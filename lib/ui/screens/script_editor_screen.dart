@@ -1,0 +1,270 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../design_system/vx_colors.dart';
+import '../design_system/vx_typography.dart';
+
+class ScriptEditorScreen extends StatefulWidget {
+  final String? initialScript;
+  const ScriptEditorScreen({super.key, this.initialScript});
+
+  @override
+  State<ScriptEditorScreen> createState() => _ScriptEditorScreenState();
+}
+
+class _ScriptEditorScreenState extends State<ScriptEditorScreen> {
+  final TextEditingController _codeController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialScript != null) {
+      _codeController.text = widget.initialScript!;
+    } else {
+      _loadDraft();
+    }
+  }
+
+  Future<void> _loadDraft() async {
+    final prefs = await SharedPreferences.getInstance();
+    final draft = prefs.getString('last_draft_script');
+    if (draft != null && draft.isNotEmpty) {
+      setState(() => _codeController.text = draft);
+    } else {
+      _codeController.text = """
+def on_candle(candle):
+    # Example: Simple Moving Average Cross
+    
+    # 1. Calculate Indicators
+    rsi = indicators.rsi(period=14)
+    sma_20 = indicators.sma(period=20)
+    
+    # 2. Logic
+    if rsi < 30 and candle.close > sma_20:
+        volex.buy(amount=0.1)
+        print("Buying the dip!")
+        
+    elif rsi > 70:
+        volex.sell(amount=0.1)
+        print("Taking profits.")
+""";
+    }
+  }
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _insertSnippet(String text) {
+    final textSelection = _codeController.selection;
+    if (textSelection.start == -1) {
+      // Append to end if no selection
+      final newText = _codeController.text + text;
+      _codeController.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: newText.length),
+      );
+    } else {
+      final newText = _codeController.text.replaceRange(
+        textSelection.start,
+        textSelection.end,
+        text,
+      );
+      final myTextLength = text.length;
+      _codeController.value = TextEditingValue(
+        text: newText,
+        selection:
+            TextSelection.collapsed(offset: textSelection.start + myTextLength),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: VxColors.background,
+      appBar: AppBar(
+        backgroundColor: VxColors.surface,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.white70),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              const Icon(Icons.code, color: VxColors.neonPurple, size: 20),
+              const SizedBox(width: 8),
+              VxText.monoBold("Script Editor", fontSize: 14),
+            ],
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save, color: VxColors.neonCyan),
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setString('last_draft_script', _codeController.text);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Draft Saved to Disk")));
+              }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.cloud_upload, color: VxColors.neonCyan),
+            tooltip: 'Publish to Marketplace',
+            onPressed: () async {
+              // Mock Publish Flow
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Publish Strategy"),
+                  content:
+                      const Text("Publish this strategy to the marketplace?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text("Strategy Published Successfully!")),
+                        );
+                        Navigator.pop(context); // Close Editor
+                      },
+                      child: const Text("Publish"),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: TextButton.icon(
+              onPressed: () {
+                // Simulate Engine Integration
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Validating Strategy Syntax... Passed."),
+                    backgroundColor: VxColors.neonGreen,
+                  ),
+                );
+                Future.delayed(const Duration(seconds: 1), () {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text("Simulation complete. Strategy is stable."),
+                        backgroundColor: VxColors.neonCyan,
+                      ),
+                    );
+                    Navigator.of(context).pop(_codeController.text);
+                  }
+                });
+              },
+              icon: const Icon(Icons.play_arrow, color: Colors.black),
+              label: const Text("Simulate",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              style: TextButton.styleFrom(
+                backgroundColor: VxColors.neonCyan,
+                foregroundColor: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Code Editor Area
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              color: const Color(0xFF1E1E1E), // VS Code Dark bg
+              child: TextField(
+                controller: _codeController,
+                focusNode: _focusNode,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                style: GoogleFonts.firaCode(
+                  color: const Color(0xFFD4D4D4), // VS Code text
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                ),
+                enableInteractiveSelection: true,
+              ),
+            ),
+          ),
+          _buildHelperToolbar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHelperToolbar() {
+    return Container(
+      height: 48,
+      color: VxColors.surface,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        children: [
+          _SnippetButton("def ", onTap: () => _insertSnippet("def ")),
+          _SnippetButton("if ", onTap: () => _insertSnippet("if ")),
+          _SnippetButton("else:", onTap: () => _insertSnippet("else:\n    ")),
+          _SnippetButton(":", onTap: () => _insertSnippet(":")),
+          _SnippetButton(" (", onTap: () => _insertSnippet(" (")),
+          _SnippetButton(") ", onTap: () => _insertSnippet(") ")),
+          _SnippetButton("volex.buy()",
+              onTap: () => _insertSnippet("volex.buy(amount=0.1)")),
+          _SnippetButton("volex.sell()",
+              onTap: () => _insertSnippet("volex.sell(amount=0.1)")),
+          _SnippetButton("rsi", onTap: () => _insertSnippet("rsi")),
+          _SnippetButton("sma", onTap: () => _insertSnippet("sma")),
+          _SnippetButton("print()", onTap: () => _insertSnippet("print()")),
+        ],
+      ),
+    );
+  }
+}
+
+class _SnippetButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _SnippetButton(this.label, {required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: VxColors.background,
+          foregroundColor: VxColors.neonPurple,
+          elevation: 0,
+          side: BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+        onPressed: onTap,
+        child: Text(
+          label,
+          style:
+              GoogleFonts.firaCode(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}

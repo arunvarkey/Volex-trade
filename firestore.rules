@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Explicitly deny everything by default to prevent silent exposure
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // User data is private
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null 
+                   && request.auth.uid == userId
+                   && request.resource.data.keys().hasOnly([
+                     'displayName', 'email', 'createdAt', 
+                     'simulatorBalance', 'preferences'
+                   ])
+                   // Prevent client from marking trades as live
+                   && request.resource.data.get('isLive', false) == false;
+      
+      // Trades subcollection
+      match /trades/{tradeId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow write: if request.auth != null 
+                     && request.auth.uid == userId
+                     && request.resource.data.get('isLive', false) == false
+                     && request.resource.data.size() < 50; // field count limit (prevents massive writes)
+      }
+    }
+  }
+}

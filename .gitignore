@@ -1,0 +1,80 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Security: Never track root keys, but allow them in Android folders for build
+# (We will discuss this with the user)
+/google-services.json
+/key.properties
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Keystores and Certificates
+*.jks
+*.keystore
+*.pem
+*.p12
+
+# Keys and config
+**/key.properties
+**/google-services.json
+GoogleService-Info.plist
+
+# Temporary Analysis and Test Artifacts
+*.txt
+*.json
+*.lock
+*.jks
+*.iml
+test_results*/
+analyze_output*/
+analysis_*/
+source_dump.txt
+fingerprints.txt
+path.txt
+todos.txt
+*.ps1
+*.sh
+*.bat

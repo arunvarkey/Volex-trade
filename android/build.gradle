@@ -1,0 +1,87 @@
+buildscript {
+    ext.kotlin_version = '2.1.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+
+    // Provide fallback for plugins using legacy 'flutter' property access (e.g., jni 0.15.2)
+    if (project.name != 'app' && !project.hasProperty('flutter')) {
+        ext.flutter = [
+            ndkVersion: "25.1.8937393",
+            compileSdkVersion: 35,
+            minSdkVersion: 21,
+            targetSdkVersion: 35
+        ]
+    }
+
+    afterEvaluate { project ->
+        if (project.hasProperty('android') && project.name != 'jni') {
+            project.android {
+                if (namespace == null) {
+                    try {
+                        def manifestFile = project.file('src/main/AndroidManifest.xml')
+                        if (manifestFile.exists()) {
+                            def manifestContent = manifestFile.text
+                            def matcher = (manifestContent =~ /package="([^"]+)"/)
+                            if (matcher.find()) {
+                                namespace = matcher.group(1)
+                            }
+                        }
+                    } catch (Exception e) { }
+                    
+                    if (namespace == null) {
+                        try {
+                            namespace = "com.antigravity.volextrade.plugins.${project.name.replace('-', '_')}"
+                        } catch (e) { }
+                    }
+                }
+                
+                // Explicitly set compileSdkVersion for plugins that require it
+                try {
+                    compileSdkVersion 35
+                } catch (e) { }
+
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+        
+        tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
+
+        // Ensure Kotlin targets 17 to match Java
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                jvmTarget = '17'
+            }
+        }
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

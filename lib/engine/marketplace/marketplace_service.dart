@@ -1,0 +1,195 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import '../../core/app_logger.dart';
+import 'models/strategy_listing.dart';
+import '../../domain/trade_signal.dart';
+import '../../domain/order.dart'; // For OrderSide
+
+/// Service handles the Strategy Marketplace.
+///
+/// Allows users to:
+/// - Browse strategies ([getFeaturedStrategies], [searchStrategies])
+/// - Subscribe to strategies ([subscribeToStrategy])
+/// - Publish their own strategies ([publishStrategy])
+///
+/// Currently uses MOCK data for Phase 4B.
+class MarketplaceService extends ChangeNotifier {
+  final List<StrategyListing> _mockListings = [
+    StrategyListing.mock(
+      id: 'strat_001',
+      title: 'Golden Cross Alpha',
+      category: StrategyCategory.trendFollowing,
+    ),
+    StrategyListing.mock(
+      id: 'strat_002',
+      title: 'Volex AI Scalper',
+      category: StrategyCategory.aiExperimental,
+    ).copyWith(
+      title: 'Volex AI Scalper',
+      description:
+          'High-frequency scalping using LSTM models. Risky but high reward.',
+      monthlyPrice: 99.00,
+      tier: MarketplaceTier.premium,
+      totalReturn: 312.5,
+      winRate: 0.58,
+      rating: 4.5,
+    ),
+    StrategyListing.mock(
+      id: 'strat_003',
+      title: 'Safe Harbor Yield',
+      category: StrategyCategory.arbitrage,
+    ).copyWith(
+      title: 'Safe Harbor Yield',
+      description: 'Stable coin arbitrage across exchanges. Low risk.',
+      monthlyPrice: 9.99,
+      tier: MarketplaceTier.basic,
+      totalReturn: 12.4,
+      winRate: 0.98,
+      rating: 4.9,
+    ),
+    StrategyListing.mock(
+      id: 'strat_004',
+      title: 'CryptoBreakout V2',
+      category: StrategyCategory.breakout,
+    ).copyWith(
+      title: 'CryptoBreakout V2',
+      description:
+          'Monitors consolidation zones and enters on high volume breakouts.',
+      monthlyPrice: 49.99,
+      tier: MarketplaceTier.premium,
+      totalReturn: 88.2,
+      winRate: 0.45, // Lower win rate but high R:R
+      rating: 4.2,
+    ),
+  ];
+
+  final Set<String> _subscriptions = {}; // Set of Strategy IDs
+
+  /// Get featured strategies for the home carousel
+  Future<List<StrategyListing>> getFeaturedStrategies() async {
+    await Future.delayed(const Duration(milliseconds: 600)); // Simulate network
+    return _mockListings;
+  }
+
+  /// Search strategies by query or category
+  Future<List<StrategyListing>> searchStrategies({
+    String? query,
+    StrategyCategory? category,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _mockListings.where((s) {
+      if (category != null && s.category != category) return false;
+      if (query != null &&
+          !s.title.toLowerCase().contains(query.toLowerCase())) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  /// Subscribe to a strategy
+  /// Returns success status
+  Future<bool> subscribeToStrategy(String strategyId) async {
+    AppLogger.info("MARKET: Subscribing to $strategyId...");
+    await Future.delayed(
+        const Duration(seconds: 1)); // Simulate payment processing
+
+    // In a real app, this would trigger IAP or Credit deduction
+    _subscriptions.add(strategyId);
+    notifyListeners();
+
+    AppLogger.info("MARKET: Subscribed to $strategyId successfully.");
+    return true;
+  }
+
+  /// Check if user is subscribed
+  bool isSubscribed(String strategyId) {
+    return _subscriptions.contains(strategyId);
+  }
+
+  /// Check if user is subscribed by Strategy Name (For Phase 4C Mock)
+  bool isSubscribedByName(String strategyName) {
+    try {
+      final strat = _mockListings.firstWhere((s) => s.title == strategyName);
+      return _subscriptions.contains(strat.id);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Publish a new strategy
+  Future<void> publishStrategy(StrategyListing listing) async {
+    AppLogger.info("MARKET: Publishing ${listing.title}...");
+    await Future.delayed(const Duration(seconds: 2));
+    _mockListings.add(listing);
+    notifyListeners();
+    AppLogger.info("MARKET: Published successfully.");
+  }
+
+  // --- Signal Simulation (Phase 4C) ---
+  final _signalController = StreamController<TradeSignal>.broadcast();
+  Stream<TradeSignal> get signalStream => _signalController.stream;
+  Timer? _simTimer;
+
+  /// Start broadcasting mock signals for subscribed strategies
+  void startSignalSimulation() {
+    _simTimer?.cancel();
+    _simTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (_subscriptions.isEmpty) return;
+
+      // Pick a random strategy to emit a signal
+      // In reality, this would come from a websocket
+      final randomStratId = _subscriptions.toList().first;
+      final strat = _mockListings.firstWhere((s) => s.id == randomStratId);
+
+      final signal = TradeSignal(
+        timestamp: DateTime.now(),
+        price: 42000.0 + (timer.tick * 10), // variable price
+        side: (timer.tick % 2 == 0) ? OrderSide.buy : OrderSide.sell,
+        strategyName: strat.title,
+        description: "Signal generated by ${strat.title} algorithm.",
+      );
+
+      _signalController.add(signal);
+      AppLogger.info("MARKET: Emitted signal for ${strat.title}");
+    });
+  }
+
+  @override
+  void dispose() {
+    _simTimer?.cancel();
+    _signalController.close();
+    super.dispose();
+  }
+}
+
+extension StrategyListingCopy on StrategyListing {
+  StrategyListing copyWith({
+    String? title,
+    String? description,
+    double? monthlyPrice,
+    MarketplaceTier? tier,
+    double? totalReturn,
+    double? winRate,
+    double? rating,
+  }) {
+    return StrategyListing(
+      id: id,
+      authorId: authorId,
+      authorName: authorName,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category,
+      monthlyPrice: monthlyPrice ?? this.monthlyPrice,
+      tier: tier ?? this.tier,
+      totalReturn: totalReturn ?? this.totalReturn,
+      winRate: winRate ?? this.winRate,
+      maxDrawdown: maxDrawdown,
+      subscriberCount: subscriberCount,
+      rating: rating ?? this.rating,
+      verified: verified,
+      createdAt: createdAt,
+      lastUpdated: lastUpdated,
+    );
+  }
+}

@@ -1,0 +1,100 @@
+import 'order.dart';
+import '../core/financial_math.dart';
+
+class Position {
+  final String id;
+  final String symbol;
+  final OrderSide side;
+  double quantity;
+  double entryPrice;
+  final DateTime openedAt;
+  bool isOpen;
+  DateTime? closedAt;
+  double? realizedPnL;
+  double? unrealizedPnl;
+  double? stopLoss;
+  double? takeProfit;
+  String? strategyId;
+
+  Position({
+    required this.id,
+    required this.symbol,
+    required this.side,
+    required this.quantity,
+    required this.entryPrice,
+    required this.openedAt,
+    this.isOpen = true,
+    this.unrealizedPnl,
+    this.stopLoss,
+    this.takeProfit,
+    this.strategyId,
+  });
+
+  factory Position.empty() {
+    return Position(
+      id: '',
+      symbol: '',
+      side: OrderSide.buy,
+      quantity: 0,
+      entryPrice: 0,
+      openedAt: DateTime.now(),
+      isOpen: false,
+    );
+  }
+
+  void close(double exitPrice) {
+    isOpen = false;
+    closedAt = DateTime.now();
+
+    final pnlCents = FinancialMath.calculatePnL(
+      quantity: quantity,
+      entryPrice: entryPrice,
+      exitPrice: exitPrice,
+      isLong: side == OrderSide.buy,
+    );
+    realizedPnL = FinancialMath.centsToDollars(pnlCents);
+  }
+
+  void addToPosition(double qty, double price) {
+    final totalCost = (quantity * entryPrice) + (qty * price);
+    quantity += qty;
+    entryPrice = totalCost / quantity;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'symbol': symbol,
+      'side': side.index,
+      'quantity': quantity,
+      'entryPrice': entryPrice,
+      'openedAt': openedAt.toIso8601String(),
+      'isOpen': isOpen,
+      'closedAt': closedAt?.toIso8601String(),
+      'realizedPnL': realizedPnL,
+      'unrealizedPnl': unrealizedPnl,
+      'stopLoss': stopLoss,
+      'takeProfit': takeProfit,
+      'strategyId': strategyId,
+    };
+  }
+
+  factory Position.fromJson(Map<String, dynamic> json) {
+    return Position(
+      id: json['id'],
+      symbol: json['symbol'],
+      side: OrderSide.values[json['side']],
+      quantity: json['quantity'],
+      entryPrice: json['entryPrice'],
+      openedAt: DateTime.parse(json['openedAt']),
+      isOpen: json['isOpen'],
+    )
+      ..closedAt =
+          json['closedAt'] != null ? DateTime.parse(json['closedAt']) : null
+      ..realizedPnL = json['realizedPnl']
+      ..unrealizedPnl = json['unrealizedPnl']
+      ..stopLoss = json['stopLoss']
+      ..takeProfit = json['takeProfit']
+      ..strategyId = json['strategyId'];
+  }
+}

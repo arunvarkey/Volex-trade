@@ -1,0 +1,141 @@
+name: volex_terminal
+description: "Educational trading simulator - Learn with AI-powered strategy builder. No real money."
+publish_to: 'none'
+version: 1.0.1+10
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+    
+  # Existing dependencies (keeping versions)
+  cupertino_icons: ^1.0.8
+  web_socket_channel: ^3.0.3
+  http: ^1.6.0
+  crypto: ^3.0.3
+  encrypt: ^5.0.3
+  uuid: ^4.5.1
+  intl: ^0.19.0
+  shared_preferences: ^2.5.3
+  provider: ^6.1.5+1
+  path_provider: ^2.1.5
+  google_fonts: ^6.3.0
+  go_router: ^15.1.2
+  fl_chart: 0.69.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  fluttertoast: ^8.2.9
+  flutter_secure_storage: ^10.0.0
+  local_auth: ^2.3.0
+  get_it: ^9.2.0
+  google_sign_in: ^6.2.1
+  
+  # NEW: Essential additions for production features
+  # Analytics & Monitoring
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.3.4
+  firebase_analytics: ^11.6.0
+  firebase_crashlytics: ^4.3.10
+  
+  # In-App Purchases (for subscriptions)
+  in_app_purchase: ^3.2.0
+  in_app_purchase_android: ^0.3.0+11
+  in_app_purchase_storekit: ^0.3.6+7
+  
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+
+  flutter_background_service: ^5.0.0
+  
+  # Utils
+  collection: ^1.18.0
+  equatable: ^2.0.7
+  json_annotation: ^4.9.0
+  synchronized: ^3.3.0+3
+  
+  # UI Enhancements
+  shimmer: ^3.0.0
+  confetti: ^0.8.0
+
+  timeago: ^3.6.1
+  
+  # Image processing
+  flutter_image_compress: ^2.3.0
+
+  
+  # Permissions
+  permission_handler: ^11.3.1
+
+  # AI & Machine Learning
+
+  
+  # Time Utils
+  # Time Utils
+  # timeago: ^3.7.0 (removed duplicate)
+  
+  # Media & Video Testing
+  # Media (Removed)
+
+  
+  # Share & Deep linking
+  share_plus: ^10.1.2
+  app_links: ^6.3.0
+  url_launcher: ^6.3.1
+  
+  # QR Code
+  # QR (Removed)
+
+  
+  # Haptics
+  # Haptics (Removed)
+
+  
+  # Connectivity
+  connectivity_plus: ^6.1.0
+  image_picker: ^1.1.2
+  
+  # Security
+  flutter_jailbreak_detection: ^1.10.0
+  device_info_plus: ^10.1.0
+
+  cloud_firestore: ^5.6.12
+  cloud_functions: ^5.6.2
+  flutter_dotenv: ^6.0.0
+  firebase_app_check: ^0.3.2+10
+  sentry_flutter: ^9.10.0
+  firebase_remote_config: ^5.5.0
+
+  # Simulator & Premium
+
+
+  path: ^1.9.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  flutter_lints: ^4.0.0
+  
+  # Code generation
+  build_runner: ^2.4.13
+  json_serializable: ^6.8.0
+  hive_generator: ^2.0.1
+  flutter_launcher_icons: ^0.14.2
+  integration_test:
+    sdk: flutter
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/market_data/
+    
+  # Using Google Fonts - no need to bundle fonts
