@@ -48,6 +48,14 @@ class SubscriptionService extends ChangeNotifier {
   Future<void> initialize() async {
     AppLogger.info('💳 SubscriptionService: Initializing...');
 
+    // In-app purchases aren't supported on web; default to the free tier so
+    // the app can boot for preview without the IAP plugin.
+    if (kIsWeb) {
+      AppLogger.warning('🌐 Web: IAP unavailable, defaulting to free tier');
+      _updateStatus(SubscriptionStatus.free());
+      return;
+    }
+
     // Check if IAP is available with timeout to prevent boot hang
     final available = await _iap.isAvailable().timeout(
       const Duration(seconds: 5),
