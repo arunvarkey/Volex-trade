@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
@@ -142,8 +143,9 @@ class _VolexTerminalAppState extends State<VolexTerminalApp>
             theme: themeService.buildThemeData(),
             routerConfig: appRouter,
             builder: (context, child) {
-              // Only override ErrorWidget in non-test environments to avoid flutter_test assertion
-              if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+              // Only override ErrorWidget in non-test environments to avoid flutter_test assertion.
+              // Platform.environment is unsupported on web, so guard with kIsWeb.
+              if (kIsWeb || !Platform.environment.containsKey('FLUTTER_TEST')) {
                 ErrorWidget.builder = (errorDetails) {
                   return Container(
                     color: Colors.black,

@@ -7,7 +7,11 @@ class AuthService {
   // Lazy so construction never touches Firebase (safe on web where Firebase
   // may not be configured).
   FirebaseAuth get _auth => FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  // Lazy: constructing GoogleSignIn on web asserts if no client ID meta tag
+  // is configured, so defer until Google sign-in is actually used.
+  GoogleSignIn? _googleSignInInstance;
+  GoogleSignIn get _googleSignIn => _googleSignInInstance ??= GoogleSignIn();
 
   /// Returns the currently signed-in user, or null if auth is unavailable.
   User? get currentUser {
