@@ -40,6 +40,14 @@ class _SplashScreenState extends State<SplashScreen>
     final startTime = DateTime.now();
 
     try {
+      // Web preview: Firebase/auth aren't configured on web, so skip the
+      // Firebase-dependent startup routing and go straight to the app.
+      if (kIsWeb) {
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) context.go('/');
+        return;
+      }
+
       // Determine startup route
       final startupService = StartupService();
       final destination = await startupService.determineStartupRoute();

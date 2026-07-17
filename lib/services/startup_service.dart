@@ -15,7 +15,7 @@ class StartupService {
   static const _keySignalViewCount = 'signal_view_count';
   static const _keyHasShownUpgradePrompt = 'has_shown_upgrade_prompt';
 
-  final _auth = FirebaseAuth.instance;
+  FirebaseAuth get _auth => FirebaseAuth.instance;
 
   /// Determine where user should start
   Future<StartupDestination> determineStartupRoute() async {

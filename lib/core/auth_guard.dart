@@ -12,6 +12,9 @@ class AuthGuard {
   ];
 
   static String? handleRedirect(BuildContext context, GoRouterState state) {
+    // Web preview runs without Firebase auth configured, so don't gate routes.
+    if (kIsWeb) return null;
+
     final isPublic = publicRoutes.contains(state.uri.path);
     final user = FirebaseAuth.instance.currentUser;
 

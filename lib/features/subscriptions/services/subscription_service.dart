@@ -18,9 +18,12 @@ class SubscriptionService extends ChangeNotifier {
       'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp8rHarIy5Xhthe99e59imTdOBLel8Okox+NrEvcPqn5f+TGcTMjEPZfPX1CRzSnmm/9U1yZe4RyNaabWj9aMA5Gi8NQy4O16igwKxNknj1+BIvUaFq3mX9HhTO8mPBueRsJNGHkfE7KhAhUNFw07DfZEpaKVD3lB/d2FTrMvab6fXCpxYOjk5KVtLFdsxTO6xYtSci3+YdXEKFidvciLjLwywb8q1Dq3NeXNx4CuzWrMgZP/5pAZD4NcNgcyVlVM6jhSOjcGO/Te/7+qRTNsxud8RDYEywwd54b5/g2NEms1lEAXz2r1ThDfXkVAA3jmM/PgFOjlhQ856MqYaN8r3wIDAQAB';
 
   final InAppPurchase _iap = InAppPurchase.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  // Accessed lazily so construction never touches Firebase. On platforms where
+  // Firebase isn't configured (e.g. web preview), these are simply never read
+  // because IAP is unavailable and initialize() returns early.
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+  FirebaseAnalytics get _analytics => FirebaseAnalytics.instance;
 
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   final _statusController = StreamController<SubscriptionStatus>.broadcast();

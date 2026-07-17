@@ -282,7 +282,12 @@ class ServiceLocator {
 
       // Register AI Guardian
       onProgress?.call('Setting up AI Guardian...', 0.885);
-      final userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+      String userId = 'anonymous';
+      try {
+        userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+      } catch (_) {
+        // Firebase may be unavailable (e.g. web preview); default to anonymous.
+      }
       getIt.registerLazySingleton(() => AIGuardianService(userId));
       _log('GUARDIAN: OK.');
 
