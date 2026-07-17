@@ -33,6 +33,13 @@ class MoreScreen extends StatelessWidget {
           _buildSection('LEARN & PRACTICE'),
           _buildMenuItem(
             context,
+            icon: Icons.school,
+            title: 'Trading Academy',
+            subtitle: 'Learn to trade step by step — free, zero risk',
+            route: '/learn',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.auto_awesome,
             title: 'AI Strategy Builder',
             subtitle: 'Describe an idea, AI builds a strategy',

@@ -510,7 +510,7 @@ class HomeScreenV2 extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
       child: InkWell(
-        onTap: () => context.push('/signals'),
+        onTap: () => context.push('/learn'),
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -547,7 +547,7 @@ class HomeScreenV2 extends StatelessWidget {
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      'Try our guided first trade — takes 30 seconds',
+                      'Start free lessons — learn step by step, zero risk',
                       style: VxTypography.bodySmall.copyWith(fontSize: 12),
                     ),
                   ],

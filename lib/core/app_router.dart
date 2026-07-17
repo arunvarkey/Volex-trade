@@ -38,6 +38,9 @@ import 'package:volex_terminal/features/simulator/backtest/screens/backtest_conf
 import 'package:volex_terminal/features/simulator/backtest/screens/backtest_results_screen.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
+import 'package:volex_terminal/features/academy/ui/academy_screen.dart';
+import 'package:volex_terminal/features/academy/ui/lesson_screen.dart';
+import 'package:volex_terminal/features/academy/models/academy_models.dart';
 
 // Debug
 
@@ -145,6 +148,22 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/ai-strategy',
       builder: (context, state) => const AIStrategyGeneratorScreen(),
+    ),
+
+    // Trading Academy (guided learning)
+    GoRoute(
+      path: '/learn',
+      builder: (context, state) => const AcademyScreen(),
+      routes: [
+        GoRoute(
+          path: 'lesson',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra is! Lesson) return const AcademyScreen();
+            return LessonScreen(lesson: extra);
+          },
+        ),
+      ],
     ),
     GoRoute(
       path: '/lab',
