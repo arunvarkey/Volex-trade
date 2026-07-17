@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Broad grouping for event markets, used for filtering and colour-coding.
 enum MarketCategory { crypto, macro, politics, tech, culture }
 

@@ -65,7 +65,7 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
             children: [
               _BalanceHeader(portfolio: _portfolio),
               const SizedBox(height: 22),
-              _SectionLabel(icon: Icons.local_fire_department_rounded,
+              const _SectionLabel(icon: Icons.local_fire_department_rounded,
                   text: 'TRENDING MENTIONS', accent: VxColors.neonYellow),
               const SizedBox(height: 10),
               SizedBox(
@@ -89,7 +89,7 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
                 ),
               ),
               const SizedBox(height: 22),
-              _SectionLabel(icon: Icons.insights_rounded,
+              const _SectionLabel(icon: Icons.insights_rounded,
                   text: 'EVENT MARKETS', accent: VxColors.neonCyan),
               const SizedBox(height: 10),
               _CategoryFilter(

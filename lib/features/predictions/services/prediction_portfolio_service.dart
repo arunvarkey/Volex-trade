@@ -132,7 +132,7 @@ class PredictionPortfolioService extends ChangeNotifier {
     await _persist();
     return PredictionTradeResult(
       true,
-      'Bought $contracts ${side.name.toUpperCase()} @ ${priceCents}¢',
+      'Bought $contracts ${side.name.toUpperCase()} @ $priceCents¢',
     );
   }
 

@@ -219,7 +219,7 @@ class ProbabilityBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('YES ${yes}¢',
+            Text('YES $yes¢',
                 style: VxTypography.caption.copyWith(
                     fontSize: 11,
                     color: VxColors.neonGreen,
