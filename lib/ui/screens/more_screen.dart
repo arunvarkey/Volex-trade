@@ -40,6 +40,13 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.insights,
+            title: 'Buzz & Predictions',
+            subtitle: 'Trade events, politics & crypto on sentiment — virtual',
+            route: '/predictions',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.auto_awesome,
             title: 'AI Strategy Builder',
             subtitle: 'Describe an idea, AI builds a strategy',

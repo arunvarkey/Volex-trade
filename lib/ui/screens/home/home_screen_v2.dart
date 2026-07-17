@@ -46,6 +46,7 @@ class HomeScreenV2 extends StatelessWidget {
                     _buildQuickTradeSection(context),
                     _buildYourStrategiesSection(context),
                     _buildLearningCTA(context),
+                    _buildPredictionsCTA(context),
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -555,6 +556,65 @@ class HomeScreenV2 extends StatelessWidget {
               ),
               const Icon(Icons.chevron_right_rounded,
                   color: VxColors.neonCyan, size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPredictionsCTA(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+      child: InkWell(
+        onTap: () => context.push('/predictions'),
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                VxColors.neonPurple.withOpacity(0.18),
+                VxColors.surface,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: VxColors.neonPurple.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: VxColors.neonPurple.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Text('🔮', style: TextStyle(fontSize: 22)),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Buzz & Predictions',
+                      style: VxTypography.body
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      'Trade politics, crypto & events on sentiment — virtual',
+                      style: VxTypography.bodySmall.copyWith(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: VxColors.neonPurple, size: 24),
             ],
           ),
         ),

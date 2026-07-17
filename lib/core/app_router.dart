@@ -41,6 +41,9 @@ import 'package:volex_terminal/features/simulator/backtest/models/backtest_resul
 import 'package:volex_terminal/features/academy/ui/academy_screen.dart';
 import 'package:volex_terminal/features/academy/ui/lesson_screen.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
+import 'package:volex_terminal/features/predictions/ui/predictions_screen.dart';
+import 'package:volex_terminal/features/predictions/ui/event_market_detail_screen.dart';
+import 'package:volex_terminal/features/predictions/models/prediction_models.dart';
 
 // Debug
 
@@ -161,6 +164,22 @@ final GoRouter appRouter = GoRouter(
             final extra = state.extra;
             if (extra is! Lesson) return const AcademyScreen();
             return LessonScreen(lesson: extra);
+          },
+        ),
+      ],
+    ),
+
+    // Buzz & Predictions (Kalshi-style event markets, simulated)
+    GoRoute(
+      path: '/predictions',
+      builder: (context, state) => const PredictionsScreen(),
+      routes: [
+        GoRoute(
+          path: 'market',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra is! EventMarket) return const PredictionsScreen();
+            return EventMarketDetailScreen(market: extra);
           },
         ),
       ],
