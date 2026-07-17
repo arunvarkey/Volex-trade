@@ -4,7 +4,11 @@ import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 
 class AIGuardianService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Lazy: touching Firestore at construction crashes on platforms where
+  // Firebase isn't configured (web preview). _getRecentTrades already
+  // catches failures and returns [], so analysis degrades gracefully and
+  // never blocks a trade.
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
   final String _userId;
 
   AIGuardianService(this._userId);
