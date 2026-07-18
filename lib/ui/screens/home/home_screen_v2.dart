@@ -17,6 +17,7 @@ import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/ui/widgets/market_ticker/vx_ticker_tape.dart';
 import 'package:volex_terminal/ui/widgets/market_ticker/vx_market_list.dart';
+import 'package:volex_terminal/ui/widgets/journey_strip.dart';
 
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
@@ -45,6 +46,7 @@ class HomeScreenV2 extends StatelessWidget {
                     _buildStatusBar(context),
                     const VxTickerTape(),
                     _buildBalanceSection(context),
+                    const JourneyStrip(),
                     _buildQuickActions(context),
                     const VxMarketList(),
                     _buildQuickTradeSection(context),
@@ -571,7 +573,7 @@ class HomeScreenV2 extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
       child: InkWell(
-        onTap: () => context.push('/predictions'),
+        onTap: () => context.go('/predictions'),
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(20),

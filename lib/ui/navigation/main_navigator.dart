@@ -45,8 +45,9 @@ class _MainNavigatorState extends State<MainNavigator> {
     if (location.startsWith('/signals')) {
       return 1; // Signals also maps to index 1
     }
-    if (location.startsWith('/portfolio')) return 2;
-    if (location.startsWith('/more')) return 3;
+    if (location.startsWith('/predictions')) return 2;
+    if (location.startsWith('/portfolio')) return 3;
+    if (location.startsWith('/more')) return 4;
     return 0; // Home
   }
 
@@ -65,9 +66,12 @@ class _MainNavigatorState extends State<MainNavigator> {
         }
         break;
       case 2:
-        context.go('/portfolio');
+        context.go('/predictions');
         break;
       case 3:
+        context.go('/portfolio');
+        break;
+      case 4:
         context.go('/more');
         break;
     }
@@ -146,18 +150,25 @@ class _FloatingGlassNav extends StatelessWidget {
               onTap: () => onTap(1),
             ),
           _NavIcon(
+            icon: Icons.insights_outlined,
+            activeIcon: Icons.insights,
+            label: 'PREDICT',
+            isSelected: selectedIndex == 2,
+            onTap: () => onTap(2),
+          ),
+          _NavIcon(
             icon: Icons.account_balance_wallet_outlined,
             activeIcon: Icons.account_balance_wallet,
             label: 'WALLET',
-            isSelected: selectedIndex == 2,
-            onTap: () => onTap(2),
+            isSelected: selectedIndex == 3,
+            onTap: () => onTap(3),
           ),
           _NavIcon(
             icon: Icons.more_horiz_outlined,
             activeIcon: Icons.more_horiz,
             label: 'MORE',
-            isSelected: selectedIndex == 3,
-            onTap: () => onTap(3),
+            isSelected: selectedIndex == 4,
+            onTap: () => onTap(4),
           ),
         ],
       ),

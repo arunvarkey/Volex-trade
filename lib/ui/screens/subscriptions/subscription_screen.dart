@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/features/subscriptions/models/subscription_tier.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
@@ -202,6 +203,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 _buildFeature('Unlimited trade signals'),
                 _buildFeature('All technical indicators'),
                 _buildFeature('Strategy Optimizer (genetic algo)'),
+                _buildFeature('Buzz & Predictions event markets'),
                 _buildFeature('Export trade history (CSV)'),
                 _buildFeature('Custom watchlists'),
 
@@ -381,7 +383,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
+  bool _blockOnWeb() {
+    if (!kIsWeb) return false;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content:
+            Text('Purchases are available in the Volex mobile app.'),
+      ),
+    );
+    return true;
+  }
+
   void _restorePurchases() async {
+    if (_blockOnWeb()) return;
     await getIt<SubscriptionService>().restorePurchases();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -391,6 +405,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   void _purchaseSelectedPlan() async {
+    if (_blockOnWeb()) return;
     final productToBuy = _isAnnual
         ? SubscriptionProduct.premiumYearly
         : SubscriptionProduct.explorerPremium;

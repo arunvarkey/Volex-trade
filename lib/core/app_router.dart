@@ -136,6 +136,13 @@ final GoRouter appRouter = GoRouter(
           parentNavigatorKey: _shellNavigatorKey,
           builder: (context, state) => const SignalFeedScreen(),
         ),
+        // Buzz & Predictions (Kalshi-style event markets, simulated) —
+        // a first-class tab inside the shell.
+        GoRoute(
+          path: '/predictions',
+          parentNavigatorKey: _shellNavigatorKey,
+          builder: (context, state) => const PredictionsScreen(),
+        ),
       ],
     ),
 
@@ -169,20 +176,14 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
 
-    // Buzz & Predictions (Kalshi-style event markets, simulated)
+    // Buzz & Predictions market detail (pushed above the shell)
     GoRoute(
-      path: '/predictions',
-      builder: (context, state) => const PredictionsScreen(),
-      routes: [
-        GoRoute(
-          path: 'market',
-          builder: (context, state) {
-            final extra = state.extra;
-            if (extra is! EventMarket) return const PredictionsScreen();
-            return EventMarketDetailScreen(market: extra);
-          },
-        ),
-      ],
+      path: '/predictions/market',
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! EventMarket) return const PredictionsScreen();
+        return EventMarketDetailScreen(market: extra);
+      },
     ),
     GoRoute(
       path: '/lab',
