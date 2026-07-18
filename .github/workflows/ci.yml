@@ -25,10 +25,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # --no-fatal-warnings until the M0 warning-cleanup milestone flips this
-      # strict (see ROADMAP.md). Errors always fail the build.
+      # Gate on ERRORS for now. flutter analyze (unlike dart analyze) treats
+      # infos as fatal by default, and the codebase carries ~500 pre-existing
+      # withOpacity deprecation infos scheduled for M0 cleanup (ROADMAP.md).
+      # Tighten to --fatal-warnings, then --fatal-infos, as M0 lands.
       - name: Analyze
-        run: flutter analyze --no-fatal-warnings
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Test
         run: flutter test
