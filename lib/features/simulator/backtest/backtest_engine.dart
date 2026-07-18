@@ -6,7 +6,6 @@ import 'package:volex_terminal/data/market_data_repository.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/domain/order.dart' as dom;
-import 'package:volex_terminal/domain/order.dart'; // Added by user instruction
 import 'models/backtest_request.dart';
 import 'models/backtest_result.dart';
 import 'models/trade_marker.dart';

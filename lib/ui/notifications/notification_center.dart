@@ -163,8 +163,6 @@ class _NotificationCenterState extends State<NotificationCenter> {
         return Icons.terminal_outlined;
       case NotificationType.user:
         return Icons.person_outline;
-      default:
-        return Icons.notifications_none;
     }
   }
 }

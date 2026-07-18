@@ -183,7 +183,6 @@ class _ParameterEditorState extends State<ParameterEditor> {
               enabled ? (v) => _updateValue(schema.name, v, schema) : null,
         );
       case ParameterType.string:
-      default:
         return VxText.mono(value.toString(), color: Colors.white70);
     }
   }

@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+// intl exports its own TextDirection, which (package beats platform on name
+// conflicts) would shadow Flutter's and break TextDirection.ltr below.
+import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -51,7 +53,6 @@ class _VxProChartState extends State<VxProChart> {
 
   // Gesture bookkeeping
   double _scaleStartVisible = 90;
-  int _scaleStartRight = 0;
 
   @override
   void initState() {
@@ -97,7 +98,6 @@ class _VxProChartState extends State<VxProChart> {
 
   void _onScaleStart(ScaleStartDetails d) {
     _scaleStartVisible = _visibleCount.toDouble();
-    _scaleStartRight = _rightIndex;
   }
 
   void _onScaleUpdate(ScaleUpdateDetails d, double candleWidth) {
