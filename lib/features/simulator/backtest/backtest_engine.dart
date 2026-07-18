@@ -44,6 +44,23 @@ class BacktestEngine extends ChangeNotifier {
             'Insufficient data for backtest (min 100 candles)');
       }
 
+      // No isolates on web: run the backtest inline on the main thread.
+      if (kIsWeb) {
+        final result = await runBacktest(BacktestIsolateParams(
+          candles: candles,
+          strategy: request.strategy,
+          runtimeStrategy: request.runtimeStrategy,
+          initialEquity: request.initialEquity,
+        )).timeout(
+          timeout,
+          onTimeout: () => BacktestResult.error(
+              'Backtest timed out after ${timeout.inSeconds} seconds.'),
+        );
+        _history.insert(0, result);
+        notifyListeners();
+        return result;
+      }
+
       final receivePort = ReceivePort();
       final isolate = await Isolate.spawn(
         _isolateEntry,
