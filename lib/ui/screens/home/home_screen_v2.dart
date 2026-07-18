@@ -15,6 +15,8 @@ import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/ui/widgets/quantum_switcher.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
+import 'package:volex_terminal/ui/widgets/market_ticker/vx_ticker_tape.dart';
+import 'package:volex_terminal/ui/widgets/market_ticker/vx_market_list.dart';
 
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
@@ -41,8 +43,10 @@ class HomeScreenV2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildStatusBar(context),
+                    const VxTickerTape(),
                     _buildBalanceSection(context),
                     _buildQuickActions(context),
+                    const VxMarketList(),
                     _buildQuickTradeSection(context),
                     _buildYourStrategiesSection(context),
                     _buildLearningCTA(context),
