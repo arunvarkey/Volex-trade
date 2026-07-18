@@ -132,6 +132,8 @@ class _PinEntryScreenState extends State<PinEntryScreen>
                     const SizedBox(height: 20),
                     if (widget.mode == PinEntryMode.verify)
                       _buildBiometricButton(),
+                    if (widget.mode == PinEntryMode.setup && !_isConfirming)
+                      _buildSkipForNowButton(),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -346,6 +348,21 @@ class _PinEntryScreenState extends State<PinEntryScreen>
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkipForNowButton() {
+    return TextButton(
+      onPressed: () => getIt<SecurityService>().skipSetupForNow(),
+      child: const Text(
+        'Explore first — set up PIN later',
+        style: TextStyle(
+          color: VxColors.textSecondary,
+          fontSize: 13,
+          decoration: TextDecoration.underline,
+          decorationColor: Colors.white24,
         ),
       ),
     );
