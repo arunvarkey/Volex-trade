@@ -1,0 +1,34 @@
+name: CI
+
+# Quality gate for every push on every branch: static analysis + the full
+# unit-test suite. The release APK build (build.yml) still runs only on the
+# main branches; this one is the fast, always-on discipline check.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # --no-fatal-warnings until the M0 warning-cleanup milestone flips this
+      # strict (see ROADMAP.md). Errors always fail the build.
+      - name: Analyze
+        run: flutter analyze --no-fatal-warnings
+
+      - name: Test
+        run: flutter test
