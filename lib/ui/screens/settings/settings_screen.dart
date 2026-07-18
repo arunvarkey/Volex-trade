@@ -144,7 +144,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              isPro ? "Live Trading Active" : "Paper Trading (Simulation)",
+              isPro ? "Pro Simulator Active" : "Paper Trading (Simulation)",
               style: const TextStyle(
                 color: VxColors.textSecondary,
                 fontSize: 12,

@@ -8,7 +8,7 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/domain/trade_signal.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
-import 'package:volex_terminal/ui/design_system/charts/vx_candle_chart.dart';
+import 'package:volex_terminal/ui/chart_engine/vx_pro_chart.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_top_bar.dart';
 import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
@@ -248,7 +248,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                       ? const Center(
                           child: CircularProgressIndicator(
                               color: VxColors.neonCyan))
-                      : VxCandleChart(
+                      : VxProChart(
                           candles: _candles,
                           showVolume: true,
                           showIndicators: true,

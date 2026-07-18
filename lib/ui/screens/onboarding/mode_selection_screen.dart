@@ -67,7 +67,7 @@ class ModeSelectionScreen extends StatelessWidget {
                   color: VxColors.neonPurple,
                   features: const [
                     'Everything in Explorer',
-                    'Live Trading Execution',
+                    'Full Terminal & Realistic Execution (Simulated)',
                     'Automated Strategies',
                     'Advanced Risk Management',
                   ],
