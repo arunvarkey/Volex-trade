@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'chart_math.dart';
 
 /// VxProChart — Volex's own TradingView-class chart engine.
 ///
@@ -250,24 +251,7 @@ class _ProChartPainter extends CustomPainter {
 
   // ── Grid & axes ───────────────────────────────────────────────────
 
-  double _niceStep(double rough) {
-    final mag = math.pow(10, (math.log(rough) / math.ln10).floor()).toDouble();
-    final norm = rough / mag;
-    if (norm < 1.5) return mag;
-    if (norm < 3.5) return 2.5 * mag;
-    if (norm < 7.5) return 5 * mag;
-    return 10 * mag;
-  }
-
-  Iterable<double> _priceLevels() sync* {
-    final step = _niceStep((_maxP - _minP) / 4.5);
-    if (step <= 0) return;
-    var level = (_minP / step).ceil() * step;
-    while (level < _maxP) {
-      yield level;
-      level += step;
-    }
-  }
+  List<double> _priceLevels() => ChartMath.priceLevels(_minP, _maxP);
 
   void _drawGrid(Canvas canvas) {
     final paint = Paint()
