@@ -18,9 +18,9 @@ class TerminalTimeframeBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
+        color: VxColors.surface.withValues(alpha: 0.5),
         border: Border(
-          bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: Row(
@@ -35,11 +35,11 @@ class TerminalTimeframeBar extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? VxColors.neonCyan.withOpacity(0.15)
+                      ? VxColors.neonCyan.withValues(alpha: 0.15)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: isSelected
-                      ? Border.all(color: VxColors.neonCyan.withOpacity(0.5))
+                      ? Border.all(color: VxColors.neonCyan.withValues(alpha: 0.5))
                       : null,
                 ),
                 child: Text(

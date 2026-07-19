@@ -63,9 +63,9 @@ class AIStrategyResults extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: VxColors.neonGreen.withOpacity(0.1),
+        color: VxColors.neonGreen.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -90,7 +90,7 @@ class AIStrategyResults extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: VxColors.warning.withOpacity(0.2),
+                        color: VxColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: VxColors.warning),
                       ),

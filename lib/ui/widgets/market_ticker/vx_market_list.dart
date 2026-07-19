@@ -64,9 +64,9 @@ class _VxMarketListState extends State<VxMarketList> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: VxColors.surface.withOpacity(0.5),
+                  color: VxColors.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: tickers.isEmpty
                     ? const Padding(
@@ -133,7 +133,7 @@ class _MarketRow extends StatelessWidget {
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.10),
+                color: color.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(9),
               ),
               child: Center(
@@ -190,7 +190,7 @@ class _MarketRow extends StatelessWidget {
                       Container(
                         height: 3,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08),
+                          color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -221,7 +221,7 @@ class _MarketRow extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
+                    color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(

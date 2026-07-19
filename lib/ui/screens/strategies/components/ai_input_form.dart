@@ -86,7 +86,7 @@ class AIInputForm extends StatelessWidget {
           Text(
             'Our AI will transform your trading idea into a complete, backtested strategy in seconds.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: 14,
               height: 1.5,
             ),
@@ -189,7 +189,7 @@ class AIInputForm extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? VxColors.neonCyan.withOpacity(0.2)
+                      ? VxColors.neonCyan.withValues(alpha: 0.2)
                       : VxColors.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -243,7 +243,7 @@ class AIInputForm extends StatelessWidget {
             activeTrackColor: _getRiskColor(riskTolerance),
             inactiveTrackColor: VxColors.surface,
             thumbColor: _getRiskColor(riskTolerance),
-            overlayColor: _getRiskColor(riskTolerance).withOpacity(0.2),
+            overlayColor: _getRiskColor(riskTolerance).withValues(alpha: 0.2),
           ),
           child: Slider(
             value: riskTolerance,
@@ -275,9 +275,9 @@ class AIInputForm extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: VxColors.neonCyan.withOpacity(0.1),
+        color: VxColors.neonCyan.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -306,7 +306,7 @@ class AIInputForm extends StatelessWidget {
             value: useCompanyKey,
             onChanged: onUseCompanyKeyChanged,
             activeColor: VxColors.neonCyan,
-            activeTrackColor: VxColors.neonCyan.withOpacity(0.3),
+            activeTrackColor: VxColors.neonCyan.withValues(alpha: 0.3),
           ),
         ],
       ),

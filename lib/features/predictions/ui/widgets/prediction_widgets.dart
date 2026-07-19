@@ -36,9 +36,9 @@ class BuzzCard extends StatelessWidget {
         width: 250,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: VxColors.surface.withOpacity(0.6),
+          color: VxColors.surface.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: sentimentColor.withOpacity(0.25)),
+          border: Border.all(color: sentimentColor.withValues(alpha: 0.25)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,9 +124,9 @@ class MarketRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: VxColors.surface.withOpacity(0.5),
+          color: VxColors.surface.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +137,7 @@ class MarketRow extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: cat.withOpacity(0.12),
+                    color: cat.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(

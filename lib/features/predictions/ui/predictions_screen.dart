@@ -136,7 +136,7 @@ class _BalanceHeader extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.18)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.18)),
       ),
       child: Row(
         children: [
@@ -163,7 +163,7 @@ class _BalanceHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: (up ? VxColors.neonGreen : VxColors.neonRed)
-                  .withOpacity(0.12),
+                  .withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -254,13 +254,13 @@ class _CategoryFilter extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: active
-              ? VxColors.neonCyan.withOpacity(0.15)
-              : Colors.white.withOpacity(0.04),
+              ? VxColors.neonCyan.withValues(alpha: 0.15)
+              : Colors.white.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: active
-                ? VxColors.neonCyan.withOpacity(0.6)
-                : Colors.white.withOpacity(0.08),
+                ? VxColors.neonCyan.withValues(alpha: 0.6)
+                : Colors.white.withValues(alpha: 0.08),
           ),
         ),
         child: Center(

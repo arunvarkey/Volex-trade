@@ -115,7 +115,7 @@ class SecuritySettingsScreen extends StatelessWidget {
                 style: TextStyle(color: VxColors.neonRed)),
             subtitle: const Text('Permanently remove all data',
                 style: TextStyle(color: Colors.white54)),
-            tileColor: VxColors.surface.withOpacity(0.5),
+            tileColor: VxColors.surface.withValues(alpha: 0.5),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             onTap: () => _showDeleteConfirmation(context),
@@ -129,9 +129,9 @@ class SecuritySettingsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: VxColors.neonCyan.withOpacity(0.05),
+        color: VxColors.neonCyan.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.1)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.1)),
       ),
       child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,

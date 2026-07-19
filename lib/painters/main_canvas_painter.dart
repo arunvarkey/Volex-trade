@@ -17,7 +17,7 @@ class MainCanvasPainter extends CustomPainter {
 
   static final Paint _bgPaint = Paint()..color = VxColors.background;
   static final Paint _gridPaint = Paint()
-    ..color = Colors.white.withOpacity(0.03)
+    ..color = Colors.white.withValues(alpha: 0.03)
     ..strokeWidth = 1.0;
 
   MainCanvasPainter({

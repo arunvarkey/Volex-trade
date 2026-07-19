@@ -79,11 +79,11 @@ class _ParameterEditorState extends State<ParameterEditor> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(canEdit ? 0.02 : 0.01),
+        color: Colors.white.withValues(alpha: canEdit ? 0.02 : 0.01),
         border: Border.all(
             color: error != null
-                ? VxColors.neonRed.withOpacity(0.5)
-                : Colors.white.withOpacity(0.05)),
+                ? VxColors.neonRed.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.05)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

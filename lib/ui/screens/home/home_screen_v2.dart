@@ -206,7 +206,7 @@ class HomeScreenV2 extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: VxColors.neonCyan.withOpacity(0.1),
+                        color: VxColors.neonCyan.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -370,7 +370,7 @@ class HomeScreenV2 extends StatelessWidget {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: VxColors.success.withOpacity(0.1),
+                                  color: VxColors.success.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Center(
@@ -530,7 +530,7 @@ class HomeScreenV2 extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+            border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -538,7 +538,7 @@ class HomeScreenV2 extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: VxColors.neonCyan.withOpacity(0.12),
+                  color: VxColors.neonCyan.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -582,14 +582,14 @@ class HomeScreenV2 extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                VxColors.neonPurple.withOpacity(0.18),
+                VxColors.neonPurple.withValues(alpha: 0.18),
                 VxColors.surface,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: VxColors.neonPurple.withOpacity(0.3)),
+            border: Border.all(color: VxColors.neonPurple.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -597,7 +597,7 @@ class HomeScreenV2 extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: VxColors.neonPurple.withOpacity(0.15),
+                  color: VxColors.neonPurple.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -690,7 +690,7 @@ class _ActionCard extends StatelessWidget {
                   child: Icon(
                 icon,
                 size: 16,
-                color: iconBgColor.withOpacity(0.95),
+                color: iconBgColor.withValues(alpha: 0.95),
               )),
             ),
             const SizedBox(height: 10),
@@ -739,9 +739,9 @@ class _TradeButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color.withOpacity(0.25)),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Center(
           child: Text(
@@ -800,7 +800,7 @@ class _StrategyCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
+                color: iconColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(

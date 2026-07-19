@@ -35,13 +35,13 @@ class VxStrategyTile extends StatelessWidget {
             width: 40,
             decoration: BoxDecoration(
               color: isSelected
-                  ? VxColors.neonCyan.withOpacity(0.2)
-                  : VxColors.primaryGradient.colors.first.withOpacity(0.1),
+                  ? VxColors.neonCyan.withValues(alpha: 0.2)
+                  : VxColors.primaryGradient.colors.first.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                   color: isSelected
                       ? VxColors.neonCyan
-                      : VxColors.neonCyan.withOpacity(0.3),
+                      : VxColors.neonCyan.withValues(alpha: 0.3),
                   width: isSelected ? 2 : 1),
             ),
             child: const Icon(Icons.show_chart,

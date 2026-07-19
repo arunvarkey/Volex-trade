@@ -41,7 +41,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
                 prefixIcon: const Icon(Icons.search,
                     color: VxColors.neonCyan, size: 20),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.02),
+                fillColor: Colors.white.withValues(alpha: 0.02),
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.white10)),

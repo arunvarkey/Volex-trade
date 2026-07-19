@@ -123,12 +123,12 @@ class _BacktestPanelState extends State<BacktestPanel> {
             width: 640,
             height: 520,
             decoration: BoxDecoration(
-              color: VxColors.background.withOpacity(0.9),
+              color: VxColors.background.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+              border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
               boxShadow: [
                 BoxShadow(
-                  color: VxColors.neonCyan.withOpacity(0.1),
+                  color: VxColors.neonCyan.withValues(alpha: 0.1),
                   blurRadius: 30,
                 )
               ],
@@ -291,7 +291,7 @@ class _BacktestPanelState extends State<BacktestPanel> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.white10),
-                color: Colors.white.withOpacity(0.01)),
+                color: Colors.white.withValues(alpha: 0.01)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: CustomPaint(
@@ -315,7 +315,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.03),
+          color: Colors.white.withValues(alpha: 0.03),
           border: Border.all(color: Colors.white10),
           borderRadius: BorderRadius.circular(8)),
       child: Column(
@@ -375,8 +375,8 @@ class _SimpleEquityPainter extends CustomPainter {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [
-        VxColors.neonGreen.withOpacity(0.15),
-        VxColors.neonGreen.withOpacity(0.0),
+        VxColors.neonGreen.withValues(alpha: 0.15),
+        VxColors.neonGreen.withValues(alpha: 0.0),
       ],
     );
 

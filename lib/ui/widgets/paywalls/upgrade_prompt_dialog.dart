@@ -32,10 +32,10 @@ class UpgradePromptDialog extends StatelessWidget {
           color: VxColors.surface,
           borderRadius: BorderRadius.circular(24),
           border:
-              Border.all(color: VxColors.primary.withOpacity(0.3), width: 2),
+              Border.all(color: VxColors.primary.withValues(alpha: 0.3), width: 2),
           boxShadow: [
             BoxShadow(
-              color: VxColors.primary.withOpacity(0.2),
+              color: VxColors.primary.withValues(alpha: 0.2),
               blurRadius: 30,
               spreadRadius: 0,
             ),

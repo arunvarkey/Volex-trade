@@ -64,8 +64,8 @@ class OrderPainter {
         if (order.exitPrice != null && order.closedAt != null) {
           final exitY = controller.priceToY(order.exitPrice!, size.height);
           lineColor = (order.realizedPnl ?? 0) >= 0
-              ? VxColors.neonGreen.withOpacity(0.5)
-              : VxColors.neonRed.withOpacity(0.5);
+              ? VxColors.neonGreen.withValues(alpha: 0.5)
+              : VxColors.neonRed.withValues(alpha: 0.5);
 
           canvas.drawLine(
               Offset(x, y),

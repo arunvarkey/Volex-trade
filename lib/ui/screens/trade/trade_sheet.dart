@@ -221,7 +221,7 @@ class _TradeActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: color.withOpacity(0.2),
+        backgroundColor: color.withValues(alpha: 0.2),
         foregroundColor: color,
         side: BorderSide(color: color),
         padding: const EdgeInsets.symmetric(vertical: 16),

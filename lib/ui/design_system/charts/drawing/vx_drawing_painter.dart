@@ -67,7 +67,7 @@ class VxDrawingPainter extends CustomPainter {
             color: line.color,
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            backgroundColor: Colors.black.withOpacity(0.5),
+            backgroundColor: Colors.black.withValues(alpha: 0.5),
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -121,7 +121,7 @@ class VxDrawingPainter extends CustomPainter {
     final x2 = _indexToX(fib.endIndex, size.width);
 
     final dashedPaint = Paint()
-      ..color = fib.color.withOpacity(0.3)
+      ..color = fib.color.withValues(alpha: 0.3)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -144,7 +144,7 @@ class VxDrawingPainter extends CustomPainter {
             color: fib.color,
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            backgroundColor: Colors.black.withOpacity(0.7),
+            backgroundColor: Colors.black.withValues(alpha: 0.7),
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -171,7 +171,7 @@ class VxDrawingPainter extends CustomPainter {
     // Fill
     if (rect.filled) {
       final fillPaint = Paint()
-        ..color = rect.color.withOpacity(rect.fillOpacity)
+        ..color = rect.color.withValues(alpha: rect.fillOpacity)
         ..style = PaintingStyle.fill;
       canvas.drawRect(rectObj, fillPaint);
     }
@@ -202,7 +202,7 @@ class VxDrawingPainter extends CustomPainter {
     final y2 = _priceToY(current.dy, size.height);
 
     final paint = Paint()
-      ..color = currentDrawing!.tool.color.withOpacity(0.7)
+      ..color = currentDrawing!.tool.color.withValues(alpha: 0.7)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
@@ -221,7 +221,7 @@ class VxDrawingPainter extends CustomPainter {
             canvas,
             Offset(x1, y),
             Offset(x2, y),
-            paint..color = currentDrawing!.tool.color.withOpacity(0.3),
+            paint..color = currentDrawing!.tool.color.withValues(alpha: 0.3),
           );
         }
         break;

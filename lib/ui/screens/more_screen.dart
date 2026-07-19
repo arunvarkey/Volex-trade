@@ -265,9 +265,9 @@ class MoreScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: VxColors.neonCyan.withOpacity(0.05),
+                color: VxColors.neonCyan.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: VxColors.neonCyan.withOpacity(0.1)),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.1)),
               ),
               child: Icon(icon, color: VxColors.neonCyan, size: 20),
             ),

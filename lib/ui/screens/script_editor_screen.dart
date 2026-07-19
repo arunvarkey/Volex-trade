@@ -255,7 +255,7 @@ class _SnippetButton extends StatelessWidget {
           backgroundColor: VxColors.background,
           foregroundColor: VxColors.neonPurple,
           elevation: 0,
-          side: BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+          side: BorderSide(color: VxColors.neonPurple.withValues(alpha: 0.3)),
           padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         onPressed: onTap,

@@ -8,7 +8,7 @@ class CrosshairPainter {
     if (offset == null) return;
 
     final paint = Paint()
-          ..color = Colors.white.withOpacity(0.5)
+          ..color = Colors.white.withValues(alpha: 0.5)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.0
         // ..pathEffect = PathEffect.dashPathEffect([4, 4], 0) // Not supported on Paint directly in standard Canvas kit?
@@ -53,7 +53,7 @@ class CrosshairPainter {
       style: TextStyle(
           color: Colors.white,
           fontSize: 10,
-          backgroundColor: Colors.black.withOpacity(0.7)),
+          backgroundColor: Colors.black.withValues(alpha: 0.7)),
     );
     final tp = TextPainter(
       text: textSpan,

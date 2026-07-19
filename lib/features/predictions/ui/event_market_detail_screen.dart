@@ -111,9 +111,9 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: VxColors.surface.withOpacity(0.5),
+                  color: VxColors.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: ProbabilityBar(yesPrice: market.yesPrice),
               ),
@@ -165,9 +165,9 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.6),
+        color: VxColors.surface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.15)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.15)),
       ),
       child: Column(
         children: [
@@ -223,10 +223,10 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 3),
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.04),
+                        color: Colors.white.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(8),
                         border:
-                            Border.all(color: Colors.white.withOpacity(0.08)),
+                            Border.all(color: Colors.white.withValues(alpha: 0.08)),
                       ),
                       child: Center(
                         child: Text('$preset',
@@ -288,10 +288,10 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.18) : Colors.white.withOpacity(0.03),
+          color: selected ? color.withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected ? color : Colors.white.withOpacity(0.08),
+            color: selected ? color : Colors.white.withValues(alpha: 0.08),
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -318,9 +318,9 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Icon(icon, size: 18, color: Colors.white70),
       ),
@@ -379,9 +379,9 @@ class _PositionTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
+        color: VxColors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: sideColor.withOpacity(0.3)),
+        border: Border.all(color: sideColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -425,9 +425,9 @@ class _MentionTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.4),
+        color: VxColors.surface.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

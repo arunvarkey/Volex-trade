@@ -99,12 +99,12 @@ class PortfolioScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: (em.isLiveMode ? VxColors.neonRed : VxColors.neonCyan)
-                      .withOpacity(0.1),
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color:
                         (em.isLiveMode ? VxColors.neonRed : VxColors.neonCyan)
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -182,8 +182,8 @@ class PortfolioScreen extends StatelessWidget {
                           show: true,
                           gradient: LinearGradient(
                             colors: [
-                              VxColors.neonCyan.withOpacity(0.15),
-                              VxColors.neonCyan.withOpacity(0),
+                              VxColors.neonCyan.withValues(alpha: 0.15),
+                              VxColors.neonCyan.withValues(alpha: 0),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -312,7 +312,7 @@ class PortfolioScreen extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: (isLong ? VxColors.neonGreen : VxColors.neonRed)
-                    .withOpacity(0.1),
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -397,7 +397,7 @@ class PortfolioScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           border:
-              Border(bottom: BorderSide(color: Colors.white.withOpacity(0.02))),
+              Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.02))),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

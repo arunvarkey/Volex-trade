@@ -72,11 +72,11 @@ class TemplateSelectorScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: hasAccess
-              ? VxColors.neonCyan.withOpacity(0.05)
+              ? VxColors.neonCyan.withValues(alpha: 0.05)
               : Colors.grey[900],
           border: Border.all(
             color: hasAccess
-                ? VxColors.neonCyan.withOpacity(0.3)
+                ? VxColors.neonCyan.withValues(alpha: 0.3)
                 : Colors.grey[800]!,
           ),
           borderRadius: BorderRadius.circular(8),
@@ -88,7 +88,7 @@ class TemplateSelectorScreen extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: hasAccess
-                    ? VxColors.neonCyan.withOpacity(0.2)
+                    ? VxColors.neonCyan.withValues(alpha: 0.2)
                     : Colors.grey[800],
                 borderRadius: BorderRadius.circular(8),
               ),

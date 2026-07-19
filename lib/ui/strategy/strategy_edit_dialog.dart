@@ -68,12 +68,12 @@ class _StrategyEditDialogState extends State<StrategyEditDialog> {
             width: 500,
             constraints: const BoxConstraints(maxHeight: 700),
             decoration: BoxDecoration(
-                color: VxColors.surface.withOpacity(0.9),
-                border: Border.all(color: VxColors.neonCyan.withOpacity(0.5)),
+                color: VxColors.surface.withValues(alpha: 0.9),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                      color: VxColors.neonCyan.withOpacity(0.1), blurRadius: 30)
+                      color: VxColors.neonCyan.withValues(alpha: 0.1), blurRadius: 30)
                 ]),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -111,9 +111,9 @@ class _StrategyEditDialogState extends State<StrategyEditDialog> {
                             padding: const EdgeInsets.all(12),
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
-                                color: VxColors.neonRed.withOpacity(0.1),
+                                color: VxColors.neonRed.withValues(alpha: 0.1),
                                 border: Border.all(
-                                    color: VxColors.neonRed.withOpacity(0.5)),
+                                    color: VxColors.neonRed.withValues(alpha: 0.5)),
                                 borderRadius: BorderRadius.circular(8)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

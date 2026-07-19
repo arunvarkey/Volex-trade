@@ -113,12 +113,12 @@ class _CreatorDashboardPageState extends State<CreatorDashboardPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.02),
+          color: Colors.white.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: VxColors.neonGreen.withOpacity(0.1)),
+          border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(
-                color: VxColors.neonGreen.withOpacity(0.02), blurRadius: 40)
+                color: VxColors.neonGreen.withValues(alpha: 0.02), blurRadius: 40)
           ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -171,7 +171,7 @@ class _CreatorDashboardPageState extends State<CreatorDashboardPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.white.withValues(alpha: 0.02),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white10),
       ),
@@ -196,7 +196,7 @@ class _CreatorDashboardPageState extends State<CreatorDashboardPage> {
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                    color: VxColors.neonCyan.withOpacity(0.3), width: 2)),
+                    color: VxColors.neonCyan.withValues(alpha: 0.3), width: 2)),
             child: Center(
                 child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -225,7 +225,7 @@ class _CreatorDashboardPageState extends State<CreatorDashboardPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.01),
+        color: Colors.white.withValues(alpha: 0.01),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white12),
       ),

@@ -21,8 +21,8 @@ class VxHealthScore extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: _color.withOpacity(0.5), width: 2),
-        color: _color.withOpacity(0.1),
+        border: Border.all(color: _color.withValues(alpha: 0.5), width: 2),
+        color: _color.withValues(alpha: 0.1),
       ),
       child: Center(
         child: VxText.monoBold(

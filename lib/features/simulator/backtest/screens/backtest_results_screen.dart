@@ -35,7 +35,7 @@ class BacktestResultsScreen extends StatelessWidget {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: _getGradeColor(result.metrics.grade).withOpacity(0.2),
+              color: _getGradeColor(result.metrics.grade).withValues(alpha: 0.2),
               border: Border.all(color: _getGradeColor(result.metrics.grade)),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -116,11 +116,11 @@ class BacktestResultsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(0.2),
-            color.withOpacity(0.05),
+            color.withValues(alpha: 0.2),
+            color.withValues(alpha: 0.05),
           ],
         ),
-        border: Border.all(color: color.withOpacity(0.5), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.5), width: 2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -294,7 +294,7 @@ class BacktestResultsScreen extends StatelessWidget {
                 color: (result.isProfitable
                         ? VxColors.neonGreen
                         : VxColors.neonRed)
-                    .withOpacity(0.1),
+                    .withValues(alpha: 0.1),
               ),
             ),
           ],

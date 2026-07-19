@@ -108,7 +108,7 @@ class _ProgressHeader extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +146,7 @@ class _ProgressHeader extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: total == 0 ? 0 : progress,
                     minHeight: 8,
-                    backgroundColor: Colors.white.withOpacity(0.08),
+                    backgroundColor: Colors.white.withValues(alpha: 0.08),
                     valueColor: const AlwaysStoppedAnimation<Color>(
                         VxColors.neonCyan),
                   ),
@@ -226,12 +226,12 @@ class _ModuleCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
+        color: VxColors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: moduleComplete
-              ? module.accent.withOpacity(0.4)
-              : Colors.white.withOpacity(0.05),
+              ? module.accent.withValues(alpha: 0.4)
+              : Colors.white.withValues(alpha: 0.05),
         ),
       ),
       child: Column(
@@ -244,7 +244,7 @@ class _ModuleCard extends StatelessWidget {
                   width: 46,
                   height: 46,
                   decoration: BoxDecoration(
-                    color: module.accent.withOpacity(0.12),
+                    color: module.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
@@ -293,7 +293,7 @@ class _ModuleCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: total == 0 ? 0 : done / total,
                       minHeight: 5,
-                      backgroundColor: Colors.white.withOpacity(0.06),
+                      backgroundColor: Colors.white.withValues(alpha: 0.06),
                       valueColor:
                           AlwaysStoppedAnimation<Color>(module.accent),
                     ),
@@ -354,11 +354,11 @@ class _LessonRow extends StatelessWidget {
               height: 26,
               decoration: BoxDecoration(
                 color: done
-                    ? accent.withOpacity(0.15)
-                    : Colors.white.withOpacity(0.05),
+                    ? accent.withValues(alpha: 0.15)
+                    : Colors.white.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: done ? accent : Colors.white.withOpacity(0.1),
+                  color: done ? accent : Colors.white.withValues(alpha: 0.1),
                 ),
               ),
               child: Center(
@@ -418,7 +418,7 @@ class _LevelChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.12),
+        color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(

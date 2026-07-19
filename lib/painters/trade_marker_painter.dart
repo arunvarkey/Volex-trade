@@ -80,7 +80,7 @@ class TradeMarkerPainter {
 
     // Optional: Draw a subtle glow
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
     canvas.drawPath(path, glowPaint);
   }

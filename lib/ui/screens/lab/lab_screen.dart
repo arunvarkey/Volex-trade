@@ -190,8 +190,8 @@ class LabScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: 5,
       itemBuilder: (context, index) => Shimmer.fromColors(
-        baseColor: Colors.white.withOpacity(0.05),
-        highlightColor: Colors.white.withOpacity(0.1),
+        baseColor: Colors.white.withValues(alpha: 0.05),
+        highlightColor: Colors.white.withValues(alpha: 0.1),
         child: Container(
           height: 80,
           margin: const EdgeInsets.only(bottom: 12),
@@ -210,7 +210,7 @@ class LabScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.white.withValues(alpha: 0.02),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white10),
       ),
@@ -405,9 +405,9 @@ class _StrategyCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.1),
+                color: statusColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: statusColor.withOpacity(0.3)),
+                border: Border.all(color: statusColor.withValues(alpha: 0.3)),
               ),
               child: Text(
                 statusText,
@@ -449,9 +449,9 @@ class _LabActionButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.05),
+            color: color.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: color.withOpacity(0.2)),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
           ),
           child: Column(
             children: [

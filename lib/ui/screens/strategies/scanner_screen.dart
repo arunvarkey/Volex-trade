@@ -188,11 +188,11 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color:
-              isActive ? VxColors.neonCyan.withOpacity(0.1) : VxColors.surface,
+              isActive ? VxColors.neonCyan.withValues(alpha: 0.1) : VxColors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color:
-                isActive ? VxColors.neonCyan.withOpacity(0.3) : VxColors.border,
+                isActive ? VxColors.neonCyan.withValues(alpha: 0.3) : VxColors.border,
           ),
         ),
         child: Text(
@@ -218,7 +218,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
           border: Border(
-              bottom: BorderSide(color: VxColors.border.withOpacity(0.5))),
+              bottom: BorderSide(color: VxColors.border.withValues(alpha: 0.5))),
         ),
         child: Row(
           children: [
@@ -231,7 +231,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Center(

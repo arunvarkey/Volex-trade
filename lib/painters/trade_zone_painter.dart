@@ -20,7 +20,7 @@ class TradeZonePainter {
 
       if (isSelected || zone.isTriggered) {
         final glowPaint = Paint()
-          ..color = color.withOpacity(0.4)
+          ..color = color.withValues(alpha: 0.4)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 4.0
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
@@ -28,12 +28,12 @@ class TradeZonePainter {
       }
 
       final fillPaint = Paint()
-        ..color = isSelected ? color.withOpacity(0.3) : color.withOpacity(0.1)
+        ..color = isSelected ? color.withValues(alpha: 0.3) : color.withValues(alpha: 0.1)
         ..style = PaintingStyle.fill;
       canvas.drawRect(rect, fillPaint);
 
       final borderPaint = Paint()
-        ..color = isSelected ? Colors.white : color.withOpacity(0.8)
+        ..color = isSelected ? Colors.white : color.withValues(alpha: 0.8)
         ..style = PaintingStyle.stroke
         ..strokeWidth = isSelected ? 2.0 : 1.0;
       canvas.drawRect(rect, borderPaint);
@@ -46,7 +46,7 @@ class TradeZonePainter {
           controller.activeDragStart!, controller.activeDragEnd!);
 
       final paint = Paint()
-        ..color = VxColors.neonCyan.withOpacity(0.15)
+        ..color = VxColors.neonCyan.withValues(alpha: 0.15)
         ..style = PaintingStyle.fill;
 
       final border = Paint()

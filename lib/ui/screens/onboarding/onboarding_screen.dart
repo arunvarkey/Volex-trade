@@ -171,8 +171,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  page.color.withOpacity(0.2),
-                  page.color.withOpacity(0.05),
+                  page.color.withValues(alpha: 0.2),
+                  page.color.withValues(alpha: 0.05),
                 ],
               ),
               shape: BoxShape.circle,

@@ -79,7 +79,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
                   borderSide:
-                      BorderSide(color: VxColors.neonCyan.withOpacity(0.3)),
+                      BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.3)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -155,11 +155,11 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonCyan.withOpacity(0.1),
-            VxColors.neonPurple.withOpacity(0.1),
+            VxColors.neonCyan.withValues(alpha: 0.1),
+            VxColors.neonPurple.withValues(alpha: 0.1),
           ],
         ),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -222,7 +222,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? VxColors.neonCyan.withOpacity(0.2)
+                  ? VxColors.neonCyan.withValues(alpha: 0.2)
                   : Colors.grey[900],
               border: Border.all(
                 color: isSelected ? VxColors.neonCyan : Colors.grey[800]!,
@@ -258,7 +258,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? VxColors.neonPurple.withOpacity(0.2)
+                  ? VxColors.neonPurple.withValues(alpha: 0.2)
                   : Colors.grey[900],
               border: Border.all(
                 color: isSelected ? VxColors.neonPurple : Colors.grey[800]!,
@@ -310,7 +310,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: VxColors.neonCyan.withOpacity(0.2),
+                color: VxColors.neonCyan.withValues(alpha: 0.2),
                 border: Border.all(color: VxColors.neonCyan),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -347,7 +347,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             activeTrackColor: VxColors.neonCyan,
             inactiveTrackColor: Colors.grey[800],
             thumbColor: VxColors.neonCyan,
-            overlayColor: VxColors.neonCyan.withOpacity(0.2),
+            overlayColor: VxColors.neonCyan.withValues(alpha: 0.2),
             valueIndicatorColor: VxColors.neonCyan,
           ),
           child: Slider(

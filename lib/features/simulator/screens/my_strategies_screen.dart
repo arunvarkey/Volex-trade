@@ -130,11 +130,11 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonCyan.withOpacity(0.05),
-            VxColors.neonPurple.withOpacity(0.05),
+            VxColors.neonCyan.withValues(alpha: 0.05),
+            VxColors.neonPurple.withValues(alpha: 0.05),
           ],
         ),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

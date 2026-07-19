@@ -94,13 +94,13 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
             height: MediaQuery.of(context).size.height * 0.8,
             constraints: const BoxConstraints(maxWidth: 800, maxHeight: 640),
             decoration: BoxDecoration(
-                color: VxColors.background.withOpacity(0.95),
+                color: VxColors.background.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(20),
                 border:
-                    Border.all(color: VxColors.neonMagenta.withOpacity(0.3)),
+                    Border.all(color: VxColors.neonMagenta.withValues(alpha: 0.3)),
                 boxShadow: [
                   BoxShadow(
-                      color: VxColors.neonMagenta.withOpacity(0.1),
+                      color: VxColors.neonMagenta.withValues(alpha: 0.1),
                       blurRadius: 40)
                 ]),
             child: Column(
@@ -155,7 +155,7 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
                                   borderSide:
                                       BorderSide(color: VxColors.neonMagenta)),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.02)),
+                              fillColor: Colors.white.withValues(alpha: 0.02)),
                           items: widget.availableStrategies.map((s) {
                             return DropdownMenuItem(
                               value: s,
@@ -183,7 +183,7 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
                             : "RUN OPTIMIZATION"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                VxColors.neonMagenta.withOpacity(0.8),
+                                VxColors.neonMagenta.withValues(alpha: 0.8),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 22),
@@ -230,9 +230,9 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
       padding: const EdgeInsets.all(VxSpacing.md),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.01),
+          color: Colors.white.withValues(alpha: 0.01),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,

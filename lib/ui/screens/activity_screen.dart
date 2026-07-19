@@ -181,10 +181,10 @@ class _ActivityLogList extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(8),
               border: Border(
-                  left: BorderSide(color: color.withOpacity(0.5), width: 3)),
+                  left: BorderSide(color: color.withValues(alpha: 0.5), width: 3)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +216,7 @@ class _ActivityLogList extends StatelessWidget {
                           ),
                         ],
                           VxText.caption(log.strategyName,
-                              color: VxColors.neonCyan.withOpacity(0.5)),
+                              color: VxColors.neonCyan.withValues(alpha: 0.5)),
                         ],
                       ),
                     ],

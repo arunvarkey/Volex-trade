@@ -115,11 +115,11 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.primary.withOpacity(0.1),
-            VxColors.primary.withOpacity(0.2),
+            VxColors.primary.withValues(alpha: 0.1),
+            VxColors.primary.withValues(alpha: 0.2),
           ],
         ),
-        border: Border.all(color: VxColors.primary.withOpacity(0.5)),
+        border: Border.all(color: VxColors.primary.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -202,7 +202,7 @@ class _SignalCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.1),
+                            color: color.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -253,7 +253,7 @@ class _SignalCard extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.03),
+                    color: Colors.white.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -385,9 +385,9 @@ class _ConfidenceBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: VxColors.neonPurple.withOpacity(0.2),
+        color: VxColors.neonPurple.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.neonPurple.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonPurple.withValues(alpha: 0.3)),
       ),
       child: Text(
         "${confidence.toStringAsFixed(0)}%",

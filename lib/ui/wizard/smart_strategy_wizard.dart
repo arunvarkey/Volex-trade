@@ -33,7 +33,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
       backgroundColor: VxColors.deepBlack,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+        side: BorderSide(color: VxColors.neonPurple.withValues(alpha: 0.3)),
       ),
       child: Container(
         height: 500,
@@ -175,7 +175,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
           border: Border.all(color: isSelected ? color : Colors.white10),
           borderRadius: BorderRadius.circular(12),
         ),

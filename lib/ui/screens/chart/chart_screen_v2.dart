@@ -331,13 +331,13 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: VxColors.neonCyan.withOpacity(0.3),
+                              color: VxColors.neonCyan.withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 2,
                             ),
                           ],
                           border:
-                              Border.all(color: Colors.white.withOpacity(0.2)),
+                              Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
                         child: const Icon(Icons.bolt,
                             color: Colors.white, size: 28),

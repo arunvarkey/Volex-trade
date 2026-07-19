@@ -122,9 +122,9 @@ class _AIStrategyGeneratorScreenState extends State<AIStrategyGeneratorScreen> {
             margin: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
             decoration: BoxDecoration(
-              color: VxColors.neonCyan.withOpacity(0.1),
+              color: VxColors.neonCyan.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+              border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
             ),
             child: Center(
               child: Text(

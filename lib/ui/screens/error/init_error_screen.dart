@@ -143,9 +143,9 @@ class _InitErrorScreenState extends State<InitErrorScreen>
             height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: VxColors.neonRed.withOpacity(0.1),
+              color: VxColors.neonRed.withValues(alpha: 0.1),
               border: Border.all(
-                color: VxColors.neonRed.withOpacity(0.5),
+                color: VxColors.neonRed.withValues(alpha: 0.5),
                 width: 2,
               ),
             ),
@@ -207,7 +207,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
         color: VxColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: VxColors.neonRed.withOpacity(0.3),
+          color: VxColors.neonRed.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -215,7 +215,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
         children: [
           Icon(
             Icons.info_outline,
-            color: VxColors.neonRed.withOpacity(0.7),
+            color: VxColors.neonRed.withValues(alpha: 0.7),
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -223,7 +223,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
             child: Text(
               'Don\'t worry - your data is safe. We can try again.',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 14,
               ),
             ),

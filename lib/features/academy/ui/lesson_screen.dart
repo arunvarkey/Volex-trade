@@ -303,9 +303,9 @@ class _Callout extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16, top: 2),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(emphasise ? 0.1 : 0.06),
+        color: color.withValues(alpha: emphasise ? 0.1 : 0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.35)),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,14 +353,14 @@ class _TryItBlock extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonCyan.withOpacity(0.12),
-            VxColors.neonPurple.withOpacity(0.10),
+            VxColors.neonCyan.withValues(alpha: 0.12),
+            VxColors.neonPurple.withValues(alpha: 0.10),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.35)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

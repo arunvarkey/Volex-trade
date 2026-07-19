@@ -138,7 +138,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         border: Border.all(color: VxColors.primary, width: 2),
         boxShadow: [
           BoxShadow(
-            color: VxColors.primary.withOpacity(0.2),
+            color: VxColors.primary.withValues(alpha: 0.2),
             blurRadius: 20,
             spreadRadius: 0,
           ),
@@ -151,7 +151,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: VxColors.primary.withOpacity(0.15),
+              color: VxColors.primary.withValues(alpha: 0.15),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(18),
                 topRight: Radius.circular(18),

@@ -186,9 +186,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: VxColors.danger.withOpacity(0.1),
+        color: VxColors.danger.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.danger.withOpacity(0.3), width: 2),
+        border: Border.all(color: VxColors.danger.withValues(alpha: 0.3), width: 2),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,7 +258,7 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-              color: VxColors.primary.withOpacity(0.2),
+              color: VxColors.primary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -397,9 +397,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: VxColors.positive.withOpacity(0.1),
+            color: VxColors.positive.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: VxColors.positive.withOpacity(0.3)),
+            border: Border.all(color: VxColors.positive.withValues(alpha: 0.3)),
           ),
           child: const Row(
             children: [

@@ -142,9 +142,9 @@ class _VxIndicatorPanelState extends State<VxIndicatorPanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: VxColors.surface.withOpacity(0.9),
+              color: VxColors.surface.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: Wrap(
               spacing: 8,
@@ -160,11 +160,11 @@ class _VxIndicatorPanelState extends State<VxIndicatorPanel> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    backgroundColor: indicator.color.withOpacity(0.1),
+                    backgroundColor: indicator.color.withValues(alpha: 0.1),
                     deleteIcon:
                         Icon(Icons.close, size: 14, color: indicator.color),
                     onDeleted: () => _toggleIndicator(indicator),
-                    side: BorderSide(color: indicator.color.withOpacity(0.3)),
+                    side: BorderSide(color: indicator.color.withValues(alpha: 0.3)),
                   ),
                 );
               }).toList(),
@@ -194,9 +194,9 @@ class _VxIndicatorPanelState extends State<VxIndicatorPanel> {
                   0.5, // Dynamic height limit
             ),
             decoration: BoxDecoration(
-              color: VxColors.surface.withOpacity(0.95),
+              color: VxColors.surface.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+              border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -207,7 +207,7 @@ class _VxIndicatorPanelState extends State<VxIndicatorPanel> {
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                       ),
                     ),
                   ),
@@ -297,13 +297,13 @@ class _IndicatorTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 4),
       decoration: BoxDecoration(
         color: indicator.isEnabled
-            ? indicator.color.withOpacity(0.1)
+            ? indicator.color.withValues(alpha: 0.1)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: indicator.isEnabled
-              ? indicator.color.withOpacity(0.3)
-              : Colors.white.withOpacity(0.05),
+              ? indicator.color.withValues(alpha: 0.3)
+              : Colors.white.withValues(alpha: 0.05),
         ),
       ),
       child: Material(
@@ -398,7 +398,7 @@ class _IndicatorSettingsSheetState extends State<_IndicatorSettingsSheet> {
       decoration: BoxDecoration(
         color: VxColors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: widget.indicator.color.withOpacity(0.3)),
+        border: Border.all(color: widget.indicator.color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -469,7 +469,7 @@ class _IndicatorSettingsSheetState extends State<_IndicatorSettingsSheet> {
                         activeTrackColor: widget.indicator.color,
                         inactiveTrackColor: Colors.white10,
                         thumbColor: widget.indicator.color,
-                        overlayColor: widget.indicator.color.withOpacity(0.2),
+                        overlayColor: widget.indicator.color.withValues(alpha: 0.2),
                       ),
                       child: Slider(
                         value: param.value.toDouble(),

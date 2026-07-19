@@ -21,7 +21,7 @@ class AIGuardianWarningDialog extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: VxColors.surface.withOpacity(0.9),
+              color: VxColors.surface.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: VxColors.neutral800),
             ),
@@ -37,7 +37,7 @@ class AIGuardianWarningDialog extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: VxColors.neonRed.withOpacity(0.1),
+                          color: VxColors.neonRed.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -93,10 +93,10 @@ class AIGuardianWarningDialog extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: VxColors.neonCyan.withOpacity(0.1),
+                      color: VxColors.neonCyan.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: VxColors.neonCyan.withOpacity(0.3),
+                        color: VxColors.neonCyan.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Column(
@@ -216,9 +216,9 @@ class AIGuardianWarningDialog extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: VxColors.danger.withOpacity(0.1),
+        color: VxColors.danger.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.danger.withOpacity(0.3)),
+        border: Border.all(color: VxColors.danger.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,9 +260,9 @@ class AIGuardianWarningDialog extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: VxColors.warning.withOpacity(0.1),
+        color: VxColors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.warning.withOpacity(0.3)),
+        border: Border.all(color: VxColors.warning.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

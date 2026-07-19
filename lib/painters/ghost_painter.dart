@@ -8,7 +8,7 @@ class GhostPainter {
     if (ghost == null) return;
 
     final paint = Paint()
-      ..color = VxColors.neonCyan.withOpacity(0.8)
+      ..color = VxColors.neonCyan.withValues(alpha: 0.8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
@@ -22,7 +22,7 @@ class GhostPainter {
     canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
 
     final glowPaint = Paint()
-      ..color = VxColors.neonCyan.withOpacity(0.4)
+      ..color = VxColors.neonCyan.withValues(alpha: 0.4)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10.0
       ..strokeCap = StrokeCap.round
@@ -32,6 +32,6 @@ class GhostPainter {
 
     canvas.drawCircle(Offset(x2, y2), 4.0, Paint()..color = VxColors.neonCyan);
     canvas.drawCircle(Offset(x2, y2), 8.0,
-        Paint()..color = VxColors.neonCyan.withOpacity(0.3));
+        Paint()..color = VxColors.neonCyan.withValues(alpha: 0.3));
   }
 }

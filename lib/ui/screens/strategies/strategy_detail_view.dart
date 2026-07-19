@@ -59,7 +59,7 @@ class StrategyDetailView extends StatelessWidget {
                 width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                color: VxColors.neonRed.withOpacity(0.1),
+                color: VxColors.neonRed.withValues(alpha: 0.1),
                 child: Row(
                   children: [
                     const Icon(Icons.warning_amber_rounded,
@@ -78,7 +78,7 @@ class StrategyDetailView extends StatelessWidget {
                 width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                color: VxColors.neonCyan.withOpacity(0.1),
+                color: VxColors.neonCyan.withValues(alpha: 0.1),
                 child: Row(
                   children: [
                     const Icon(Icons.science, color: VxColors.neonCyan),

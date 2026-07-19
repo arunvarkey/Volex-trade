@@ -44,11 +44,11 @@ class VxStatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: outline ? Colors.transparent : color.withOpacity(0.15),
+        color: outline ? Colors.transparent : color.withValues(alpha: 0.15),
         borderRadius:
             BorderRadius.circular(4), // Slightly rounded rect like a code tag
         border: Border.all(
-          color: color.withOpacity(0.5),
+          color: color.withValues(alpha: 0.5),
           width: 1,
         ),
       ),

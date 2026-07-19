@@ -160,9 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       foregroundColor:
                           VxColors.deepBlack, // ✅ FIXED: Dark text on light bg
                       disabledBackgroundColor:
-                          VxColors.primary.withOpacity(0.6),
+                          VxColors.primary.withValues(alpha: 0.6),
                       disabledForegroundColor:
-                          VxColors.deepBlack.withOpacity(0.6),
+                          VxColors.deepBlack.withValues(alpha: 0.6),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

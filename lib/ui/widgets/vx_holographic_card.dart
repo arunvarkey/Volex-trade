@@ -61,7 +61,7 @@ class VxHolographicCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(borderRadius),
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withOpacity(0.05),
+                        Colors.white.withValues(alpha: 0.05),
                         Colors.transparent,
                       ],
                       begin: Alignment.topCenter,

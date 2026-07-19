@@ -42,12 +42,12 @@ class ToolbarOverlay extends StatelessWidget {
               height: 64,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                  color: VxColors.surface.withOpacity(0.7),
+                  color: VxColors.surface.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.4),
+                      color: Colors.black.withValues(alpha: 0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     )
@@ -248,9 +248,9 @@ class _ModeButton extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: isActive ? color.withOpacity(0.15) : Colors.transparent,
+          color: isActive ? color.withValues(alpha: 0.15) : Colors.transparent,
           border: Border.all(
-            color: isActive ? color.withOpacity(0.5) : Colors.white10,
+            color: isActive ? color.withValues(alpha: 0.5) : Colors.white10,
           ),
           borderRadius: BorderRadius.circular(6),
         ),
@@ -271,7 +271,7 @@ class _Divider extends StatelessWidget {
       width: 1,
       height: 24,
       margin: const EdgeInsets.symmetric(horizontal: 6),
-      color: Colors.white.withOpacity(0.05),
+      color: Colors.white.withValues(alpha: 0.05),
     );
   }
 }

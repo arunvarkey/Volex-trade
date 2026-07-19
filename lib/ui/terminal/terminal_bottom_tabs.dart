@@ -19,9 +19,9 @@ class TerminalBottomTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
+        color: VxColors.surface.withValues(alpha: 0.5),
         border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.05)),
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: Column(
@@ -66,12 +66,12 @@ class TerminalBottomTabs extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 36, color: Colors.white.withOpacity(0.1)),
+          Icon(icon, size: 36, color: Colors.white.withValues(alpha: 0.1)),
           const SizedBox(height: 8),
           Text(
             message,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               fontSize: 12,
             ),
           ),

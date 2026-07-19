@@ -28,9 +28,9 @@ class VxToolbar extends StatelessWidget implements PreferredSizeWidget {
         right: VxSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: VxColors.background.withOpacity(0.8), // Slightly opaque
+        color: VxColors.background.withValues(alpha: 0.8), // Slightly opaque
         border:
-            Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
+            Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
       ),
       child: Row(
         children: [

@@ -65,11 +65,11 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    VxColors.neonPurple.withOpacity(0.2),
-                    VxColors.neonCyan.withOpacity(0.1),
+                    VxColors.neonPurple.withValues(alpha: 0.2),
+                    VxColors.neonCyan.withValues(alpha: 0.1),
                   ],
                 ),
-                border: Border.all(color: VxColors.neonPurple.withOpacity(0.5)),
+                border: Border.all(color: VxColors.neonPurple.withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -131,7 +131,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide:
-                      BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+                      BorderSide(color: VxColors.neonPurple.withValues(alpha: 0.3)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -299,11 +299,11 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonGreen.withOpacity(0.1),
-            VxColors.neonCyan.withOpacity(0.1),
+            VxColors.neonGreen.withValues(alpha: 0.1),
+            VxColors.neonCyan.withValues(alpha: 0.1),
           ],
         ),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.5)),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

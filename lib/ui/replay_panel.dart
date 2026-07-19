@@ -41,13 +41,13 @@ class ReplayPanel extends StatelessWidget {
                   width: 480,
                   padding: const EdgeInsets.all(VxSpacing.lg),
                   decoration: BoxDecoration(
-                    color: VxColors.surface.withOpacity(0.7),
+                    color: VxColors.surface.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(16),
                     border:
-                        Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+                        Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.4),
+                        color: Colors.black.withValues(alpha: 0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       )
@@ -79,12 +79,12 @@ class ReplayPanel extends StatelessWidget {
                       SliderTheme(
                         data: SliderThemeData(
                           activeTrackColor: VxColors.neonCyan,
-                          inactiveTrackColor: Colors.white.withOpacity(0.05),
+                          inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
                           thumbColor: Colors.white,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 5),
                           trackHeight: 2,
-                          overlayColor: VxColors.neonCyan.withOpacity(0.1),
+                          overlayColor: VxColors.neonCyan.withValues(alpha: 0.1),
                         ),
                         child: Slider(
                           value: controller.progress,
@@ -112,7 +112,7 @@ class ReplayPanel extends StatelessWidget {
                             ),
                             style: IconButton.styleFrom(
                               backgroundColor:
-                                  VxColors.neonCyan.withOpacity(0.1),
+                                  VxColors.neonCyan.withValues(alpha: 0.1),
                               padding: const EdgeInsets.all(12),
                             ),
                           ),
@@ -192,7 +192,7 @@ class ReplayPanel extends StatelessWidget {
                                 tooltip: 'Edit Strategy',
                                 style: IconButton.styleFrom(
                                   backgroundColor:
-                                      VxColors.neonPurple.withOpacity(0.2),
+                                      VxColors.neonPurple.withValues(alpha: 0.2),
                                   padding: const EdgeInsets.all(8),
                                 ),
                               ),

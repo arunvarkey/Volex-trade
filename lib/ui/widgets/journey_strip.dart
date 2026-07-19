@@ -141,9 +141,9 @@ class _JourneyCard extends StatelessWidget {
         width: 128,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: VxColors.surface.withOpacity(0.55),
+          color: VxColors.surface.withValues(alpha: 0.55),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: step.color.withOpacity(0.25)),
+          border: Border.all(color: step.color.withValues(alpha: 0.25)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +156,7 @@ class _JourneyCard extends StatelessWidget {
                   step.number,
                   style: VxTypography.caption.copyWith(
                     fontSize: 10,
-                    color: step.color.withOpacity(0.7),
+                    color: step.color.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -185,7 +185,7 @@ class _JourneyCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: step.progress,
                   minHeight: 3,
-                  backgroundColor: Colors.white.withOpacity(0.08),
+                  backgroundColor: Colors.white.withValues(alpha: 0.08),
                   valueColor: AlwaysStoppedAnimation<Color>(step.color),
                 ),
               ),

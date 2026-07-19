@@ -34,7 +34,7 @@ class SimulatorHomeScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             margin: const EdgeInsets.only(right: 16),
             decoration: BoxDecoration(
-              color: appMode.currentMode.themeColor.withOpacity(0.2),
+              color: appMode.currentMode.themeColor.withValues(alpha: 0.2),
               border: Border.all(color: appMode.currentMode.themeColor),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -85,11 +85,11 @@ class SimulatorHomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonCyan.withOpacity(0.1),
-            VxColors.neonPurple.withOpacity(0.1),
+            VxColors.neonCyan.withValues(alpha: 0.1),
+            VxColors.neonPurple.withValues(alpha: 0.1),
           ],
         ),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -222,8 +222,8 @@ class SimulatorHomeScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          border: Border.all(color: color.withOpacity(0.5)),
+          color: color.withValues(alpha: 0.1),
+          border: Border.all(color: color.withValues(alpha: 0.5)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(

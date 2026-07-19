@@ -105,8 +105,8 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: isLocked
-                  ? VxColors.neonRed.withOpacity(0.1)
-                  : VxColors.neonGreen.withOpacity(0.1),
+                  ? VxColors.neonRed.withValues(alpha: 0.1)
+                  : VxColors.neonGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                   color: isLocked ? VxColors.neonRed : VxColors.neonGreen,
@@ -213,9 +213,9 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              border: Border.all(color: VxColors.neonRed.withOpacity(0.3)),
+              border: Border.all(color: VxColors.neonRed.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(16),
-              color: VxColors.neonRed.withOpacity(0.05),
+              color: VxColors.neonRed.withValues(alpha: 0.05),
             ),
             child: Column(
               children: [

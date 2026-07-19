@@ -224,11 +224,11 @@ class VxColors {
   // ========================================
 
   /// Glassmorphic translucent surface
-  static Color get glassSurface => Colors.white.withOpacity(0.03);
+  static Color get glassSurface => Colors.white.withValues(alpha: 0.03);
 
   /// Luminous holographic border
-  static Color get holographicBorder => Colors.white.withOpacity(0.12);
+  static Color get holographicBorder => Colors.white.withValues(alpha: 0.12);
 
   /// Subtle cyan glow for active elements
-  static Color get primaryGlow => neonCyan.withOpacity(0.15);
+  static Color get primaryGlow => neonCyan.withValues(alpha: 0.15);
 }

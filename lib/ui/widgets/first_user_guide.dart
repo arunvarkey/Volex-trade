@@ -74,14 +74,14 @@ class _FirstUserGuideState extends State<FirstUserGuide> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  VxColors.neonCyan.withOpacity(0.14),
+                  VxColors.neonCyan.withValues(alpha: 0.14),
                   VxColors.surface,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: VxColors.neonCyan.withOpacity(0.35)),
+              border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.35)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,9 +189,9 @@ class _SecondaryChoice extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white.withOpacity(0.08)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -255,7 +255,7 @@ class _ProChartPainter extends CustomPainter {
 
   void _drawGrid(Canvas canvas) {
     final paint = Paint()
-      ..color = VxColors.gridLines.withOpacity(0.55)
+      ..color = VxColors.gridLines.withValues(alpha: 0.55)
       ..strokeWidth = 0.6;
     for (final level in _priceLevels()) {
       final y = _y(level);
@@ -294,7 +294,7 @@ class _ProChartPainter extends CustomPainter {
     // Axis background strip
     canvas.drawRect(
       Rect.fromLTWH(_chartW, 0, priceAxisWidth, _chartH),
-      Paint()..color = VxColors.background.withOpacity(0.6),
+      Paint()..color = VxColors.background.withValues(alpha: 0.6),
     );
     canvas.drawLine(Offset(_chartW, 0), Offset(_chartW, _chartH),
         Paint()..color = Colors.white12..strokeWidth = 0.7);
@@ -361,7 +361,7 @@ class _ProChartPainter extends CustomPainter {
       final x = _x(_startIdx + i);
       final h = (c.volume / maxV) * (volH - 8);
       final color =
-          (c.isGreen ? VxColors.neonGreen : VxColors.neonRed).withOpacity(0.32);
+          (c.isGreen ? VxColors.neonGreen : VxColors.neonRed).withValues(alpha: 0.32);
       canvas.drawRect(
         Rect.fromLTRB(x - bodyW / 2, base - h, x + bodyW / 2, base),
         Paint()..color = color,
@@ -396,7 +396,7 @@ class _ProChartPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = color.withOpacity(0.85)
+          ..color = color.withValues(alpha: 0.85)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.2,
       );
@@ -443,7 +443,7 @@ class _ProChartPainter extends CustomPainter {
       Offset(0, y),
       Offset(_chartW, y),
       Paint()
-        ..color = color.withOpacity(0.55)
+        ..color = color.withValues(alpha: 0.55)
         ..strokeWidth = 0.8,
     );
     _axisTag(canvas, y, _fmtPrice(last.close), color);

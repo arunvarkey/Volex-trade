@@ -21,12 +21,12 @@ class StrategyLogPanel extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(VxSpacing.md),
         decoration: BoxDecoration(
-          color: VxColors.surface.withOpacity(0.8),
-          border: Border.all(color: VxColors.neonCyan.withOpacity(0.15)),
+          color: VxColors.surface.withValues(alpha: 0.8),
+          border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.15)),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 4),
             )

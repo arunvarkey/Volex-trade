@@ -39,8 +39,8 @@ class TradeConfirmationDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isBuy
-                ? Colors.green.withOpacity(0.3)
-                : VxColors.neonRed.withOpacity(0.3),
+                ? Colors.green.withValues(alpha: 0.3)
+                : VxColors.neonRed.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -54,12 +54,12 @@ class TradeConfirmationDialog extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: isBuy
                       ? [
-                          Colors.green.withOpacity(0.2),
-                          Colors.green.withOpacity(0.05)
+                          Colors.green.withValues(alpha: 0.2),
+                          Colors.green.withValues(alpha: 0.05)
                         ]
                       : [
-                          VxColors.neonRed.withOpacity(0.2),
-                          VxColors.neonRed.withOpacity(0.05)
+                          VxColors.neonRed.withValues(alpha: 0.2),
+                          VxColors.neonRed.withValues(alpha: 0.05)
                         ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -137,7 +137,7 @@ class TradeConfirmationDialog extends StatelessWidget {
                     highlight: true,
                   ),
                   const SizedBox(height: 16),
-                  Divider(color: Colors.white.withOpacity(0.1)),
+                  Divider(color: Colors.white.withValues(alpha: 0.1)),
                   const SizedBox(height: 16),
                   _buildDetailRow('Available Balance',
                       '\$${executionManager.balance.toStringAsFixed(2)}'),
@@ -155,9 +155,9 @@ class TradeConfirmationDialog extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -190,7 +190,7 @@ class TradeConfirmationDialog extends StatelessWidget {
                       onPressed: () => Navigator.pop(context, false),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white70,
-                        side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                        side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -281,7 +281,7 @@ class OrderExecutingOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withOpacity(0.8),
+      color: Colors.black.withValues(alpha: 0.8),
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(32),
@@ -289,7 +289,7 @@ class OrderExecutingOverlay extends StatelessWidget {
             color: VxColors.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: VxColors.neonCyan.withOpacity(0.3),
+              color: VxColors.neonCyan.withValues(alpha: 0.3),
               width: 2,
             ),
           ),
@@ -396,8 +396,8 @@ void showTradeNotification(
       borderRadius: BorderRadius.circular(12),
       side: BorderSide(
         color: success
-            ? Colors.green.withOpacity(0.3)
-            : VxColors.neonRed.withOpacity(0.3),
+            ? Colors.green.withValues(alpha: 0.3)
+            : VxColors.neonRed.withValues(alpha: 0.3),
         width: 1.5,
       ),
     ),

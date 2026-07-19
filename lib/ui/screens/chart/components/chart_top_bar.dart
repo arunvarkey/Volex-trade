@@ -44,9 +44,9 @@ class ChartTopBar extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: VxColors.neonCyan.withOpacity(0.05),
+                  color: VxColors.neonCyan.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+                  border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   children: [
@@ -84,7 +84,7 @@ class ChartTopBar extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white10),
                 ),

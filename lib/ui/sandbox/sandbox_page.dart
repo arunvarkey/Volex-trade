@@ -192,8 +192,8 @@ class _SandboxPageState extends State<SandboxPage> {
                                 child: ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: _isRunning
-                                        ? VxColors.neonRed.withOpacity(0.8)
-                                        : VxColors.neonCyan.withOpacity(0.8),
+                                        ? VxColors.neonRed.withValues(alpha: 0.8)
+                                        : VxColors.neonCyan.withValues(alpha: 0.8),
                                     foregroundColor: Colors.black,
                                     padding: const EdgeInsets.all(22),
                                     shape: RoundedRectangleBorder(
@@ -290,13 +290,13 @@ class _SandboxPageState extends State<SandboxPage> {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: result.success
-                ? VxColors.neonGreen.withOpacity(0.05)
-                : VxColors.neonRed.withOpacity(0.05),
+                ? VxColors.neonGreen.withValues(alpha: 0.05)
+                : VxColors.neonRed.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
                 color: result.success
-                    ? VxColors.neonGreen.withOpacity(0.2)
-                    : VxColors.neonRed.withOpacity(0.2)),
+                    ? VxColors.neonGreen.withValues(alpha: 0.2)
+                    : VxColors.neonRed.withValues(alpha: 0.2)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -323,7 +323,7 @@ class _SandboxPageState extends State<SandboxPage> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white10),
             ),
@@ -348,7 +348,7 @@ class _SandboxPageState extends State<SandboxPage> {
               width: double.infinity,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: VxColors.neonGreen.withOpacity(0.8),
+                      backgroundColor: VxColors.neonGreen.withValues(alpha: 0.8),
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(

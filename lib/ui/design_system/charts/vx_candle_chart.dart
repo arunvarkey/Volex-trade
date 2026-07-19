@@ -339,7 +339,7 @@ class _VxCandleChartState extends State<VxCandleChart> {
       if (key == 'sma') color = theme.currentTheme.accent;
       if (key == 'ema') color = theme.currentTheme.primary;
       if (key.contains('bb')) {
-        color = theme.currentTheme.textSecondary.withOpacity(0.3);
+        color = theme.currentTheme.textSecondary.withValues(alpha: 0.3);
         width = 1.0;
       }
       if (key == 'macd') color = theme.currentTheme.success;
@@ -405,7 +405,7 @@ class _VxCandleChartState extends State<VxCandleChart> {
                 .where((e) => e.value != null)
                 .map((e) => FlSpot(e.key.toDouble(), e.value!))
                 .toList(),
-            color: theme.currentTheme.accent.withOpacity(0.8),
+            color: theme.currentTheme.accent.withValues(alpha: 0.8),
             barWidth: 1.5,
             dotData: const FlDotData(show: false),
           ),

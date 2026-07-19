@@ -26,9 +26,9 @@ class TerminalTradingPanel extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
+        color: VxColors.surface.withValues(alpha: 0.5),
         border: Border(
-          left: BorderSide(color: Colors.white.withOpacity(0.05)),
+          left: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: SingleChildScrollView(
@@ -59,7 +59,7 @@ class TerminalTradingPanel extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: VxColors.deepBlack,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,13 +182,13 @@ class TerminalTradingPanel extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: isSmall ? 5 : 6),
         decoration: BoxDecoration(
           color: isSelected
-              ? VxColors.neonCyan.withOpacity(0.15)
+              ? VxColors.neonCyan.withValues(alpha: 0.15)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
             color: isSelected
-                ? VxColors.neonCyan.withOpacity(0.5)
-                : Colors.white.withOpacity(0.1),
+                ? VxColors.neonCyan.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.1),
           ),
         ),
         child: Text(

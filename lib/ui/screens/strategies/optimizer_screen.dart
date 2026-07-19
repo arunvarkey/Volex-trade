@@ -174,7 +174,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                 decoration: BoxDecoration(
                   color: VxColors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+                  border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   children: [
@@ -310,7 +310,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       decoration: BoxDecoration(
         color: VxColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.5)),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
@@ -391,7 +391,7 @@ class PriceSparklinePainter extends CustomPainter {
     if (candles.isEmpty) return;
 
     final paint = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
@@ -424,7 +424,7 @@ class PriceSparklinePainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [color.withOpacity(0.2), Colors.transparent],
+        colors: [color.withValues(alpha: 0.2), Colors.transparent],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     canvas.drawPath(fillPath, fillPaint);

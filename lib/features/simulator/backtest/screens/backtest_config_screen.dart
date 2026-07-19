@@ -183,8 +183,8 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: VxColors.neonCyan.withOpacity(0.1),
-          border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+          color: VxColors.neonCyan.withValues(alpha: 0.1),
+          border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -225,7 +225,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         border: Border.all(color: color),
         borderRadius: BorderRadius.circular(4),
       ),
@@ -317,7 +317,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: VxColors.neonGreen.withOpacity(0.2),
+                color: VxColors.neonGreen.withValues(alpha: 0.2),
                 border: Border.all(color: VxColors.neonGreen),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -339,7 +339,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             activeTrackColor: VxColors.neonGreen,
             inactiveTrackColor: Colors.grey[800],
             thumbColor: VxColors.neonGreen,
-            overlayColor: VxColors.neonGreen.withOpacity(0.2),
+            overlayColor: VxColors.neonGreen.withValues(alpha: 0.2),
           ),
           child: Slider(
             value: _initialEquity,

@@ -20,12 +20,12 @@ class AnalyticsPanel extends StatelessWidget {
         constraints: const BoxConstraints(maxHeight: 400),
         padding: const EdgeInsets.all(VxSpacing.md),
         decoration: BoxDecoration(
-          color: VxColors.surface.withOpacity(0.85),
-          border: Border.all(color: VxColors.neonCyan.withOpacity(0.15)),
+          color: VxColors.surface.withValues(alpha: 0.85),
+          border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.15)),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 4),
             )
@@ -142,8 +142,8 @@ class _EquityCurvePainter extends CustomPainter {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [
-        VxColors.neonCyan.withOpacity(0.2),
-        VxColors.neonCyan.withOpacity(0.0),
+        VxColors.neonCyan.withValues(alpha: 0.2),
+        VxColors.neonCyan.withValues(alpha: 0.0),
       ],
     );
 

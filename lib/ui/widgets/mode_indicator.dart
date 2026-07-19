@@ -15,7 +15,7 @@ class ModeIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: mode.themeColor.withOpacity(0.2),
+        color: mode.themeColor.withValues(alpha: 0.2),
         border: Border.all(color: mode.themeColor),
         borderRadius: BorderRadius.circular(4),
       ),

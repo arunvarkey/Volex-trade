@@ -46,7 +46,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: VxColors.surface.withOpacity(0.9), // Slightly transparent
+            color: VxColors.surface.withValues(alpha: 0.9), // Slightly transparent
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             border: const Border(top: BorderSide(color: VxColors.neutral800)),
           ),
@@ -129,7 +129,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                   activeTrackColor: _isBuy ? VxColors.success : VxColors.danger,
                   thumbColor: VxColors.textPrimary,
                   overlayColor: (_isBuy ? VxColors.success : VxColors.danger)
-                      .withOpacity(0.2),
+                      .withValues(alpha: 0.2),
                 ),
                 child: Slider(
                   value: (double.tryParse(_amountController.text) ?? 0.0)
@@ -188,7 +188,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isSelected
               ? Border.all(color: color)
