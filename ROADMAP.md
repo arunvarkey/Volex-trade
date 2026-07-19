@@ -38,9 +38,10 @@ Every feature — no exceptions — moves through five gates:
 
 | Item | Acceptance criteria | Status |
 |---|---|---|
-| CI quality gate on all branches | analyze + full test suite run on every push; red = blocked | ✅ this commit |
-| Warning cleanup | `flutter analyze` has 0 warnings; CI flips to `--fatal-warnings` | ☐ |
-| withOpacity migration | 0 `withOpacity` deprecation infos; done mechanically, one commit | ☐ |
+| CI quality gate on all branches | analyze + full test suite run on every push; red = blocked | ✅ |
+| Warning cleanup | `flutter analyze` has 0 warnings; CI flips to `--fatal-warnings` | ✅ (gate is fatal-warnings; also fixed a CI-caught TextDirection compile error in VxProChart) |
+| Repair quarantined legacy tests | the 11 tests skipped with `@Skip('Quarantined…')` (dashboard_provider, notifications_screen, backtest timeout, execution_manager) are fixed and un-skipped | ☐ |
+| withOpacity migration | 0 `withOpacity` deprecation infos; CI flips to `--fatal-infos` | ☐ |
 | fl_chart retirement | remaining fl_chart screens migrated to VxProChart or explicitly kept with a reason; unused chart widgets deleted | ☐ |
 
 **Required tests:** existing 27 must stay green throughout.
