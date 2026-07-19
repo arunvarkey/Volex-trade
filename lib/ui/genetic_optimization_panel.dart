@@ -168,7 +168,7 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
           VxText.monoBold("GENOME_CONFIG", fontSize: 10, color: Colors.white38),
           const SizedBox(height: 20),
           DropdownButtonFormField<Strategy>(
-            value: _selectedStrategy,
+            initialValue: _selectedStrategy,
             dropdownColor: VxColors.surface,
             style: const TextStyle(
                 fontFamily: 'RobotoMono', color: Colors.white, fontSize: 13),

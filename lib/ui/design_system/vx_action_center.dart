@@ -641,7 +641,7 @@ class _StrategyDashboardSheet extends StatelessWidget {
                     Switch(
                       value: false,
                       onChanged: (_) {},
-                      activeColor: VxColors.warning,
+                      activeThumbColor: VxColors.warning,
                     ),
                   ],
                 ),

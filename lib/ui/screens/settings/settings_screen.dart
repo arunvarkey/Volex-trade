@@ -151,7 +151,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             value: isPro,
-            activeColor: VxColors.neonCyan,
+            activeThumbColor: VxColors.neonCyan,
             onChanged: (value) async {
               final newMode = value ? UserMode.pro : UserMode.explorer;
               await getIt<UserModeService>().setMode(newMode);

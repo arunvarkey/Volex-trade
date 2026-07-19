@@ -516,12 +516,12 @@ class _ProChartPainter extends CustomPainter {
       final s50 = _sma(idx, 50);
       if (s20 != null) {
         final tp = _text('SMA20 ${_fmtPrice(s20)}', color: VxColors.neonCyan);
-        tp.paint(canvas, Offset(8, 18));
+        tp.paint(canvas, const Offset(8, 18));
       }
       if (s50 != null) {
         final tp =
             _text('SMA50 ${_fmtPrice(s50)}', color: VxColors.neonPurple);
-        tp.paint(canvas, Offset(96, 18));
+        tp.paint(canvas, const Offset(96, 18));
       }
     }
   }

@@ -140,7 +140,7 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
                       Expanded(
                         child: DropdownButtonFormField<Strategy>(
                           isExpanded: true,
-                          value: _selectedStrategy,
+                          initialValue: _selectedStrategy,
                           dropdownColor: VxColors.surface,
                           style: const TextStyle(
                               fontFamily: 'RobotoMono', color: Colors.white),

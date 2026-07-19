@@ -308,7 +308,7 @@ class SecureStorageService {
     );
 
     final encrypted = encrypter.encrypt(plaintext, iv: iv);
-    return base64.encode(iv.bytes) + ':' + encrypted.base64;
+    return '${base64.encode(iv.bytes)}:${encrypted.base64}';
   }
 
   String _decrypt(String ciphertext) {

@@ -305,7 +305,7 @@ class AIInputForm extends StatelessWidget {
           Switch(
             value: useCompanyKey,
             onChanged: onUseCompanyKeyChanged,
-            activeColor: VxColors.neonCyan,
+            activeThumbColor: VxColors.neonCyan,
             activeTrackColor: VxColors.neonCyan.withValues(alpha: 0.3),
           ),
         ],

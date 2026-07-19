@@ -75,7 +75,7 @@ class ParametersTab extends StatelessWidget {
           Switch(
               value: value,
               onChanged: (v) {},
-              activeColor: Colors.orangeAccent),
+              activeThumbColor: Colors.orangeAccent),
         ],
       ),
     );

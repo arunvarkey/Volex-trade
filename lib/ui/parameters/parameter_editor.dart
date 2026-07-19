@@ -164,7 +164,7 @@ class _ParameterEditorState extends State<ParameterEditor> {
       case ParameterType.boolean:
         return Switch(
           value: value as bool,
-          activeColor: VxColors.neonCyan,
+          activeThumbColor: VxColors.neonCyan,
           onChanged:
               enabled ? (v) => _updateValue(schema.name, v, schema) : null,
         );

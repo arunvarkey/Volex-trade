@@ -206,7 +206,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                           value: _useRealData,
                           onChanged: (val) =>
                               setState(() => _useRealData = val),
-                          activeColor: VxColors.neonMagenta,
+                          activeThumbColor: VxColors.neonMagenta,
                           inactiveThumbColor: VxColors.neonCyan,
                         ),
                         Text("Binance Live",

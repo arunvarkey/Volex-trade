@@ -25,11 +25,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Errors and warnings are fatal. Infos not yet: the codebase carries
-      # ~500 pre-existing withOpacity deprecation infos scheduled for M0
-      # cleanup (ROADMAP.md); drop --no-fatal-infos once that lands.
+      # Fully strict: errors, warnings, AND infos are all fatal. The M0
+      # cleanup (ROADMAP.md) zeroed the analyzer — keep it at zero.
       - name: Analyze
-        run: flutter analyze --no-fatal-infos
+        run: flutter analyze --fatal-infos
 
       - name: Test
         run: flutter test

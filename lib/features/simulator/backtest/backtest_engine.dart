@@ -400,7 +400,9 @@ class BacktestEngine extends ChangeNotifier {
           break;
         case 'breakout':
           if (order.direction == dom.OrderDirection.short &&
-              candle.close > indicators['bb_upper']!) shouldExit = true;
+              candle.close > indicators['bb_upper']!) {
+            shouldExit = true;
+          }
           break;
         case 'macd_trend':
           final macdLine = indicators['macd_line'] ?? 0;

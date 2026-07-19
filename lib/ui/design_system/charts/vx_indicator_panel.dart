@@ -357,7 +357,7 @@ class _IndicatorTile extends StatelessWidget {
                 Switch(
                   value: indicator.isEnabled,
                   onChanged: (_) => onToggle(),
-                  activeColor: indicator.color,
+                  activeThumbColor: indicator.color,
                 ),
               ],
             ),

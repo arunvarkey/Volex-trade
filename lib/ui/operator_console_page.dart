@@ -294,28 +294,37 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white10),
       ),
-      child: Column(
-        children: [
-          _modeButton(mgr, LiveExecutionMode.manualOnly, "MANUAL_CONTROL"),
-          _modeButton(mgr, LiveExecutionMode.autoCapped, "AUTO_CAPPED"),
-          _modeButton(mgr, LiveExecutionMode.fullAuto, "FULL_AUTONOMY"),
-        ],
+      child: RadioGroup<LiveExecutionMode>(
+        groupValue: mgr.liveExecutionMode,
+        onChanged: (val) {
+          if (val == null) return;
+          mgr.setLiveExecutionMode(val);
+          _addLog("MODE_SHIFT: ${_modeLabels[val]} active.");
+        },
+        child: Column(
+          children: [
+            _modeButton(LiveExecutionMode.manualOnly),
+            _modeButton(LiveExecutionMode.autoCapped),
+            _modeButton(LiveExecutionMode.fullAuto),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _modeButton(
-      ExecutionManager mgr, LiveExecutionMode mode, String label) {
+  static const Map<LiveExecutionMode, String> _modeLabels = {
+    LiveExecutionMode.manualOnly: "MANUAL_CONTROL",
+    LiveExecutionMode.autoCapped: "AUTO_CAPPED",
+    LiveExecutionMode.fullAuto: "FULL_AUTONOMY",
+  };
+
+  Widget _modeButton(LiveExecutionMode mode) {
     return RadioListTile<LiveExecutionMode>(
-      title: VxText.monoBold(label, fontSize: 13, color: Colors.white),
+      title: VxText.monoBold(_modeLabels[mode]!,
+          fontSize: 13, color: Colors.white),
       value: mode,
-      groupValue: mgr.liveExecutionMode,
       activeColor: VxColors.neonCyan,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-      onChanged: (val) {
-        mgr.setLiveExecutionMode(val!);
-        _addLog("MODE_SHIFT: ${label.toUpperCase()} active.");
-      },
     );
   }
 

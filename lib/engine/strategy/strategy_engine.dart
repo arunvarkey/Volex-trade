@@ -188,8 +188,9 @@ class StrategyEngine extends ChangeNotifier {
   bool _isProcessingTick = false;
 
   Future<void> onTick(Candle candle) async {
-    if (_isPaused || _isProcessingTick)
+    if (_isPaused || _isProcessingTick) {
       return; // Skip if already busy (Task 47)
+    }
     _isProcessingTick = true;
 
     try {
