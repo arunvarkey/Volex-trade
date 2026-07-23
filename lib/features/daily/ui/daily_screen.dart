@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/features/academy/data/academy_curriculum.dart';
+import 'package:volex_terminal/features/academy/models/academy_models.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';

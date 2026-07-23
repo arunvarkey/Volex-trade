@@ -50,11 +50,22 @@ Every feature — no exceptions — moves through five gates:
 
 **Goal:** Volex runs on real hardware and reaches its first outside users.
 
-| Item | Acceptance criteria |
-|---|---|
-| Android device run | app boots, all 5 tabs + Academy + Predictions + chart verified on a physical phone; issues logged and fixed |
-| Release build | `flutter build apk --release` succeeds; app icon, name, version correct |
-| Play internal testing | listing assets from docs/APP_STORE_ENTRY.md; ≥3 testers installed; crash-free sessions in Crashlytics |
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| **13+ age gate** | birth-agnostic 13+ confirmation before the app; stores only a derived boolean (no birthdate); under-13 gets a polite block; tested | ✅ |
+| Android device run | app boots, all 5 tabs + Academy + Predictions + chart verified on a physical phone; issues logged and fixed | ☐ |
+| Release build | `flutter build apk --release` succeeds; app icon, name, version correct | ☐ |
+| Play internal testing | listing assets from docs/APP_STORE_ENTRY.md; ≥3 testers installed; crash-free sessions in Crashlytics | ☐ |
+
+**Compliance decisions (need legal review before public launch):**
+- Floor is **13+** (chosen): covers students, avoids COPPA's under-13 regime.
+- **Store age *rating* risk:** Buzz & Predictions reads as "simulated
+  gambling" to Apple/Google reviewers and may force a 17+ rating regardless
+  of the 13+ floor. Options tracked: gate/hide Predictions for a lower
+  rating, or accept 17+ and ship a **School Mode** build (Predictions off,
+  data minimised) for the student/classroom channel.
+- **Data minimisation for minors:** review Firebase Analytics/Crashlytics
+  defaults; keep opt-in; no ad SDKs (none present).
 
 **Required tests:** no new unit tests; manual device checklist executed twice
 (fresh install + upgrade install).

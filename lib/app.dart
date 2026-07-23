@@ -13,6 +13,7 @@ import 'package:volex_terminal/ui/screens/auth/pin_entry_screen.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/core/providers_setup.dart';
 import 'package:volex_terminal/services/feature_flag_service.dart';
+import 'package:volex_terminal/features/compliance/age_gate_screen.dart';
 
 /// Error fallback app
 class ErrorApp extends StatelessWidget {
@@ -191,7 +192,9 @@ class _VolexTerminalAppState extends State<VolexTerminalApp>
               return MaintenanceMonitor(
                 child: PrivacyShield(
                   child: AuthActivityListener(
-                    child: AuthGate(child: child),
+                    child: AgeGate(
+                      child: AuthGate(child: child),
+                    ),
                   ),
                 ),
               );
