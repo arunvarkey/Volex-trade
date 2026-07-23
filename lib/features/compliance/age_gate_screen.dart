@@ -94,8 +94,8 @@ class _AskView extends StatelessWidget {
               shape:
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
-            child: Text("I'M ${AgeGateService.minimumAge} OR OLDER",
-                style: const TextStyle(
+            child: const Text("I'M ${AgeGateService.minimumAge} OR OLDER",
+                style: TextStyle(
                     fontWeight: FontWeight.w900, letterSpacing: 1.0)),
           ),
           const SizedBox(height: 12),
