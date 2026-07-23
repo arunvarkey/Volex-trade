@@ -120,6 +120,12 @@ class _QuizScreenState extends State<QuizScreen> {
             correct: q.isCorrect(_chosen!),
             text: q.explanation,
           ),
+          const SizedBox(height: 20),
+          _PrimaryButton(
+            label: _index + 1 < _questions.length ? 'CONTINUE' : 'SEE RESULT',
+            icon: Icons.arrow_forward_rounded,
+            onTap: _next,
+          ),
         ],
       ],
     );
