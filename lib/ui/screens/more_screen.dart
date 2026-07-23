@@ -33,6 +33,13 @@ class MoreScreen extends StatelessWidget {
           _buildSection('LEARN & PRACTICE'),
           _buildMenuItem(
             context,
+            icon: Icons.bolt,
+            title: 'Volex Daily',
+            subtitle: '5 quick calls a day — build your streak',
+            route: '/daily',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.school,
             title: 'Trading Academy',
             subtitle: 'Learn to trade step by step — free, zero risk',

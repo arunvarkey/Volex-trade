@@ -61,17 +61,22 @@ Every feature — no exceptions — moves through five gates:
 
 ## M2 — Retention core (the daily loop)
 
-**Goal:** a reason to open Volex every day.
+**Goal:** a reason to open Volex every day. Headlined by **Volex Daily** —
+the daily ritual that unifies streaks, prediction, and learning into one
+shareable loop (Predict → Resolve → Rank → Share). This is the retention *and*
+acquisition engine: the shareable result card is the growth mechanism.
 
-| Item | Scope | Acceptance criteria |
-|---|---|---|
-| Lesson quizzes | 3 questions per lesson, stored with curriculum; must pass (2/3) to mark complete | quiz UI matches lesson reader style; progress only on pass; regression: existing completions unaffected |
-| Streaks + daily goal | streak = consecutive days with ≥1 lesson or paper trade; flame counter on home; local-midnight rollover | streak survives restart; timezone-safe; never punishes same-day repeat |
-| Market resolution | predictions markets get `resolvesAt` + outcome; resolved positions pay out to balance; history screen | resolution is idempotent; balance math tested; resolved markets leave the live list |
-| Local notifications | daily lesson nudge (opt-in), "market resolved" | permission asked in context, never on first launch |
+| Item | Scope | Acceptance criteria | Status |
+|---|---|---|---|
+| **Volex Daily v1** | 5 deterministic trading-judgment calls/day; instant resolution; streak; shareable card; wrong answers deep-link the relevant lesson | same set for everyone per date; timezone-safe streak (extend/reset/idempotent replay); share text correct; tested | ✅ this commit |
+| Volex Daily v2 | layer in real resolving event markets (BTC close, Fed) from a data backend, alongside the judgment calls | resolution idempotent; honest "not yet resolved" state; true global rank | ☐ |
+| Lesson quizzes | 3 questions per lesson; must pass (2/3) to mark complete | quiz UI matches lesson reader; progress only on pass; existing completions unaffected | ☐ |
+| XP + levels | XP from lessons/backtests/trades/Daily; Novice→Operator→Analyst→Pro; feeds the Daily streak | levels derived from XP; persisted; tested | ☐ |
+| Local notifications | daily "your calls are ready" nudge (opt-in), "market resolved" | permission asked in context, never on first launch | ☐ |
 
-**Required tests:** streak date math (rollover, timezone, gap), resolution
-payout math, quiz gating. Target: +15 tests.
+**Required tests:** streak date math (rollover, gap, idempotent replay) ✅,
+deterministic daily-set generation ✅, share-text formatting ✅; then quiz
+gating and XP-from-actions. Target met for v1 (+9 tests).
 
 ## M3 — Chart engine v2
 

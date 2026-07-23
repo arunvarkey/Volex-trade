@@ -44,6 +44,7 @@ import 'package:volex_terminal/features/academy/models/academy_models.dart';
 import 'package:volex_terminal/features/predictions/ui/predictions_screen.dart';
 import 'package:volex_terminal/features/predictions/ui/event_market_detail_screen.dart';
 import 'package:volex_terminal/features/predictions/models/prediction_models.dart';
+import 'package:volex_terminal/features/daily/ui/daily_screen.dart';
 
 // Debug
 
@@ -158,6 +159,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/ai-strategy',
       builder: (context, state) => const AIStrategyGeneratorScreen(),
+    ),
+
+    // Volex Daily (daily challenge ritual)
+    GoRoute(
+      path: '/daily',
+      builder: (context, state) => const DailyScreen(),
     ),
 
     // Trading Academy (guided learning)
