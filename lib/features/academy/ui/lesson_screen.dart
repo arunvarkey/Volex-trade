@@ -5,6 +5,7 @@ import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import '../data/academy_curriculum.dart';
+import '../data/academy_quizzes.dart';
 import '../models/academy_models.dart';
 import '../services/academy_progress_service.dart';
 
@@ -28,7 +29,14 @@ class _LessonScreenState extends State<LessonScreen> {
     return idx < 0 ? 1 : idx + 1;
   }
 
+  /// Not-yet-completed lessons go through the checkpoint quiz, which is what
+  /// actually marks them complete and awards XP. Lessons without a quiz (a
+  /// safety fallback) mark complete directly.
   Future<void> _completeAndContinue() async {
+    if (AcademyQuizzes.hasQuiz(widget.lesson.id)) {
+      context.push('/learn/quiz', extra: widget.lesson);
+      return;
+    }
     await _progress.markComplete(widget.lesson.id);
     final next = _progress.lessonAfter(widget.lesson.id);
     if (!mounted) return;
@@ -128,6 +136,7 @@ class _LessonScreenState extends State<LessonScreen> {
       bottomNavigationBar: _BottomBar(
         alreadyDone: alreadyDone,
         hasNext: hasNext,
+        hasQuiz: AcademyQuizzes.hasQuiz(lesson.id),
         onComplete: _completeAndContinue,
         onNext: _goNextOrBack,
       ),
@@ -138,12 +147,14 @@ class _LessonScreenState extends State<LessonScreen> {
 class _BottomBar extends StatelessWidget {
   final bool alreadyDone;
   final bool hasNext;
+  final bool hasQuiz;
   final VoidCallback onComplete;
   final VoidCallback onNext;
 
   const _BottomBar({
     required this.alreadyDone,
     required this.hasNext,
+    required this.hasQuiz,
     required this.onComplete,
     required this.onNext,
   });
@@ -155,8 +166,13 @@ class _BottomBar extends StatelessWidget {
     final VoidCallback onTap;
 
     if (!alreadyDone) {
-      label = hasNext ? 'MARK COMPLETE & CONTINUE' : 'MARK COMPLETE & FINISH';
-      icon = Icons.check_rounded;
+      if (hasQuiz) {
+        label = 'TAKE THE CHECKPOINT QUIZ';
+        icon = Icons.quiz_rounded;
+      } else {
+        label = hasNext ? 'MARK COMPLETE & CONTINUE' : 'MARK COMPLETE & FINISH';
+        icon = Icons.check_rounded;
+      }
       onTap = onComplete;
     } else if (hasNext) {
       label = 'NEXT LESSON';

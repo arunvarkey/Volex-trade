@@ -40,6 +40,7 @@ import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_s
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
 import 'package:volex_terminal/features/academy/ui/academy_screen.dart';
 import 'package:volex_terminal/features/academy/ui/lesson_screen.dart';
+import 'package:volex_terminal/features/academy/ui/quiz_screen.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
 import 'package:volex_terminal/features/predictions/ui/predictions_screen.dart';
 import 'package:volex_terminal/features/predictions/ui/event_market_detail_screen.dart';
@@ -178,6 +179,14 @@ final GoRouter appRouter = GoRouter(
             final extra = state.extra;
             if (extra is! Lesson) return const AcademyScreen();
             return LessonScreen(lesson: extra);
+          },
+        ),
+        GoRoute(
+          path: 'quiz',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra is! Lesson) return const AcademyScreen();
+            return QuizScreen(lesson: extra);
           },
         ),
       ],

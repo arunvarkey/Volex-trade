@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../academy/services/xp_service.dart';
 import '../data/daily_question_bank.dart';
 import '../models/daily_models.dart';
 
@@ -120,6 +121,10 @@ class DailyService extends ChangeNotifier {
     }
 
     await _persist();
+
+    // Award XP once per challenge — replaying the same day never double-counts.
+    await XpService.instance
+        .awardOnce('daily:${challenge.number}', XpService.dailyXp);
 
     return DailyResult(
       dateKey: todayKey,

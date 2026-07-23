@@ -7,6 +7,7 @@ import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../data/academy_curriculum.dart';
 import '../models/academy_models.dart';
 import '../services/academy_progress_service.dart';
+import '../services/xp_service.dart';
 
 /// The Trading Academy hub — a guided, top-to-bottom learning path.
 class AcademyScreen extends StatefulWidget {
@@ -18,11 +19,13 @@ class AcademyScreen extends StatefulWidget {
 
 class _AcademyScreenState extends State<AcademyScreen> {
   final AcademyProgressService _progress = AcademyProgressService.instance;
+  final XpService _xp = XpService.instance;
 
   @override
   void initState() {
     super.initState();
     _progress.ensureLoaded();
+    _xp.ensureLoaded();
   }
 
   void _openLesson(Lesson lesson) {
@@ -47,7 +50,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
         ),
       ),
       body: AnimatedBuilder(
-        animation: _progress,
+        animation: Listenable.merge([_progress, _xp]),
         builder: (context, _) {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
@@ -57,6 +60,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                 completed: _progress.completedCount,
                 total: _progress.totalCount,
                 nextLesson: _progress.nextLesson,
+                xp: _xp,
                 onContinue: (lesson) => _openLesson(lesson),
               ),
               const SizedBox(height: 24),
@@ -83,6 +87,7 @@ class _ProgressHeader extends StatelessWidget {
   final int completed;
   final int total;
   final Lesson? nextLesson;
+  final XpService xp;
   final ValueChanged<Lesson> onContinue;
 
   const _ProgressHeader({
@@ -90,6 +95,7 @@ class _ProgressHeader extends StatelessWidget {
     required this.completed,
     required this.total,
     required this.nextLesson,
+    required this.xp,
     required this.onContinue,
   });
 
@@ -167,6 +173,8 @@ class _ProgressHeader extends StatelessWidget {
             '$completed of $total lessons complete',
             style: VxTypography.caption.copyWith(fontSize: 11),
           ),
+          const SizedBox(height: 16),
+          _XpBar(xp: xp),
           if (!finished) ...[
             const SizedBox(height: 18),
             SizedBox(
@@ -430,6 +438,65 @@ class _LevelChip extends StatelessWidget {
           letterSpacing: 0.8,
         ),
       ),
+    );
+  }
+}
+
+/// Compact level badge + XP-to-next-level bar shown in the Academy header.
+class _XpBar extends StatelessWidget {
+  final XpService xp;
+  const _XpBar({required this.xp});
+
+  @override
+  Widget build(BuildContext context) {
+    final level = xp.level;
+    final next = xp.nextLevel;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(level.emoji, style: const TextStyle(fontSize: 15)),
+            const SizedBox(width: 6),
+            Text(
+              level.label.toUpperCase(),
+              style: VxTypography.caption.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
+                color: VxColors.neonYellow,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '${xp.totalXp} XP',
+              style: VxTypography.caption.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: Colors.white70,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: LinearProgressIndicator(
+            value: xp.progressToNextLevel,
+            minHeight: 5,
+            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            valueColor:
+                const AlwaysStoppedAnimation<Color>(VxColors.neonYellow),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          next == null
+              ? 'Top level reached — you\'re a Pro.'
+              : '${xp.xpToNextLevel} XP to ${next.label}',
+          style: VxTypography.caption.copyWith(fontSize: 10),
+        ),
+      ],
     );
   }
 }

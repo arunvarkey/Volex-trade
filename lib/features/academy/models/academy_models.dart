@@ -105,6 +105,31 @@ class Lesson {
   });
 }
 
+/// One multiple-choice question used to check understanding after a lesson.
+///
+/// Kept deliberately simple (four options, one correct) so the quiz reader can
+/// render it without any dependency and the pass/fail logic stays trivial to
+/// unit-test.
+class QuizQuestion {
+  final String prompt;
+  final List<String> options;
+
+  /// Index into [options] of the single correct answer.
+  final int correctIndex;
+
+  /// Shown after the learner answers, right or wrong, to reinforce the point.
+  final String explanation;
+
+  const QuizQuestion({
+    required this.prompt,
+    required this.options,
+    required this.correctIndex,
+    required this.explanation,
+  });
+
+  bool isCorrect(int chosen) => chosen == correctIndex;
+}
+
 /// A themed group of lessons that build on each other.
 class AcademyModule {
   final String id;

@@ -81,13 +81,14 @@ acquisition engine: the shareable result card is the growth mechanism.
 |---|---|---|---|
 | **Volex Daily v1** | 5 deterministic trading-judgment calls/day; instant resolution; streak; shareable card; wrong answers deep-link the relevant lesson | same set for everyone per date; timezone-safe streak (extend/reset/idempotent replay); share text correct; tested | ✅ this commit |
 | Volex Daily v2 | layer in real resolving event markets (BTC close, Fed) from a data backend, alongside the judgment calls | resolution idempotent; honest "not yet resolved" state; true global rank | ☐ |
-| Lesson quizzes | 3 questions per lesson; must pass (2/3) to mark complete | quiz UI matches lesson reader; progress only on pass; existing completions unaffected | ☐ |
-| XP + levels | XP from lessons/backtests/trades/Daily; Novice→Operator→Analyst→Pro; feeds the Daily streak | levels derived from XP; persisted; tested | ☐ |
+| Lesson quizzes | 3 questions per lesson; must pass (2/3) to mark complete | quiz UI matches lesson reader; progress only on pass; existing completions unaffected | ✅ (48 questions; checkpoint gate; reading no longer auto-completes) |
+| XP + levels | XP from lessons/backtests/trades/Daily; Novice→Operator→Analyst→Pro; feeds the Daily streak | levels derived from XP; persisted; tested | ✅ (idempotent awardOnce; lessons + Daily wired; badge on Academy hub; trades/backtests still to hook) |
 | Local notifications | daily "your calls are ready" nudge (opt-in), "market resolved" | permission asked in context, never on first launch | ☐ |
 
 **Required tests:** streak date math (rollover, gap, idempotent replay) ✅,
-deterministic daily-set generation ✅, share-text formatting ✅; then quiz
-gating and XP-from-actions. Target met for v1 (+9 tests).
+deterministic daily-set generation ✅, share-text formatting ✅, quiz
+well-formedness + pass gating ✅, XP idempotency + level thresholds ✅ (+13
+tests). Remaining: XP hooks from paper trades and backtests.
 
 ## M3 — Chart engine v2
 
