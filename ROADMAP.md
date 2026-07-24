@@ -82,7 +82,7 @@ acquisition engine: the shareable result card is the growth mechanism.
 | **Volex Daily v1** | 5 deterministic trading-judgment calls/day; instant resolution; streak; shareable card; wrong answers deep-link the relevant lesson | same set for everyone per date; timezone-safe streak (extend/reset/idempotent replay); share text correct; tested | ✅ this commit |
 | Volex Daily v2 | layer in real resolving event markets (BTC close, Fed) from a data backend, alongside the judgment calls | resolution idempotent; honest "not yet resolved" state; true global rank | ☐ |
 | Lesson quizzes | 3 questions per lesson; must pass (2/3) to mark complete | quiz UI matches lesson reader; progress only on pass; existing completions unaffected | ✅ (48 questions; checkpoint gate; reading no longer auto-completes) |
-| XP + levels | XP from lessons/backtests/trades/Daily; Novice→Operator→Analyst→Pro; feeds the Daily streak | levels derived from XP; persisted; tested | ✅ (awardOnce for milestones + addXp for repeatable actions; lessons, Daily & backtests wired; badge on Academy hub; live paper-trade hook still to add) |
+| XP + levels | XP from lessons/backtests/trades/Daily; Novice→Operator→Analyst→Pro; feeds the Daily streak | levels derived from XP; persisted; tested | ✅ (all four sources wired — lessons, Daily, backtests, paper trades; awardOnce for milestones + addXp for repeatable actions; badge on Academy hub) |
 | Local notifications | daily "your calls are ready" nudge (opt-in), "market resolved" | permission asked in context, never on first launch | ☐ |
 
 **Required tests:** streak date math (rollover, gap, idempotent replay) ✅,

@@ -11,6 +11,7 @@ import 'package:volex_terminal/engine/exchange/paper_exchange_client.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
 import 'package:volex_terminal/services/analytics_service.dart';
 import 'package:volex_terminal/engine/execution/i_execution_service.dart';
+import 'package:volex_terminal/features/academy/services/xp_service.dart';
 import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
 import 'package:volex_terminal/features/ai_guardian/ui/ai_guardian_warning_dialog.dart';
 import 'package:volex_terminal/core/service_locator.dart';
@@ -262,6 +263,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
 
       _orders.add(order);
       _updatePositionAfterTrade(order);
+
+      // Placing a paper trade is a repeatable, XP-earning action.
+      XpService.instance.addXp(XpService.tradeXp);
 
       AnalyticsService.instance.logEvent('order_placed', parameters: {
         'symbol': symbol,
