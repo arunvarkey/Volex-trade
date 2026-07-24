@@ -70,6 +70,19 @@ void main() {
     expect(xp.xpToNextLevel, 0);
   });
 
+  test('addXp accumulates every call (repeatable actions)', () async {
+    await xp.addXp(XpService.backtestXp);
+    await xp.addXp(XpService.backtestXp);
+    await xp.addXp(XpService.tradeXp);
+    expect(xp.totalXp, XpService.backtestXp * 2 + XpService.tradeXp);
+  });
+
+  test('addXp ignores non-positive amounts', () async {
+    await xp.addXp(0);
+    await xp.addXp(-10);
+    expect(xp.totalXp, 0);
+  });
+
   test('persists total and awarded keys', () async {
     await xp.awardOnce('lesson:z', 50);
     final prefs = await SharedPreferences.getInstance();

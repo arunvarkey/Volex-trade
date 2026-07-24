@@ -6,6 +6,7 @@ import 'package:volex_terminal/data/market_data_repository.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/domain/order.dart' as dom;
+import 'package:volex_terminal/features/academy/services/xp_service.dart';
 import 'models/backtest_request.dart';
 import 'models/backtest_result.dart';
 import 'models/trade_marker.dart';
@@ -55,8 +56,7 @@ class BacktestEngine extends ChangeNotifier {
           onTimeout: () => BacktestResult.error(
               'Backtest timed out after ${timeout.inSeconds} seconds.'),
         );
-        _history.insert(0, result);
-        notifyListeners();
+        _record(result);
         return result;
       }
 
@@ -84,12 +84,21 @@ class BacktestEngine extends ChangeNotifier {
         },
       ) as BacktestResult;
 
-      _history.insert(0, result); // Add to history
-      notifyListeners();
+      _record(result); // Add to history (+ XP on success)
       return result;
     } catch (e) {
       return BacktestResult.error('Backtest Engine Error: $e');
     }
+  }
+
+  /// Records a finished result and, when it succeeded, awards XP for running a
+  /// backtest. Repeatable action, so it uses [XpService.addXp] (not once-only).
+  void _record(BacktestResult result) {
+    _history.insert(0, result);
+    if (result.isSuccess) {
+      XpService.instance.addXp(XpService.backtestXp);
+    }
+    notifyListeners();
   }
 
   static void _isolateEntry(_BacktestJob job) async {

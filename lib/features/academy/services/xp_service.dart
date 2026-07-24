@@ -146,6 +146,17 @@ class XpService extends ChangeNotifier {
     return amount;
   }
 
+  /// Adds [amount] XP for a *repeatable* action (a paper trade, a backtest)
+  /// without idempotency tracking — every call counts. Use [awardOnce] for
+  /// one-time milestones like completing a specific lesson.
+  Future<void> addXp(int amount) async {
+    await ensureLoaded();
+    if (amount <= 0) return;
+    _total += amount;
+    notifyListeners();
+    await _persist();
+  }
+
   Future<void> reset() async {
     _total = 0;
     _awarded.clear();
