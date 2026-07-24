@@ -19,12 +19,13 @@ import 'chart_math.dart';
 ///  - crosshair with OHLC/volume legend (hover on desktop, long-press on touch)
 ///  - right-hand price axis with a live last-price line and label
 ///  - volume histogram pane
-///  - SMA(20)/SMA(50) overlays
+///  - SMA(20)/SMA(50) overlays and an RSI(14) sub-pane with 70/30 guides
 ///  - magnitude-aware "nice" price grid and adaptive time axis
 class VxProChart extends StatefulWidget {
   final List<Candle> candles;
   final bool showVolume;
   final bool showIndicators;
+  final bool showRsi;
 
   /// Accepted for drop-in compatibility with the old chart; not yet rendered.
   final List<dynamic> activeSignals;
@@ -34,6 +35,7 @@ class VxProChart extends StatefulWidget {
     required this.candles,
     this.showVolume = true,
     this.showIndicators = true,
+    this.showRsi = true,
     this.activeSignals = const [],
   });
 
@@ -160,6 +162,7 @@ class _VxProChartState extends State<VxProChart> {
                 cursor: _cursor,
                 showVolume: widget.showVolume,
                 showIndicators: widget.showIndicators,
+                showRsi: widget.showRsi,
               ),
             ),
           ),
@@ -177,6 +180,8 @@ class _ProChartPainter extends CustomPainter {
   static const double priceAxisWidth = 64;
   static const double timeAxisHeight = 22;
   static const double volumeShare = 0.16;
+  static const double rsiShare = 0.18;
+  static const int rsiPeriod = 14;
 
   final List<Candle> candles;
   final int rightIndex;
@@ -184,6 +189,7 @@ class _ProChartPainter extends CustomPainter {
   final Offset? cursor;
   final bool showVolume;
   final bool showIndicators;
+  final bool showRsi;
 
   _ProChartPainter({
     required this.candles,
@@ -192,12 +198,16 @@ class _ProChartPainter extends CustomPainter {
     required this.cursor,
     required this.showVolume,
     required this.showIndicators,
+    required this.showRsi,
   });
 
   late double _chartW;
   late double _chartH;
   late double _priceTop;
   late double _priceBottom;
+  late double _volBase;
+  late double _rsiTop;
+  late double _rsiBottom;
   late double _minP;
   late double _maxP;
   late int _startIdx;
@@ -217,9 +227,15 @@ class _ProChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _chartW = size.width - priceAxisWidth;
     _chartH = size.height - timeAxisHeight;
+    // Enough vertical room to bother with the RSI pane?
+    final bool rsiOn = showRsi && _chartH > 220;
+    final rsiH = rsiOn ? _chartH * rsiShare : 0.0;
     final volH = showVolume ? _chartH * volumeShare : 0.0;
     _priceTop = 8;
-    _priceBottom = _chartH - volH - 6;
+    _priceBottom = _chartH - volH - rsiH - 6;
+    _volBase = _chartH - rsiH - 2;
+    _rsiTop = _chartH - rsiH + 6;
+    _rsiBottom = _chartH - 4;
 
     _endIdx = rightIndex.clamp(0, candles.length - 1);
     _startIdx = math.max(0, _endIdx - visibleCount + 1);
@@ -242,6 +258,7 @@ class _ProChartPainter extends CustomPainter {
     if (showVolume) _drawVolume(canvas, visible, volH);
     _drawCandles(canvas, visible);
     if (showIndicators) _drawSmas(canvas);
+    if (rsiOn) _drawRsi(canvas);
     _drawLastPrice(canvas);
     _drawTimeAxis(canvas, visible);
     _drawPriceAxis(canvas);
@@ -354,7 +371,7 @@ class _ProChartPainter extends CustomPainter {
       maxV = math.max(maxV, c.volume);
     }
     if (maxV <= 0) return;
-    final base = _chartH - 2;
+    final base = _volBase;
     final bodyW = math.max(1.0, _candleW * 0.62);
     for (int i = 0; i < visible.length; i++) {
       final c = visible[i];
@@ -406,6 +423,77 @@ class _ProChartPainter extends CustomPainter {
   void _drawSmas(Canvas canvas) {
     _drawSmaLine(canvas, 20, VxColors.neonCyan);
     _drawSmaLine(canvas, 50, VxColors.neonPurple);
+  }
+
+  // ── RSI sub-pane ──────────────────────────────────────────────────
+
+  void _drawRsi(Canvas canvas) {
+    final closes = [for (final k in candles) k.close];
+    final rsi = ChartMath.rsiSeries(closes, period: rsiPeriod);
+
+    final top = _rsiTop;
+    final bottom = _rsiBottom;
+    double yFor(double v) =>
+        bottom - (v.clamp(0.0, 100.0).toDouble() / 100) * (bottom - top);
+
+    // Separator above the pane.
+    canvas.drawLine(
+      Offset(0, top - 6),
+      Offset(_chartW, top - 6),
+      Paint()
+        ..color = Colors.white12
+        ..strokeWidth = 0.7,
+    );
+
+    // 70 / 30 reference lines (overbought / oversold).
+    final guide = Paint()
+      ..color = VxColors.gridLines.withValues(alpha: 0.5)
+      ..strokeWidth = 0.6;
+    for (final level in const [70.0, 30.0]) {
+      final y = yFor(level);
+      _dashedLine(canvas, Offset(0, y), Offset(_chartW, y), guide,
+          dash: 3, gap: 3);
+      final tp = _text(level.toStringAsFixed(0));
+      tp.paint(canvas, Offset(_chartW + 6, y - tp.height / 2));
+    }
+
+    // The RSI line across the visible range.
+    final path = Path();
+    bool started = false;
+    for (int i = _startIdx; i <= _endIdx; i++) {
+      final v = rsi[i];
+      if (v == null) continue;
+      final p = Offset(_x(i), yFor(v));
+      if (!started) {
+        path.moveTo(p.dx, p.dy);
+        started = true;
+      } else {
+        path.lineTo(p.dx, p.dy);
+      }
+    }
+    if (started) {
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = VxColors.neonYellow.withValues(alpha: 0.9)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2,
+      );
+    }
+
+    // Label with the hovered (or latest) value.
+    int idx = _endIdx;
+    final c = cursor;
+    if (c != null && c.dx >= 0 && c.dx <= _chartW) {
+      idx = (_startIdx + (c.dx / _candleW - 0.5).round())
+          .clamp(_startIdx, _endIdx);
+    }
+    final cur = rsi[idx];
+    final label = cur == null
+        ? 'RSI($rsiPeriod)'
+        : 'RSI($rsiPeriod) ${cur.toStringAsFixed(1)}';
+    _text(label, color: VxColors.neonYellow, weight: FontWeight.w600)
+        .paint(canvas, Offset(8, top));
   }
 
   // ── Last price & crosshair ────────────────────────────────────────

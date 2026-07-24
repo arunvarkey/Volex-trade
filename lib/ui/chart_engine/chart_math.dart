@@ -47,4 +47,104 @@ class ChartMath {
     }
     return sum / period;
   }
+
+  /// Exponential moving average of [values], seeded with the simple average of
+  /// the first [period] values. Returns a list the same length as [values];
+  /// entries before index `period - 1` are null (not enough history).
+  static List<double?> emaSeries(List<double> values, int period) {
+    final out = List<double?>.filled(values.length, null);
+    if (period <= 0 || values.length < period) return out;
+    final k = 2 / (period + 1);
+    double sum = 0;
+    for (int i = 0; i < period; i++) {
+      sum += values[i];
+    }
+    double prev = sum / period;
+    out[period - 1] = prev;
+    for (int i = period; i < values.length; i++) {
+      prev = (values[i] - prev) * k + prev;
+      out[i] = prev;
+    }
+    return out;
+  }
+
+  /// Wilder's RSI over [closes]. Returns a list aligned to [closes]; the first
+  /// defined value is at index [period]. A perfectly flat window (no gains or
+  /// losses) yields a neutral 50.
+  static List<double?> rsiSeries(List<double> closes, {int period = 14}) {
+    final n = closes.length;
+    final out = List<double?>.filled(n, null);
+    if (period <= 0 || n <= period) return out;
+
+    double gain = 0;
+    double loss = 0;
+    for (int i = 1; i <= period; i++) {
+      final ch = closes[i] - closes[i - 1];
+      if (ch > 0) {
+        gain += ch;
+      } else {
+        loss -= ch; // ch <= 0, so -ch >= 0
+      }
+    }
+    double avgGain = gain / period;
+    double avgLoss = loss / period;
+    out[period] = _rsiFrom(avgGain, avgLoss);
+
+    for (int i = period + 1; i < n; i++) {
+      final ch = closes[i] - closes[i - 1];
+      final g = ch > 0 ? ch : 0.0;
+      final l = ch < 0 ? -ch : 0.0;
+      avgGain = (avgGain * (period - 1) + g) / period;
+      avgLoss = (avgLoss * (period - 1) + l) / period;
+      out[i] = _rsiFrom(avgGain, avgLoss);
+    }
+    return out;
+  }
+
+  static double _rsiFrom(double avgGain, double avgLoss) {
+    if (avgLoss == 0) return avgGain == 0 ? 50 : 100;
+    final rs = avgGain / avgLoss;
+    return 100 - 100 / (1 + rs);
+  }
+
+  /// MACD (fast/slow/signal, default 12/26/9) over [closes]. Each list is
+  /// aligned to [closes] with nulls where there isn't enough history, and at
+  /// every defined index `histogram == macd - signal`.
+  static ({List<double?> macd, List<double?> signal, List<double?> histogram})
+      macd(
+    List<double> closes, {
+    int fast = 12,
+    int slow = 26,
+    int signalPeriod = 9,
+  }) {
+    final n = closes.length;
+    final emaFast = emaSeries(closes, fast);
+    final emaSlow = emaSeries(closes, slow);
+
+    final macdLine = List<double?>.filled(n, null);
+    for (int i = 0; i < n; i++) {
+      final f = emaFast[i];
+      final s = emaSlow[i];
+      if (f != null && s != null) macdLine[i] = f - s;
+    }
+
+    final signal = List<double?>.filled(n, null);
+    final hist = List<double?>.filled(n, null);
+    final firstIdx = macdLine.indexWhere((v) => v != null);
+    if (firstIdx >= 0) {
+      final defined = <double>[];
+      for (int i = firstIdx; i < n; i++) {
+        defined.add(macdLine[i]!);
+      }
+      final sig = emaSeries(defined, signalPeriod);
+      for (int j = 0; j < sig.length; j++) {
+        final v = sig[j];
+        if (v == null) continue;
+        final i = firstIdx + j;
+        signal[i] = v;
+        hist[i] = macdLine[i]! - v;
+      }
+    }
+    return (macd: macdLine, signal: signal, histogram: hist);
+  }
 }
