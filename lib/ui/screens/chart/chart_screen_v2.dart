@@ -9,6 +9,7 @@ import 'package:volex_terminal/domain/trade_signal.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/ui/chart_engine/vx_pro_chart.dart';
+import 'package:volex_terminal/ui/chart_engine/chart_marker.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_top_bar.dart';
 import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
@@ -226,6 +227,23 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     return signals;
   }
 
+  /// The user's own filled orders on the current symbol, as chart markers
+  /// (green triangle below the bar for buys, red above for sells).
+  List<ChartMarker> _buildTradeMarkers(BuildContext context) {
+    final manager = context.watch<ExecutionManager>();
+    final marks = <ChartMarker>[];
+    for (final o in manager.orders) {
+      if (o.symbol != _currentSymbol) continue;
+      if (o.status != OrderStatus.filled || o.filledAt == null) continue;
+      marks.add(ChartMarker(
+        timeMs: o.filledAt!.millisecondsSinceEpoch,
+        price: o.filledPrice ?? o.price,
+        isBuy: o.side == OrderSide.buy,
+      ));
+    }
+    return marks;
+  }
+
   @override
   Widget build(BuildContext context) {
     // 85% Chart Real Estate Goal
@@ -252,6 +270,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                           candles: _candles,
                           showVolume: true,
                           showIndicators: true,
+                          markers: _buildTradeMarkers(context),
                           activeSignals: _buildActiveSignals(_candles),
                         ),
                 ),

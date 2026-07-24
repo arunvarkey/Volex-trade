@@ -101,6 +101,30 @@ class ChartMath {
     return out;
   }
 
+  /// Index of the entry in the ascending-sorted [times] closest to [target]
+  /// (e.g. mapping a trade timestamp to its candle). Ties resolve to the lower
+  /// index. Returns -1 for an empty list.
+  static int nearestIndexByTime(List<int> times, int target) {
+    final n = times.length;
+    if (n == 0) return -1;
+    if (target <= times.first) return 0;
+    if (target >= times.last) return n - 1;
+    int lo = 0;
+    int hi = n - 1;
+    while (lo <= hi) {
+      final mid = (lo + hi) >> 1;
+      final t = times[mid];
+      if (t == target) return mid;
+      if (t < target) {
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    // lo is now the first index past target; hi == lo - 1.
+    return (target - times[hi]) <= (times[lo] - target) ? hi : lo;
+  }
+
   static double _rsiFrom(double avgGain, double avgLoss) {
     if (avgLoss == 0) return avgGain == 0 ? 50 : 100;
     final rs = avgGain / avgLoss;

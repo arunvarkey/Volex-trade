@@ -9,6 +9,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'chart_marker.dart';
 import 'chart_math.dart';
 
 /// VxProChart — Volex's own TradingView-class chart engine.
@@ -20,12 +21,16 @@ import 'chart_math.dart';
 ///  - right-hand price axis with a live last-price line and label
 ///  - volume histogram pane
 ///  - SMA(20)/SMA(50) overlays and an RSI(14) sub-pane with 70/30 guides
+///  - trade markers (filled buys/sells) drawn at their price and time
 ///  - magnitude-aware "nice" price grid and adaptive time axis
 class VxProChart extends StatefulWidget {
   final List<Candle> candles;
   final bool showVolume;
   final bool showIndicators;
   final bool showRsi;
+
+  /// Filled buys/sells to draw on the price pane at their price and time.
+  final List<ChartMarker> markers;
 
   /// Accepted for drop-in compatibility with the old chart; not yet rendered.
   final List<dynamic> activeSignals;
@@ -36,6 +41,7 @@ class VxProChart extends StatefulWidget {
     this.showVolume = true,
     this.showIndicators = true,
     this.showRsi = true,
+    this.markers = const [],
     this.activeSignals = const [],
   });
 
@@ -163,6 +169,7 @@ class _VxProChartState extends State<VxProChart> {
                 showVolume: widget.showVolume,
                 showIndicators: widget.showIndicators,
                 showRsi: widget.showRsi,
+                markers: widget.markers,
               ),
             ),
           ),
@@ -190,6 +197,7 @@ class _ProChartPainter extends CustomPainter {
   final bool showVolume;
   final bool showIndicators;
   final bool showRsi;
+  final List<ChartMarker> markers;
 
   _ProChartPainter({
     required this.candles,
@@ -199,6 +207,7 @@ class _ProChartPainter extends CustomPainter {
     required this.showVolume,
     required this.showIndicators,
     required this.showRsi,
+    required this.markers,
   });
 
   late double _chartW;
@@ -258,6 +267,7 @@ class _ProChartPainter extends CustomPainter {
     if (showVolume) _drawVolume(canvas, visible, volH);
     _drawCandles(canvas, visible);
     if (showIndicators) _drawSmas(canvas);
+    if (markers.isNotEmpty) _drawMarkers(canvas);
     if (rsiOn) _drawRsi(canvas);
     _drawLastPrice(canvas);
     _drawTimeAxis(canvas, visible);
@@ -423,6 +433,37 @@ class _ProChartPainter extends CustomPainter {
   void _drawSmas(Canvas canvas) {
     _drawSmaLine(canvas, 20, VxColors.neonCyan);
     _drawSmaLine(canvas, 50, VxColors.neonPurple);
+  }
+
+  // ── Trade markers ─────────────────────────────────────────────────
+
+  void _drawMarkers(Canvas canvas) {
+    final times = [for (final c in candles) c.time];
+    const s = 5.0;
+    for (final m in markers) {
+      final idx = ChartMath.nearestIndexByTime(times, m.timeMs);
+      if (idx < _startIdx || idx > _endIdx) continue;
+      final x = _x(idx);
+      final c = candles[idx];
+      final color = m.isBuy ? VxColors.neonGreen : VxColors.neonRed;
+      final fill = Paint()..color = color;
+      final path = Path();
+      if (m.isBuy) {
+        // Upward triangle a little below the candle's low.
+        final y = _y(c.low) + 9;
+        path.moveTo(x, y - s);
+        path.lineTo(x - s, y + s);
+        path.lineTo(x + s, y + s);
+      } else {
+        // Downward triangle a little above the candle's high.
+        final y = _y(c.high) - 9;
+        path.moveTo(x, y + s);
+        path.lineTo(x - s, y - s);
+        path.lineTo(x + s, y - s);
+      }
+      path.close();
+      canvas.drawPath(path, fill);
+    }
   }
 
   // ── RSI sub-pane ──────────────────────────────────────────────────

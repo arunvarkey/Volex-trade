@@ -97,11 +97,11 @@ tests). Remaining: XP hooks from paper trades and backtests.
 | Item | Acceptance criteria | Status |
 |---|---|---|
 | Indicator panes | RSI + MACD in a sub-pane; toggleable; math unit-tested against known values | 🟡 RSI(14) pane live with 70/30 guides + `showRsi` toggle; RSI & MACD/EMA math unit-tested (StockCharts reference + invariants). MACD pane rendering still to add (math ready) |
-| Trade markers | paper-trade entries/exits drawn on the chart at their price/time | ☐ |
+| Trade markers | paper-trade entries/exits drawn on the chart at their price/time | ✅ (filled buys/sells on the live chart via `markers`; buy▲ below bar, sell▼ above; nearest-candle positioning unit-tested) |
 | Drawing tools | trendline + horizontal level, drag to edit, persisted per symbol | ☐ |
 
-**Required tests:** RSI/MACD math vs reference values ✅ (+12); marker
-positioning math (pending).
+**Required tests:** RSI/MACD math vs reference values ✅; marker positioning
+math (nearestIndexByTime: clamp, exact, nearest, tie) ✅ (+18 total).
 
 ## M4 — Monetization readiness
 

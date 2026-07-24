@@ -70,6 +70,30 @@ void main() {
     });
   });
 
+  group('nearestIndexByTime', () {
+    const times = [100, 200, 300, 400];
+
+    test('empty list returns -1', () {
+      expect(ChartMath.nearestIndexByTime(const [], 5), -1);
+    });
+    test('before first clamps to 0', () {
+      expect(ChartMath.nearestIndexByTime(times, 10), 0);
+    });
+    test('after last clamps to the end', () {
+      expect(ChartMath.nearestIndexByTime(times, 9999), 3);
+    });
+    test('exact match returns that index', () {
+      expect(ChartMath.nearestIndexByTime(times, 300), 2);
+    });
+    test('rounds to the nearer neighbour', () {
+      expect(ChartMath.nearestIndexByTime(times, 240), 1);
+      expect(ChartMath.nearestIndexByTime(times, 260), 2);
+    });
+    test('a tie resolves to the lower index', () {
+      expect(ChartMath.nearestIndexByTime(times, 250), 1);
+    });
+  });
+
   group('macd', () {
     test('constant series gives zero macd, signal and histogram', () {
       final r = ChartMath.macd(List.filled(60, 3.0));
