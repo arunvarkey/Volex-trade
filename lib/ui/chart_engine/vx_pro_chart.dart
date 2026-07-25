@@ -694,6 +694,16 @@ class _ProChartPainter extends CustomPainter {
             _text('SMA50 ${_fmtPrice(s50)}', color: VxColors.neonPurple);
         tp.paint(canvas, const Offset(96, 18));
       }
+      // MACD(12/26/9) histogram readout — green above zero, red below.
+      final macd = ChartMath.macd([for (final cc in candles) cc.close]);
+      final hist = macd.histogram[idx];
+      if (hist != null) {
+        final col = hist >= 0 ? VxColors.neonGreen : VxColors.neonRed;
+        final tp = _text(
+            'MACD ${hist >= 0 ? '+' : ''}${hist.toStringAsFixed(2)}',
+            color: col);
+        tp.paint(canvas, const Offset(184, 18));
+      }
     }
   }
 
