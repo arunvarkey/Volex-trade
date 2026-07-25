@@ -9,9 +9,9 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/core/chart_math.dart';
 import 'chart_drawing.dart';
 import 'chart_marker.dart';
-import 'chart_math.dart';
 
 /// VxProChart — Volex's own TradingView-class chart engine.
 ///

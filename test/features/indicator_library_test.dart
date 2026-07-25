@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/features/simulator/backtest/indicator_library.dart';
-import 'package:volex_terminal/ui/chart_engine/chart_math.dart';
+import 'package:volex_terminal/core/chart_math.dart';
 
 Candle _c(double close) =>
     Candle(time: 0, open: close, high: close, low: close, close: close, volume: 0);

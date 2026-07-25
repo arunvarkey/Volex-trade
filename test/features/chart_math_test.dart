@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:volex_terminal/ui/chart_engine/chart_math.dart';
+import 'package:volex_terminal/core/chart_math.dart';
 
 void main() {
   group('ChartMath.niceStep', () {

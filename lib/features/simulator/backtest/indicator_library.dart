@@ -1,6 +1,6 @@
 // lib/engine/backtest/indicator_library.dart
 import 'package:volex_terminal/domain/candle_model.dart';
-import 'package:volex_terminal/ui/chart_engine/chart_math.dart';
+import 'package:volex_terminal/core/chart_math.dart';
 import 'dart:math' as math;
 
 class IndicatorLibrary {
