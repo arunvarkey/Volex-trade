@@ -139,5 +139,11 @@ marketplace — an empty marketplace helps no one).
 - 2026-07: Predictions promoted to first-class tab — "everything in one
   app" (charts + events) is the differentiator vs. single-purpose apps.
 - 2026-07: CI on all branches; the working branch is no longer ungated.
+- 2026-07: Engine audit — backtest indicators consolidated onto the tested
+  `ChartMath`. Fixed a real MACD bug (signal line was stubbed to 0, so every
+  signal-cross was actually a zero-cross) and aligned backtest RSI to Wilder's
+  smoothing so the backtest and the on-screen RSI(14) pane now agree.
+  Remaining engine follow-ups: backtest timeout regression (M0), backtest EMA
+  is O(n²) over long histories, Sharpe assumes daily periods.
 
 _Last updated: 2026-07-18_
