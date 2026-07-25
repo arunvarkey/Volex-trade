@@ -10,6 +10,8 @@ import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/ui/chart_engine/vx_pro_chart.dart';
 import 'package:volex_terminal/ui/chart_engine/chart_marker.dart';
+import 'package:volex_terminal/ui/chart_engine/chart_drawing.dart';
+import 'package:volex_terminal/ui/chart_engine/drawing_service.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_top_bar.dart';
 import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
@@ -53,6 +55,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     _repository = widget.repository ?? MarketDataRepository();
     _chartController = ChartController();
     _currentSymbol = widget.symbol ?? 'BTCUSDT'; // Default to BTC if null
+    DrawingService.instance.ensureLoaded();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
@@ -244,6 +247,103 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     return marks;
   }
 
+  /// Adds a horizontal price level at the current price for this symbol.
+  void _addLevelAtCurrentPrice() {
+    if (_currentPrice <= 0) return;
+    final id = DateTime.now().microsecondsSinceEpoch.toString();
+    DrawingService.instance.add(
+      _currentSymbol,
+      ChartDrawing.horizontal(id: id, price: _currentPrice),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Level added at ${_currentPrice.toStringAsFixed(2)}'),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  /// A sheet to review and delete this symbol's drawings.
+  void _openDrawingsSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: VxColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return AnimatedBuilder(
+          animation: DrawingService.instance,
+          builder: (ctx, _) {
+            final items = DrawingService.instance.forSymbol(_currentSymbol);
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.draw_rounded,
+                            color: VxColors.neonPurple, size: 20),
+                        const SizedBox(width: 8),
+                        Text('Drawings · $_currentSymbol',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
+                        const Spacer(),
+                        if (items.isNotEmpty)
+                          TextButton(
+                            onPressed: () => DrawingService.instance
+                                .clearSymbol(_currentSymbol),
+                            child: const Text('CLEAR ALL',
+                                style: TextStyle(color: VxColors.neonRed)),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    if (items.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Text(
+                          'No drawings yet. Tap the line button to add a price '
+                          'level at the current price.',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                      )
+                    else
+                      for (final d in items)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.horizontal_rule_rounded,
+                              color: VxColors.neonPurple),
+                          title: Text(
+                            d.type == ChartDrawingType.horizontal
+                                ? 'Level ${d.price.toStringAsFixed(2)}'
+                                : 'Trendline',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete_outline_rounded,
+                                color: VxColors.neonRed),
+                            onPressed: () => DrawingService.instance
+                                .remove(_currentSymbol, d.id),
+                          ),
+                        ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 85% Chart Real Estate Goal
@@ -266,12 +366,17 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                       ? const Center(
                           child: CircularProgressIndicator(
                               color: VxColors.neonCyan))
-                      : VxProChart(
-                          candles: _candles,
-                          showVolume: true,
-                          showIndicators: true,
-                          markers: _buildTradeMarkers(context),
-                          activeSignals: _buildActiveSignals(_candles),
+                      : AnimatedBuilder(
+                          animation: DrawingService.instance,
+                          builder: (context, _) => VxProChart(
+                            candles: _candles,
+                            showVolume: true,
+                            showIndicators: true,
+                            markers: _buildTradeMarkers(context),
+                            drawings:
+                                DrawingService.instance.forSymbol(_currentSymbol),
+                            activeSignals: _buildActiveSignals(_candles),
+                          ),
                         ),
                 ),
 
@@ -324,6 +429,29 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
 
                 // [NEW] Layer 3.5: Replay Panel
                 if (_isReplayMode) ReplayPanel(controller: _replayController),
+
+                // Layer 3.6: Draw-level button (tap = add, long-press = manage)
+                if (!_isReplayMode)
+                  Positioned(
+                    bottom: 198,
+                    right: 26,
+                    child: GestureDetector(
+                      onTap: _addLevelAtCurrentPrice,
+                      onLongPress: _openDrawingsSheet,
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: VxColors.surfaceBright.withValues(alpha: 0.9),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: VxColors.neonPurple.withValues(alpha: 0.5)),
+                        ),
+                        child: const Icon(Icons.horizontal_rule_rounded,
+                            color: VxColors.neonPurple, size: 24),
+                      ),
+                    ),
+                  ),
 
                 // Layer 4: Trade FAB
                 if (!_isReplayMode)

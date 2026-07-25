@@ -94,6 +94,21 @@ void main() {
     });
   });
 
+  group('distanceToSegment', () {
+    test('a point on the segment is distance 0', () {
+      expect(ChartMath.distanceToSegment(1, 0, 0, 0, 2, 0), closeTo(0, 1e-9));
+    });
+    test('perpendicular distance to the line', () {
+      expect(ChartMath.distanceToSegment(1, 3, 0, 0, 2, 0), closeTo(3, 1e-9));
+    });
+    test('beyond an endpoint measures to that endpoint', () {
+      expect(ChartMath.distanceToSegment(5, 0, 0, 0, 2, 0), closeTo(3, 1e-9));
+    });
+    test('a zero-length segment measures to its point', () {
+      expect(ChartMath.distanceToSegment(3, 4, 0, 0, 0, 0), closeTo(5, 1e-9));
+    });
+  });
+
   group('macd', () {
     test('constant series gives zero macd, signal and histogram', () {
       final r = ChartMath.macd(List.filled(60, 3.0));

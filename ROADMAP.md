@@ -98,7 +98,7 @@ tests). Remaining: XP hooks from paper trades and backtests.
 |---|---|---|
 | Indicator panes | RSI + MACD in a sub-pane; toggleable; math unit-tested against known values | 🟡 RSI(14) pane live with 70/30 guides + `showRsi` toggle; RSI & MACD/EMA math unit-tested (StockCharts reference + invariants). MACD pane rendering still to add (math ready) |
 | Trade markers | paper-trade entries/exits drawn on the chart at their price/time | ✅ (filled buys/sells on the live chart via `markers`; buy▲ below bar, sell▼ above; nearest-candle positioning unit-tested) |
-| Drawing tools | trendline + horizontal level, drag to edit, persisted per symbol | ☐ |
+| Drawing tools | trendline + horizontal level, drag to edit, persisted per symbol | 🟡 horizontal levels: add-at-price + manage/delete sheet, rendered on chart, persisted per symbol (DrawingService, tested); trendline model + rendering + segment hit-test math ready; on-canvas drag-to-edit deferred to device-time (needs touch validation) |
 
 **Required tests:** RSI/MACD math vs reference values ✅; marker positioning
 math (nearestIndexByTime: clamp, exact, nearest, tie) ✅ (+18 total).

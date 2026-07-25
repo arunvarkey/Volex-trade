@@ -125,6 +125,28 @@ class ChartMath {
     return (target - times[hi]) <= (times[lo] - target) ? hi : lo;
   }
 
+  /// Shortest distance from point (px,py) to the segment (ax,ay)-(bx,by),
+  /// in the same units as the inputs. Used to hit-test trendlines. A
+  /// zero-length segment measures distance to its single point.
+  static double distanceToSegment(
+      double px, double py, double ax, double ay, double bx, double by) {
+    final dx = bx - ax;
+    final dy = by - ay;
+    final lenSq = dx * dx + dy * dy;
+    if (lenSq == 0) {
+      final ex = px - ax;
+      final ey = py - ay;
+      return math.sqrt(ex * ex + ey * ey);
+    }
+    var t = ((px - ax) * dx + (py - ay) * dy) / lenSq;
+    t = t.clamp(0.0, 1.0);
+    final cx = ax + t * dx;
+    final cy = ay + t * dy;
+    final ex = px - cx;
+    final ey = py - cy;
+    return math.sqrt(ex * ex + ey * ey);
+  }
+
   static double _rsiFrom(double avgGain, double avgLoss) {
     if (avgLoss == 0) return avgGain == 0 ? 50 : 100;
     final rs = avgGain / avgLoss;

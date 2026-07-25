@@ -9,6 +9,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'chart_drawing.dart';
 import 'chart_marker.dart';
 import 'chart_math.dart';
 
@@ -32,6 +33,9 @@ class VxProChart extends StatefulWidget {
   /// Filled buys/sells to draw on the price pane at their price and time.
   final List<ChartMarker> markers;
 
+  /// User annotations (horizontal levels, trendlines) for this symbol.
+  final List<ChartDrawing> drawings;
+
   /// Accepted for drop-in compatibility with the old chart; not yet rendered.
   final List<dynamic> activeSignals;
 
@@ -42,6 +46,7 @@ class VxProChart extends StatefulWidget {
     this.showIndicators = true,
     this.showRsi = true,
     this.markers = const [],
+    this.drawings = const [],
     this.activeSignals = const [],
   });
 
@@ -170,6 +175,7 @@ class _VxProChartState extends State<VxProChart> {
                 showIndicators: widget.showIndicators,
                 showRsi: widget.showRsi,
                 markers: widget.markers,
+                drawings: widget.drawings,
               ),
             ),
           ),
@@ -198,6 +204,7 @@ class _ProChartPainter extends CustomPainter {
   final bool showIndicators;
   final bool showRsi;
   final List<ChartMarker> markers;
+  final List<ChartDrawing> drawings;
 
   _ProChartPainter({
     required this.candles,
@@ -208,6 +215,7 @@ class _ProChartPainter extends CustomPainter {
     required this.showIndicators,
     required this.showRsi,
     required this.markers,
+    required this.drawings,
   });
 
   late double _chartW;
@@ -267,6 +275,7 @@ class _ProChartPainter extends CustomPainter {
     if (showVolume) _drawVolume(canvas, visible, volH);
     _drawCandles(canvas, visible);
     if (showIndicators) _drawSmas(canvas);
+    if (drawings.isNotEmpty) _drawDrawings(canvas);
     if (markers.isNotEmpty) _drawMarkers(canvas);
     if (rsiOn) _drawRsi(canvas);
     _drawLastPrice(canvas);
@@ -433,6 +442,39 @@ class _ProChartPainter extends CustomPainter {
   void _drawSmas(Canvas canvas) {
     _drawSmaLine(canvas, 20, VxColors.neonCyan);
     _drawSmaLine(canvas, 50, VxColors.neonPurple);
+  }
+
+  // ── User drawings (levels & trendlines) ──────────────────────────
+
+  void _drawDrawings(Canvas canvas) {
+    List<int>? times; // built lazily, only if a trendline needs it
+    for (final d in drawings) {
+      if (d.type == ChartDrawingType.horizontal) {
+        if (d.price < _minP || d.price > _maxP) continue;
+        final y = _y(d.price);
+        canvas.drawLine(
+          Offset(0, y),
+          Offset(_chartW, y),
+          Paint()
+            ..color = VxColors.neonPurple.withValues(alpha: 0.75)
+            ..strokeWidth = 1.0,
+        );
+        _axisTag(canvas, y, _fmtPrice(d.price), VxColors.neonPurple);
+      } else {
+        final t = times ??= [for (final c in candles) c.time];
+        final ai = ChartMath.nearestIndexByTime(t, d.aTimeMs);
+        final bi = ChartMath.nearestIndexByTime(t, d.bTimeMs);
+        if (ai < 0 || bi < 0) continue;
+        canvas.drawLine(
+          Offset(_x(ai), _y(d.aPrice)),
+          Offset(_x(bi), _y(d.bPrice)),
+          Paint()
+            ..color = VxColors.neonPurple.withValues(alpha: 0.85)
+            ..strokeWidth = 1.4
+            ..style = PaintingStyle.stroke,
+        );
+      }
+    }
   }
 
   // ── Trade markers ─────────────────────────────────────────────────
