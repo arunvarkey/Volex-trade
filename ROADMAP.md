@@ -40,7 +40,7 @@ Every feature — no exceptions — moves through five gates:
 |---|---|---|
 | CI quality gate on all branches | analyze + full test suite run on every push; red = blocked | ✅ |
 | Warning cleanup | `flutter analyze` has 0 warnings; CI flips to `--fatal-warnings` | ✅ (gate is fatal-warnings; also fixed a CI-caught TextDirection compile error in VxProChart) |
-| Repair quarantined legacy tests | the 11 tests skipped with `@Skip('Quarantined…')` (dashboard_provider, notifications_screen, backtest timeout, execution_manager) are fixed and un-skipped | ☐ |
+| Repair quarantined legacy tests | the 11 tests skipped with `@Skip('Quarantined…')` (dashboard_provider, notifications_screen, backtest timeout, execution_manager) are fixed and un-skipped | ☐ investigated: `execution_manager` needs `build_runner` codegen (not runnable in the cloud CI env); `backtest/timeout` un-skip proved a real behavioral drift — the engine now completes the hanging run and returns `result.error == null`, so it needs the timeout semantics revisited, not a trivial fix; `dashboard_provider` & `notifications_screen` depend on shared `test_helper` mocks + Firebase. Best done at device-time with a local toolchain. |
 | withOpacity migration + zero infos | 0 analyzer issues of any severity; CI at `--fatal-infos` | ✅ (509 withOpacity migrated; Switch/Dropdown/Radio deprecations modernized; gate fully strict) |
 | fl_chart retirement | remaining fl_chart screens migrated to VxProChart or explicitly kept with a reason; unused chart widgets deleted | ☐ |
 
