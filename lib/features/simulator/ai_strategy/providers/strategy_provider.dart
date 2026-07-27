@@ -40,27 +40,19 @@ class StrategyProvider extends ChangeNotifier {
           userPrompt: prompt, useCompanyKey: useCompanyKey);
       _backtestResult = null; // Reset backtest on new strategy
     } catch (e) {
-      // Fallback to Mock Strategy (Demo Mode) whenever the cloud AI is
-      // unreachable — no key, no auth, offline, rate-limited, or (as on web
-      // where Firebase is skipped) the callable itself is unavailable. This is
-      // a simulator: it must always produce a usable strategy rather than
-      // dead-ending on an error snackbar.
-      final isFallbackable = e is! AiStrategyError ||
-          e.type == AiErrorType.missingKey ||
-          e.type == AiErrorType.invalidKey ||
-          e.type == AiErrorType.networkError ||
-          e.type == AiErrorType.rateLimit ||
-          e.type == AiErrorType.unknown;
-
-      if (isFallbackable) {
+      // Only a genuine bad-AI-output parse error surfaces to the user.
+      // Everything else — no key, no auth, offline, rate-limited, or (as on
+      // web where Firebase is skipped) the callable being unavailable — falls
+      // back to a demo strategy, so this simulator always produces something
+      // usable rather than dead-ending on an error snackbar.
+      if (e is AiStrategyError && e.type == AiErrorType.parsingError) {
+        _error = e.message;
+        AppLogger.error('Strategy Generation Failed', e);
+      } else {
         AppLogger.warning(
             'Cloud AI unavailable ($e). Falling back to Demo Mode strategy.');
         _currentStrategy = await _aiService.generateMockStrategy(query: prompt);
         _backtestResult = null;
-      } else {
-        // Only genuine parsing/validation problems surface as errors.
-        _error = e is AiStrategyError ? e.message : e.toString();
-        AppLogger.error('Strategy Generation Failed', e);
       }
     } finally {
       _isLoading = false;
