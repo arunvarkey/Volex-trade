@@ -140,6 +140,7 @@ class StrategyDetailView extends StatelessWidget {
               ? null
               : () async {
                   await manager.startStrategy(strategyId);
+                  if (!context.mounted) return;
                   _notify(context, 'Strategy activated — paper trading');
                 },
         ),
@@ -150,6 +151,7 @@ class StrategyDetailView extends StatelessWidget {
           onPressed: isRunning
               ? () async {
                   await manager.stopStrategy(strategyId);
+                  if (!context.mounted) return;
                   _notify(context, 'Strategy stopped');
                 }
               : null,
