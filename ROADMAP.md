@@ -90,6 +90,34 @@ deterministic daily-set generation ✅, share-text formatting ✅, quiz
 well-formedness + pass gating ✅, XP idempotency + level thresholds ✅ (+13
 tests). Remaining: XP hooks from paper trades and backtests.
 
+### Strategy Studio activation (mission-critical, device-gated)
+
+A complete **AI Strategy Studio** (1,808 LOC: hub → template picker → template
+config → backtest, plus AI Assistant and a My-Strategies manager) exists under
+`lib/features/simulator/` but was never connected — its DI plumbing was never
+finished. This is the **"build"** pillar of the north-star loop
+(learn → **build → backtest** → paper-trade) and its paywalled AI Assistant is
+the Act-1 subscription mechanism, so activating it is on-mission. Do this at
+device-time where boot/DI changes can be validated:
+
+1. **Provide `AppModeService`** (ctor takes `SharedPreferences`) in the
+   `providers_setup` tree — the hub reads it via `context.watch`.
+2. **Register + initialize `StrategyRepository`** (Hive box `strategies`) in the
+   boot sequence (Hive is already `initFlutter`'d in `persistence_service`);
+   `template_config` and `my_strategies` resolve it via `GetIt`.
+3. **Register routes** under a `/simulator` parent: `templates`,
+   `templates/config` (extra `StrategyTemplate`), `ai-assistant`,
+   `my-strategies`, and point its backtest at the **existing corrected**
+   `/lab/backtest/config` (do NOT re-create a `/simulator/backtest*` path — the
+   backtest-results nav bug there is already fixed to `/lab/backtest/results`).
+4. **Entry point** behind progressive disclosure (More menu), leaving the
+   current `/ai-strategy` generator in place as fallback until the studio is
+   judged live. Promote the winner; delete the loser.
+
+Credibility guardrail (per Vision): the studio's backtest must run through the
+corrected engine (Wilder RSI, real MACD signal, fixed Bollinger) — guaranteed
+by reusing `/lab/backtest/*`, not a parallel path.
+
 ## M3 — Chart engine v2
 
 **Goal:** VxProChart reaches genuine TradingView-tier depth.
