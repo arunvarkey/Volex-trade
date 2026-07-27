@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'com.android.tools.build:gradle:8.9.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
@@ -27,8 +27,8 @@ subprojects {
     // Provide fallback for plugins using legacy 'flutter' property access (e.g., jni 0.15.2)
     if (project.name != 'app' && !project.hasProperty('flutter')) {
         ext.flutter = [
-            ndkVersion: "25.1.8937393",
-            compileSdkVersion: 35,
+            ndkVersion: "28.2.13676358",
+            compileSdkVersion: 36,
             minSdkVersion: 21,
             targetSdkVersion: 35
         ]
@@ -58,7 +58,7 @@ subprojects {
                 
                 // Explicitly set compileSdkVersion for plugins that require it
                 try {
-                    compileSdkVersion 35
+                    compileSdkVersion 36
                 } catch (e) { }
 
                 compileOptions {
