@@ -60,6 +60,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   final List<Order> _orders = [];
   final List<Position> _positions = [];
 
+  // Strategies the user has activated for paper trading this session.
+  final Set<String> _activeStrategyIds = {};
+
   // Execution status
   bool _isExecuting = false;
   String? _lastError;
@@ -133,7 +136,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   /// If true, trading is disabled.
   bool get isReadOnly => _isReadOnly;
 
-  Set<String> get activeStrategyIds => {};
+  Set<String> get activeStrategyIds => Set.unmodifiable(_activeStrategyIds);
 
   ExchangeService get exchange => _exchange;
 
@@ -436,23 +439,37 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
 
   /// Checks if a specific strategy is active.
   @override
-  bool isStrategyRunning(String id) => false;
+  bool isStrategyRunning(String id) => _activeStrategyIds.contains(id);
 
   /// Starts an automated trading strategy.
   @override
   Future<void> startStrategy(String id) async {
-    AppLogger.info("EXEC: Starting Strategy $id");
+    if (_activeStrategyIds.add(id)) {
+      AppLogger.info("EXEC: Starting Strategy $id");
+      AnalyticsService.instance
+          .logEvent('strategy_started', parameters: {'strategy_id': id});
+      notifyListeners();
+    }
   }
 
   /// Stops an automated trading strategy.
   @override
   Future<void> stopStrategy(String id) async {
-    AppLogger.info("EXEC: Stopping Strategy $id");
+    if (_activeStrategyIds.remove(id)) {
+      AppLogger.info("EXEC: Stopping Strategy $id");
+      AnalyticsService.instance
+          .logEvent('strategy_stopped', parameters: {'strategy_id': id});
+      notifyListeners();
+    }
   }
 
   /// Emergency stop for all running strategies.
   void stopAllStrategy() {
-    AppLogger.info("EXEC: Stopping all strategies");
+    if (_activeStrategyIds.isNotEmpty) {
+      AppLogger.info("EXEC: Stopping all strategies");
+      _activeStrategyIds.clear();
+      notifyListeners();
+    }
   }
 
   /// Manually injects an order into the local history (mainly for tests).
@@ -466,6 +483,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   void reset() {
     _orders.clear();
     _positions.clear();
+    _activeStrategyIds.clear();
     _paperBalance = 100000.0;
     _liveBalance = 0.0;
     _isReadOnly = false;
