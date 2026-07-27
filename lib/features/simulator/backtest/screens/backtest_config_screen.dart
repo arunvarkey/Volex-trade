@@ -435,7 +435,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         setState(() => _isRunning = false);
 
         if (result.isSuccess) {
-          context.push('/simulator/backtest-results', extra: result);
+          context.push('/lab/backtest/results', extra: result);
         } else {
           _showError(result.error!);
         }
