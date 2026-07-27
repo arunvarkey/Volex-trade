@@ -18,33 +18,35 @@ class ModeIndicatorBanner extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: const BoxDecoration(
-        color: VxColors.warning,
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      decoration: BoxDecoration(
+        color: VxColors.warning.withValues(alpha: 0.08),
         border: Border(
           bottom: BorderSide(
-            color: VxColors.warning,
+            color: VxColors.warning.withValues(alpha: 0.20),
             width: 1,
-            style: BorderStyle.solid,
           ),
         ),
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.science_outlined,
-            color: VxColors.deepBlack,
-            size: 16,
+          Container(
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: VxColors.warning,
+              shape: BoxShape.circle,
+            ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
-            'EXPLORER MODE - SIMULATED TRADING',
+            'Paper trading · simulated funds',
             style: TextStyle(
-              color: VxColors.deepBlack,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              letterSpacing: 1.1,
+              color: VxColors.warning.withValues(alpha: 0.95),
+              fontWeight: FontWeight.w600,
+              fontSize: 11.5,
+              letterSpacing: 0.2,
             ),
           ),
         ],

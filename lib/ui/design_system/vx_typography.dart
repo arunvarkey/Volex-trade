@@ -5,11 +5,11 @@ import 'vx_colors.dart';
 class VxTypography {
   VxTypography._();
 
-  static TextStyle hero = GoogleFonts.jetBrainsMono(
+  static TextStyle hero = GoogleFonts.dmSans(
     fontSize: 38,
     fontWeight: FontWeight.w700,
     color: VxColors.textPrimary,
-    letterSpacing: -1.0,
+    letterSpacing: -1.2,
   );
 
   static TextStyle h1 = GoogleFonts.dmSans(
@@ -59,14 +59,14 @@ class VxTypography {
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: VxColors.textTertiary,
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
   );
 
   static TextStyle button = GoogleFonts.plusJakartaSans(
     fontSize: 16,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
-    letterSpacing: 1.0,
+    letterSpacing: 0.2,
   );
 }
 
