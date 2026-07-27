@@ -20,6 +20,7 @@ import 'package:volex_terminal/ui/widgets/market_ticker/vx_market_list.dart';
 import 'package:volex_terminal/ui/widgets/journey_strip.dart';
 import 'package:volex_terminal/ui/widgets/first_user_guide.dart';
 import 'package:volex_terminal/features/daily/ui/daily_home_card.dart';
+import 'package:volex_terminal/services/profile_service.dart';
 
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
@@ -85,9 +86,9 @@ class HomeScreenV2 extends StatelessWidget {
                   .copyWith(color: VxColors.textSecondary),
               children: [
                 TextSpan(text: '$greeting, '),
-                const TextSpan(
-                  text: 'Trader',
-                  style: TextStyle(
+                TextSpan(
+                  text: context.watch<ProfileService>().displayName,
+                  style: const TextStyle(
                     color: VxColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../design_system/vx_colors.dart';
 import '../../design_system/vx_typography.dart';
 import '../../design_system/vx_card.dart';
 import '../../../services/profile_service.dart';
-import '../settings/settings_screen.dart'; // [NEW]
+import '../../../engine/execution_manager.dart';
+import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -12,11 +14,12 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileService = context.watch<ProfileService>();
+    final execution = context.watch<ExecutionManager>();
 
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: VxText.subtitle("Operator Profile"),
+        title: VxText.subtitle("Profile"),
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
@@ -32,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
 
-            // Avatar Section
+            // Avatar
             Center(
               child: Stack(
                 children: [
@@ -43,19 +46,22 @@ class ProfileScreen extends StatelessWidget {
                         ? FileImage(profileService.profileImage!)
                         : null,
                     child: profileService.profileImage == null
-                        ? const Icon(Icons.person,
-                            size: 60, color: VxColors.neonCyan)
+                        ? Text(
+                            _initials(profileService.displayName),
+                            style: VxTypography.h1
+                                .copyWith(color: VxColors.primary),
+                          )
                         : null,
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: CircleAvatar(
-                      backgroundColor: VxColors.neonCyan,
+                      backgroundColor: VxColors.primary,
                       radius: 20,
                       child: IconButton(
                         icon: const Icon(Icons.camera_alt,
-                            size: 20, color: Colors.black),
+                            size: 18, color: Colors.white),
                         onPressed: () =>
                             _showImageSourceDialog(context, profileService),
                       ),
@@ -65,56 +71,90 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
-            VxText.heading2("John Doe"),
-            VxText.body("Elite Operator", color: VxColors.neonCyan),
+            // Editable name
+            GestureDetector(
+              onTap: () => _editName(context, profileService),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  VxText.heading2(profileService.displayName),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.edit_outlined,
+                      size: 18, color: VxColors.textTertiary),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            VxText.body("Paper Trader", color: VxColors.textSecondary),
 
-            const SizedBox(height: 48),
+            const SizedBox(height: 40),
 
-            _buildStatCard(context),
+            _buildStatCard(execution),
 
             const SizedBox(height: 24),
 
-            _buildInfoList(),
+            _buildInfoList(execution),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard(BuildContext context) {
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return 'T';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return (parts.first[0] + parts.last[0]).toUpperCase();
+  }
+
+  Widget _buildStatCard(ExecutionManager execution) {
+    final closed =
+        execution.positions.where((p) => !p.isOpen).toList(growable: false);
+    final trades = closed.length;
+    final wins = closed.where((p) => (p.realizedPnL ?? 0) > 0).length;
+    final winRate = trades > 0 ? (wins / trades * 100) : 0.0;
+    final pnl = execution.totalPnL;
+
     return VxCard(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildStatItem("Win Rate", "68%"),
-            _buildStatItem("Total Trades", "1.2k"),
-            _buildStatItem("Profit", "+14.2%"),
+            _buildStatItem(
+                "Win Rate", trades > 0 ? "${winRate.toStringAsFixed(0)}%" : "—"),
+            _buildStatItem("Trades", "$trades"),
+            _buildStatItem(
+              "P&L",
+              "${pnl >= 0 ? '+' : '-'}\$${pnl.abs().toStringAsFixed(0)}",
+              color: pnl >= 0 ? VxColors.positive : VxColors.negative,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value) {
+  Widget _buildStatItem(String label, String value, {Color? color}) {
     return Column(
       children: [
         VxText.body(label, color: Colors.white38, fontSize: 10),
         const SizedBox(height: 4),
-        VxText.subtitle(value, color: VxColors.neonCyan),
+        VxText.subtitle(value, color: color ?? VxColors.textPrimary),
       ],
     );
   }
 
-  Widget _buildInfoList() {
+  Widget _buildInfoList(ExecutionManager execution) {
     return Column(
       children: [
-        _buildInfoTile(Icons.email, "Email", "j.doe@volex.terminal"),
-        _buildInfoTile(Icons.calendar_today, "Joined", "Jan 2026"),
-        _buildInfoTile(Icons.security, "Trust Score", "98/100"),
+        _buildInfoTile(Icons.account_balance_wallet_outlined, "Balance",
+            "\$${execution.balance.toStringAsFixed(0)}"),
+        _buildInfoTile(Icons.science_outlined, "Mode", "Paper (simulated)"),
+        _buildInfoTile(
+            Icons.bolt_outlined, "Active strategies", "${execution.activeStrategyIds.length}"),
       ],
     );
   }
@@ -127,34 +167,89 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _editName(BuildContext context, ProfileService service) async {
+    final controller = TextEditingController(
+        text: service.hasCustomName ? service.displayName : '');
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: VxColors.surface,
+        title: VxText.subtitle("Your name"),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 24,
+          style: const TextStyle(color: Colors.white),
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            hintText: 'e.g. Alex',
+            hintStyle: TextStyle(color: Colors.white24),
+          ),
+          onSubmitted: (v) => Navigator.pop(ctx, v),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel',
+                style: TextStyle(color: VxColors.textTertiary)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, controller.text),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: VxColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (name != null && name.trim().isNotEmpty) {
+      await service.setDisplayName(name);
+    }
+  }
+
   void _showImageSourceDialog(BuildContext context, ProfileService service) {
     showModalBottomSheet(
       context: context,
       backgroundColor: VxColors.surface,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera, color: VxColors.neonCyan),
-                title: const Text("Camera"),
+                leading: const Icon(Icons.camera_alt, color: VxColors.primary),
+                title: const Text("Take photo",
+                    style: TextStyle(color: Colors.white)),
                 onTap: () {
-                  // ProfileService.pickImage()
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
+                  service.pickAndProcessImage(ImageSource.camera);
                 },
               ),
               ListTile(
                 leading:
-                    const Icon(Icons.photo_library, color: VxColors.neonCyan),
-                title: const Text("Gallery"),
+                    const Icon(Icons.photo_library, color: VxColors.primary),
+                title: const Text("Choose from gallery",
+                    style: TextStyle(color: Colors.white)),
                 onTap: () {
-                  // ProfileService.pickImage()
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
+                  service.pickAndProcessImage(ImageSource.gallery);
                 },
               ),
+              if (service.profileImage != null)
+                ListTile(
+                  leading: const Icon(Icons.delete_outline,
+                      color: VxColors.negative),
+                  title: const Text("Remove photo",
+                      style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    service.clearImage();
+                  },
+                ),
             ],
           ),
         );
