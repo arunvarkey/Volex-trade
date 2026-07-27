@@ -98,10 +98,10 @@ class ThemeService extends ChangeNotifier {
         thickness: 1,
         space: 1,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: VxColors.surface,
         elevation: 0,
-        shape: const RoundedRectangleBorder(borderRadius: radius16),
+        shape: RoundedRectangleBorder(borderRadius: radius16),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: VxColors.background,
@@ -157,10 +157,10 @@ class ThemeService extends ChangeNotifier {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: radius12),
       ),
-      dialogTheme: DialogThemeData(
+      dialogTheme: const DialogThemeData(
         backgroundColor: VxColors.surface,
         surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(borderRadius: radius16),
+        shape: RoundedRectangleBorder(borderRadius: radius16),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: VxColors.surface,
@@ -169,10 +169,10 @@ class ThemeService extends ChangeNotifier {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
       ),
-      chipTheme: ChipThemeData(
+      chipTheme: const ChipThemeData(
         backgroundColor: VxColors.surfaceBright,
-        labelStyle: const TextStyle(color: VxColors.textSecondary),
-        shape: const RoundedRectangleBorder(borderRadius: radius12),
+        labelStyle: TextStyle(color: VxColors.textSecondary),
+        shape: RoundedRectangleBorder(borderRadius: radius12),
         side: BorderSide.none,
       ),
       progressIndicatorTheme:
