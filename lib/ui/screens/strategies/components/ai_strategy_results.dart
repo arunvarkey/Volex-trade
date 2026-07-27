@@ -125,12 +125,11 @@ class AIStrategyResults extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          strategy.name.toUpperCase(),
+          strategy.name,
           style: const TextStyle(
             color: VxColors.neonCyan,
             fontSize: 24,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -271,10 +270,10 @@ class AIStrategyResults extends StatelessWidget {
               Expanded(
                 child: _buildMetric(
                   'Total Return',
-                  '+${results.totalReturnPercent.toStringAsFixed(1)}%',
+                  '${results.totalReturnPercent >= 0 ? '+' : ''}${results.totalReturnPercent.toStringAsFixed(1)}%',
                   results.totalReturnPercent >= 0
-                      ? VxColors.neonCyan
-                      : VxColors.neonRed,
+                      ? VxColors.positive
+                      : VxColors.negative,
                 ),
               ),
             ],

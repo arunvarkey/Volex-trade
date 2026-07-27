@@ -128,7 +128,7 @@ class StrategyDetailView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          tooltip: isRunning ? "STRATEGY RUNNING" : "START STRATEGY",
+          tooltip: isRunning ? "Strategy running" : "Start strategy",
           icon: isRunning
               ? const SizedBox(
                   width: 14,
@@ -136,15 +136,37 @@ class StrategyDetailView extends StatelessWidget {
                   child: CircularProgressIndicator(
                       strokeWidth: 2, color: VxColors.neonGreen))
               : const Icon(Icons.play_arrow, color: VxColors.neonGreen),
-          onPressed: isRunning ? null : () => manager.startStrategy(strategyId),
+          onPressed: isRunning
+              ? null
+              : () async {
+                  await manager.startStrategy(strategyId);
+                  _notify(context, 'Strategy activated — paper trading');
+                },
         ),
         IconButton(
-          tooltip: "STOP STRATEGY",
+          tooltip: "Stop strategy",
           icon: Icon(Icons.stop,
               color: isRunning ? VxColors.neonRed : Colors.white12),
-          onPressed: isRunning ? () => manager.stopStrategy(strategyId) : null,
+          onPressed: isRunning
+              ? () async {
+                  await manager.stopStrategy(strategyId);
+                  _notify(context, 'Strategy stopped');
+                }
+              : null,
         ),
       ],
+    );
+  }
+
+  void _notify(BuildContext context, String message) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: VxColors.surfaceBright,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 }
