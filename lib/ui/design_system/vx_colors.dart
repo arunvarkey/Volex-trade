@@ -195,6 +195,11 @@ class VxColors {
   /// Bearish candle
   static const bearish = neonRed;
 
+  /// Vivid candle colors — brighter/higher-contrast than the UI green/red so
+  /// the chart reads crisp and "hi-def" against the dark background.
+  static const chartUp = Color(0xFF26E29A);
+  static const chartDown = Color(0xFFFF5A6E);
+
   /// Grid lines
   static const gridLines = Color(0xFF1E2836);
 

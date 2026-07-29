@@ -291,7 +291,7 @@ class _ProChartPainter extends CustomPainter {
 
   void _drawGrid(Canvas canvas) {
     final paint = Paint()
-      ..color = VxColors.gridLines.withValues(alpha: 0.55)
+      ..color = VxColors.gridLines.withValues(alpha: 0.35)
       ..strokeWidth = 0.6;
     for (final level in _priceLevels()) {
       final y = _y(level);
@@ -362,14 +362,19 @@ class _ProChartPainter extends CustomPainter {
   // ── Series ────────────────────────────────────────────────────────
 
   void _drawCandles(Canvas canvas, List<Candle> visible) {
-    final bodyW = math.max(1.0, _candleW * 0.62);
-    final wickPaint = Paint()..strokeWidth = math.max(0.8, _candleW * 0.08);
+    final bodyW = math.max(1.0, _candleW * 0.66);
+    final wickPaint = Paint()
+      ..strokeWidth = math.max(1.0, _candleW * 0.10)
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
+    final bodyPaint = Paint()..isAntiAlias = true;
 
     for (int i = 0; i < visible.length; i++) {
       final c = visible[i];
       final x = _x(_startIdx + i);
-      final color = c.isGreen ? VxColors.neonGreen : VxColors.neonRed;
+      final color = c.isGreen ? VxColors.chartUp : VxColors.chartDown;
       wickPaint.color = color;
+      bodyPaint.color = color;
       canvas.drawLine(
           Offset(x, _y(c.high)), Offset(x, _y(c.low)), wickPaint);
 
@@ -378,8 +383,8 @@ class _ProChartPainter extends CustomPainter {
       final rect = Rect.fromLTRB(
           x - bodyW / 2, top, x + bodyW / 2, math.max(bottom, top + 1));
       canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, const Radius.circular(1)),
-        Paint()..color = color,
+        RRect.fromRectAndRadius(rect, const Radius.circular(1.5)),
+        bodyPaint,
       );
     }
   }
@@ -397,7 +402,7 @@ class _ProChartPainter extends CustomPainter {
       final x = _x(_startIdx + i);
       final h = (c.volume / maxV) * (volH - 8);
       final color =
-          (c.isGreen ? VxColors.neonGreen : VxColors.neonRed).withValues(alpha: 0.32);
+          (c.isGreen ? VxColors.chartUp : VxColors.chartDown).withValues(alpha: 0.30);
       canvas.drawRect(
         Rect.fromLTRB(x - bodyW / 2, base - h, x + bodyW / 2, base),
         Paint()..color = color,
