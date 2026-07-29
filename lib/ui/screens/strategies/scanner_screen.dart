@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/scanner/scanner_engine.dart';
@@ -71,9 +70,8 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: Text("All Markets",
-            style: GoogleFonts.spaceMono(
-                fontWeight: FontWeight.bold, fontSize: 18)),
+        title: const Text("All Markets",
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -283,7 +281,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
                 children: [
                   Text(
                     "\$${result.history.isNotEmpty ? result.history.last.close.toStringAsFixed(2) : "0.00"}",
-                    style: GoogleFonts.spaceMono(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,

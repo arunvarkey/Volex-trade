@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'vx_themes.dart';
 import 'vx_colors.dart';
@@ -66,7 +67,13 @@ class ThemeService extends ChangeNotifier {
   // the whole app already uses — so themed defaults match hand-styled screens.
   ThemeData buildThemeData() {
     final base = ThemeData.dark();
-    final textTheme = _currentTheme.getTextTheme(base.textTheme);
+    // One consistent app-wide font (DM Sans) to match VxTypography, instead of
+    // the per-theme display fonts (Orbitron/RobotoMono) that made different
+    // pages render in different fonts.
+    final textTheme = GoogleFonts.dmSansTextTheme(base.textTheme).apply(
+      bodyColor: VxColors.textPrimary,
+      displayColor: VxColors.textPrimary,
+    );
 
     const radius12 = BorderRadius.all(Radius.circular(12));
     const radius16 = BorderRadius.all(Radius.circular(16));
