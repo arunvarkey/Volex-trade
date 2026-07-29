@@ -219,19 +219,33 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () => _setContracts(preset),
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
                       margin: const EdgeInsets.symmetric(horizontal: 3),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
+                        color: _contracts == preset
+                            ? VxColors.primary.withValues(alpha: 0.18)
+                            : Colors.white.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(8),
-                        border:
-                            Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        border: Border.all(
+                          color: _contracts == preset
+                              ? VxColors.primary
+                              : Colors.white.withValues(alpha: 0.08),
+                          width: _contracts == preset ? 1.5 : 1,
+                        ),
                       ),
                       child: Center(
                         child: Text('$preset',
-                            style:
-                                VxTypography.caption.copyWith(fontSize: 12)),
+                            style: VxTypography.caption.copyWith(
+                              fontSize: 12,
+                              color: _contracts == preset
+                                  ? VxColors.primary
+                                  : Colors.white70,
+                              fontWeight: _contracts == preset
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                            )),
                       ),
                     ),
                   ),

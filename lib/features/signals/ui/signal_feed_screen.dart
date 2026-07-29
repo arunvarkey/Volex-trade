@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -23,21 +24,42 @@ class SignalFeedScreen extends StatefulWidget {
 class _SignalFeedScreenState extends State<SignalFeedScreen> {
   final SignalEngine _engine = getIt<SignalEngine>();
   final List<TradeSignal> _signals = [];
+  StreamSubscription<TradeSignal>? _sub;
+  bool _scanning = true;
 
   @override
   void initState() {
     super.initState();
-    // Start generating signals if not already running (or just listen)
-    // _engine.startGenerating(); // Ideally moved to service locator or a provider
-    _engine.signalStream.listen((signal) {
+    // Seed from any signals the engine already generated — the broadcast
+    // stream doesn't replay, so without this the feed would sit empty.
+    _signals.addAll(_engine.recentSignals);
+
+    _sub = _engine.signalStream.listen((signal) {
       if (mounted) {
         setState(() {
           _signals.insert(0, signal);
-          // Keep list manageable
           if (_signals.length > 50) _signals.removeLast();
         });
       }
     });
+
+    if (_signals.isEmpty) {
+      _refresh();
+    } else {
+      _scanning = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    setState(() => _scanning = true);
+    await _engine.scanNow();
+    if (mounted) setState(() => _scanning = false);
   }
 
   @override
@@ -52,7 +74,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
             const SignalLimitBanner(),
             Expanded(
               child: _signals.isEmpty
-                  ? _buildEmptyState()
+                  ? (_scanning ? _buildScanningState() : _buildNoSignalsState())
                   : Consumer<SubscriptionService>(
                       builder: (context, subscription, child) {
                         final limit = subscription.maxSignals;
@@ -95,15 +117,44 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildScanningState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(color: VxColors.neonCyan),
+          const CircularProgressIndicator(color: VxColors.primary),
           const SizedBox(height: 16),
           VxText.body('Scanning markets...', color: Colors.white54),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNoSignalsState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.radar_rounded,
+                color: VxColors.textTertiary, size: 48),
+            const SizedBox(height: 16),
+            VxText.subtitle('No signals right now', color: Colors.white70),
+            const SizedBox(height: 8),
+            VxText.body(
+              'The engine re-scans the market every minute. Check back shortly or scan again now.',
+              color: Colors.white38,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              onPressed: _refresh,
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: const Text('Scan now'),
+            ),
+          ],
+        ),
       ),
     );
   }

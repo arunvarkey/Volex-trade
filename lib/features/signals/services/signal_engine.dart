@@ -18,6 +18,18 @@ class SignalEngine {
 
   Stream<TradeSignal> get signalStream => _signalsController.stream;
 
+  // Retain recently generated signals so a screen opened *after* generation
+  // (broadcast streams don't replay) can seed itself instead of showing an
+  // endless "Scanning markets…" spinner.
+  final List<TradeSignal> _recent = [];
+  List<TradeSignal> get recentSignals => List.unmodifiable(_recent);
+
+  bool _hasScanned = false;
+  bool get hasScanned => _hasScanned;
+
+  /// Runs a single scan on demand (used by the feed to force a refresh).
+  Future<void> scanNow() => _generateSignals();
+
   SignalEngine({
     required StrategyEngine strategyEngine,
     required AIGuardianService aiGuardian,
@@ -59,8 +71,21 @@ class SignalEngine {
         final recommendations =
             await _strategyEngine.analyzeSymbol(symbol, history);
 
-        for (final rec in recommendations) {
-          if (!rec.shouldTrade) continue;
+        // Prefer actionable (shouldTrade) recommendations; if none fire this
+        // scan, still surface the single strongest recommendation so the feed
+        // always shows current opportunities instead of staying empty.
+        final tradeable =
+            recommendations.where((r) => r.shouldTrade).toList();
+        final toEmit = tradeable.isNotEmpty
+            ? tradeable
+            : (recommendations.isEmpty
+                ? recommendations
+                : [
+                    recommendations.reduce(
+                        (a, b) => a.confidence >= b.confidence ? a : b)
+                  ]);
+
+        for (final rec in toEmit) {
 
           // Construct a mock order for analysis
           final mockOrder = Order(
@@ -94,7 +119,9 @@ class SignalEngine {
             expiresAt: DateTime.now().add(const Duration(minutes: 5)),
           );
 
-          // Emit signal
+          // Retain + emit
+          _recent.insert(0, signal);
+          if (_recent.length > 50) _recent.removeRange(50, _recent.length);
           _signalsController.add(signal);
 
           // Save to history (fire and forget)
@@ -107,6 +134,7 @@ class SignalEngine {
         AppLogger.error('Error generating signal for $symbol: $e');
       }
     }
+    _hasScanned = true;
   }
 
   String _generateSignalId() {
