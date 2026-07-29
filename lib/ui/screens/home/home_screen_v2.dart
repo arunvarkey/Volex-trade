@@ -639,6 +639,7 @@ class HomeScreenV2 extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) => SmartOrderSheet(
         symbol: 'BTCUSDT',

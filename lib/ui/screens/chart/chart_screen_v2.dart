@@ -268,6 +268,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
   void _openDrawingsSheet() {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       backgroundColor: VxColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -463,6 +464,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
+                          useRootNavigator: true,
                           backgroundColor: Colors.transparent,
                           builder: (context) => SmartOrderSheet(
                             symbol: _currentSymbol,

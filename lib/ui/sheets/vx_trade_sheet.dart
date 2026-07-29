@@ -51,6 +51,7 @@ class VxTradeSheet extends StatefulWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      useRootNavigator: true,
       builder: (context) => VxTradeSheet(
         symbol: symbol,
         currentPrice: currentPrice,
