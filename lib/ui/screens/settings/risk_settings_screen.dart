@@ -94,7 +94,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Risk Settings", style: GoogleFonts.jetBrainsMono()),
+        title: const Text("Risk Settings"),
         centerTitle: true,
       ),
       body: ListView(

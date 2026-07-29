@@ -34,7 +34,7 @@ class ChartStatsOverlay extends StatelessWidget {
             Text(
               '\$${currentPrice.toStringAsFixed(currentPrice >= 1 ? 2 : 4)}',
               style: VxTypography.hero.copyWith(
-                fontFamily: GoogleFonts.spaceMono().fontFamily,
+                fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
                 fontSize: 28,
                 letterSpacing: -1.0,
                 color: Colors.white,
@@ -115,7 +115,7 @@ class ChartStatsOverlay extends StatelessWidget {
               color: color,
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              fontFamily: GoogleFonts.spaceMono().fontFamily,
+              fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
             ),
           ),
         ],

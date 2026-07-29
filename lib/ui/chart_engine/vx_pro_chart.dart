@@ -318,7 +318,7 @@ class _ProChartPainter extends CustomPainter {
     final tp = TextPainter(
       text: TextSpan(
         text: s,
-        style: GoogleFonts.robotoMono(
+        style: GoogleFonts.jetBrainsMono(
             fontSize: size, color: color, fontWeight: weight),
       ),
       textDirection: TextDirection.ltr,

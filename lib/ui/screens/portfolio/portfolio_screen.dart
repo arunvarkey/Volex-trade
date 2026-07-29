@@ -122,7 +122,7 @@ class PortfolioScreen extends StatelessWidget {
           Text(
             '\$${balance.toStringAsFixed(2)}',
             style: VxTypography.hero.copyWith(
-              fontFamily: GoogleFonts.spaceMono().fontFamily,
+              fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
               fontSize: 32,
             ),
           ),
@@ -140,7 +140,7 @@ class PortfolioScreen extends StatelessWidget {
                 style: VxTypography.body.copyWith(
                   color: isLoss ? VxColors.neonRed : VxColors.neonGreen,
                   fontWeight: FontWeight.w700,
-                  fontFamily: GoogleFonts.spaceMono().fontFamily,
+                  fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
                 ),
               ),
             ],

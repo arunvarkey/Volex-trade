@@ -195,7 +195,7 @@ def on_candle(candle):
                 focusNode: _focusNode,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
-                style: GoogleFonts.firaCode(
+                style: GoogleFonts.jetBrainsMono(
                   color: const Color(0xFFD4D4D4), // VS Code text
                   fontSize: 14,
                   height: 1.5,
@@ -262,7 +262,7 @@ class _SnippetButton extends StatelessWidget {
         child: Text(
           label,
           style:
-              GoogleFonts.firaCode(fontSize: 12, fontWeight: FontWeight.bold),
+              GoogleFonts.jetBrainsMono(fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ),
     );

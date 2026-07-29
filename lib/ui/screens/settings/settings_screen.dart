@@ -19,8 +19,8 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: Text("SETTINGS",
-            style: GoogleFonts.robotoMono(fontWeight: FontWeight.bold)),
+        title: const Text("Settings",
+            style: TextStyle(fontWeight: FontWeight.w700)),
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -79,7 +79,7 @@ class SettingsScreen extends StatelessWidget {
           Center(
             child: Text(
               "Version 1.0.0 (Build 15)",
-              style: GoogleFonts.firaCode(color: Colors.white24, fontSize: 12),
+              style: GoogleFonts.jetBrainsMono(color: Colors.white24, fontSize: 12),
             ),
           ),
         ],
@@ -92,7 +92,7 @@ class SettingsScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title.toUpperCase(),
-        style: GoogleFonts.robotoMono(
+        style: GoogleFonts.jetBrainsMono(
           color: Colors.grey,
           fontSize: 12,
           fontWeight: FontWeight.bold,

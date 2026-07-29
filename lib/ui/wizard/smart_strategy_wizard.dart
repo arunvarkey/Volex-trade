@@ -45,11 +45,11 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "SMART BUILDER",
-                  style: GoogleFonts.robotoMono(
+                  "Smart Builder",
+                  style: GoogleFonts.dmSans(
                     color: VxColors.neonPurple,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+                    letterSpacing: 0.2,
                   ),
                 ),
                 IconButton(
