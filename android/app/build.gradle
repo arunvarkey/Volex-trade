@@ -3,8 +3,18 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
-    id "com.google.firebase.crashlytics"
+}
+
+// Firebase's Google-Services + Crashlytics Gradle plugins hard-require a
+// google-services.json. Apply them only when that file is present, so the app
+// builds and runs Firebase-free (like the web preview) for developers who
+// haven't configured a Firebase project.
+def googleServicesFile = rootProject.file("app/google-services.json")
+if (googleServicesFile.exists()) {
+    apply plugin: "com.google.gms.google-services"
+    apply plugin: "com.google.firebase.crashlytics"
+} else {
+    println("⚠️  google-services.json not found — Firebase Gradle plugins skipped (running Firebase-free).")
 }
 
 def keystoreProperties = new Properties()

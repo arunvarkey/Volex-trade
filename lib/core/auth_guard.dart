@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,11 @@ class AuthGuard {
   static String? handleRedirect(BuildContext context, GoRouterState state) {
     // Web preview runs without Firebase auth configured, so don't gate routes.
     if (kIsWeb) return null;
+
+    // Native without a configured Firebase project (no google-services.json):
+    // run open, exactly like the web preview, instead of crashing on
+    // FirebaseAuth.instance.
+    if (Firebase.apps.isEmpty) return null;
 
     final isPublic = publicRoutes.contains(state.uri.path);
     final user = FirebaseAuth.instance.currentUser;

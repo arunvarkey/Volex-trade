@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 
 enum StartupDestination {
@@ -21,8 +22,13 @@ class StartupService {
   Future<StartupDestination> determineStartupRoute() async {
     final prefs = await SharedPreferences.getInstance();
 
+    // Firebase may be unconfigured (no google-services.json). Treat that as a
+    // guest session — skip the account gate and run the app open, rather than
+    // throwing on FirebaseAuth.instance.
+    final firebaseReady = Firebase.apps.isNotEmpty;
+
     // Check if user is signed in
-    final user = _auth.currentUser;
+    final user = firebaseReady ? _auth.currentUser : null;
     final isAuthenticated = user != null;
 
     // Check if user completed onboarding
@@ -42,7 +48,8 @@ class StartupService {
       return StartupDestination.onboarding;
     }
 
-    if (!isAuthenticated) {
+    // Only require an account when Firebase is actually available.
+    if (firebaseReady && !isAuthenticated) {
       return StartupDestination.signup;
     }
 
