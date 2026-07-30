@@ -50,7 +50,7 @@ class MainCanvasPainter extends CustomPainter {
   }
 
   void _drawDebugInfo(Canvas canvas) {
-    const textStyle = TextStyle(
+    final textStyle = TextStyle(
         color: VxColors.neonCyan,
         fontSize: 10,
         fontFamily: VxTypography.monoFamily,
