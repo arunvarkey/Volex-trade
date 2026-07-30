@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -61,8 +62,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Mark onboarding as complete
     await StartupService().markOnboardingComplete();
 
-    // Navigate to signup
-    if (mounted) {
+    if (!mounted) return;
+    // Firebase-free (no google-services.json): there's no auth backend, so
+    // skip account creation and continue into the app as a guest — otherwise
+    // the user gets stuck on a signup/login screen that can never succeed.
+    if (Firebase.apps.isEmpty) {
+      context.go('/mode-selection');
+    } else {
       context.go('/signup');
     }
   }
