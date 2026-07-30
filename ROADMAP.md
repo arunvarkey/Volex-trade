@@ -53,7 +53,7 @@ Every feature — no exceptions — moves through five gates:
 | Item | Acceptance criteria | Status |
 |---|---|---|
 | **13+ age gate** | birth-agnostic 13+ confirmation before the app; stores only a derived boolean (no birthdate); under-13 gets a polite block; tested | ✅ |
-| Android device run | app boots, all 5 tabs + Academy + Predictions + chart verified on a physical phone; issues logged and fixed | ☐ |
+| Android device run | app boots, all 5 tabs + Academy + Predictions + chart verified on a physical phone; issues logged and fixed | 🟡 app builds & runs Firebase-free on a physical Android device (AGP 8.9.1 / Gradle 8.11.1 / compileSdk 36 / NDK 28; google-services optional; native auth guarded). Verified on-device and fixed this pass: AI Strategy Builder generation, strategy start/stop, editable profile, bottom-sheet-behind-nav overlap, Live Signals population, Predict contract selection, chart trade-sheet alignment, chart candle clarity, All-Markets synthetic data, and a full app-wide font/design consistency pass (one DM Sans + one JetBrains Mono; blue accent). Remaining: full Academy/Optimizer/Wallet walkthrough, release build, Play internal testing. |
 | Release build | `flutter build apk --release` succeeds; app icon, name, version correct | ☐ |
 | Play internal testing | listing assets from docs/APP_STORE_ENTRY.md; ≥3 testers installed; crash-free sessions in Crashlytics | ☐ |
 
