@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../sheets/vx_trade_sheet.dart';
@@ -612,7 +613,7 @@ class _StrategyDashboardSheet extends StatelessWidget {
                     color: isProfitable ? VxColors.neonGreen : VxColors.neonRed,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'RobotoMono',
+                    fontFamily: VxTypography.monoFamily,
                   ),
                 ),
               ],
@@ -790,11 +791,11 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
                 const SizedBox(width: 8),
                 Text(
                   widget.symbol,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: VxColors.neonCyan,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'RobotoMono',
+                    fontFamily: VxTypography.monoFamily,
                   ),
                 ),
               ],
@@ -822,11 +823,11 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
           TextField(
             controller: _priceController,
             keyboardType: TextInputType.number,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'RobotoMono',
+              fontFamily: VxTypography.monoFamily,
             ),
             decoration: InputDecoration(
               labelText: 'Target Price',
@@ -1214,8 +1215,8 @@ class _VxSymbolSearchDelegate extends SearchDelegate<String> {
               children: [
                 Text(
                   '\$${market['price']}',
-                  style: const TextStyle(
-                      color: Colors.white70, fontFamily: 'RobotoMono'),
+                  style: TextStyle(
+                      color: Colors.white70, fontFamily: VxTypography.monoFamily),
                 ),
                 Text(
                   '${isPositive ? '+' : ''}${market['change']}%',

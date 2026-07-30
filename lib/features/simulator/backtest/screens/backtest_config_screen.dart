@@ -48,7 +48,6 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         title: const Text(
           'BACKTEST CONFIGURATION',
           style: TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
             letterSpacing: 2,
             fontSize: 16,
@@ -326,7 +325,6 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                 style: const TextStyle(
                   color: VxColors.neonGreen,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Courier',
                   fontSize: 16,
                 ),
               ),

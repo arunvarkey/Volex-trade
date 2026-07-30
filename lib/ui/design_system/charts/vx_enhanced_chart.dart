@@ -1,4 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
@@ -467,8 +468,8 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
               style: TextStyle(
                   color: color, fontSize: 12, fontWeight: FontWeight.bold)),
           Text("\$${price.toStringAsFixed(2)}",
-              style: const TextStyle(
-                  color: Colors.white, fontFamily: 'RobotoMono')),
+              style: TextStyle(
+                  color: Colors.white, fontFamily: VxTypography.monoFamily)),
         ],
       ),
     );
@@ -593,10 +594,10 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
                   return LineTooltipItem(
                     "O: ${c.open.toStringAsFixed(2)}\nH: ${c.high.toStringAsFixed(2)}\n"
                     "L: ${c.low.toStringAsFixed(2)}\nC: ${c.close.toStringAsFixed(2)}",
-                    const TextStyle(
+                    TextStyle(
                       color: Colors.white,
                       fontSize: 10,
-                      fontFamily: 'RobotoMono',
+                      fontFamily: VxTypography.monoFamily,
                     ),
                   );
                 }).toList(),

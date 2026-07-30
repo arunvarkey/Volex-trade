@@ -181,7 +181,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                   '\$${widget.currentPrice.toStringAsFixed(2)}',
                   style: VxTypography.body.copyWith(
                     color: Colors.white70,
-                    fontFamily: 'SpaceMono', // Theme aligned
+                    fontFamily: VxTypography.monoFamily, // Theme aligned
                   ),
                 ),
               ],
@@ -267,10 +267,10 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                     ),
                     Text(
                       '${(_sliderValue * 100).toInt()}% of Portfolio',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
-                        fontFamily: 'RobotoMono',
+                        fontFamily: VxTypography.monoFamily,
                       ),
                     ),
                   ],

@@ -94,7 +94,7 @@ class _AnalyticsSummaryCard extends StatelessWidget {
           value,
           style: TextStyle(
             color: valueColor,
-            fontFamily: 'JetBrainsMono',
+            fontFamily: VxTypography.monoFamily,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),

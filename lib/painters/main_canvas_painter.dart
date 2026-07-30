@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../engine/chart_controller.dart';
 import 'candle_painter.dart';
 import 'ghost_painter.dart';
@@ -52,7 +53,7 @@ class MainCanvasPainter extends CustomPainter {
     const textStyle = TextStyle(
         color: VxColors.neonCyan,
         fontSize: 10,
-        fontFamily: 'RobotoMono',
+        fontFamily: VxTypography.monoFamily,
         letterSpacing: 1.2);
     final textSpan = TextSpan(
       text:

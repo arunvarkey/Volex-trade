@@ -174,8 +174,8 @@ class _ParameterEditorState extends State<ParameterEditor> {
           dropdownColor: VxColors.surface,
           isExpanded: true,
           underline: const SizedBox(),
-          style: const TextStyle(
-              fontFamily: 'RobotoMono', color: Colors.white70, fontSize: 12),
+          style: TextStyle(
+              fontFamily: VxTypography.monoFamily, color: Colors.white70, fontSize: 12),
           items: schema.options!
               .map((o) => DropdownMenuItem(value: o, child: Text(o)))
               .toList(),

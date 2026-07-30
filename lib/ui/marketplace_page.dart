@@ -33,8 +33,8 @@ class _MarketplacePageState extends State<MarketplacePage> {
           Padding(
             padding: const EdgeInsets.all(VxSpacing.lg),
             child: TextField(
-              style: const TextStyle(
-                  color: Colors.white, fontFamily: 'RobotoMono'),
+              style: TextStyle(
+                  color: Colors.white, fontFamily: VxTypography.monoFamily),
               decoration: InputDecoration(
                 hintText: "SEARCH_GENOMES...",
                 hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),

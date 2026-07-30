@@ -48,7 +48,6 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
         title: Text(
           'CONFIGURE ${widget.template.name.toUpperCase()}',
           style: const TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
             letterSpacing: 2,
             fontSize: 16,
@@ -321,7 +320,6 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
                 style: const TextStyle(
                   color: VxColors.neonCyan,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Courier',
                 ),
               ),
             ),

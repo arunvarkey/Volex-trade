@@ -45,7 +45,6 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
             Text(
               'AI STRATEGY ASSISTANT',
               style: TextStyle(
-                fontFamily: 'Courier',
                 color: VxColors.neonPurple,
                 letterSpacing: 2,
                 fontSize: 16,
@@ -343,7 +342,6 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     style: const TextStyle(
                       color: VxColors.neonCyan,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Courier',
                     ),
                   ),
                 ],

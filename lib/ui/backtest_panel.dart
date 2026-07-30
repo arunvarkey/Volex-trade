@@ -171,8 +171,8 @@ class _BacktestPanelState extends State<BacktestPanel> {
                         child: DropdownButtonFormField<Strategy>(
                           initialValue: _selectedStrategy,
                           dropdownColor: VxColors.surface,
-                          style: const TextStyle(
-                              fontFamily: 'RobotoMono', color: Colors.white),
+                          style: TextStyle(
+                              fontFamily: VxTypography.monoFamily, color: Colors.white),
                           decoration: const InputDecoration(
                             labelText: "STRATEGY_MODEL",
                             labelStyle:

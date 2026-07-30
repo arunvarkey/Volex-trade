@@ -170,8 +170,8 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
           DropdownButtonFormField<Strategy>(
             initialValue: _selectedStrategy,
             dropdownColor: VxColors.surface,
-            style: const TextStyle(
-                fontFamily: 'RobotoMono', color: Colors.white, fontSize: 13),
+            style: TextStyle(
+                fontFamily: VxTypography.monoFamily, color: Colors.white, fontSize: 13),
             decoration: const InputDecoration(
               labelText: "STRATEGY_TARGET",
               labelStyle: TextStyle(color: Colors.white24, fontSize: 10),

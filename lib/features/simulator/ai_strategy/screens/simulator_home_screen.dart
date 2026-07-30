@@ -23,7 +23,6 @@ class SimulatorHomeScreen extends StatelessWidget {
         title: const Text(
           'STRATEGY SIMULATOR',
           style: TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
             letterSpacing: 2,
           ),

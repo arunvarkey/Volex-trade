@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../navigation/vx_navigation_helper.dart';
 import 'package:provider/provider.dart';
 import '../providers/dashboard_provider.dart';
@@ -77,11 +78,11 @@ class _VxCockpitState extends State<VxCockpit> {
           const SizedBox(height: 8),
           Text(
             '\$${totalBalance.toStringAsFixed(2)}',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 48,
               fontWeight: FontWeight.bold,
-              fontFamily: 'RobotoMono',
+              fontFamily: VxTypography.monoFamily,
             ),
           ),
           const SizedBox(height: 8),
@@ -335,11 +336,11 @@ class _MarketTile extends StatelessWidget {
                   children: [
                     Text(
                       '\$${price.toStringAsFixed(2)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'RobotoMono',
+                        fontFamily: VxTypography.monoFamily,
                       ),
                     ),
                     const SizedBox(height: 2),

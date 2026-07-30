@@ -142,8 +142,8 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
                           isExpanded: true,
                           initialValue: _selectedStrategy,
                           dropdownColor: VxColors.surface,
-                          style: const TextStyle(
-                              fontFamily: 'RobotoMono', color: Colors.white),
+                          style: TextStyle(
+                              fontFamily: VxTypography.monoFamily, color: Colors.white),
                           decoration: InputDecoration(
                               labelText: "STRATEGY_TARGET",
                               labelStyle: const TextStyle(

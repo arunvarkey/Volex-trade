@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../vx_colors.dart';
@@ -53,10 +54,10 @@ class VxLineChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toStringAsFixed(0),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white54,
                     fontSize: 10,
-                    fontFamily: 'RobotoMono',
+                    fontFamily: VxTypography.monoFamily,
                   ),
                 );
               },
@@ -86,10 +87,10 @@ class VxLineChart extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Text(
                     DateFormat('MM/dd').format(ts),
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white54,
                         fontSize: 10,
-                        fontFamily: 'RobotoMono'),
+                        fontFamily: VxTypography.monoFamily),
                   ),
                 );
               },

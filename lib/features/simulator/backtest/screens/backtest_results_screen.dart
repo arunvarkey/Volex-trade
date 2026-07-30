@@ -23,7 +23,6 @@ class BacktestResultsScreen extends StatelessWidget {
         title: const Text(
           'BACKTEST RESULTS',
           style: TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
             letterSpacing: 2,
             fontSize: 16,
@@ -191,7 +190,6 @@ class BacktestResultsScreen extends StatelessWidget {
             color: color,
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Courier',
           ),
         ),
       ],
@@ -362,7 +360,6 @@ class BacktestResultsScreen extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                fontFamily: 'Courier',
               ),
             ),
             const SizedBox(width: 8),
@@ -438,7 +435,6 @@ class BacktestResultsScreen extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Courier',
                   fontSize: 13,
                 ),
               ),
@@ -449,7 +445,6 @@ class BacktestResultsScreen extends StatelessWidget {
                     color:
                         trade.pnl! >= 0 ? VxColors.neonGreen : VxColors.neonRed,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Courier',
                     fontSize: 12,
                   ),
                 ),

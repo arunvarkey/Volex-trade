@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../vx_colors.dart';
 
 /// Model for a technical indicator
@@ -458,7 +459,7 @@ class _IndicatorSettingsSheetState extends State<_IndicatorSettingsSheet> {
                             color: widget.indicator.color,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'RobotoMono',
+                            fontFamily: VxTypography.monoFamily,
                           ),
                         ),
                       ],

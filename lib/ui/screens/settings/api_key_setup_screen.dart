@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/features/trading/services/secure_trading_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -79,9 +80,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
               TextFormField(
                 controller: _apiKeyController,
                 enabled: !_hasExistingKeys,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'JetBrainsMono',
+                  fontFamily: VxTypography.monoFamily,
                   fontSize: 13,
                 ),
                 decoration: InputDecoration(
@@ -121,9 +122,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
                 controller: _secretKeyController,
                 enabled: !_hasExistingKeys,
                 obscureText: _obscureSecret,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'JetBrainsMono',
+                  fontFamily: VxTypography.monoFamily,
                   fontSize: 13,
                 ),
                 decoration: InputDecoration(

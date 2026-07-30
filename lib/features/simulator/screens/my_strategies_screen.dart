@@ -43,7 +43,6 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
         title: Text(
           'MY STRATEGIES ($count/$limit)',
           style: const TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
             letterSpacing: 2,
             fontSize: 16,
@@ -173,7 +172,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
           Text(
             '${strategy.symbol} • ${strategy.timeframe}',
             style: TextStyle(
-                color: Colors.grey[500], fontSize: 11, fontFamily: 'Courier'),
+                color: Colors.grey[500], fontSize: 11),
           ),
           const SizedBox(height: 16),
           Row(

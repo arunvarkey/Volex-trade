@@ -23,7 +23,6 @@ class TemplateSelectorScreen extends StatelessWidget {
         title: const Text(
           'CHOOSE TEMPLATE',
           style: TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
             letterSpacing: 2,
           ),
