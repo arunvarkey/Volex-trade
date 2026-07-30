@@ -23,6 +23,12 @@ import 'package:volex_terminal/ui/screens/subscriptions/subscription_screen.dart
 import 'package:volex_terminal/ui/screens/strategies/optimizer_screen.dart';
 import 'package:volex_terminal/ui/screens/strategies/scanner_screen.dart'; // MarketScannerScreen
 import 'package:volex_terminal/ui/screens/strategies/ai_strategy_generator_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/simulator_home_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/template_selector_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/template_config_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/ai_assistant_screen.dart';
+import 'package:volex_terminal/features/simulator/screens/my_strategies_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/models/strategy_template.dart';
 import 'package:volex_terminal/ui/screens/lab/lab_screen.dart';
 import 'package:volex_terminal/ui/screens/marketplace/marketplace_screen.dart';
 import 'package:volex_terminal/ui/screens/marketplace/leaderboard_screen.dart';
@@ -160,6 +166,30 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/ai-strategy',
       builder: (context, state) => const AIStrategyGeneratorScreen(),
+    ),
+
+    // Strategy Studio (template-driven build pillar). Backtest reuses the
+    // corrected /lab/backtest/* engine, not a parallel path.
+    GoRoute(
+      path: '/simulator',
+      builder: (context, state) => const SimulatorHomeScreen(),
+    ),
+    GoRoute(
+      path: '/simulator/templates',
+      builder: (context, state) => const TemplateSelectorScreen(),
+    ),
+    GoRoute(
+      path: '/simulator/templates/config',
+      builder: (context, state) =>
+          TemplateConfigScreen(template: state.extra as StrategyTemplate),
+    ),
+    GoRoute(
+      path: '/simulator/ai-assistant',
+      builder: (context, state) => const AiAssistantScreen(),
+    ),
+    GoRoute(
+      path: '/simulator/my-strategies',
+      builder: (context, state) => const MyStrategiesScreen(),
     ),
 
     // Volex Daily (daily challenge ritual)

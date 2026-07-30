@@ -17,6 +17,8 @@ import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/ui/design_system/theme_service.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
 import 'package:volex_terminal/engine/persistence/persistence_service.dart';
+import 'package:volex_terminal/core/config/app_mode_service.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/services/strategy_repository.dart';
 import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/engine/chart_controller.dart';
@@ -98,6 +100,10 @@ class ServiceLocator {
       getIt.registerSingleton<SharedPreferences>(prefs);
       _log('SHPREFS: OK.');
 
+      // App mode (paper/testnet/live) — read by the Strategy Studio hub.
+      getIt.registerSingleton<AppModeService>(AppModeService(prefs));
+      _log('APP_MODE: OK.');
+
       onProgress?.call('Initializing secure storage...', 0.1);
       _log('SECURE: Vault check...');
       final secureStorage = SecureStorageService();
@@ -121,6 +127,17 @@ class ServiceLocator {
       await persistence.initialize();
       getIt.registerSingleton<PersistenceService>(persistence);
       _log('HIVE: OK.');
+
+      // Strategy Studio persistence (Hive box 'strategies'). Guarded so a box
+      // failure can't abort boot — the studio simply has no saved strategies.
+      final strategyRepository = StrategyRepository();
+      try {
+        await strategyRepository.initialize();
+      } catch (e) {
+        _log('STRATEGY_REPO: init failed ($e) — continuing.');
+      }
+      getIt.registerSingleton<StrategyRepository>(strategyRepository);
+      _log('STRATEGY_REPO: OK.');
 
       onProgress?.call('Initializing terminal settings...', 0.16);
       final terminalSettings = TerminalSettingsProvider.inject(persistence);

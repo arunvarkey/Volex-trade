@@ -470,7 +470,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       'name': 'AI: ${_controller.text.split(' ').take(4).join(' ')}',
     });
 
-    context.push('/simulator/backtest', extra: strategy);
+    context.push('/lab/backtest/config', extra: strategy);
   }
 
   void _showError(String message) {

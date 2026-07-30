@@ -474,7 +474,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
 
     // Navigate to backtest
     if (mounted) {
-      context.push('/simulator/backtest', extra: strategy);
+      context.push('/lab/backtest/config', extra: strategy);
     }
   }
 

@@ -92,6 +92,16 @@ tests). Remaining: XP hooks from paper trades and backtests.
 
 ### Strategy Studio activation (mission-critical, device-gated)
 
+> **Status: 🟡 wired — pending on-device validation.** DI + routing done:
+> `AppModeService` and `StrategyRepository` (Hive box `strategies`, boot-guarded)
+> registered and provided; routes live under `/simulator` (`templates`,
+> `templates/config` with `StrategyTemplate` extra, `ai-assistant`,
+> `my-strategies`); the studio's backtest repointed to the corrected
+> `/lab/backtest/config` (no parallel path); More-menu entry added, with the
+> `/ai-strategy` generator kept as fallback. Green under `--fatal-infos`.
+> Remaining: walk the hub → template → config → backtest → save loop on device.
+
+
 A complete **AI Strategy Studio** (1,808 LOC: hub → template picker → template
 config → backtest, plus AI Assistant and a My-Strategies manager) exists under
 `lib/features/simulator/` but was never connected — its DI plumbing was never

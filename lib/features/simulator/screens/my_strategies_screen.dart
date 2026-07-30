@@ -266,7 +266,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
   }
 
   void _backtest(GeneratedStrategy strategy) {
-    context.push('/simulator/backtest', extra: strategy);
+    context.push('/lab/backtest/config', extra: strategy);
   }
 
   void _startPaperTrading(GeneratedStrategy strategy) {

@@ -61,6 +61,13 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.tune,
+            title: 'Strategy Studio',
+            subtitle: 'Pick a template, tune it, and save your strategies',
+            route: '/simulator',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.science,
             title: 'Backtest Lab',
             subtitle: 'Test strategies against real market history',
