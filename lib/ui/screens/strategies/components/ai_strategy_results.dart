@@ -75,17 +75,19 @@ class AIStrategyResults extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text(
                       'Strategy Generated!',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                    const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
@@ -95,7 +97,7 @@ class AIStrategyResults extends StatelessWidget {
                         border: Border.all(color: VxColors.warning),
                       ),
                       child: Text(
-                        'CONFIDENCE: ${(strategy.confidenceScore * 100).toStringAsFixed(0)}%',
+                        'CONFIDENCE ${(strategy.confidenceScore * 100).toStringAsFixed(0)}%',
                         style: const TextStyle(
                           color: VxColors.warning,
                           fontSize: 10,

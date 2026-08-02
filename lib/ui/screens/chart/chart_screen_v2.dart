@@ -403,13 +403,37 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   child: Consumer<DashboardProvider>(
                     builder: (context, dashboard, _) {
                       final ticker = dashboard.getTicker(_currentSymbol);
+                      // Derive window stats from the loaded candles so the
+                      // header never shows zeros when there's no live ticker
+                      // (offline/synthetic data).
+                      double hi = 0, lo = 0, vol = 0, chg = 0;
+                      if (_candles.isNotEmpty) {
+                        hi = _candles.first.high;
+                        lo = _candles.first.low;
+                        for (final c in _candles) {
+                          if (c.high > hi) hi = c.high;
+                          if (c.low < lo) lo = c.low;
+                          vol += c.volume;
+                        }
+                        final f = _candles.first.close;
+                        if (_candles.length >= 2 && f != 0) {
+                          chg = ((_candles.last.close - f) / f) * 100;
+                        }
+                      }
                       return ChartStatsOverlay(
                         symbol: _currentSymbol,
                         currentPrice: _currentPrice,
-                        change24h: ticker?.changePercent ?? 0.0,
-                        high24h: ticker?.highPrice ?? 0.0,
-                        low24h: ticker?.lowPrice ?? 0.0,
-                        volume24h: ticker?.quoteVolume ?? 0.0,
+                        change24h: (ticker?.changePercent ?? 0) != 0
+                            ? ticker!.changePercent
+                            : chg,
+                        high24h: (ticker?.highPrice ?? 0) > 0
+                            ? ticker!.highPrice
+                            : hi,
+                        low24h:
+                            (ticker?.lowPrice ?? 0) > 0 ? ticker!.lowPrice : lo,
+                        volume24h: (ticker?.quoteVolume ?? 0) > 0
+                            ? ticker!.quoteVolume
+                            : vol,
                       );
                     },
                   ),
