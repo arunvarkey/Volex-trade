@@ -56,16 +56,32 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     _chartController = ChartController();
     _currentSymbol = widget.symbol ?? 'BTCUSDT'; // Default to BTC if null
     DrawingService.instance.ensureLoaded();
+    _replayController.addListener(_onReplaySeek);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
     });
   }
 
+  /// When replay is paused/seeked, resync the chart to the playhead so
+  /// dragging the slider actually moves the chart (play is handled by the
+  /// candle stream).
+  void _onReplaySeek() {
+    if (!_isReplayMode || _replayController.isPlaying || !mounted) return;
+    final soFar = _replayController.historySoFar;
+    if (soFar.isEmpty) return;
+    setState(() {
+      _candles = List.from(soFar);
+      _currentPrice = soFar.last.close;
+    });
+    _chartController.setData(_candles);
+  }
+
   @override
   void dispose() {
     _candleSubscription?.cancel();
     _replaySubscription?.cancel();
+    _replayController.removeListener(_onReplaySeek);
     _chartController.dispose();
     _replayController.dispose();
     super.dispose();
@@ -134,11 +150,14 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
       // The replayer will start from index 0 or user seeks.
       // Note: Realistically we might want to fetch a deeper history for backtesting.
       // For MVP, we play back what we have.
-      _replayController.loadHistory(List.from(_candles));
+      // Seed a warmup window so the chart isn't blank before playback, then
+      // replay reveals candles forward from there.
+      final full = List<Candle>.from(_candles);
+      final warmup = full.length > 60 ? 60 : (full.length ~/ 2);
+      _replayController.loadHistory(full, warmup: warmup);
 
-      // Clear chart to empty (or start point)
-      _candles = [];
-      _chartController.setData([]);
+      _candles = full.take(warmup).toList();
+      _chartController.setData(_candles);
 
       // Listen to Replayer
       _replaySubscription?.cancel();

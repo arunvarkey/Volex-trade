@@ -7,6 +7,7 @@ import 'data_status.dart';
 import 'binance/binance_socket_client.dart';
 import '../core/isolate_manager.dart';
 import 'package:volex_terminal/core/app_logger.dart';
+import 'package:volex_terminal/core/synthetic_candles.dart';
 
 import '../core/service_locator.dart';
 
@@ -139,13 +140,16 @@ class MarketDataRepository implements IMarketDataRepository {
 
       if (response.statusCode == 200) {
         final List<dynamic> json = const JsonDecoder().convert(response.body);
-        return json.map((j) => Candle.fromJson(j)).toList();
+        final candles = json.map((j) => Candle.fromJson(j)).toList();
+        if (candles.isNotEmpty) return candles;
       }
-      return [];
+      AppLogger.warning(
+          "History: empty/failed real data for $symbol (${response.statusCode}); using synthetic.");
     } catch (e) {
-      AppLogger.error("History Fetch Error: $e");
-      return [];
+      AppLogger.error("History Fetch Error: $e. Using synthetic candles.");
     }
+    // Offline/blocked fallback so the scanner and signal engine always have data.
+    return SyntheticCandles.generate(symbol, interval, limit);
   }
 
   @override
