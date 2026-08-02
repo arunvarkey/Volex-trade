@@ -168,6 +168,56 @@ marketplace — an empty marketplace helps no one).
 
 ---
 
+## M6 — International-grade launch readiness  `NOT STARTED`
+
+**Goal:** the honest gate between "runs on a device" and a global public
+launch. Nothing here is optional for GA; each item has a binary done/not-done.
+
+> Reality check (2026-08): the app runs end-to-end on device in a
+> **Firebase-free / synthetic-data** preview mode. That is a demo, not a
+> launch. The items below are what stand between the two.
+
+### 6a — Functional completeness (verified on device, not just compiling)
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Signals engine | Produces real signals from live data on a physical device | ⬜ (offline synthetic fallback added) |
+| Backtest loop | describe → generate → backtest → **honest** results screen with real metrics | ⬜ |
+| Strategy activation | "Deploy" actually runs a paper-trading loop that opens/closes positions | ⬜ (state tracked only) |
+| Replay | Loads history, plays, seeks, and renders throughout | ⬜ (warmup + seek fixed; needs device pass) |
+| Every screen | Handles loading / empty / error states; **zero** RenderFlex overflows across phone sizes | ⬜ |
+
+### 6b — Real backend & data (no more mocks)
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Firebase project | Real `google-services.json` / `firebase_options`; auth, Firestore, analytics live | ⬜ |
+| Market data | A production data feed (Binance or licensed vendor) with fallback + rate-limit handling | ⬜ |
+| Real AI strategy gen | Cloud function + key wired; demo mode only when offline, clearly labelled | ⬜ |
+| Accounts | Sign-up / sign-in / verify / reset all work; guest → account upgrade path | ⬜ |
+
+### 6c — International grade (the literal bar)
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| i18n / l10n | All user-facing strings externalized; at least EN + 2 launch languages; `intl` wired | ⬜ |
+| Formatting | Locale-aware number / currency / date formatting; RTL layout sanity | ⬜ |
+| Performance | Cold start < 3s on mid-tier Android; chart stays 60fps; no jank on scroll | ⬜ |
+| Accessibility | Semantic labels, tap targets ≥ 48dp, contrast AA, dynamic text scaling | ⬜ |
+
+### 6d — Trust, compliance & store readiness
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Disclaimers | "Simulated — not financial advice" surfaced where trades/signals appear | ⬜ |
+| Legal | Privacy Policy + Terms live at real URLs; age gate verified; data-deletion path | ⬜ |
+| Store assets | Icon, screenshots, listing copy, content rating, privacy nutrition labels | ⬜ |
+| Release build | Signed release APK/IPA builds green; ProGuard/R8 keeps app working; crash-free | ⬜ |
+| QA matrix | Manual pass on ≥3 device sizes + a tester cohort before public listing | ⬜ |
+
+**GA definition of done:** a new user on a fresh device can sign up, complete a
+full learn → build → backtest → paper-trade loop on real data, in their
+language, with no dead-ends, overflows, or mock placeholders — and a signed
+release build passes store review.
+
+---
+
 ## Decision log
 
 - 2026-07: Simulator-first identity locked (VISION.md). Live execution
@@ -184,4 +234,11 @@ marketplace — an empty marketplace helps no one).
   Remaining engine follow-ups: backtest timeout regression (M0), backtest EMA
   is O(n²) over long histories, Sharpe assumes daily periods.
 
-_Last updated: 2026-07-18_
+- 2026-08: Device preview runs Firebase-free on synthetic data. Added an
+  offline synthetic-candle fallback (charts/scanner/signals), fixed the
+  onboarding mode-selection blocker, AI-results overflow, chart 24h stats,
+  and replay's blank-start. Added **M6 — international-grade launch
+  readiness** as the honest gate to GA: real backend + data, functional
+  completeness on device, i18n/perf/a11y, and compliance/store readiness.
+
+_Last updated: 2026-08-02_
