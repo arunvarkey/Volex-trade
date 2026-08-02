@@ -93,39 +93,34 @@ class ModeSelectionScreen extends StatelessWidget {
   }
 
   void _selectExplorerMode(BuildContext context) async {
-    // Save mode selection
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_mode', 'explorer');
-
-    // Mark mode as selected
     await StartupService().markModeSelected();
-
-    // Track analytics
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'mode_selected',
-      parameters: {'mode': 'explorer'},
-    );
+    _logMode('explorer');
 
     // Go straight to app (no API keys needed!)
     if (context.mounted) context.go('/');
   }
 
   void _selectProMode(BuildContext context) async {
-    // Save mode selection
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_mode', 'pro');
-
-    // Mark mode as selected
     await StartupService().markModeSelected();
-
-    // Track analytics
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'mode_selected',
-      parameters: {'mode': 'pro'},
-    );
+    _logMode('pro');
 
     // Show API key setup
     if (context.mounted) context.push('/api-key-setup');
+  }
+
+  /// Fire-and-forget analytics that never blocks navigation. Firebase may be
+  /// unconfigured on device (no google-services.json), so guard both the
+  /// synchronous `.instance` access and the async logEvent.
+  void _logMode(String mode) {
+    try {
+      FirebaseAnalytics.instance
+          .logEvent(name: 'mode_selected', parameters: {'mode': mode})
+          .catchError((_) {});
+    } catch (_) {}
   }
 }
 
