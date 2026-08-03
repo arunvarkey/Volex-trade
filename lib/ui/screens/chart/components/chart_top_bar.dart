@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../design_system/vx_colors.dart';
 import '../../../design_system/vx_typography.dart';
+import '../../../design_system/vx_coin_icon.dart';
 import '../../../widgets/vx_holographic_card.dart';
 
 class ChartTopBar extends StatelessWidget {
@@ -50,6 +51,8 @@ class ChartTopBar extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
+                    VxCoinIcon(symbol, size: 22),
+                    const SizedBox(width: 8),
                     Text(
                       symbol,
                       style: VxTypography.body

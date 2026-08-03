@@ -7,6 +7,7 @@ import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/features/signals/services/signal_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_card.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/widgets/paywalls/signal_limit_banner.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
@@ -252,23 +253,24 @@ class _SignalCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: color.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isBuy ? Icons.arrow_upward : Icons.arrow_downward,
-                            color: color,
-                            size: 20,
-                          ),
-                        ),
+                        VxCoinIcon(signal.symbol, size: 40),
                         const SizedBox(width: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            VxText.bodyBold(signal.symbol),
+                            Row(
+                              children: [
+                                Icon(
+                                  isBuy
+                                      ? Icons.arrow_upward
+                                      : Icons.arrow_downward,
+                                  color: color,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                VxText.bodyBold(signal.symbol),
+                              ],
+                            ),
                             VxText.caption(signal.strategyName,
                                 color: Colors.white38),
                           ],

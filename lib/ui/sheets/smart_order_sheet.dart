@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 
@@ -65,7 +66,13 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  VxText.heading3("Trade ${widget.symbol}"),
+                  Row(
+                    children: [
+                      VxCoinIcon(widget.symbol, size: 28),
+                      const SizedBox(width: 10),
+                      VxText.heading3("Trade ${widget.symbol}"),
+                    ],
+                  ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close, color: VxColors.neutral500),
