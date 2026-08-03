@@ -26,6 +26,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   final List<TradeSignal> _signals = [];
   StreamSubscription<TradeSignal>? _sub;
   bool _scanning = true;
+  bool _upgradeDismissed = false;
 
   @override
   void initState() {
@@ -78,8 +79,9 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
                   : Consumer<SubscriptionService>(
                       builder: (context, subscription, child) {
                         final limit = subscription.maxSignals;
-                        final showUpgrade =
-                            _signals.length > limit && !subscription.isPremium;
+                        final showUpgrade = _signals.length > limit &&
+                            !subscription.isPremium &&
+                            !_upgradeDismissed;
                         final displayCount =
                             showUpgrade ? limit : _signals.length;
 
@@ -207,7 +209,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {}, // Just scroll back up or ignore
+                  onPressed: () => setState(() => _upgradeDismissed = true),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
                     side: const BorderSide(color: Colors.white24),
