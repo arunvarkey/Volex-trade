@@ -6,6 +6,7 @@ import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/services/market_ticker_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'ticker_format.dart';
 
 /// Dense live watchlist — symbol, name, 24h range bar, monospace price and
@@ -129,24 +130,7 @@ class _MarketRow extends StatelessWidget {
         child: Row(
           children: [
             // Asset badge
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Center(
-                child: Text(
-                  base.substring(0, base.length > 4 ? 4 : base.length),
-                  style: VxTypography.caption.copyWith(
-                    fontSize: base.length > 3 ? 8 : 10,
-                    fontWeight: FontWeight.w900,
-                    color: color,
-                  ),
-                ),
-              ),
-            ),
+            VxCoinIcon(ticker.symbol, size: 34),
             const SizedBox(width: 12),
             // Symbol + name + volume
             Expanded(

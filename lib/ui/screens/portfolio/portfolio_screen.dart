@@ -6,6 +6,7 @@ import '../../../engine/execution_manager.dart';
 import '../../../domain/order.dart';
 import '../../../domain/position.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_coin_icon.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
 import 'package:intl/intl.dart';
@@ -293,8 +294,6 @@ class PortfolioScreen extends StatelessWidget {
   }
 
   Widget _buildPositionCard(BuildContext context, Position pos) {
-    final isLong = pos.side == OrderSide.buy;
-
     return InkWell(
       onTap: () => context.push('/chart?symbol=${pos.symbol}'),
       borderRadius: BorderRadius.circular(12),
@@ -303,19 +302,7 @@ class PortfolioScreen extends StatelessWidget {
         borderRadius: 12,
         child: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: (isLong ? VxColors.neonGreen : VxColors.neonRed)
-                    .withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                isLong ? Icons.radar : Icons.align_vertical_bottom,
-                color: isLong ? VxColors.neonGreen : VxColors.neonRed,
-                size: 18,
-              ),
-            ),
+            VxCoinIcon(pos.symbol, size: 40),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

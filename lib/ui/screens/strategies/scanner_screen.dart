@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/scanner/scanner_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 
 class MarketScannerScreen extends StatefulWidget {
@@ -225,21 +226,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
               flex: 2,
               child: Row(
                 children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        name[0],
-                        style: TextStyle(
-                            color: color, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                  VxCoinIcon(result.symbol, size: 38),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

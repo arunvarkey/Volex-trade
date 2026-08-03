@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:volex_terminal/domain/mini_ticker.dart';
 import 'package:volex_terminal/services/market_ticker_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'ticker_format.dart';
 
@@ -90,6 +91,8 @@ class _TapeItem extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          VxCoinIcon(ticker.symbol, size: 16),
+          const SizedBox(width: 6),
           Text(
             baseAsset(ticker.symbol),
             style: VxTypography.caption.copyWith(
