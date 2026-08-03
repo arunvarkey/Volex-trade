@@ -264,11 +264,6 @@ class PortfolioScreen extends StatelessWidget {
           'Open Positions',
           style: VxTypography.caption.copyWith(letterSpacing: 2.0),
         ),
-        TextButton(
-          onPressed: () {},
-          child: Text('Details',
-              style: VxTypography.caption.copyWith(color: VxColors.neonCyan)),
-        ),
       ],
     );
   }

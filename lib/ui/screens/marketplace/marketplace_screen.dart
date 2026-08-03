@@ -45,10 +45,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         backgroundColor: VxColors.background,
         appBar: VxToolbar(
           title: VxText.title('Marketplace'),
-          actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),
-          ],
           bottom: const TabBar(
             indicatorColor: VxColors.accent,
             labelColor: VxColors.accent,
