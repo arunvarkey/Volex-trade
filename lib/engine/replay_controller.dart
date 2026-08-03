@@ -166,9 +166,6 @@ class ReplayController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to get current historical slice for initial load or seek/reset
-  List<Candle> get historySoFar => _fullHistory.sublist(0, _currentIndex);
-
   @override
   void dispose() {
     _timer?.cancel();
