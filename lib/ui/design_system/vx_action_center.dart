@@ -7,6 +7,7 @@ import '../navigation/vx_navigation_helper.dart';
 import '../screens/strategies/ai_strategy_generator_screen.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
+import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import '../../core/app_router.dart';
 import 'package:volex_terminal/engine/alerts/alert_engine.dart';
@@ -321,7 +322,7 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
         isScrollControlled: true,
         builder: (context) => _StrategyDashboardSheet(
           strategyName: activeStrategy.name,
-          currentPnL: 124.50, // Mock PnL
+          currentPnL: context.read<ExecutionManager>().totalPnL,
           onStop: () {
             // Stop logic
             final engine = context.read<StrategyEngine>();
