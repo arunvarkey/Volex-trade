@@ -46,10 +46,14 @@ android {
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
             } else {
-                // Fallback for development if key missing
+                // Fallback: sign release builds with the standard Android
+                // debug keystore (auto-created in the user's home by any debug
+                // run), so `flutter build apk --release` works with zero setup
+                // for sideloading/testing. Provide android/key.properties with
+                // a real upload key for a Play Store build.
                 keyAlias 'androiddebugkey'
                 keyPassword 'android'
-                storeFile file('../debug.keystore')
+                storeFile file("${System.properties['user.home']}/.android/debug.keystore")
                 storePassword 'android'
             }
         }
