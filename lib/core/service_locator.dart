@@ -21,6 +21,7 @@ import 'package:volex_terminal/core/config/app_mode_service.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/services/strategy_repository.dart';
 import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
+import 'package:volex_terminal/engine/strategy/strategy_runner.dart';
 import 'package:volex_terminal/engine/chart_controller.dart';
 import 'package:volex_terminal/providers/execution_mode_provider.dart';
 // import 'package:volex_terminal/services/secure_auth_service.dart'; // REMOVED
@@ -330,6 +331,17 @@ class ServiceLocator {
       getIt.registerSingleton<ScannerEngine>(scannerEngine);
       _log('SCANNER: OK.');
 
+      // --- STRATEGY RUNNER (live paper-trading loop) ---
+      // Turns activated strategies into real paper trades. Listens to the
+      // ExecutionManager and runs only while strategies are active.
+      final strategyRunner = StrategyRunner(
+        getIt<ExecutionManager>(),
+        strategyEngine,
+        historicalRepo,
+      );
+      getIt.registerSingleton<StrategyRunner>(strategyRunner);
+      _log('RUNNER: OK.');
+
       _log('ALGO: Hyper-Thread init...');
       getIt.registerLazySingleton(() => PythonSandboxService());
       _log('ALGO: OK.');
@@ -386,6 +398,9 @@ class ServiceLocator {
       // Sentry cleans itself up, but we can log specific shutdown if needed
       // getIt<CrashReportingService>().dispose();
       getIt<IMarketDataRepository>().dispose();
+      if (getIt.isRegistered<StrategyRunner>()) {
+        getIt<StrategyRunner>().dispose();
+      }
       getIt<ExecutionManager>().dispose();
       getIt<RiskManager>().dispose();
       getIt<NotificationBus>().dispose();
