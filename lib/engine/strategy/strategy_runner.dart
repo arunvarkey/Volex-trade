@@ -4,7 +4,6 @@ import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/data/historical_repository.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
-import 'package:volex_terminal/engine/strategy/strategy_base.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/engine/strategy/strategy_recommendation.dart';
 
