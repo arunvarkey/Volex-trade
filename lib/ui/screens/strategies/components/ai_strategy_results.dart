@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
 
@@ -310,17 +311,25 @@ class AIStrategyResults extends StatelessWidget {
   }
 
   Widget _buildMetric(String label, String value, Color color) {
+    const terms = {
+      'Win Rate': 'win_rate',
+      'Total Return': 'total_return',
+      'Max Drawdown': 'max_drawdown',
+      'Profit Factor': 'profit_factor',
+    };
+    const labelStyle = TextStyle(
+      color: Colors.white54,
+      fontSize: 10,
+      letterSpacing: 1,
+    );
+    final id = terms[label];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 10,
-            letterSpacing: 1,
-          ),
-        ),
+        id != null
+            ? InfoLabel(
+                text: label.toUpperCase(), termId: id, style: labelStyle)
+            : Text(label.toUpperCase(), style: labelStyle),
         const SizedBox(height: 4),
         Text(
           value,

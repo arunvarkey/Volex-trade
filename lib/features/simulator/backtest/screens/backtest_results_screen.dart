@@ -4,8 +4,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
+import '../../../../core/glossary.dart';
 import '../../../../ui/design_system/vx_colors.dart';
 import '../../../../ui/widgets/guidance_banner.dart';
+import '../../../../ui/widgets/glossary_sheet.dart';
 import '../models/backtest_result.dart';
 import '../models/trade_marker.dart';
 
@@ -180,12 +182,30 @@ class BacktestResultsScreen extends StatelessWidget {
     );
   }
 
+  static const Map<String, String> _labelTerms = {
+    'Win Rate': 'win_rate',
+    'Total Return': 'total_return',
+    'Max Drawdown': 'max_drawdown',
+    'Profit Factor': 'profit_factor',
+    'P&L': 'pnl',
+  };
+
+  /// A metric label that becomes tappable (with a "?") when we have a plain
+  /// English definition for it; otherwise plain text.
+  Widget _termLabel(String label, TextStyle style) {
+    final id = _labelTerms[label];
+    if (id != null && Glossary.has(id)) {
+      return InfoLabel(text: label, termId: id, style: style);
+    }
+    return Text(label, style: style);
+  }
+
   Widget _buildStatColumn(String label, String value, Color color) {
     return Column(
       children: [
-        Text(
+        _termLabel(
           label,
-          style: TextStyle(
+          TextStyle(
             color: Colors.grey[400],
             fontSize: 11,
             letterSpacing: 1,
@@ -356,9 +376,9 @@ class BacktestResultsScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        _termLabel(
           label,
-          style: TextStyle(color: Colors.grey[400], fontSize: 13),
+          TextStyle(color: Colors.grey[400], fontSize: 13),
         ),
         Row(
           children: [
