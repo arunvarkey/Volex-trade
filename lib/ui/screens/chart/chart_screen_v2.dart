@@ -16,6 +16,7 @@ import 'package:volex_terminal/ui/screens/chart/components/chart_top_bar.dart';
 import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
 import 'package:volex_terminal/ui/sheets/smart_order_sheet.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 // [NEW] Backtesting Imports
@@ -412,6 +413,19 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                     onSymbolTap: () => _onSymbolChanged(_currentSymbol),
                     isReplayMode: _isReplayMode,
                     onReplayTap: _toggleReplayMode,
+                  ),
+                ),
+
+                // Layer 1.5: first-time guidance (dismiss-once, never nags)
+                const Positioned(
+                  top: 62,
+                  left: 0,
+                  right: 0,
+                  child: GuidanceBanner(
+                    id: 'chart_intro',
+                    text:
+                        'A practice chart with live data. Tap the ⚡ button to place '
+                        'a risk-free trade — pinch to zoom, drag to pan.',
                   ),
                 ),
 

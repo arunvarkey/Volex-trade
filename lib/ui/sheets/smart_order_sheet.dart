@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 
@@ -106,6 +107,13 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                   const SizedBox(width: 8),
                   _buildTypeButton("Limit", false),
                 ],
+              ),
+
+              const GuidanceBanner(
+                id: 'trade_sheet_intro',
+                text:
+                    'Market fills instantly at the current price. Limit waits '
+                    'until the price reaches the amount you set.',
               ),
 
               const SizedBox(height: 16),

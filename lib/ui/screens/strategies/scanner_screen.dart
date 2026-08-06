@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/scanner/scanner_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 
 class MarketScannerScreen extends StatefulWidget {
@@ -88,6 +89,12 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
       ),
       body: Column(
         children: [
+          const GuidanceBanner(
+            id: 'markets_intro',
+            text:
+                'Browse the market. Tap any coin to open its live practice chart, '
+                'or filter by Gainers, Losers and Most Active.',
+          ),
           // Search Bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
