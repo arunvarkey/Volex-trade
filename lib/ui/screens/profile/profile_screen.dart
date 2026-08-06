@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../design_system/vx_colors.dart';
 import '../../design_system/vx_typography.dart';
 import '../../design_system/vx_card.dart';
+import '../../widgets/glossary_sheet.dart';
 import '../../../services/profile_service.dart';
 import '../../../engine/execution_manager.dart';
 import '../settings/settings_screen.dart';
@@ -124,12 +125,14 @@ class ProfileScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildStatItem(
-                "Win Rate", trades > 0 ? "${winRate.toStringAsFixed(0)}%" : "—"),
+                "Win Rate", trades > 0 ? "${winRate.toStringAsFixed(0)}%" : "—",
+                termId: 'win_rate'),
             _buildStatItem("Trades", "$trades"),
             _buildStatItem(
               "P&L",
               "${pnl >= 0 ? '+' : '-'}\$${pnl.abs().toStringAsFixed(0)}",
               color: pnl >= 0 ? VxColors.positive : VxColors.negative,
+              termId: 'pnl',
             ),
           ],
         ),
@@ -137,10 +140,15 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, {Color? color}) {
+  Widget _buildStatItem(String label, String value,
+      {Color? color, String? termId}) {
+    final labelStyle =
+        VxTypography.body.copyWith(color: Colors.white38, fontSize: 10);
     return Column(
       children: [
-        VxText.body(label, color: Colors.white38, fontSize: 10),
+        termId != null
+            ? InfoLabel(text: label, termId: termId, style: labelStyle)
+            : Text(label, style: labelStyle),
         const SizedBox(height: 4),
         VxText.subtitle(value, color: color ?? VxColors.textPrimary),
       ],

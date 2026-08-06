@@ -163,6 +163,15 @@ class AIStrategyResults extends StatelessWidget {
     );
   }
 
+  static const Map<String, String> _indicatorTerms = {
+    'RSI': 'rsi',
+    'MACD': 'macd',
+    'SMA': 'sma',
+    'EMA': 'ema',
+    'BOLLINGER_BANDS': 'bollinger_bands',
+    'VOLUME': 'volume',
+  };
+
   Widget _buildConditionsSection(
     String title,
     List<StrategyCondition> conditions,
@@ -185,10 +194,10 @@ class AIStrategyResults extends StatelessWidget {
           const Text('None',
               style: TextStyle(color: Colors.white30, fontSize: 14)),
         ...conditions.map((condition) {
-          final text =
-              '${condition.indicator} ${condition.comparator} ${condition.value}';
-          final params =
-              condition.params.isNotEmpty ? ' (${condition.params})' : '';
+          final rest =
+              ' ${condition.comparator} ${condition.value}${condition.params.isNotEmpty ? ' (${condition.params})' : ''}';
+          final termId = _indicatorTerms[condition.indicator.toUpperCase()];
+          const valueStyle = TextStyle(color: Colors.white, fontSize: 14);
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
@@ -202,15 +211,15 @@ class AIStrategyResults extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    text + params,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
+                if (termId != null)
+                  InfoLabel(
+                    text: condition.indicator,
+                    termId: termId,
+                    style: valueStyle.copyWith(fontWeight: FontWeight.w600),
+                  )
+                else
+                  Text(condition.indicator, style: valueStyle),
+                Expanded(child: Text(rest, style: valueStyle)),
               ],
             ),
           );
