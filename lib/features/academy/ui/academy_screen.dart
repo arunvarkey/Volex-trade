@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
 import '../data/academy_curriculum.dart';
 import '../models/academy_models.dart';
@@ -55,6 +56,12 @@ class _AcademyScreenState extends State<AcademyScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
             children: [
+              const GuidanceBanner(
+                id: 'learn_intro',
+                text:
+                    'Tap any lesson to start — each is 2–3 minutes and unlocks the next. '
+                    'Finish the basics before you build a strategy.',
+              ),
               _ProgressHeader(
                 progress: _progress.overallProgress,
                 completed: _progress.completedCount,

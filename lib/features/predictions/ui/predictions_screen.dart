@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
 import '../data/prediction_data.dart';
 import '../models/prediction_models.dart';
@@ -63,6 +64,12 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
             children: [
+              const GuidanceBanner(
+                id: 'predict_intro',
+                text:
+                    'Predict real-world events with virtual money. Pick Yes or No, '
+                    'set how many contracts, and see your payout if you\'re right.',
+              ),
               _BalanceHeader(portfolio: _portfolio),
               const SizedBox(height: 22),
               const _SectionLabel(icon: Icons.local_fire_department_rounded,

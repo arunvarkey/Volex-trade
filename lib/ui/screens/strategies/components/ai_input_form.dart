@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
 class AIInputForm extends StatelessWidget {
   final TextEditingController descriptionController;
@@ -36,6 +37,13 @@ class AIInputForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const GuidanceBanner(
+            id: 'build_intro',
+            text:
+                'Describe your idea in plain English (or tap an example below), '
+                'then Generate. We build the strategy and explain why it works.',
+          ),
+          const SizedBox(height: 8),
           _buildHeroSection(),
           const SizedBox(height: 32),
           _buildDescriptionInput(),

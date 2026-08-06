@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import '../../../../ui/design_system/vx_colors.dart';
+import '../../../../ui/widgets/guidance_banner.dart';
 import '../models/backtest_result.dart';
 import '../models/trade_marker.dart';
 
@@ -54,6 +55,13 @@ class BacktestResultsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const GuidanceBanner(
+              id: 'backtest_results_intro',
+              text:
+                  'A backtest replays real history to show how your strategy '
+                  'would have done. Win rate and return are the headline numbers; '
+                  'max drawdown is the worst dip along the way.',
+            ),
             // Overall performance card
             _buildPerformanceCard(),
 
