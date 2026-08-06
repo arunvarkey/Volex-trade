@@ -355,6 +355,28 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     if (changed) notifyListeners();
   }
 
+  /// Updates unrealized PnL for open positions of a single [symbol] only.
+  /// Used by the multi-symbol strategy runner, where each symbol has its own
+  /// mark price and applying one price to every position would be wrong.
+  void updateUnrealizedPnlForSymbol(String symbol, double currentPrice) {
+    bool changed = false;
+    for (final pos in _positions) {
+      if (pos.isOpen && pos.symbol == symbol) {
+        final pnlCents = FinancialMath.calculatePnL(
+            quantity: pos.quantity,
+            entryPrice: pos.entryPrice,
+            exitPrice: currentPrice,
+            isLong: pos.side == OrderSide.buy);
+        final pnl = FinancialMath.centsToDollars(pnlCents);
+        if (pos.unrealizedPnl != pnl) {
+          pos.unrealizedPnl = pnl;
+          changed = true;
+        }
+      }
+    }
+    if (changed) notifyListeners();
+  }
+
   void _checkPendingOrders(double currentPrice) {
     final pending = _orders
         .where((o) => o.status == OrderStatus.open && o.type == OrderType.limit)

@@ -3,49 +3,55 @@ import 'dart:math';
 
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/data/historical_repository.dart';
+import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/domain/position.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/engine/strategy/strategy_recommendation.dart';
 
-/// Turns an activated strategy into a real paper-trading loop.
+/// Turns an activated strategy into a real paper-trading loop across several
+/// markets.
 ///
 /// While one or more strategies are active in [ExecutionManager], this
-/// periodically evaluates each on realistic candles and opens/closes a single
-/// paper position per strategy — so "Deploy"/▶ actually trades (positions,
-/// P&L, stop-loss/take-profit exits) instead of only flipping a flag.
+/// periodically evaluates each strategy on every watchlist symbol and manages
+/// one paper position per (strategy, symbol): opens on a signal, and closes on
+/// stop-loss, take-profit, or an opposite-side signal — so "Deploy"/▶ actually
+/// trades (positions, P&L, risk exits) instead of only flipping a flag.
 ///
-/// Because the offline data source is static synthetic candles, the loop keeps
-/// its own gently-walking mark price (tethered to the latest close) so the
-/// simulated market moves — that's what lets stop-loss/take-profit and P&L
-/// actually breathe. On real market data this walk stays close to the truth.
+/// Each symbol keeps its own gently random-walking mark price (tethered to its
+/// latest close) so the simulated markets move and stop/take exits can fire.
 ///
-/// Safe by construction: one position per strategy, a small fixed fraction of
-/// the paper balance per trade, a cooldown after each exit, and every step
-/// wrapped so a bad evaluation can never crash the app.
+/// Safe by construction: one position per (strategy, symbol), a small fixed
+/// fraction of the paper balance per trade, a cooldown after each exit, and
+/// every step wrapped so a bad evaluation can never crash the app.
 class StrategyRunner {
   final ExecutionManager _execution;
   final StrategyEngine _engine;
   final HistoricalRepository _history;
 
-  /// The symbol activated strategies paper-trade on (MVP: a single market).
-  static const String symbol = 'BTCUSDT';
+  /// The markets activated strategies paper-trade across.
+  static const List<String> symbols = [
+    'BTCUSDT',
+    'ETHUSDT',
+    'SOLUSDT',
+    'BNBUSDT',
+  ];
   static const Duration _interval = Duration(seconds: 20);
   static const Duration _cooldown = Duration(seconds: 60);
-  static const double _riskFraction = 0.05; // 5% of balance per position
+  static const double _riskFraction = 0.03; // 3% of balance per position
 
   final Random _rng = Random();
   Timer? _timer;
   bool _evaluating = false;
 
-  /// Simulated live mark price for the paper market.
-  double? _mark;
+  /// Simulated live mark price per symbol.
+  final Map<String, double> _marks = {};
 
-  /// Stop-loss / take-profit per strategy with an open position.
+  /// Stop-loss / take-profit per '<strategyId>|<symbol>' with an open position.
   final Map<String, _Bracket> _brackets = {};
 
-  /// Don't immediately re-enter right after an exit.
+  /// Don't immediately re-enter a '<strategyId>|<symbol>' right after an exit.
   final Map<String, DateTime> _cooldownUntil = {};
 
   StrategyRunner(this._execution, this._engine, this._history) {
@@ -67,15 +73,15 @@ class StrategyRunner {
     }
   }
 
-  /// Advance the simulated mark price: a small random walk gently tethered to
-  /// the latest real/synthetic close so it wanders but never runs away.
-  double _nextMark(double base) {
-    _mark ??= base;
-    final drift = (base - _mark!) * 0.03; // pull back toward the close
+  /// Advance a symbol's simulated mark: a small random walk gently tethered to
+  /// the latest close so it wanders but never runs away.
+  double _nextMark(String symbol, double base) {
+    final current = _marks[symbol] ?? base;
+    final drift = (base - current) * 0.03; // pull back toward the close
     final noise = (_rng.nextDouble() - 0.5) * base * 0.004; // ±0.2%
-    var next = _mark! + drift + noise;
+    var next = current + drift + noise;
     if (next <= 0) next = base;
-    _mark = next;
+    _marks[symbol] = next;
     return next;
   }
 
@@ -85,50 +91,59 @@ class StrategyRunner {
     try {
       final activeIds = _execution.activeStrategyIds;
       if (activeIds.isEmpty) return;
-
-      final candles = await _history.fetchHistory(
-          symbol: symbol, interval: '1h', limit: 200);
-      if (candles.length < 30) return;
-
-      final price = _nextMark(candles.last.close);
-      // Refresh unrealized P&L on open positions against the moving mark.
-      _execution.updateUnrealizedPnl(price);
-
       final strategies = _engine.allStrategies;
-      for (final id in activeIds) {
-        Strategy? strat;
-        for (final s in strategies) {
-          if (s.id == id) {
-            strat = s;
-            break;
-          }
-        }
-        if (strat == null) continue;
 
-        StrategyRecommendation? rec;
+      for (final sym in symbols) {
+        List<Candle> candles;
         try {
-          final recs = await strat.analyze(symbol, candles);
-          for (final r in recs) {
-            if (!r.shouldTrade) continue;
-            if (rec == null || r.confidence > rec.confidence) rec = r;
-          }
+          candles = await _history.fetchHistory(
+              symbol: sym, interval: '1h', limit: 200);
         } catch (e) {
-          AppLogger.error('StrategyRunner: analyze failed for $id: $e');
+          AppLogger.error('StrategyRunner: history failed for $sym: $e');
           continue;
         }
+        if (candles.length < 30) continue;
 
-        final open =
-            _execution.openPositions.where((p) => p.strategyId == id).toList();
+        final price = _nextMark(sym, candles.last.close);
+        _execution.updateUnrealizedPnlForSymbol(sym, price);
 
-        try {
-          if (open.isEmpty) {
-            _brackets.remove(id);
-            _maybeEnter(id, rec, price);
-          } else {
-            _maybeExit(id, open.first, rec, price);
+        for (final id in activeIds) {
+          Strategy? strat;
+          for (final s in strategies) {
+            if (s.id == id) {
+              strat = s;
+              break;
+            }
           }
-        } catch (e) {
-          AppLogger.error('StrategyRunner: trade skipped for $id: $e');
+          if (strat == null) continue;
+
+          StrategyRecommendation? rec;
+          try {
+            final recs = await strat.analyze(sym, candles);
+            for (final r in recs) {
+              if (!r.shouldTrade) continue;
+              if (rec == null || r.confidence > rec.confidence) rec = r;
+            }
+          } catch (e) {
+            AppLogger.error('StrategyRunner: analyze failed for $id/$sym: $e');
+            continue;
+          }
+
+          final key = '$id|$sym';
+          final open = _execution.openPositions
+              .where((p) => p.strategyId == id && p.symbol == sym)
+              .toList();
+
+          try {
+            if (open.isEmpty) {
+              _brackets.remove(key);
+              await _maybeEnter(key, sym, id, rec, price);
+            } else {
+              await _maybeExit(key, id, open.first, rec, price);
+            }
+          } catch (e) {
+            AppLogger.error('StrategyRunner: trade skipped for $key: $e');
+          }
         }
       }
     } catch (e) {
@@ -138,17 +153,17 @@ class StrategyRunner {
     }
   }
 
-  Future<void> _maybeEnter(
-      String id, StrategyRecommendation? rec, double price) async {
+  Future<void> _maybeEnter(String key, String sym, String id,
+      StrategyRecommendation? rec, double price) async {
     if (rec == null) return;
-    final cd = _cooldownUntil[id];
+    final cd = _cooldownUntil[key];
     if (cd != null && DateTime.now().isBefore(cd)) return;
 
     final qty = _sizeFor(price);
     if (qty <= 0) return;
 
     await _execution.placeMarketOrder(
-      symbol: symbol,
+      symbol: sym,
       side: rec.side,
       quantity: qty,
       currentPrice: price,
@@ -156,15 +171,15 @@ class StrategyRunner {
       takeProfit: rec.takeProfit,
       strategyId: id,
     );
-    _brackets[id] = _Bracket(rec.stopLoss, rec.takeProfit);
+    _brackets[key] = _Bracket(rec.stopLoss, rec.takeProfit);
     AppLogger.info(
-        'StrategyRunner: $id opened ${rec.side.name} $symbol @ ${price.toStringAsFixed(2)}');
+        'StrategyRunner: $id opened ${rec.side.name} $sym @ ${price.toStringAsFixed(2)}');
   }
 
-  Future<void> _maybeExit(String id, Position pos, StrategyRecommendation? rec,
-      double price) async {
+  Future<void> _maybeExit(String key, String id, Position pos,
+      StrategyRecommendation? rec, double price) async {
     final isLong = pos.side == OrderSide.buy;
-    final br = _brackets[id];
+    final br = _brackets[key];
 
     // 1) Stop-loss / take-profit auto-exit.
     if (br != null) {
@@ -173,22 +188,22 @@ class StrategyRunner {
       final hitTake = br.takeProfit != null &&
           (isLong ? price >= br.takeProfit! : price <= br.takeProfit!);
       if (hitStop || hitTake) {
-        await _close(id, pos, price);
+        await _close(key, id, pos, price);
         AppLogger.info(
-            'StrategyRunner: $id ${hitStop ? 'stop-loss' : 'take-profit'} exit $symbol @ ${price.toStringAsFixed(2)}');
+            'StrategyRunner: $id ${hitStop ? 'stop-loss' : 'take-profit'} exit ${pos.symbol} @ ${price.toStringAsFixed(2)}');
         return;
       }
     }
 
     // 2) Exit on an opposite-side signal.
     if (rec != null && rec.side != pos.side) {
-      await _close(id, pos, price);
+      await _close(key, id, pos, price);
       AppLogger.info(
-          'StrategyRunner: $id signal-flip exit $symbol @ ${price.toStringAsFixed(2)}');
+          'StrategyRunner: $id signal-flip exit ${pos.symbol} @ ${price.toStringAsFixed(2)}');
     }
   }
 
-  Future<void> _close(String id, Position pos, double price) async {
+  Future<void> _close(String key, String id, Position pos, double price) async {
     // Offsetting market order (ExecutionManager.closeOrder omits the required
     // currentPrice, so we close directly).
     await _execution.placeMarketOrder(
@@ -198,8 +213,8 @@ class StrategyRunner {
       currentPrice: price,
       strategyId: id,
     );
-    _brackets.remove(id);
-    _cooldownUntil[id] = DateTime.now().add(_cooldown);
+    _brackets.remove(key);
+    _cooldownUntil[key] = DateTime.now().add(_cooldown);
   }
 
   double _sizeFor(double price) {
