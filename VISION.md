@@ -15,6 +15,31 @@ backtest, and prove** trading strategies on real market data with **zero
 financial risk** — and a marketplace where the best strategy-builders get
 rewarded.
 
+## Our trademark — Guided every step
+
+A complete beginner who wants to *study* trading can open Volex and **never be
+lost**. At every screen the app shows the single best **next step** and teaches
+the **why** behind it. "Guided every step" is the thing we are known for — the
+promise on the box. If a new user ever stares at a screen not knowing what to
+do next, we have failed our trademark.
+
+The guided path is always the same spine: **Learn → Build → Test → Trade →
+Level up.** The product surfaces exactly where the user is on that spine and
+what to do next, and explains it in one plain sentence.
+
+## Design principles (all four, at once)
+
+Every screen must satisfy all four — never trade one away for another:
+
+1. **Beautiful** — best-in-class for a trader. Calm, professional, one design
+   system (see below), no toy/gamer chrome.
+2. **Detailed** — rigorous as an engineer. Real data, real math, honest
+   numbers, nothing faked.
+3. **Simple** — usable by a child. Plain language, one primary action per
+   screen, no unexplained jargon.
+4. **Guided** — it walks you. There is always an obvious next step and a
+   one-line "why".
+
 ## Positioning
 
 **The flight simulator for traders.** Pilots log hundreds of simulator hours

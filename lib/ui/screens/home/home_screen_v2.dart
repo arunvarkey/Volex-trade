@@ -18,6 +18,7 @@ import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/ui/widgets/market_ticker/vx_ticker_tape.dart';
 import 'package:volex_terminal/ui/widgets/market_ticker/vx_market_list.dart';
 import 'package:volex_terminal/ui/widgets/journey_strip.dart';
+import 'package:volex_terminal/ui/widgets/next_step_guide.dart';
 import 'package:volex_terminal/ui/widgets/first_user_guide.dart';
 import 'package:volex_terminal/features/daily/ui/daily_home_card.dart';
 import 'package:volex_terminal/services/profile_service.dart';
@@ -51,6 +52,7 @@ class HomeScreenV2 extends StatelessWidget {
                     const FirstUserGuide(),
                     const DailyHomeCard(),
                     _buildBalanceSection(context),
+                    const NextStepGuide(),
                     const JourneyStrip(),
                     _buildQuickActions(context),
                     const VxMarketList(),
