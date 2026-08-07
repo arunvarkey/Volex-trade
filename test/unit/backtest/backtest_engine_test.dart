@@ -57,6 +57,55 @@ void main() {
     expect(result.metrics.winRate, inInclusiveRange(0, 100));
   });
 
+  test('BacktestEngine sizes positions by equity fraction (no leverage blow-up)',
+      () async {
+    // A BTC-scale series rising ~40%. With the old fixed 1-unit position this
+    // implied ~1 BTC on a $10k account and produced absurd returns; honest
+    // %-of-equity sizing keeps the account return realistic.
+    final candles = List.generate(120, (i) {
+      final base = 60000.0 + i * 200; // ~60k -> ~84k
+      return Candle(
+        time: DateTime(2024).add(Duration(hours: i)).millisecondsSinceEpoch,
+        open: base,
+        high: base + 300,
+        low: base - 300,
+        close: base + 100,
+        volume: 10,
+      );
+    });
+
+    final strategy = GeneratedStrategy(
+      name: 'Sizing',
+      description: 'Test',
+      symbol: 'BTCUSDT',
+      timeframe: '1h',
+      templateId: 'ma_crossover',
+      parameters: const {
+        'fast_ma_period': 3,
+        'slow_ma_period': 8,
+        'ma_type': 'SMA'
+      },
+      entryConditions: const [],
+      exitConditions: const [],
+      riskParams: const RiskParameters(
+          stopLossPercent: 2, takeProfitPercent: 4, positionSizePercent: 10),
+      educationalExplanation: 'Test',
+      confidenceScore: 1.0,
+    );
+
+    final result = await BacktestEngine.runBacktest(BacktestIsolateParams(
+      candles: candles,
+      strategy: strategy,
+      initialEquity: 10000,
+    ));
+
+    expect(result.finalEquity.isFinite, isTrue);
+    expect(result.finalEquity, greaterThan(0));
+    // Honest sizing: a ~40% price move cannot become a >100% account return
+    // when each position is a small fraction of equity.
+    expect(result.metrics.totalReturnPercent.abs(), lessThan(100));
+  });
+
   test('BacktestEngine handles empty data gracefully', () async {
     final strategy = GeneratedStrategy(
       name: 'Test Strategy',
