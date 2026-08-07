@@ -242,3 +242,5 @@ release build passes store review.
   completeness on device, i18n/perf/a11y, and compliance/store readiness.
 
 _Last updated: 2026-08-02_
+
+<!-- CI verification re-trigger: 2026-08-07T12:16Z -->
