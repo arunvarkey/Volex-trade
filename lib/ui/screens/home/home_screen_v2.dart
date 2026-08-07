@@ -102,6 +102,7 @@ class HomeScreenV2 extends StatelessWidget {
             children: [
               _buildIconButton(
                 icon: Icons.search_rounded,
+                semanticLabel: 'Search markets',
                 onPressed: () => QuantumSwitcher.show(context, (symbol) {
                   context.push('/chart?symbol=$symbol');
                 }),
@@ -111,6 +112,7 @@ class HomeScreenV2 extends StatelessWidget {
               const SizedBox(width: 8),
               _buildIconButton(
                 icon: Icons.person_outline_rounded,
+                semanticLabel: 'Profile',
                 onPressed: () => context.push('/profile'),
               ),
             ],
@@ -121,19 +123,28 @@ class HomeScreenV2 extends StatelessWidget {
   }
 
   Widget _buildIconButton(
-      {required IconData icon, required VoidCallback onPressed}) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: VxColors.surface,
-          shape: BoxShape.circle,
-          border: Border.all(color: VxColors.border),
+      {required IconData icon,
+      required VoidCallback onPressed,
+      String? semanticLabel}) {
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: Tooltip(
+        message: semanticLabel ?? '',
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: VxColors.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: VxColors.border),
+            ),
+            child: Icon(icon, size: 18, color: VxColors.textSecondary),
+          ),
         ),
-        child: Icon(icon, size: 18, color: VxColors.textSecondary),
       ),
     );
   }
