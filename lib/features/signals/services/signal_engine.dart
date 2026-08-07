@@ -117,6 +117,9 @@ class SignalEngine {
             strategyName: rec.strategyName,
             timestamp: DateTime.now(),
             expiresAt: DateTime.now().add(const Duration(minutes: 5)),
+            // Honest: a confirmed trigger (shouldTrade) vs. the strongest
+            // current setup surfaced for the watchlist.
+            isActionable: rec.shouldTrade,
           );
 
           // Retain + emit

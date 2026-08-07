@@ -281,7 +281,30 @@ class _SignalCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    _ConfidenceBadge(confidence: signal.confidence),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!signal.isActionable) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color:
+                                  VxColors.textTertiary.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text('WATCH',
+                                style: TextStyle(
+                                    color: VxColors.textSecondary,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5)),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                        _ConfidenceBadge(confidence: signal.confidence),
+                      ],
+                    ),
                   ],
                 ),
                 const Divider(color: Colors.white10, height: 24),
