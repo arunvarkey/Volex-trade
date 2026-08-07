@@ -32,7 +32,8 @@ import 'package:volex_terminal/core/app_logger.dart';
 
 // Exchange Services
 import 'package:volex_terminal/engine/exchange/exchange_service.dart';
-// import 'package:volex_terminal/data/binance/binance_api_service.dart';
+import 'package:volex_terminal/data/binance/binance_api_service.dart';
+import 'package:volex_terminal/data/binance/binance_exchange_service.dart';
 import 'package:volex_terminal/engine/exchange/paper_exchange_client.dart';
 import 'package:volex_terminal/engine/sandbox/python_sandbox_service.dart';
 import 'package:volex_terminal/services/alert_service.dart';
@@ -323,8 +324,15 @@ class ServiceLocator {
 
       // --- SCANNER INIT ---
       _log('SCANNER: Core init...');
-      // For now, passing null exchange to force mock/safe data or relying on internal logic
-      final historicalRepo = HistoricalRepository();
+      // Real market data via Binance's PUBLIC klines endpoint (no API key or
+      // secret needed — read-only). HistoricalRepository transparently falls
+      // back to synthetic candles if the network/region blocks the request, so
+      // the simulator is never empty.
+      final publicMarketData = BinanceExchangeService(
+        BinanceApiService(apiKey: '', apiSecret: ''),
+      );
+      final historicalRepo =
+          HistoricalRepository(exchange: publicMarketData);
       getIt.registerSingleton<HistoricalRepository>(historicalRepo);
 
       final scannerEngine = ScannerEngine(historicalRepo);
