@@ -366,9 +366,9 @@ class AIStrategyResults extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.rocket_launch, size: 20),
+                Icon(Icons.bookmark_add_outlined, size: 20),
                 SizedBox(width: 8),
-                Text('DEPLOY STRATEGY'),
+                Text('SAVE STRATEGY'),
               ],
             ),
           ),
