@@ -8,6 +8,7 @@ import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
+import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
 
 class SmartOrderSheet extends StatefulWidget {
   final String symbol;
@@ -163,6 +164,11 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               ),
 
               const SizedBox(height: 12),
+
+              const Center(
+                child: VxDisclaimer(text: 'Paper trade — simulated funds.'),
+              ),
+              const SizedBox(height: 10),
 
               // Execute Button
               SizedBox(

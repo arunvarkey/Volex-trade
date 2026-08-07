@@ -10,6 +10,7 @@ import 'package:volex_terminal/ui/design_system/vx_card.dart';
 import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/widgets/paywalls/signal_limit_banner.dart';
+import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/services/startup_service.dart';
@@ -115,6 +116,9 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
           const SizedBox(height: 8),
           VxText.body('Real-time AI opportunities from the Volex Engine.',
               color: Colors.white54),
+          const SizedBox(height: 10),
+          const VxDisclaimer(
+              text: 'Signals are educational — not financial advice.'),
         ],
       ),
     );
