@@ -236,7 +236,8 @@ class BacktestEngine extends ChangeNotifier {
       _handlePositionManagement(simulator, strategy, indicators, candle);
 
       // 4. Check Entry Signals
-      _handleEntryLogic(simulator, strategy, indicators, candle);
+      _handleEntryLogic(
+          simulator, strategy, indicators, candle, params.initialEquity);
 
       // 5. Update Equity Curve
       double floatingPnl = 0;
@@ -434,7 +435,8 @@ class BacktestEngine extends ChangeNotifier {
       ExecutionSimulator simulator,
       GeneratedStrategy strategy,
       Map<String, double> indicators,
-      Candle candle) {
+      Candle candle,
+      double initialEquity) {
     if (simulator.orders.any((o) => o.status == dom.OrderStatus.filled)) {
       return;
     }
@@ -487,13 +489,27 @@ class BacktestEngine extends ChangeNotifier {
     }
 
     if (signal != null) {
+      // Honest fill: we decided at this candle's OPEN (on data through i-1), so
+      // we can only transact at the open — never the not-yet-known close.
+      final entryPrice = candle.open;
+      if (entryPrice <= 0) return;
+
+      // Honest sizing: a real fraction of *current* equity (positionSizePercent),
+      // not a fixed 1 unit. Since we only enter when flat, realized net result
+      // is the whole equity delta so far.
+      final equity = initialEquity + simulator.netResult;
+      final sizeFraction =
+          (strategy.riskParams.positionSizePercent / 100).clamp(0.01, 1.0);
+      final qty = (equity * sizeFraction) / entryPrice;
+      if (qty <= 0) return;
+
       simulator.placeOrder(dom.Order(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         symbol: strategy.symbol,
         type: dom.OrderType.market,
         direction: signal,
-        quantity: 1.0,
-        price: candle.close,
+        quantity: qty,
+        price: entryPrice,
         timestamp: candle.date,
       ));
     }

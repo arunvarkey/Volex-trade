@@ -47,6 +47,14 @@ void main() {
     // So Fast > Slow -> Buy Signal.
     expect(result.metrics.totalTrades, greaterThanOrEqualTo(0));
     expect(result.finalEquity, greaterThan(0));
+
+    // Honesty guardrails: equity-fraction position sizing must keep results
+    // finite and sanely bounded — no impossible "up 400%" blow-ups from a
+    // fixed 1-unit position on a smooth synthetic series.
+    expect(result.finalEquity.isFinite, isTrue);
+    expect(result.metrics.totalReturnPercent.isFinite, isTrue);
+    expect(result.metrics.maxDrawdownPercent, inInclusiveRange(0, 100));
+    expect(result.metrics.winRate, inInclusiveRange(0, 100));
   });
 
   test('BacktestEngine handles empty data gracefully', () async {
