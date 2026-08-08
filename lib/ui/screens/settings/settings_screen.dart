@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,8 +20,8 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: const Text("Settings",
-            style: TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(AppLocalizations.of(context).settingsTitle,
+            style: const TextStyle(fontWeight: FontWeight.w700)),
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),

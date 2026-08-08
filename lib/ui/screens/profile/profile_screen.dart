@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../design_system/vx_colors.dart';
@@ -20,7 +21,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: VxText.subtitle("Profile"),
+        title: VxText.subtitle(AppLocalizations.of(context).profileTitle),
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
@@ -88,7 +89,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            VxText.body("Paper Trader", color: VxColors.textSecondary),
+            VxText.body(AppLocalizations.of(context).profilePaperTrader,
+                color: VxColors.textSecondary),
 
             const SizedBox(height: 40),
 
