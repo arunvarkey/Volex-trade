@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/scanner/scanner_engine.dart';
@@ -40,6 +41,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scanner = context.watch<ScannerEngine>();
     final isLive = context.read<ExecutionManager>().isLiveMode;
 
@@ -72,8 +74,8 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: const Text("All Markets",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        title: Text(l10n.marketsTitle,
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -108,14 +110,14 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
               child: TextField(
                 controller: _searchController,
                 style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText: "Search coins...",
-                  hintStyle: TextStyle(
+                decoration: InputDecoration(
+                  hintText: l10n.marketsSearchHint,
+                  hintStyle: const TextStyle(
                       color: VxColors.textTertiary, fontSize: 14),
-                  prefixIcon: Icon(Icons.search,
+                  prefixIcon: const Icon(Icons.search,
                       color: VxColors.textTertiary, size: 20),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
@@ -299,6 +301,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -307,7 +310,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
           const SizedBox(height: 16),
           Text(
             _searchQuery.isEmpty
-                ? "No coins found"
+                ? l10n.marketsNoCoins
                 : "No results for '$_searchQuery'",
             style: const TextStyle(color: Colors.white70, fontSize: 16),
           ),

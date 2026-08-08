@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
@@ -107,18 +108,17 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   }
 
   Widget _buildHeader() {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          VxText.heading2('Live Signals', color: Colors.white),
+          VxText.heading2(l10n.signalsTitle, color: Colors.white),
           const SizedBox(height: 8),
-          VxText.body('Real-time AI opportunities from the Volex Engine.',
-              color: Colors.white54),
+          VxText.body(l10n.signalsSubtitle, color: Colors.white54),
           const SizedBox(height: 10),
-          const VxDisclaimer(
-              text: 'Signals are educational — not financial advice.'),
+          VxDisclaimer(text: l10n.signalsDisclaimer),
         ],
       ),
     );
@@ -138,6 +138,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   }
 
   Widget _buildNoSignalsState() {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -147,10 +148,10 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
             const Icon(Icons.radar_rounded,
                 color: VxColors.textTertiary, size: 48),
             const SizedBox(height: 16),
-            VxText.subtitle('No signals right now', color: Colors.white70),
+            VxText.subtitle(l10n.signalsNoneTitle, color: Colors.white70),
             const SizedBox(height: 8),
             VxText.body(
-              'The engine re-scans the market every minute. Check back shortly or scan again now.',
+              l10n.signalsNoneBody,
               color: Colors.white38,
               textAlign: TextAlign.center,
             ),
@@ -158,7 +159,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
             OutlinedButton.icon(
               onPressed: _refresh,
               icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text('Scan now'),
+              label: Text(l10n.actionScanNow),
             ),
           ],
         ),
@@ -237,6 +238,7 @@ class _SignalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isBuy = signal.side.name.toLowerCase() == 'buy';
     final color = isBuy ? VxColors.neonGreen : VxColors.neonRed;
 
@@ -293,8 +295,8 @@ class _SignalCard extends StatelessWidget {
                                   VxColors.textTertiary.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Text('WATCH',
-                                style: TextStyle(
+                            child: Text(l10n.signalsWatch,
+                                style: const TextStyle(
                                     color: VxColors.textSecondary,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,
