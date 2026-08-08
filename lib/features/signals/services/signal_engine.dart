@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
@@ -145,6 +146,9 @@ class SignalEngine {
   }
 
   Future<void> _saveSignal(TradeSignal signal) async {
+    // Firebase-free run (no google-services.json / web preview): skip cloud
+    // persistence instead of throwing on FirebaseAuth.instance every scan.
+    if (Firebase.apps.isEmpty) return;
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
