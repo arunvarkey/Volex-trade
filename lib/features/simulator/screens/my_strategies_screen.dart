@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../../ui/design_system/vx_colors.dart';
 import '../../../features/subscriptions/services/subscription_service.dart';
 import '../ai_strategy/services/strategy_repository.dart';
+import '../../../engine/marketplace/marketplace_service.dart';
+import '../../../engine/marketplace/models/strategy_listing.dart';
+import '../../../services/profile_service.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:intl/intl.dart';
 
@@ -201,6 +204,16 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton.icon(
+              onPressed: () => _publish(strategy),
+              icon: const Icon(Icons.publish_outlined, size: 16),
+              label: const Text('Publish to Marketplace'),
+              style: TextButton.styleFrom(foregroundColor: VxColors.primary),
+            ),
+          ),
         ],
       ),
     );
@@ -267,6 +280,59 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
 
   void _backtest(GeneratedStrategy strategy) {
     context.push('/lab/backtest/config', extra: strategy);
+  }
+
+  StrategyCategory _categoryFor(String? templateId) {
+    switch (templateId) {
+      case 'rsi_mean_reversion':
+        return StrategyCategory.meanReversion;
+      case 'breakout':
+        return StrategyCategory.breakout;
+      case 'ma_crossover':
+      case 'macd_trend':
+        return StrategyCategory.trendFollowing;
+      default:
+        return StrategyCategory.aiExperimental;
+    }
+  }
+
+  Future<void> _publish(GeneratedStrategy strategy) async {
+    final now = DateTime.now();
+    // Paper-only, free, unverified: no real money changes hands and no
+    // performance is claimed until the strategy is independently verified.
+    final listing = StrategyListing(
+      id: strategy.id,
+      authorId: 'me',
+      authorName: GetIt.I<ProfileService>().displayName,
+      title: strategy.name,
+      description: strategy.description,
+      category: _categoryFor(strategy.templateId),
+      monthlyPrice: 0,
+      tier: MarketplaceTier.free,
+      totalReturn: 0,
+      winRate: 0,
+      maxDrawdown: 0,
+      verified: false,
+      createdAt: now,
+      lastUpdated: now,
+    );
+    try {
+      await GetIt.I<MarketplaceService>().publishStrategy(listing);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not publish — try again.')),
+      );
+      return;
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content:
+            Text('Published to Marketplace (free · paper-only · unverified)'),
+        backgroundColor: VxColors.neonGreen,
+      ),
+    );
   }
 
   void _startPaperTrading(GeneratedStrategy strategy) {
