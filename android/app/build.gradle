@@ -39,22 +39,18 @@ android {
     }
 
     signingConfigs {
-        release {
-            if (keystorePropertiesFile.exists()) {
+        // Only defined when a real upload key is configured via
+        // android/key.properties. Without it we fall back to AGP's built-in
+        // `debug` signing config (see buildTypes.release below), which
+        // auto-generates ~/.android/debug.keystore on demand — so a plain
+        // `flutter build apk --release` signs and installs with zero setup,
+        // even in CI where no debug build has run first.
+        if (keystorePropertiesFile.exists()) {
+            release {
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
-            } else {
-                // Fallback: sign release builds with the standard Android
-                // debug keystore (auto-created in the user's home by any debug
-                // run), so `flutter build apk --release` works with zero setup
-                // for sideloading/testing. Provide android/key.properties with
-                // a real upload key for a Play Store build.
-                keyAlias 'androiddebugkey'
-                keyPassword 'android'
-                storeFile file("${System.properties['user.home']}/.android/debug.keystore")
-                storePassword 'android'
             }
         }
     }
@@ -72,7 +68,9 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // Real upload key when key.properties is present; otherwise sign
+            // with the debug config so sideload/test APKs build with no setup.
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
             // Code shrinking/obfuscation is disabled for now so release APKs
             // run reliably (ProGuard stripping Firebase/reflection classes is a
             // common launch-crash cause). Re-enable both — with verified
