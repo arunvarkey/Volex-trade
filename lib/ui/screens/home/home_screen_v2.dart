@@ -22,6 +22,7 @@ import 'package:volex_terminal/ui/widgets/next_step_guide.dart';
 import 'package:volex_terminal/ui/widgets/first_user_guide.dart';
 import 'package:volex_terminal/features/daily/ui/daily_home_card.dart';
 import 'package:volex_terminal/services/profile_service.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
@@ -72,10 +73,11 @@ class HomeScreenV2 extends StatelessWidget {
   }
 
   Widget _buildStatusBar(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final hour = DateTime.now().hour;
-    String greeting = 'Good morning';
-    if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
-    if (hour >= 17) greeting = 'Good evening';
+    String greeting = l10n.greetingMorning;
+    if (hour >= 12 && hour < 17) greeting = l10n.greetingAfternoon;
+    if (hour >= 17) greeting = l10n.greetingEvening;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),

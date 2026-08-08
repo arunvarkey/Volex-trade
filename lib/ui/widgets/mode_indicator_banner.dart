@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../design_system/vx_colors.dart';
 import '../../services/user_mode_service.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 
 class ModeIndicatorBanner extends StatelessWidget {
   final UserMode mode;
@@ -41,7 +42,7 @@ class ModeIndicatorBanner extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            'Paper trading · simulated funds',
+            AppLocalizations.of(context).paperTradingBanner,
             style: TextStyle(
               color: VxColors.warning.withValues(alpha: 0.95),
               fontWeight: FontWeight.w600,
