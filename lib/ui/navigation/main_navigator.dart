@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/services/user_mode_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -119,6 +120,7 @@ class _FloatingGlassNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // Solid, docked bar. Opaque so page content never bleeds through, with a
     // hairline top border for separation — a clean, standard trading-app nav
     // rather than a translucent floating pill.
@@ -139,7 +141,7 @@ class _FloatingGlassNav extends StatelessWidget {
           _NavIcon(
             icon: Icons.grid_view_outlined,
             activeIcon: Icons.grid_view_rounded,
-            label: 'Home',
+            label: l10n.navHome,
             isSelected: selectedIndex == 0,
             onTap: () => onTap(0),
           ),
@@ -147,7 +149,7 @@ class _FloatingGlassNav extends StatelessWidget {
             _NavIcon(
               icon: Icons.sensors_outlined,
               activeIcon: Icons.sensors,
-              label: 'Signals',
+              label: l10n.navSignals,
               isSelected: selectedIndex == 1,
               onTap: () => onTap(1),
             )
@@ -162,21 +164,21 @@ class _FloatingGlassNav extends StatelessWidget {
           _NavIcon(
             icon: Icons.insights_outlined,
             activeIcon: Icons.insights,
-            label: 'Predict',
+            label: l10n.navPredict,
             isSelected: selectedIndex == 2,
             onTap: () => onTap(2),
           ),
           _NavIcon(
             icon: Icons.account_balance_wallet_outlined,
             activeIcon: Icons.account_balance_wallet,
-            label: 'Wallet',
+            label: l10n.navWallet,
             isSelected: selectedIndex == 3,
             onTap: () => onTap(3),
           ),
           _NavIcon(
             icon: Icons.more_horiz_outlined,
             activeIcon: Icons.more_horiz,
-            label: 'More',
+            label: l10n.navMore,
             isSelected: selectedIndex == 4,
             onTap: () => onTap(4),
           ),
