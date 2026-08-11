@@ -51,7 +51,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Emergency Stop",
-            style: GoogleFonts.jetBrainsMono(
+            style: GoogleFonts.dmSans(
                 color: VxColors.neonRed, fontWeight: FontWeight.bold)),
         content: const Text(
           "This will IMMEDIATELY halt all strategies and block new orders.\n\nAre you sure?",
@@ -122,7 +122,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(isLocked ? "System Locked" : "System Active",
-                        style: GoogleFonts.jetBrainsMono(
+                        style: GoogleFonts.dmSans(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: isLocked
@@ -144,7 +144,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
           // Daily Loss Configuration
           Text("Daily Loss Limit",
-              style: GoogleFonts.jetBrainsMono(
+              style: GoogleFonts.dmSans(
                   color: VxColors.neonCyan, fontSize: 12)),
           const SizedBox(height: 16),
 

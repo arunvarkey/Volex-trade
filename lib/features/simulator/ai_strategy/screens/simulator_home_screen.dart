@@ -20,13 +20,7 @@ class SimulatorHomeScreen extends StatelessWidget {
       backgroundColor: VxColors.deepBlack,
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
-        title: const Text(
-          'STRATEGY SIMULATOR',
-          style: TextStyle(
-            color: VxColors.neonCyan,
-            letterSpacing: 2,
-          ),
-        ),
+        title: const Text('Strategy Simulator'),
         actions: [
           // Mode indicator
           Container(

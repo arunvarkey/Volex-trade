@@ -105,7 +105,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Deploy Strategy?",
-            style: GoogleFonts.jetBrainsMono(color: VxColors.neonMagenta)),
+            style: GoogleFonts.dmSans(color: VxColors.neonMagenta)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,8 +157,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Strategy Optimizer",
-            style: GoogleFonts.jetBrainsMono(fontWeight: FontWeight.bold)),
+        title: const Text("Strategy Optimizer"),
         centerTitle: true,
         backgroundColor: Colors.transparent,
       ),
@@ -186,8 +185,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                     const SizedBox(height: 8),
                     Text(
                       _useRealData
-                          ? "Evolving 'Ghost Trend' strategy against 1000m of REAL Binance history."
-                          : "Evolving 'Ghost Trend' strategy against 1000m of simulated data.",
+                          ? "Evolving the 'Ghost Trend' strategy against 1,000 minutes of real Binance history."
+                          : "Evolving the 'Ghost Trend' strategy against 1,000 minutes of simulated data.",
                       textAlign: TextAlign.center,
                       style: const TextStyle(color: Colors.white70),
                     ),
@@ -197,8 +196,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Simulated",
-                            style: GoogleFonts.jetBrainsMono(
-                                fontSize: 10,
+                            style: GoogleFonts.dmSans(
+                                fontSize: 12,
                                 color: !_useRealData
                                     ? VxColors.neonCyan
                                     : Colors.white24)),
@@ -210,8 +209,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                           inactiveThumbColor: VxColors.neonCyan,
                         ),
                         Text("Binance Live",
-                            style: GoogleFonts.jetBrainsMono(
-                                fontSize: 10,
+                            style: GoogleFonts.dmSans(
+                                fontSize: 12,
                                 color: _useRealData
                                     ? VxColors.neonMagenta
                                     : Colors.white24)),
@@ -292,7 +291,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                   _job == null
                       ? "Start Evolution"
                       : (_job!.isRunning ? "Evolving..." : "Restart"),
-                  style: GoogleFonts.jetBrainsMono(
+                  style: GoogleFonts.dmSans(
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
@@ -315,7 +314,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       child: Column(
         children: [
           Text("Current Best",
-              style: GoogleFonts.jetBrainsMono(
+              style: GoogleFonts.dmSans(
                   color: VxColors.neonGreen, fontSize: 12)),
           if (params != null) ...[
             const SizedBox(height: 8),

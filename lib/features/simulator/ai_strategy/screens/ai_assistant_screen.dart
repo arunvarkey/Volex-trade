@@ -1,7 +1,6 @@
 // lib/features/simulator/ai_strategy/screens/ai_assistant_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../ui/design_system/vx_colors.dart';
 import '../../../../features/subscriptions/services/subscription_service.dart';
@@ -414,28 +413,28 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       _reasoning = null;
     });
 
+    // Construct the service directly — it isn't in the DI container, and
+    // depending on GetIt here previously crashed the screen.
+    final aiService = AIService();
+    AIResult<Map<String, dynamic>> result;
     try {
-      final aiService = GetIt.I<AIService>();
-      final result = await aiService.suggestParameters(
+      result = await aiService.suggestParameters(
         template: _selectedTemplate!,
         userDescription: _controller.text,
       );
-
-      if (result.isSuccess && mounted && result.value != null) {
-        final fullReasoning = result.value!['reasoning'] as String? ?? '';
-        await _typeSuggestion(result.value!, fullReasoning);
-      } else if (mounted) {
-        setState(() => _loading = false);
-        _showError(result.error ?? 'Failed to get suggestion');
-        VxHaptics.error();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        _showError('Error: $e');
-        VxHaptics.error();
-      }
+    } catch (_) {
+      result = AIResult.error('unavailable');
     }
+
+    // The AI backend needs Firebase + a paid key. When it isn't reachable,
+    // fall back to honest local demo defaults instead of a raw error dialog.
+    if (!result.isSuccess || result.value == null) {
+      result = aiService.demoSuggestParameters(_selectedTemplate!);
+    }
+
+    if (!mounted) return;
+    final fullReasoning = result.value!['reasoning'] as String? ?? '';
+    await _typeSuggestion(result.value!, fullReasoning);
   }
 
   Future<void> _typeSuggestion(
@@ -473,20 +472,4 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     context.push('/lab/backtest/config', extra: strategy);
   }
 
-  void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: VxColors.deepBlack,
-        title: const Text('ERROR', style: TextStyle(color: VxColors.neonRed)),
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: VxColors.neonCyan)),
-          ),
-        ],
-      ),
-    );
-  }
 }
