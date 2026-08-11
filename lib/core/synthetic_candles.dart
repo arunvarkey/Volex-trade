@@ -53,6 +53,10 @@ class SyntheticCandles {
       'AVAXUSDT': 35.0,
       'LINKUSDT': 15.0,
       'MATICUSDT': 0.7,
+      'DOTUSDT': 6.5,
+      'TRXUSDT': 0.12,
+      'LTCUSDT': 85.0,
+      'ATOMUSDT': 8.0,
     };
     return prices[symbol.toUpperCase()] ?? 100.0;
   }

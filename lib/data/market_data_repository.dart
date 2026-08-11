@@ -74,6 +74,8 @@ class MarketDataRepository implements IMarketDataRepository {
   static const List<String> _watchSymbols = [
     'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT',
     'XRPUSDT', 'DOGEUSDT', 'ADAUSDT', 'AVAXUSDT',
+    'LINKUSDT', 'MATICUSDT', 'DOTUSDT', 'TRXUSDT',
+    'LTCUSDT', 'ATOMUSDT',
   ];
 
   @override
@@ -96,8 +98,33 @@ class MarketDataRepository implements IMarketDataRepository {
     });
 
     _initialized = true;
+    _seedWatchlist();
     _startWatchdog();
     _startSyntheticFeed();
+  }
+
+  /// Pre-populate every watchlist symbol with a synthetic ticker so the market
+  /// list is complete from the first frame. Real ticks (and the synthetic
+  /// feed) merge into the same cache, so partial live coverage can no longer
+  /// leave the list showing only a handful of coins.
+  void _seedWatchlist() {
+    for (final s in _watchSymbols) {
+      if (_tickerCache.containsKey(s)) continue;
+      final gen = SyntheticCandles.generate(s, '1m', 2);
+      final open = gen.first.close;
+      final close = gen.last.close;
+      _synthClose[s] = close;
+      _tickerCache[s] = MiniTicker(
+        symbol: s,
+        closePrice: close,
+        openPrice: open,
+        highPrice: max(open, close),
+        lowPrice: min(open, close),
+        volume: open * 1000,
+        quoteVolume: open * open * 1000,
+      );
+    }
+    _watchlistController.add(Map.unmodifiable(_tickerCache));
   }
 
   /// Emits synthetic ticks (~1/sec) whenever the real feed is stale, so the
