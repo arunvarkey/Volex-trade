@@ -105,7 +105,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Deploy Strategy?",
-            style: GoogleFonts.dmSans(color: VxColors.neonMagenta)),
+            style: GoogleFonts.dmSans(color: VxColors.neonCyan)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +130,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
           ),
           ElevatedButton(
             style:
-                ElevatedButton.styleFrom(backgroundColor: VxColors.neonMagenta),
+                ElevatedButton.styleFrom(backgroundColor: VxColors.neonCyan),
             onPressed: () => Navigator.pop(context, true),
             child: const Text("Deploy", style: TextStyle(color: Colors.black)),
           ),
@@ -205,14 +205,14 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                           value: _useRealData,
                           onChanged: (val) =>
                               setState(() => _useRealData = val),
-                          activeThumbColor: VxColors.neonMagenta,
+                          activeThumbColor: VxColors.neonCyan,
                           inactiveThumbColor: VxColors.neonCyan,
                         ),
                         Text("Binance Live",
                             style: GoogleFonts.dmSans(
                                 fontSize: 12,
                                 color: _useRealData
-                                    ? VxColors.neonMagenta
+                                    ? VxColors.neonCyan
                                     : Colors.white24)),
                       ],
                     ),
@@ -229,7 +229,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                     painter: PriceSparklinePainter(
                       candles: _activeData!,
                       color: _useRealData
-                          ? VxColors.neonMagenta
+                          ? VxColors.neonCyan
                           : VxColors.neonCyan,
                     ),
                     child: Container(),
@@ -255,7 +255,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                   "Generation ${_job!.currentGeneration} / ${_job!.totalGenerations}",
                   style: GoogleFonts.jetBrainsMono(
                       fontSize: 24,
-                      color: VxColors.neonMagenta,
+                      color: VxColors.neonCyan,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -263,7 +263,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                 LinearProgressIndicator(
                   value: _job!.currentGeneration / _job!.totalGenerations,
                   backgroundColor: VxColors.surface,
-                  color: VxColors.neonMagenta,
+                  color: VxColors.neonCyan,
                   minHeight: 10,
                 ),
                 const SizedBox(height: 20),
@@ -349,8 +349,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
               icon: const Icon(Icons.bolt, size: 16),
               label: const Text("Apply to Live"),
               style: OutlinedButton.styleFrom(
-                foregroundColor: VxColors.neonMagenta,
-                side: const BorderSide(color: VxColors.neonMagenta),
+                foregroundColor: VxColors.neonCyan,
+                side: const BorderSide(color: VxColors.neonCyan),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
               onPressed: _isLoadingData || (_job?.isRunning ?? false)

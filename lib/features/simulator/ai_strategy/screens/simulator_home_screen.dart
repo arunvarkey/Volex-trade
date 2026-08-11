@@ -78,8 +78,8 @@ class SimulatorHomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonCyan.withValues(alpha: 0.1),
-            VxColors.neonPurple.withValues(alpha: 0.1),
+            VxColors.neonCyan.withValues(alpha: 0.12),
+            VxColors.neonCyan.withValues(alpha: 0.03),
           ],
         ),
         border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
@@ -168,7 +168,7 @@ class SimulatorHomeScreen extends StatelessWidget {
                 icon: Icons.psychology,
                 title: 'AI Assistant',
                 subtitle: 'Demo',
-                color: VxColors.neonPurple,
+                color: VxColors.neonCyan,
                 onTap: () => context.push('/simulator/ai-assistant'),
               ),
             ),
