@@ -129,17 +129,6 @@ class SimulatorHomeScreen extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          if (subscription.currentTier == SubscriptionTier.free) ...[
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => context.push('/paywall'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: VxColors.neonPurple,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('UPGRADE FOR AI ASSISTANT'),
-            ),
-          ],
         ],
       ),
     );
@@ -178,13 +167,9 @@ class SimulatorHomeScreen extends StatelessWidget {
                 context: context,
                 icon: Icons.psychology,
                 title: 'AI Assistant',
-                subtitle: subscription.canUseAiAssistant ? 'Premium' : 'Locked',
-                color: subscription.canUseAiAssistant
-                    ? VxColors.neonPurple
-                    : Colors.grey,
-                onTap: subscription.canUseAiAssistant
-                    ? () => context.push('/simulator/ai-assistant')
-                    : () => context.push('/paywall'),
+                subtitle: 'Demo',
+                color: VxColors.neonPurple,
+                onTap: () => context.push('/simulator/ai-assistant'),
               ),
             ),
           ],

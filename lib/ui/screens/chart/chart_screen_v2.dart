@@ -429,10 +429,12 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   ),
                 ),
 
-                // Layer 2: Chart Stats Overlay
+                // Layer 2: Chart Stats Overlay (compact strip below the
+                // one-time guidance banner; the chart draws its own OHLC
+                // legend at the very top, so these never stack anymore).
                 Positioned(
-                  top: 100,
-                  left: 20,
+                  top: 124,
+                  left: 16,
                   child: Consumer<DashboardProvider>(
                     builder: (context, dashboard, _) {
                       final ticker = dashboard.getTicker(_currentSymbol);

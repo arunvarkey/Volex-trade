@@ -46,16 +46,15 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
         title: Text(
-          'CONFIGURE ${widget.template.name.toUpperCase()}',
-          style: const TextStyle(
-            color: VxColors.neonCyan,
-            letterSpacing: 2,
-            fontSize: 16,
-          ),
+          'Configure ${widget.template.name}',
+          overflow: TextOverflow.ellipsis,
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        // Extra bottom inset so the CTA clears the system navigation bar
+        // instead of rendering underneath it.
+        padding: EdgeInsets.fromLTRB(
+            16, 16, 16, 24 + MediaQuery.of(context).padding.bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
