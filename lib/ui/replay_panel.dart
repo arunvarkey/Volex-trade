@@ -22,29 +22,29 @@ class ReplayPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 100,
-      left: 0,
-      right: 0,
+      top: 118,
+      left: 12,
+      right: 12,
       child: Center(
         child: AnimatedBuilder(
           animation: controller,
           builder: (context, _) {
             final dateStr = controller.currentDate != null
                 ? DateFormat('yyyy-MM-dd HH:mm').format(controller.currentDate!)
-                : "AWAITING_DATA";
+                : "Loading…";
 
             return ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                 child: Container(
-                  width: 480,
+                  constraints: const BoxConstraints(maxWidth: 480),
                   padding: const EdgeInsets.all(VxSpacing.lg),
                   decoration: BoxDecoration(
                     color: VxColors.surface.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(16),
                     border:
-                        Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
+                        Border.all(color: VxColors.primary.withValues(alpha: 0.25)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.4),
@@ -63,10 +63,10 @@ class ReplayPanel extends StatelessWidget {
                           Row(
                             children: [
                               const Icon(Icons.history_toggle_off,
-                                  color: VxColors.neonCyan, size: 16),
+                                  color: VxColors.primary, size: 16),
                               const SizedBox(width: 8),
-                              VxText.monoBold("REPLAY_ENGINE",
-                                  color: VxColors.neonCyan, fontSize: 13),
+                              VxText.bodyBold("Replay",
+                                  color: VxColors.primary, fontSize: 14),
                             ],
                           ),
                           VxText.mono(dateStr,
@@ -78,13 +78,13 @@ class ReplayPanel extends StatelessWidget {
                       // Scrubber
                       SliderTheme(
                         data: SliderThemeData(
-                          activeTrackColor: VxColors.neonCyan,
+                          activeTrackColor: VxColors.primary,
                           inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
                           thumbColor: Colors.white,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 5),
                           trackHeight: 2,
-                          overlayColor: VxColors.neonCyan.withValues(alpha: 0.1),
+                          overlayColor: VxColors.primary.withValues(alpha: 0.1),
                         ),
                         child: Slider(
                           value: controller.progress,
@@ -112,7 +112,7 @@ class ReplayPanel extends StatelessWidget {
                             ),
                             style: IconButton.styleFrom(
                               backgroundColor:
-                                  VxColors.neonCyan.withValues(alpha: 0.1),
+                                  VxColors.primary.withValues(alpha: 0.1),
                               padding: const EdgeInsets.all(12),
                             ),
                           ),
@@ -262,10 +262,10 @@ class _SpeedButton extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? VxColors.neonCyan : Colors.transparent,
+          color: isSelected ? VxColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
-              color: isSelected ? VxColors.neonCyan : Colors.white10),
+              color: isSelected ? VxColors.primary : Colors.white10),
         ),
         child: VxText.monoBold(
           label,
