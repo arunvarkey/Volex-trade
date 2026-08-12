@@ -42,6 +42,10 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final balance = context.watch<ExecutionManager>().balance;
+    final qty = double.tryParse(_amountController.text) ?? 0.0;
+    final cost = qty * widget.currentPrice;
+
     // Glassmorphism wrapper
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -141,26 +145,30 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                 onChanged: (val) => setState(() {}),
               ),
 
-              // Visual Slider
-              SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: _isBuy ? VxColors.success : VxColors.danger,
-                  thumbColor: VxColors.textPrimary,
-                  overlayColor: (_isBuy ? VxColors.success : VxColors.danger)
-                      .withValues(alpha: 0.2),
-                ),
-                child: Slider(
-                  value: (double.tryParse(_amountController.text) ?? 0.0)
-                      .clamp(0.0, 10.0),
-                  min: 0,
-                  max: 10.0,
-                  onChanged: (val) {
-                    HapticFeedback.selectionClick();
-                    setState(() {
-                      _amountController.text = val.toStringAsFixed(3);
-                    });
-                  },
-                ),
+              const SizedBox(height: 10),
+
+              // Order cost vs available balance
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  VxText.caption(
+                      'Order value  ≈ \$${cost.toStringAsFixed(2)}'),
+                  VxText.caption('Balance  \$${balance.toStringAsFixed(2)}'),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Quick-size buttons (fraction of what the balance can buy)
+              Row(
+                children: [
+                  Expanded(child: _buildQuickSize('25%', 0.25)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildQuickSize('50%', 0.50)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildQuickSize('75%', 0.75)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildQuickSize('Max', 1.0)),
+                ],
               ),
 
               const SizedBox(height: 12),
@@ -243,6 +251,30 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
         ),
         child: VxText.caption(label,
             color: isSelected ? VxColors.textPrimary : VxColors.neutral500),
+      ),
+    );
+  }
+
+  Widget _buildQuickSize(String label, double pct) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        final balance = context.read<ExecutionManager>().balance;
+        final affordable =
+            widget.currentPrice > 0 ? balance / widget.currentPrice : 0.0;
+        setState(() {
+          _amountController.text = (affordable * pct).toStringAsFixed(4);
+        });
+      },
+      child: Container(
+        height: 36,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: VxColors.neutral900,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: VxColors.neutral800),
+        ),
+        child: VxText.caption(label, color: VxColors.textSecondary),
       ),
     );
   }
