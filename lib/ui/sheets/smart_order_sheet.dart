@@ -31,20 +31,36 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
   bool _isMarket = true;
   final TextEditingController _amountController =
       TextEditingController(text: '0.1');
+  late final TextEditingController _limitPriceController;
 
   @override
   void initState() {
     super.initState();
     _isBuy = widget.isBuy;
+    _limitPriceController = TextEditingController(
+        text: widget.currentPrice.toStringAsFixed(2));
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _limitPriceController.dispose();
+    super.dispose();
   }
 
   // Future: Leverage slider, Take Profit, Stop Loss
+
+  /// Price the order will execute at: the live price for market orders, or the
+  /// user's chosen limit price otherwise.
+  double get _effectivePrice => _isMarket
+      ? widget.currentPrice
+      : (double.tryParse(_limitPriceController.text) ?? widget.currentPrice);
 
   @override
   Widget build(BuildContext context) {
     final balance = context.watch<ExecutionManager>().balance;
     final qty = double.tryParse(_amountController.text) ?? 0.0;
-    final cost = qty * widget.currentPrice;
+    final cost = qty * _effectivePrice;
 
     // Glassmorphism wrapper
     return ClipRRect(
@@ -144,6 +160,31 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                 ),
                 onChanged: (val) => setState(() {}),
               ),
+
+              // Limit price (only relevant for limit orders)
+              if (!_isMarket) ...[
+                const SizedBox(height: 12),
+                VxText.caption("Limit price"),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _limitPriceController,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  style: VxTypography.h3.copyWith(color: VxColors.textPrimary),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: VxColors.neutral900,
+                    prefixText: "\$ ",
+                    prefixStyle: VxTypography.h3
+                        .copyWith(color: VxColors.neutral500),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: (val) => setState(() {}),
+                ),
+              ],
 
               const SizedBox(height: 10),
 
@@ -261,7 +302,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
         HapticFeedback.selectionClick();
         final balance = context.read<ExecutionManager>().balance;
         final affordable =
-            widget.currentPrice > 0 ? balance / widget.currentPrice : 0.0;
+            _effectivePrice > 0 ? balance / _effectivePrice : 0.0;
         setState(() {
           _amountController.text = (affordable * pct).toStringAsFixed(4);
         });
@@ -289,6 +330,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
     }
 
     final base = widget.symbol.replaceAll('USDT', '');
+    final price = _effectivePrice;
     try {
       final manager = context.read<ExecutionManager>();
       final result = await manager.placeOrderWithGuard(
@@ -299,7 +341,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
             type: _isMarket ? OrderType.market : OrderType.limit,
             side: _isBuy ? OrderSide.buy : OrderSide.sell,
             quantity: qty,
-            price: widget.currentPrice, // Simplified for market
+            price: price,
             status: OrderStatus.pending,
           ));
 
@@ -318,8 +360,8 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
         backgroundColor: _isBuy ? VxColors.success : VxColors.danger,
         behavior: SnackBarBehavior.floating,
         content: Text(
-          '${_isBuy ? 'Bought' : 'Sold'} ${qty.toStringAsFixed(4)} $base '
-          '@ \$${widget.currentPrice.toStringAsFixed(2)}',
+          '${_isMarket ? (_isBuy ? 'Bought' : 'Sold') : 'Limit order placed:'} '
+          '${qty.toStringAsFixed(4)} $base @ \$${price.toStringAsFixed(2)}',
         ),
       ));
     } catch (e) {
