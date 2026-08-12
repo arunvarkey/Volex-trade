@@ -61,6 +61,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
     final balance = context.watch<ExecutionManager>().balance;
     final qty = double.tryParse(_amountController.text) ?? 0.0;
     final cost = qty * _effectivePrice;
+    final insufficient = _isBuy && qty > 0 && cost > balance;
 
     // Glassmorphism wrapper
     return ClipRRect(
@@ -223,20 +224,28 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               SizedBox(
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    HapticFeedback.mediumImpact();
-                    _handleTrade();
-                  },
+                  onPressed: insufficient
+                      ? null
+                      : () {
+                          HapticFeedback.mediumImpact();
+                          _handleTrade();
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         _isBuy ? VxColors.success : VxColors.danger,
                     foregroundColor: VxColors.textPrimary,
+                    disabledBackgroundColor: VxColors.neutral800,
+                    disabledForegroundColor: VxColors.neutral500,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
                   ),
                   child: VxText.bodyBold(
-                    _isBuy ? "BUY ${widget.symbol}" : "SELL ${widget.symbol}",
+                    insufficient
+                        ? "Insufficient balance"
+                        : (_isBuy
+                            ? "Buy ${widget.symbol.replaceAll('USDT', '')}"
+                            : "Sell ${widget.symbol.replaceAll('USDT', '')}"),
                     fontSize: 16,
                   ),
                 ),
