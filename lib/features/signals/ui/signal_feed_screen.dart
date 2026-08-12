@@ -405,7 +405,7 @@ class _SignalCard extends StatelessWidget {
                       }
                     },
                     icon: const Icon(Icons.copy, size: 16),
-                    label: const Text('COPY SIGNAL'),
+                    label: const Text('Copy Signal'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white10,
                       foregroundColor: Colors.white,
@@ -417,7 +417,7 @@ class _SignalCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 if (signal.isExpired)
                   Center(
-                      child: VxText.caption("EXPIRED", color: Colors.white24))
+                      child: VxText.caption("Expired", color: Colors.white24))
                 else
                   Center(
                       child: VxText.caption(

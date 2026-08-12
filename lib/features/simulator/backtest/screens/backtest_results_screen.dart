@@ -42,7 +42,7 @@ class BacktestResultsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              'GRADE: ${result.metrics.grade}',
+              'Grade ${result.metrics.grade}',
               style: TextStyle(
                 color: _getGradeColor(result.metrics.grade),
                 fontWeight: FontWeight.bold,
@@ -85,7 +85,7 @@ class BacktestResultsScreen extends StatelessWidget {
 
             // Trade list
             _buildSectionHeader(
-                'TRADE HISTORY (${result.trades.length} trades)'),
+                'Trade History (${result.trades.length} trades)'),
             const SizedBox(height: 12),
             _buildTradeList(),
 

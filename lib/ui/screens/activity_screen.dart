@@ -28,7 +28,7 @@ class ActivityScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              VxText.subtitle("SYSTEM LOGS", color: Colors.white54),
+              VxText.subtitle("Activity Log", color: Colors.white54),
               const Icon(Icons.filter_list, color: Colors.white24, size: 16),
             ],
           ),
@@ -135,7 +135,7 @@ class _ActivityLogList extends StatelessWidget {
 
     if (logs.isEmpty) {
       return Center(
-        child: VxText.body("NO RECENT ACTIVITY", color: Colors.white10),
+        child: VxText.body("No recent activity", color: Colors.white10),
       );
     }
 

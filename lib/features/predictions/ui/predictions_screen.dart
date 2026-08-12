@@ -151,7 +151,7 @@ class _BalanceHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('VIRTUAL BALANCE',
+                Text('Virtual Balance',
                     style: VxTypography.caption.copyWith(fontSize: 10)),
                 const SizedBox(height: 4),
                 Text(
