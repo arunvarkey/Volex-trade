@@ -176,7 +176,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
           height: 80,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [VxColors.neonCyan, VxColors.neonPurple],
+              colors: [VxColors.neonCyan, VxColors.neonCyan],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

@@ -35,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Start Trading Smarter',
       description:
           'Join thousands of traders using AI to make better decisions',
-      color: VxColors.neonPurple,
+      color: VxColors.neonCyan,
     ),
   ];
 

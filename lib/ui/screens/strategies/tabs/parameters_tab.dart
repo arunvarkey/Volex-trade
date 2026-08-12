@@ -30,7 +30,7 @@ class ParametersTab extends StatelessWidget {
         VxCard(
           title: VxText.subtitle("STRATEGY PARAMETERS",
               color:
-                  settings.isProMode ? VxColors.neonCyan : VxColors.neonPurple),
+                  settings.isProMode ? VxColors.neonCyan : VxColors.neonCyan),
           description: settings.isProMode
               ? "Advanced controls enabled. Type safety and bounds enforced."
               : "Read-only view. Enable Pro Mode to modify parameters.",

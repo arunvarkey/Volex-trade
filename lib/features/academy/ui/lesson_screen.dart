@@ -370,7 +370,7 @@ class _TryItBlock extends StatelessWidget {
         gradient: LinearGradient(
           colors: [
             VxColors.neonCyan.withValues(alpha: 0.12),
-            VxColors.neonPurple.withValues(alpha: 0.10),
+            VxColors.neonCyan.withValues(alpha: 0.10),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

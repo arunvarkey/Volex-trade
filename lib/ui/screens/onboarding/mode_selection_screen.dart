@@ -64,7 +64,7 @@ class ModeSelectionScreen extends StatelessWidget {
                   title: 'Pro Mode',
                   subtitle: 'Connect Your Exchange',
                   icon: Icons.rocket_launch,
-                  color: VxColors.neonPurple,
+                  color: VxColors.neonCyan,
                   features: const [
                     'Everything in Explorer',
                     'Full Terminal & Realistic Execution (Simulated)',

@@ -136,7 +136,7 @@ class OverviewTab extends StatelessWidget {
     if (ghost == null) {
       return VxCard(
         title:
-            VxText.subtitle("GHOST AI PREDICTION", color: VxColors.neonPurple),
+            VxText.subtitle("GHOST AI PREDICTION", color: VxColors.neonCyan),
         child: const Padding(
             padding: EdgeInsets.all(24.0),
             child: Center(
@@ -149,7 +149,7 @@ class OverviewTab extends StatelessWidget {
     final color = isUptrend ? VxColors.neonGreen : VxColors.neonRed;
 
     return VxCard(
-      title: VxText.subtitle("GHOST AI METRICS", color: VxColors.neonPurple),
+      title: VxText.subtitle("GHOST AI METRICS", color: VxColors.neonCyan),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(

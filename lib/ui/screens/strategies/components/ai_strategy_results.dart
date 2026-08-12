@@ -231,13 +231,13 @@ class AIStrategyResults extends StatelessWidget {
   Widget _buildBacktestPlaceholder() {
     return Center(
       child: isBacktesting
-          ? const CircularProgressIndicator(color: VxColors.neonPurple)
+          ? const CircularProgressIndicator(color: VxColors.neonCyan)
           : OutlinedButton.icon(
-              icon: const Icon(Icons.play_arrow, color: VxColors.neonPurple),
+              icon: const Icon(Icons.play_arrow, color: VxColors.neonCyan),
               label: const Text('RUN BACKTEST (BTC-USD 1H)'),
               style: OutlinedButton.styleFrom(
-                  foregroundColor: VxColors.neonPurple,
-                  side: const BorderSide(color: VxColors.neonPurple)),
+                  foregroundColor: VxColors.neonCyan,
+                  side: const BorderSide(color: VxColors.neonCyan)),
               onPressed: onRunBacktest,
             ),
     );
@@ -256,7 +256,7 @@ class AIStrategyResults extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.analytics, color: VxColors.neonPurple, size: 24),
+              Icon(Icons.analytics, color: VxColors.neonCyan, size: 24),
               SizedBox(width: 12),
               Text(
                 'BACKTEST RESULTS',
@@ -304,7 +304,7 @@ class AIStrategyResults extends StatelessWidget {
                 child: _buildMetric(
                   'Profit Factor',
                   results.metrics.profitFactor.toStringAsFixed(2),
-                  VxColors.neonPurple,
+                  VxColors.neonCyan,
                 ),
               ),
             ],

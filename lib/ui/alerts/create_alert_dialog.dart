@@ -127,7 +127,7 @@ class _CreateAlertDialogState extends State<CreateAlertDialog> {
                   borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: VxColors.neonPurple),
+                  borderSide: BorderSide(color: VxColors.neonCyan),
                 ),
               ),
             ),
@@ -138,7 +138,7 @@ class _CreateAlertDialogState extends State<CreateAlertDialog> {
             ElevatedButton(
               onPressed: _saveAlert,
               style: ElevatedButton.styleFrom(
-                backgroundColor: VxColors.neonPurple,
+                backgroundColor: VxColors.neonCyan,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(

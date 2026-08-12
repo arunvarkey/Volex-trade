@@ -49,7 +49,7 @@ class UpgradePromptDialog extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [VxColors.primary, VxColors.neonPurple],
+                  colors: [VxColors.primary, VxColors.neonCyan],
                 ),
                 shape: BoxShape.circle,
               ),
