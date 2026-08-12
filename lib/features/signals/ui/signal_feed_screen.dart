@@ -469,14 +469,14 @@ class _ConfidenceBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: VxColors.neonPurple.withValues(alpha: 0.2),
+        color: VxColors.neonCyan.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.neonPurple.withValues(alpha: 0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
       ),
       child: Text(
         "${confidence.toStringAsFixed(0)}%",
         style: const TextStyle(
-            color: VxColors.neonPurple,
+            color: VxColors.neonCyan,
             fontSize: 12,
             fontWeight: FontWeight.bold),
       ),

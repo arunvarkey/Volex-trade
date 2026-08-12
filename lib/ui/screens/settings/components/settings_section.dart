@@ -17,7 +17,7 @@ class SettingsSection extends StatelessWidget {
       title: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 18, color: VxColors.neonPurple),
+            Icon(icon, size: 18, color: VxColors.neonCyan),
             const SizedBox(width: 8)
           ],
           VxText.subtitle(title, color: Colors.white),

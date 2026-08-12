@@ -56,7 +56,7 @@ class SecuritySettingsScreen extends StatelessWidget {
 
               return ListTile(
                 leading:
-                    const Icon(Icons.fingerprint, color: VxColors.neonPurple),
+                    const Icon(Icons.fingerprint, color: VxColors.neonCyan),
                 title: const Text('Biometric Authentication',
                     style: TextStyle(color: Colors.white)),
                 subtitle: Text(

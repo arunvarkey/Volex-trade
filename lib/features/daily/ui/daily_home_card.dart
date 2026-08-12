@@ -44,7 +44,7 @@ class _DailyHomeCardState extends State<DailyHomeCard> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    VxColors.neonPurple.withValues(alpha: 0.18),
+                    VxColors.neonCyan.withValues(alpha: 0.18),
                     VxColors.neonCyan.withValues(alpha: 0.10),
                   ],
                   begin: Alignment.topLeft,
@@ -52,7 +52,7 @@ class _DailyHomeCardState extends State<DailyHomeCard> {
                 ),
                 borderRadius: BorderRadius.circular(18),
                 border:
-                    Border.all(color: VxColors.neonPurple.withValues(alpha: 0.3)),
+                    Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
