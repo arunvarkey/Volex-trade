@@ -97,12 +97,12 @@ class SimulatorHomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'WELCOME TO THE SIMULATOR',
+                      'Welcome to the Simulator',
                       style: TextStyle(
                         color: VxColors.neonCyan,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        letterSpacing: 0.3,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -140,12 +140,12 @@ class SimulatorHomeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'QUICK ACTIONS',
+          'Quick Actions',
           style: TextStyle(
             color: VxColors.neonCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 12),
@@ -236,12 +236,12 @@ class SimulatorHomeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'RECENT STRATEGIES',
+          'Recent Strategies',
           style: TextStyle(
             color: VxColors.neonCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 12),
@@ -265,12 +265,12 @@ class SimulatorHomeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'LEARNING RESOURCES',
+          'Learning Resources',
           style: TextStyle(
             color: VxColors.neonCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 12),
