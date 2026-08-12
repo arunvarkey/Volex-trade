@@ -71,7 +71,7 @@ class ChartTopBar extends StatelessWidget {
               onPressed: onReplayTap,
               icon: Icon(
                 Icons.history_toggle_off,
-                color: isReplayMode ? VxColors.neonPurple : Colors.white54,
+                color: isReplayMode ? VxColors.neonCyan : Colors.white54,
                 size: 20,
               ),
               tooltip: "Time Machine Check",
