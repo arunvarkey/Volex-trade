@@ -280,16 +280,18 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
   }
 
   Future<void> _handleTrade() async {
+    final messenger = ScaffoldMessenger.of(context);
     final qty = double.tryParse(_amountController.text);
     if (qty == null || qty <= 0) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Invalid Quantity")));
+      messenger.showSnackBar(
+          const SnackBar(content: Text("Enter a valid amount")));
       return;
     }
 
+    final base = widget.symbol.replaceAll('USDT', '');
     try {
       final manager = context.read<ExecutionManager>();
-      await manager.placeOrderWithGuard(
+      final result = await manager.placeOrderWithGuard(
           context,
           Order(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -301,11 +303,28 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
             status: OrderStatus.pending,
           ));
 
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+
+      // The order can be declined without throwing (e.g. AI Guardian cancel).
+      if (result != null && !result.success) {
+        messenger.showSnackBar(SnackBar(
+          content: Text(result.message ?? 'Order was not placed'),
+        ));
+        return;
+      }
+
+      Navigator.pop(context);
+      messenger.showSnackBar(SnackBar(
+        backgroundColor: _isBuy ? VxColors.success : VxColors.danger,
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          '${_isBuy ? 'Bought' : 'Sold'} ${qty.toStringAsFixed(4)} $base '
+          '@ \$${widget.currentPrice.toStringAsFixed(2)}',
+        ),
+      ));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Error: $e")));
+        messenger.showSnackBar(SnackBar(content: Text("Order failed: $e")));
       }
     }
   }
