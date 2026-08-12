@@ -39,14 +39,15 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Row(
           children: [
-            Icon(Icons.psychology, color: VxColors.neonPurple, size: 24),
+            Icon(Icons.psychology, color: VxColors.neonCyan, size: 24),
             SizedBox(width: 8),
             Text(
-              'AI STRATEGY ASSISTANT',
+              'AI Strategy Assistant',
               style: TextStyle(
-                color: VxColors.neonPurple,
-                letterSpacing: 2,
-                fontSize: 16,
+                color: VxColors.neonCyan,
+                letterSpacing: 0.2,
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -63,11 +64,11 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    VxColors.neonPurple.withValues(alpha: 0.2),
+                    VxColors.neonCyan.withValues(alpha: 0.2),
                     VxColors.neonCyan.withValues(alpha: 0.1),
                   ],
                 ),
-                border: Border.all(color: VxColors.neonPurple.withValues(alpha: 0.5)),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -75,14 +76,14 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.lightbulb, color: VxColors.neonPurple),
+                      Icon(Icons.lightbulb, color: VxColors.neonCyan),
                       SizedBox(width: 8),
                       Text(
                         'HOW IT WORKS',
                         style: TextStyle(
-                          color: VxColors.neonPurple,
+                          color: VxColors.neonCyan,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ],
@@ -129,7 +130,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide:
-                      BorderSide(color: VxColors.neonPurple.withValues(alpha: 0.3)),
+                      BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.3)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -138,7 +139,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide:
-                      const BorderSide(color: VxColors.neonPurple, width: 2),
+                      const BorderSide(color: VxColors.neonCyan, width: 2),
                 ),
               ),
             ),
@@ -167,7 +168,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     : const Icon(Icons.auto_awesome),
                 label: Text(_loading ? 'THINKING...' : 'GET AI SUGGESTION'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: VxColors.neonPurple,
+                  backgroundColor: VxColors.neonCyan,
                   foregroundColor: VxColors.deepBlack,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -203,15 +204,15 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lock, color: VxColors.neonPurple, size: 80),
+              const Icon(Icons.lock, color: VxColors.neonCyan, size: 80),
               const SizedBox(height: 24),
               const Text(
                 'PREMIUM FEATURE',
                 style: TextStyle(
-                  color: VxColors.neonPurple,
+                  color: VxColors.neonCyan,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+                  letterSpacing: 0.3,
                 ),
               ),
               const SizedBox(height: 16),
@@ -224,7 +225,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               ElevatedButton(
                 onPressed: () => context.push('/paywall'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: VxColors.neonPurple,
+                  backgroundColor: VxColors.neonCyan,
                   foregroundColor: VxColors.deepBlack,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -245,7 +246,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -316,7 +317,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 style: TextStyle(
                   color: VxColors.neonGreen,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -356,7 +357,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Icons.psychology,
-                    color: VxColors.neonPurple, size: 20),
+                    color: VxColors.neonCyan, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -391,8 +392,8 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 child: OutlinedButton(
                   onPressed: _generateSuggestion,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: VxColors.neonPurple,
-                    side: const BorderSide(color: VxColors.neonPurple),
+                    foregroundColor: VxColors.neonCyan,
+                    side: const BorderSide(color: VxColors.neonCyan),
                   ),
                   child: const Text('REGENERATE'),
                 ),
