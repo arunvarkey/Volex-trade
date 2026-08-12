@@ -109,7 +109,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                             ),
                           ),
                           SizedBox(width: 12),
-                          Text('RUNNING BACKTEST...'),
+                          Text('Running backtest…'),
                         ],
                       )
                     : const Text(

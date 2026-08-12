@@ -131,7 +131,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
                       ),
                     ),
                     child: const Text(
-                      'VALIDATE & BACKTEST',
+                      'Validate & Backtest',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
@@ -541,14 +541,14 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child:
-                const Text('MAYBE LATER', style: TextStyle(color: Colors.grey)),
+                const Text('Maybe Later', style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               context.push('/subscription');
             },
-            child: const Text('UNLOCK NOW',
+            child: const Text('Unlock Now',
                 style: TextStyle(color: VxColors.neonCyan)),
           ),
         ],

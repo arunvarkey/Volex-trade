@@ -79,7 +79,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                       Icon(Icons.lightbulb, color: VxColors.neonCyan),
                       SizedBox(width: 8),
                       Text(
-                        'HOW IT WORKS',
+                        'How it works',
                         style: TextStyle(
                           color: VxColors.neonCyan,
                           fontWeight: FontWeight.bold,
@@ -107,14 +107,14 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
             const SizedBox(height: 24),
 
             // Template selector
-            _buildSectionHeader('CHOOSE TEMPLATE'),
+            _buildSectionHeader('Choose template'),
             const SizedBox(height: 12),
             _buildTemplateDropdown(),
 
             const SizedBox(height: 24),
 
             // Description input
-            _buildSectionHeader('DESCRIBE YOUR GOAL'),
+            _buildSectionHeader('Describe your goal'),
             const SizedBox(height: 12),
             TextField(
               controller: _controller,
@@ -166,7 +166,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                         ),
                       )
                     : const Icon(Icons.auto_awesome),
-                label: Text(_loading ? 'THINKING...' : 'GET AI SUGGESTION'),
+                label: Text(_loading ? 'Thinking…' : 'Get AI Suggestion'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: VxColors.neonCyan,
                   foregroundColor: VxColors.deepBlack,
@@ -196,7 +196,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         backgroundColor: VxColors.deepBlack,
         iconTheme: const IconThemeData(color: Colors.white),
         title:
-            const Text('AI ASSISTANT', style: TextStyle(color: Colors.white)),
+            const Text('AI Assistant', style: TextStyle(color: Colors.white)),
       ),
       body: Center(
         child: Padding(
@@ -230,7 +230,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
-                child: const Text('UPGRADE TO PREMIUM'),
+                child: const Text('Upgrade to Premium'),
               ),
             ],
           ),
@@ -384,7 +384,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     backgroundColor: VxColors.neonGreen,
                     foregroundColor: VxColors.deepBlack,
                   ),
-                  child: const Text('ACCEPT & BACKTEST'),
+                  child: const Text('Accept & Backtest'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -395,7 +395,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     foregroundColor: VxColors.neonCyan,
                     side: const BorderSide(color: VxColors.neonCyan),
                   ),
-                  child: const Text('REGENERATE'),
+                  child: const Text('Regenerate'),
                 ),
               ),
             ],

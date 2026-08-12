@@ -69,7 +69,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                   .then((_) => _loadStrategies()),
               backgroundColor: VxColors.neonGreen,
               foregroundColor: VxColors.deepBlack,
-              label: const Text('CREATE STRATEGY',
+              label: const Text('Create Strategy',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               icon: const Icon(Icons.add),
             )
@@ -102,7 +102,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                 .push('/simulator/templates')
                 .then((_) => _loadStrategies()),
             icon: const Icon(Icons.add),
-            label: const Text('CREATE STRATEGY'),
+            label: const Text('Create Strategy'),
             style: ElevatedButton.styleFrom(
               backgroundColor: VxColors.neonGreen,
               foregroundColor: VxColors.deepBlack,
@@ -184,7 +184,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                 child: OutlinedButton.icon(
                   onPressed: () => _backtest(strategy),
                   icon: const Icon(Icons.science, size: 16),
-                  label: const Text('BACKTEST'),
+                  label: const Text('Backtest'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: VxColors.neonGreen,
                     side: const BorderSide(color: VxColors.neonGreen),
@@ -196,7 +196,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () => _startPaperTrading(strategy),
                   icon: const Icon(Icons.play_arrow, size: 16),
-                  label: const Text('PAPER TRADE'),
+                  label: const Text('Paper Trade'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: VxColors.neonCyan,
                   ),
@@ -255,7 +255,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL', style: TextStyle(color: Colors.grey)),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
@@ -269,7 +269,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                 ),
               );
             },
-            child: const Text('DELETE',
+            child: const Text('Delete',
                 style: TextStyle(
                     color: VxColors.neonRed, fontWeight: FontWeight.bold)),
           ),

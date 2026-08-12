@@ -24,7 +24,7 @@ class BacktestResultsScreen extends StatelessWidget {
         backgroundColor: VxColors.deepBlack,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          'BACKTEST RESULTS',
+          'Backtest Results',
           style: TextStyle(
             color: VxColors.neonCyan,
             letterSpacing: 0.3,
@@ -70,14 +70,14 @@ class BacktestResultsScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Equity curve
-            _buildSectionHeader('EQUITY CURVE'),
+            _buildSectionHeader('Equity Curve'),
             const SizedBox(height: 12),
             _buildEquityCurveChart(),
 
             const SizedBox(height: 24),
 
             // Key metrics grid
-            _buildSectionHeader('KEY METRICS'),
+            _buildSectionHeader('Key Metrics'),
             const SizedBox(height: 12),
             _buildMetricsGrid(),
 
@@ -144,7 +144,7 @@ class BacktestResultsScreen extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                isProfit ? 'PROFITABLE' : 'UNPROFITABLE',
+                isProfit ? 'Profitable' : 'Unprofitable',
                 style: TextStyle(
                   color: color,
                   fontSize: 20,
@@ -540,7 +540,7 @@ class BacktestResultsScreen extends StatelessWidget {
               context.go('/');
             },
             icon: const Icon(Icons.play_arrow),
-            label: const Text('GO TO TERMINAL'),
+            label: const Text('Go to Terminal'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.grey[800],
               foregroundColor: Colors.white,
@@ -560,7 +560,7 @@ class BacktestResultsScreen extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: () => _deployStrategy(context),
             icon: const Icon(Icons.rocket_launch),
-            label: const Text('DEPLOY STRATEGY'),
+            label: const Text('Deploy Strategy'),
             style: ElevatedButton.styleFrom(
               backgroundColor: VxColors.neonCyan,
               foregroundColor: VxColors.deepBlack,
@@ -580,7 +580,7 @@ class BacktestResultsScreen extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: () => context.pop(),
             icon: const Icon(Icons.edit),
-            label: const Text('MODIFY STRATEGY'),
+            label: const Text('Modify Strategy'),
             style: OutlinedButton.styleFrom(
               foregroundColor: VxColors.neonCyan,
               side: const BorderSide(color: VxColors.neonCyan),
@@ -600,7 +600,7 @@ class BacktestResultsScreen extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: () => _showComingSoon(context, 'Share results'),
             icon: const Icon(Icons.share),
-            label: const Text('SHARE RESULTS'),
+            label: const Text('Share Results'),
             style: OutlinedButton.styleFrom(
               foregroundColor: VxColors.neonCyan,
               side: const BorderSide(color: VxColors.neonCyan),
