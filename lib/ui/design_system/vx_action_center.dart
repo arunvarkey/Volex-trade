@@ -147,7 +147,7 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
         description: isRunning
             ? 'Active: ${activeStrategy.name}'
             : 'Deploy automated trading',
-        color: isRunning ? VxColors.neonGreen : VxColors.neonPurple,
+        color: isRunning ? VxColors.neonGreen : VxColors.neonCyan,
         action: _handleStartStrategy,
       ),
       _Command(
@@ -437,17 +437,17 @@ class _CommandTile extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: VxColors.neonPurple.withValues(alpha: 0.2),
+                                color: VxColors.neonCyan.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                  color: VxColors.neonPurple,
+                                  color: VxColors.neonCyan,
                                   width: 1,
                                 ),
                               ),
                               child: const Text(
                                 'PRO',
                                 style: TextStyle(
-                                  color: VxColors.neonPurple,
+                                  color: VxColors.neonCyan,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1089,7 +1089,7 @@ class _ProUpgradeDialogState extends State<_ProUpgradeDialog>
                   appRouter.push('/subscription');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: VxColors.neonPurple,
+                  backgroundColor: VxColors.neonCyan,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1125,7 +1125,7 @@ class _ProUpgradeDialogState extends State<_ProUpgradeDialog>
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon, color: VxColors.neonPurple, size: 20),
+          Icon(icon, color: VxColors.neonCyan, size: 20),
           const SizedBox(width: 12),
           Text(
             label,

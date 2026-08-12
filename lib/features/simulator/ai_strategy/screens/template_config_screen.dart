@@ -154,7 +154,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
         gradient: LinearGradient(
           colors: [
             VxColors.neonCyan.withValues(alpha: 0.1),
-            VxColors.neonPurple.withValues(alpha: 0.1),
+            VxColors.neonCyan.withValues(alpha: 0.1),
           ],
         ),
         border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
@@ -256,10 +256,10 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? VxColors.neonPurple.withValues(alpha: 0.2)
+                  ? VxColors.neonCyan.withValues(alpha: 0.2)
                   : Colors.grey[900],
               border: Border.all(
-                color: isSelected ? VxColors.neonPurple : Colors.grey[800]!,
+                color: isSelected ? VxColors.neonCyan : Colors.grey[800]!,
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(4),
@@ -267,7 +267,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             child: Text(
               tf,
               style: TextStyle(
-                color: isSelected ? VxColors.neonPurple : Colors.grey[400],
+                color: isSelected ? VxColors.neonCyan : Colors.grey[400],
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 12,
               ),
@@ -531,7 +531,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
         title: const Text(
           'UPGRADE TO PREMIUM',
           style: TextStyle(
-            color: VxColors.neonPurple,
+            color: VxColors.neonCyan,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
           ),

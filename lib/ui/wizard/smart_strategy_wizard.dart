@@ -33,7 +33,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
       backgroundColor: VxColors.deepBlack,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: VxColors.neonPurple.withValues(alpha: 0.3)),
+        side: BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.3)),
       ),
       child: Container(
         height: 500,
@@ -47,7 +47,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
                 Text(
                   "Smart Builder",
                   style: GoogleFonts.dmSans(
-                    color: VxColors.neonPurple,
+                    color: VxColors.neonCyan,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.2,
                   ),
@@ -109,7 +109,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
         ElevatedButton(
           onPressed: _nextStep,
           style: ElevatedButton.styleFrom(
-            backgroundColor: VxColors.neonPurple,
+            backgroundColor: VxColors.neonCyan,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           ),
           child: const Text("NEXT STEP"),
@@ -224,7 +224,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
           min: min,
           max: max,
           divisions: (max - min).toInt(),
-          activeColor: VxColors.neonPurple,
+          activeColor: VxColors.neonCyan,
           onChanged: onChanged,
         ),
       ],

@@ -85,7 +85,7 @@ class SignalLimitBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonPurple.withValues(alpha: 0.2),
+            VxColors.neonCyan.withValues(alpha: 0.2),
             VxColors.primary.withValues(alpha: 0.2),
           ],
         ),

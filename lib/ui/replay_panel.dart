@@ -188,11 +188,11 @@ class ReplayPanel extends StatelessWidget {
                                   }
                                 },
                                 icon: const Icon(Icons.code,
-                                    color: VxColors.neonPurple),
+                                    color: VxColors.neonCyan),
                                 tooltip: 'Edit Strategy',
                                 style: IconButton.styleFrom(
                                   backgroundColor:
-                                      VxColors.neonPurple.withValues(alpha: 0.2),
+                                      VxColors.neonCyan.withValues(alpha: 0.2),
                                   padding: const EdgeInsets.all(8),
                                 ),
                               ),

@@ -308,7 +308,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                     Row(
                       children: [
                         const Icon(Icons.draw_rounded,
-                            color: VxColors.neonPurple, size: 20),
+                            color: VxColors.neonCyan, size: 20),
                         const SizedBox(width: 8),
                         Text('Drawings · $_currentSymbol',
                             style: const TextStyle(
@@ -341,7 +341,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                           dense: true,
                           contentPadding: EdgeInsets.zero,
                           leading: const Icon(Icons.horizontal_rule_rounded,
-                              color: VxColors.neonPurple),
+                              color: VxColors.neonCyan),
                           title: Text(
                             d.type == ChartDrawingType.horizontal
                                 ? 'Level ${d.price.toStringAsFixed(2)}'
@@ -507,10 +507,10 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                           color: VxColors.surfaceBright.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: VxColors.neonPurple.withValues(alpha: 0.5)),
+                              color: VxColors.neonCyan.withValues(alpha: 0.5)),
                         ),
                         child: const Icon(Icons.horizontal_rule_rounded,
-                            color: VxColors.neonPurple, size: 24),
+                            color: VxColors.neonCyan, size: 24),
                       ),
                     ),
                   ),
