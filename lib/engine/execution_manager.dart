@@ -177,7 +177,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
           'pattern_count': analysis.patterns.length,
         });
 
-        if (!context.mounted) return placeOrder(order);
+        if (!context.mounted) return await placeOrder(order);
 
         final proceed = await showDialog<bool>(
           context: context,
