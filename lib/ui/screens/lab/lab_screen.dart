@@ -134,7 +134,7 @@ class LabScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.science, size: 40, color: VxColors.neonPurple),
+              const Icon(Icons.science, size: 40, color: VxColors.neonCyan),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -437,7 +437,7 @@ class _LabActionButton extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.onTap,
-    this.color = VxColors.neonPurple,
+    this.color = VxColors.neonCyan,
   });
 
   @override

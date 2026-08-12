@@ -27,7 +27,7 @@ class BacktestResultsScreen extends StatelessWidget {
           'BACKTEST RESULTS',
           style: TextStyle(
             color: VxColors.neonCyan,
-            letterSpacing: 2,
+            letterSpacing: 0.3,
             fontSize: 16,
           ),
         ),
@@ -149,7 +149,7 @@ class BacktestResultsScreen extends StatelessWidget {
                   color: color,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -231,7 +231,7 @@ class BacktestResultsScreen extends StatelessWidget {
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -602,8 +602,8 @@ class BacktestResultsScreen extends StatelessWidget {
             icon: const Icon(Icons.share),
             label: const Text('SHARE RESULTS'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: VxColors.neonPurple,
-              side: const BorderSide(color: VxColors.neonPurple),
+              foregroundColor: VxColors.neonCyan,
+              side: const BorderSide(color: VxColors.neonCyan),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),

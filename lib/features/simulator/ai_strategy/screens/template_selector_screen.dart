@@ -24,7 +24,7 @@ class TemplateSelectorScreen extends StatelessWidget {
           'CHOOSE TEMPLATE',
           style: TextStyle(
             color: VxColors.neonCyan,
-            letterSpacing: 2,
+            letterSpacing: 0.3,
           ),
         ),
       ),

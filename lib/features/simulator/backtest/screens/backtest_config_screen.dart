@@ -49,7 +49,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
           'BACKTEST CONFIGURATION',
           style: TextStyle(
             color: VxColors.neonCyan,
-            letterSpacing: 2,
+            letterSpacing: 0.3,
             fontSize: 16,
           ),
         ),
@@ -116,7 +116,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                         'RUN BACKTEST',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
+                          letterSpacing: 0.3,
                         ),
                       ),
               ),
@@ -198,13 +198,13 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                       color: VxColors.neonCyan,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
+                      letterSpacing: 0.3,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      _buildInfoChip(symbol, VxColors.neonPurple),
+                      _buildInfoChip(symbol, VxColors.neonCyan),
                       const SizedBox(width: 8),
                       _buildInfoChip(timeframe, VxColors.neonGreen),
                     ],
@@ -246,7 +246,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -474,9 +474,9 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         title: const Text(
           'UPGRADE TO PREMIUM',
           style: TextStyle(
-            color: VxColors.neonPurple,
+            color: VxColors.neonCyan,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         content: Text(message, style: const TextStyle(color: Colors.white)),

@@ -600,14 +600,14 @@ class HomeScreenV2 extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                VxColors.neonPurple.withValues(alpha: 0.18),
+                VxColors.neonCyan.withValues(alpha: 0.18),
                 VxColors.surface,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: VxColors.neonPurple.withValues(alpha: 0.3)),
+            border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -615,7 +615,7 @@ class HomeScreenV2 extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: VxColors.neonPurple.withValues(alpha: 0.15),
+                  color: VxColors.neonCyan.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -640,7 +640,7 @@ class HomeScreenV2 extends StatelessWidget {
                 ),
               ),
               const Icon(Icons.chevron_right_rounded,
-                  color: VxColors.neonPurple, size: 24),
+                  color: VxColors.neonCyan, size: 24),
             ],
           ),
         ),

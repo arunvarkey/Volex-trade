@@ -47,7 +47,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
           'MY STRATEGIES ($count/$limit)',
           style: const TextStyle(
             color: VxColors.neonCyan,
-            letterSpacing: 2,
+            letterSpacing: 0.3,
             fontSize: 16,
           ),
         ),
@@ -133,7 +133,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
         gradient: LinearGradient(
           colors: [
             VxColors.neonCyan.withValues(alpha: 0.05),
-            VxColors.neonPurple.withValues(alpha: 0.05),
+            VxColors.neonCyan.withValues(alpha: 0.05),
           ],
         ),
         border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
@@ -198,7 +198,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                   icon: const Icon(Icons.play_arrow, size: 16),
                   label: const Text('PAPER TRADE'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: VxColors.neonPurple,
+                    backgroundColor: VxColors.neonCyan,
                   ),
                 ),
               ),
@@ -234,7 +234,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
           style: TextStyle(
             color: VxColors.neonRed,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         content: Column(
