@@ -8,6 +8,11 @@ class MetricsCalculator {
     required List<TradeMarker> trades,
     required List<double> equityCurve,
     required double initialEquity,
+    // Bars per year for the backtest's timeframe (e.g. 8760 for 1h on a 24/7
+    // market, 365 for 1d). Used to annualize the Sharpe ratio correctly —
+    // annualizing per-bar returns with a fixed sqrt(252) is only valid for
+    // daily bars and otherwise mis-states risk-adjusted return.
+    int periodsPerYear = 252,
   }) {
     if (trades.isEmpty || equityCurve.isEmpty) {
       return const BacktestMetrics(
@@ -65,22 +70,26 @@ class MetricsCalculator {
         : losses.fold(0.0, (sum, t) => sum + (t.pnlPercent ?? 0)) /
             losses.length;
 
-    // Sharpe Ratio (Simplified periodic return approach)
-    // In a real implementation, we'd use daily/hourly returns.
-    // This is a placeholder for the consolidated engine.
+    // Sharpe ratio: mean per-bar return / std-dev of per-bar returns,
+    // annualized by sqrt(bars per year). Risk-free rate is taken as 0 (a
+    // common simplification for short-horizon crypto backtests).
     double sharpe = 0;
     if (equityCurve.length > 1) {
       final returns = <double>[];
       for (int i = 1; i < equityCurve.length; i++) {
+        if (equityCurve[i - 1] == 0) continue;
         returns.add((equityCurve[i] - equityCurve[i - 1]) / equityCurve[i - 1]);
       }
-      final mean = returns.fold(0.0, (a, b) => a + b) / returns.length;
-      final variance = returns.fold(0.0, (a, b) => a + math.pow(b - mean, 2)) /
-          returns.length;
-      final stdDev = math.sqrt(variance);
-      sharpe = stdDev == 0
-          ? 0
-          : (mean / stdDev) * math.sqrt(252); // Annualized (assuming daily)
+      if (returns.isNotEmpty) {
+        final mean = returns.fold(0.0, (a, b) => a + b) / returns.length;
+        final variance =
+            returns.fold(0.0, (a, b) => a + math.pow(b - mean, 2)) /
+                returns.length;
+        final stdDev = math.sqrt(variance);
+        sharpe = stdDev == 0
+            ? 0
+            : (mean / stdDev) * math.sqrt(periodsPerYear.toDouble());
+      }
     }
 
     // Duration

@@ -121,6 +121,27 @@ class BacktestEngine extends ChangeNotifier {
     return BacktestResult.error("No strategy provided.");
   }
 
+  /// Bars per year for a timeframe, used to annualize the Sharpe ratio.
+  /// Crypto trades 24/7, so a year is 365 days of continuous bars.
+  static int _barsPerYear(String? timeframe) {
+    const perDay = {
+      '1m': 1440,
+      '3m': 480,
+      '5m': 288,
+      '15m': 96,
+      '30m': 48,
+      '1h': 24,
+      '2h': 12,
+      '4h': 6,
+      '6h': 4,
+      '8h': 3,
+      '12h': 2,
+      '1d': 1,
+    };
+    if (timeframe == '1w') return 52;
+    return (perDay[timeframe] ?? 24) * 365;
+  }
+
   static Future<BacktestResult> _runRuntimeStrategyBacktest(
       BacktestIsolateParams params) async {
     final simulator = ExecutionSimulator(
@@ -195,6 +216,8 @@ class BacktestEngine extends ChangeNotifier {
       trades: markers,
       equityCurve: equityCurve,
       initialEquity: params.initialEquity,
+      periodsPerYear: _barsPerYear(
+          params.strategy?.timeframe ?? params.runtimeStrategy?.timeframe),
     );
 
     return BacktestResult(
@@ -287,6 +310,8 @@ class BacktestEngine extends ChangeNotifier {
       trades: markers,
       equityCurve: equityCurve,
       initialEquity: params.initialEquity,
+      periodsPerYear: _barsPerYear(
+          params.strategy?.timeframe ?? params.runtimeStrategy?.timeframe),
     );
 
     return BacktestResult(
