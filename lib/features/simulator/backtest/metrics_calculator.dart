@@ -74,6 +74,7 @@ class MetricsCalculator {
     // annualized by sqrt(bars per year). Risk-free rate is taken as 0 (a
     // common simplification for short-horizon crypto backtests).
     double sharpe = 0;
+    double sortino = 0;
     if (equityCurve.length > 1) {
       final returns = <double>[];
       for (int i = 1; i < equityCurve.length; i++) {
@@ -81,14 +82,34 @@ class MetricsCalculator {
         returns.add((equityCurve[i] - equityCurve[i - 1]) / equityCurve[i - 1]);
       }
       if (returns.isNotEmpty) {
+        final annual = math.sqrt(periodsPerYear.toDouble());
         final mean = returns.fold(0.0, (a, b) => a + b) / returns.length;
         final variance =
             returns.fold(0.0, (a, b) => a + math.pow(b - mean, 2)) /
                 returns.length;
         final stdDev = math.sqrt(variance);
-        sharpe = stdDev == 0
-            ? 0
-            : (mean / stdDev) * math.sqrt(periodsPerYear.toDouble());
+        sharpe = stdDev == 0 ? 0 : (mean / stdDev) * annual;
+
+        // Sortino: like Sharpe but only downside volatility is "risk"
+        // (target minimum acceptable return = 0). Downside deviation divides
+        // the squared negative returns by the full sample size, per convention.
+        final downSq = returns
+            .where((r) => r < 0)
+            .fold(0.0, (a, r) => a + r * r);
+        final downsideDev = math.sqrt(downSq / returns.length);
+        sortino =
+            downsideDev == 0 ? 0 : (mean / downsideDev) * annual;
+      }
+    }
+
+    // Calmar: annualized (CAGR) return per unit of max drawdown.
+    double calmar = 0;
+    if (maxDrawdown > 0 && equityCurve.length > 1 && initialEquity > 0) {
+      final years = (equityCurve.length - 1) / periodsPerYear;
+      final growth = equityCurve.last / initialEquity;
+      if (years > 0 && growth > 0) {
+        final cagr = (math.pow(growth, 1 / years) - 1) * 100;
+        calmar = cagr / maxDrawdown;
       }
     }
 
@@ -119,6 +140,8 @@ class MetricsCalculator {
       totalReturnPercent: totalReturnPercent,
       maxDrawdownPercent: maxDrawdown,
       sharpeRatio: sharpe,
+      sortinoRatio: sortino,
+      calmarRatio: calmar,
       winRate: winRate,
       profitFactor: profitFactor,
       avgWinPercent: avgWin,

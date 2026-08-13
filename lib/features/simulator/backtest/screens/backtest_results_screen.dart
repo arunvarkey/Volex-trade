@@ -187,6 +187,9 @@ class BacktestResultsScreen extends StatelessWidget {
     'Total Return': 'total_return',
     'Max Drawdown': 'max_drawdown',
     'Profit Factor': 'profit_factor',
+    'Sharpe Ratio': 'sharpe_ratio',
+    'Sortino Ratio': 'sortino_ratio',
+    'Calmar Ratio': 'calmar_ratio',
     'P&L': 'pnl',
   };
 
@@ -353,6 +356,16 @@ class BacktestResultsScreen extends StatelessWidget {
               'Sharpe Ratio',
               result.metrics.sharpeRatio.toStringAsFixed(2),
               result.metrics.isGoodSharpe),
+          Divider(color: Colors.grey[800]),
+          _buildMetricRow(
+              'Sortino Ratio',
+              result.metrics.sortinoRatio.toStringAsFixed(2),
+              result.metrics.sortinoRatio > 2),
+          Divider(color: Colors.grey[800]),
+          _buildMetricRow(
+              'Calmar Ratio',
+              result.metrics.calmarRatio.toStringAsFixed(2),
+              result.metrics.calmarRatio > 1),
           Divider(color: Colors.grey[800]),
           _buildMetricRow(
               'Max Drawdown',

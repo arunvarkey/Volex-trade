@@ -40,6 +40,21 @@ class Glossary {
       'How many dollars you won for every dollar you lost.',
       'Gross profit divided by gross loss. Above 1.0 is profitable; 2.0 means you made \$2 for every \$1 lost. Below 1.0 loses money regardless of win rate.',
     ),
+    'sharpe_ratio': GlossaryEntry(
+      'Sharpe Ratio',
+      'Return earned for each unit of overall risk (ups and downs).',
+      'Average return divided by the volatility of returns, annualized. Higher is better: above ~1 is decent, above ~2 is strong. It treats all volatility as risk, so a strategy with big winning swings can be penalized even though those swings helped you.',
+    ),
+    'sortino_ratio': GlossaryEntry(
+      'Sortino Ratio',
+      'Like Sharpe, but only counts the downside swings as risk.',
+      'Return divided by "downside deviation" (the volatility of losing periods only), annualized. Because upside volatility isn\'t punished, it rewards strategies that are choppy on the way up but steady on the way down. Usually higher than the Sharpe for the same strategy.',
+    ),
+    'calmar_ratio': GlossaryEntry(
+      'Calmar Ratio',
+      'Annual return compared with the worst drop you had to sit through.',
+      'Annualized return (CAGR) divided by max drawdown. It answers "how much return did I get per unit of worst-case pain?" Above 1 means yearly return exceeded the deepest drawdown; the higher, the more comfortable the ride relative to the reward.',
+    ),
     'rsi': GlossaryEntry(
       'RSI',
       'A 0–100 gauge of whether a coin has been bought or sold too hard.',
