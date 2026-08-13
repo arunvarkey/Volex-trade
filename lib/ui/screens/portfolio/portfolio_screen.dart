@@ -339,10 +339,35 @@ class PortfolioScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(width: 4),
+            IconButton(
+              tooltip: 'Close position',
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.close, size: 18, color: Colors.white38),
+              onPressed: () => _closePosition(context, pos),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _closePosition(BuildContext context, Position pos) async {
+    final em = context.read<ExecutionManager>();
+    final messenger = ScaffoldMessenger.of(context);
+    final pnl = pos.unrealizedPnl ?? 0.0;
+    try {
+      await em.closeOrder(pos.id);
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: pnl >= 0 ? VxColors.neonGreen : VxColors.neonRed,
+        content: Text(
+          'Closed ${pos.symbol} · ${pnl >= 0 ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
+        ),
+      ));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('Could not close: $e')));
+    }
   }
 
   Widget _buildRecentOrdersHeader() {

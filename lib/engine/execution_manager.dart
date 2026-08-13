@@ -443,11 +443,27 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       orElse: () => throw Exception("Position not found"),
     );
 
+    // placeMarketOrder requires a mark price; derive it from the position's
+    // last-known unrealized PnL when the caller doesn't supply one, so a
+    // manual "Close" always works instead of throwing.
+    final mark = currentPrice ?? _positionMarkPrice(pos);
+
     await placeMarketOrder(
       symbol: pos.symbol,
       side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
       quantity: pos.quantity,
+      currentPrice: mark,
     );
+  }
+
+  /// Best-estimate current price of an open position, backed out from its
+  /// entry and last-marked unrealized PnL. Falls back to the entry price.
+  double _positionMarkPrice(Position pos) {
+    final pnl = pos.unrealizedPnl;
+    if (pnl == null || pos.quantity == 0) return pos.entryPrice;
+    return pos.side == OrderSide.buy
+        ? pos.entryPrice + pnl / pos.quantity
+        : pos.entryPrice - pnl / pos.quantity;
   }
 
   /// Closes all open positions immediately.
