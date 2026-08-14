@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/core/service_locator.dart';
@@ -12,6 +15,7 @@ import 'package:volex_terminal/ui/screens/auth/pin_entry_screen.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/core/providers_setup.dart';
 import 'package:volex_terminal/services/feature_flag_service.dart';
+import 'package:volex_terminal/features/compliance/age_gate_screen.dart';
 
 /// Error fallback app
 class ErrorApp extends StatelessWidget {
@@ -141,9 +145,17 @@ class _VolexTerminalAppState extends State<VolexTerminalApp>
             debugShowCheckedModeBanner: false,
             theme: themeService.buildThemeData(),
             routerConfig: appRouter,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
             builder: (context, child) {
-              // Only override ErrorWidget in non-test environments to avoid flutter_test assertion
-              if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+              // Only override ErrorWidget in non-test environments to avoid flutter_test assertion.
+              // Platform.environment is unsupported on web, so guard with kIsWeb.
+              if (kIsWeb || !Platform.environment.containsKey('FLUTTER_TEST')) {
                 ErrorWidget.builder = (errorDetails) {
                   return Container(
                     color: Colors.black,
@@ -189,7 +201,9 @@ class _VolexTerminalAppState extends State<VolexTerminalApp>
               return MaintenanceMonitor(
                 child: PrivacyShield(
                   child: AuthActivityListener(
-                    child: AuthGate(child: child),
+                    child: AgeGate(
+                      child: AuthGate(child: child),
+                    ),
                   ),
                 ),
               );

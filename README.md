@@ -13,9 +13,9 @@ Volex Terminal is a **high-fidelity educational trading simulator** designed for
 - **Live Market Data**: Real-time price feeds powered by Binance Public Data.
 - **Institutional Order Types**: Practice with Market, Limit, Stop-Loss, and Take-Profit orders.
 
-### 🚀 **Live Trading (Phase 2)**
-- **Coming Soon**: Real-money execution is currently in development.
-- **Bank-Grade Security**: Infrastructure is being prepared for the next release.
+### 🚀 **The Path to Real Capital (Future)**
+- **Not a broker**: Volex does not hold funds or execute real-money trades. All trading is simulated.
+- **Graduation, later**: Once you've proven your skill, a future release will let you connect a *regulated broker partner* to trade live — with your risk guardrails intact. We stay the skill-and-strategy layer; a licensed partner handles execution.
 
 ### 🛡️ **Bank-Grade Security**
 - **Privacy Shield**: Visual obfuscation blurs the app content when backgrounded or in app switcher.

@@ -19,9 +19,9 @@ class TerminalBottomTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
+        color: VxColors.surface.withValues(alpha: 0.5),
         border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.05)),
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: Column(
@@ -66,12 +66,12 @@ class TerminalBottomTabs extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 36, color: Colors.white.withOpacity(0.1)),
+          Icon(icon, size: 36, color: Colors.white.withValues(alpha: 0.1)),
           const SizedBox(height: 8),
           Text(
             message,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               fontSize: 12,
             ),
           ),
@@ -176,6 +176,44 @@ class TerminalBottomTabs extends StatelessWidget {
   }
 
   Widget _buildHistoryList() {
-    return _buildEmptyState('History Coming Soon', Icons.history);
+    return Consumer<ExecutionManager>(
+      builder: (context, manager, _) {
+        final history = manager.closedOrders.reversed.toList();
+        if (history.isEmpty) {
+          return _buildEmptyState('No trade history yet', Icons.history);
+        }
+        return ListView.separated(
+          itemCount: history.length,
+          separatorBuilder: (_, __) =>
+              const Divider(height: 1, color: Colors.white10),
+          itemBuilder: (context, index) {
+            final order = history[index];
+            final isBuy = order.side == OrderSide.buy;
+            final px = order.filledPrice ?? order.price;
+            final qty = order.filledQuantity ?? order.quantity;
+            final color = isBuy ? VxColors.neonGreen : VxColors.neonRed;
+            return ListTile(
+              dense: true,
+              leading: Icon(
+                  isBuy ? Icons.arrow_upward : Icons.arrow_downward,
+                  size: 16,
+                  color: color),
+              title: Text(order.symbol,
+                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+              subtitle: Text(
+                  '${isBuy ? "BUY" : "SELL"} $qty @ ${px.toStringAsFixed(2)}',
+                  style: TextStyle(color: color, fontSize: 10)),
+              trailing: Text(_formatTime(order.filledAt),
+                  style: const TextStyle(color: Colors.white38, fontSize: 10)),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _formatTime(DateTime? t) {
+    if (t == null) return '';
+    return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 }

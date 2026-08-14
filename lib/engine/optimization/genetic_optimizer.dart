@@ -100,10 +100,12 @@ class GeneticOptimizer {
 
       // Task 45 Fix: Risk-adjusted fitness function
       double calculateFitness(BacktestResult r) {
-        if (r.metrics.maxDrawdownPercent > 25)
+        if (r.metrics.maxDrawdownPercent > 25) {
           return -999.0; // Hard reject high risk
-        if (r.metrics.totalTrades < 5)
+        }
+        if (r.metrics.totalTrades < 5) {
           return -999.0; // Statistical significance
+        }
 
         // Sharpe-like: Return per unit of risk (drawdown)
         return r.metrics.totalReturnPercent /

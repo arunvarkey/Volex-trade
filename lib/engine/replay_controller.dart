@@ -30,13 +30,22 @@ class ReplayController extends ChangeNotifier {
           ? _fullHistory[_currentIndex].date
           : null;
 
-  void loadHistory(List<Candle> history) {
+  /// Loads history for replay. [warmup] pre-advances the playhead so the
+  /// consumer can seed a visible chart with the first [warmup] candles and
+  /// replay reveals the rest — avoids starting on a blank chart.
+  void loadHistory(List<Candle> history, {int warmup = 0}) {
     _fullHistory = history;
-    _currentIndex = 0;
+    _currentIndex = history.isEmpty ? 0 : warmup.clamp(0, history.length - 1);
     _isPlaying = false;
     _timer?.cancel();
     notifyListeners();
   }
+
+  /// Candles from the start up to (and including) the current playhead — used
+  /// by the consumer to repopulate the chart after a seek.
+  List<Candle> get historySoFar => _fullHistory.isEmpty
+      ? const []
+      : _fullHistory.sublist(0, (_currentIndex + 1).clamp(0, _fullHistory.length));
 
   void play() {
     if (_isPlaying) return;
@@ -156,9 +165,6 @@ class ReplayController extends ChangeNotifier {
     _currentIndex++;
     notifyListeners();
   }
-
-  // Method to get current historical slice for initial load or seek/reset
-  List<Candle> get historySoFar => _fullHistory.sublist(0, _currentIndex);
 
   @override
   void dispose() {

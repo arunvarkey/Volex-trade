@@ -58,7 +58,7 @@ class _CreateAlertDialogState extends State<CreateAlertDialog> {
       backgroundColor: VxColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.white.withOpacity(0.1)),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -124,10 +124,10 @@ class _CreateAlertDialogState extends State<CreateAlertDialog> {
                 prefixText: "\$ ",
                 prefixStyle: const TextStyle(color: Colors.grey, fontSize: 24),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: VxColors.neonPurple),
+                  borderSide: BorderSide(color: VxColors.neonCyan),
                 ),
               ),
             ),
@@ -138,7 +138,7 @@ class _CreateAlertDialogState extends State<CreateAlertDialog> {
             ElevatedButton(
               onPressed: _saveAlert,
               style: ElevatedButton.styleFrom(
-                backgroundColor: VxColors.neonPurple,
+                backgroundColor: VxColors.neonCyan,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -164,7 +164,7 @@ class _CreateAlertDialogState extends State<CreateAlertDialog> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.2) : Colors.transparent,
           border: Border.all(
             color: isSelected ? color : Colors.white10,
           ),

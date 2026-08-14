@@ -14,6 +14,12 @@ class TradeSignal {
   final DateTime timestamp;
   final DateTime expiresAt;
 
+  /// True when the strategy actually fired an actionable signal; false when
+  /// this is only the strongest current *setup* surfaced for the watchlist
+  /// (no confirmed trigger yet). Keeps the feed honest about what's a real
+  /// call vs. "one to watch".
+  final bool isActionable;
+
   TradeSignal({
     required this.id,
     required this.symbol,
@@ -27,6 +33,7 @@ class TradeSignal {
     required this.strategyName,
     required this.timestamp,
     required this.expiresAt,
+    this.isActionable = true,
   });
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
@@ -46,6 +53,7 @@ class TradeSignal {
         'strategy_name': strategyName,
         'timestamp': timestamp.toIso8601String(),
         'expires_at': expiresAt.toIso8601String(),
+        'is_actionable': isActionable,
       };
 
   factory TradeSignal.fromJson(Map<String, dynamic> json) => TradeSignal(
@@ -61,6 +69,7 @@ class TradeSignal {
         strategyName: json['strategy_name'],
         timestamp: DateTime.parse(json['timestamp']),
         expiresAt: DateTime.parse(json['expires_at']),
+        isActionable: json['is_actionable'] as bool? ?? true,
       );
 
   String toShareableText() {

@@ -64,10 +64,10 @@ class ModeSelectionScreen extends StatelessWidget {
                   title: 'Pro Mode',
                   subtitle: 'Connect Your Exchange',
                   icon: Icons.rocket_launch,
-                  color: VxColors.neonPurple,
+                  color: VxColors.neonCyan,
                   features: const [
                     'Everything in Explorer',
-                    'Live Trading Execution',
+                    'Full Terminal & Realistic Execution (Simulated)',
                     'Automated Strategies',
                     'Advanced Risk Management',
                   ],
@@ -93,39 +93,34 @@ class ModeSelectionScreen extends StatelessWidget {
   }
 
   void _selectExplorerMode(BuildContext context) async {
-    // Save mode selection
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_mode', 'explorer');
-
-    // Mark mode as selected
     await StartupService().markModeSelected();
-
-    // Track analytics
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'mode_selected',
-      parameters: {'mode': 'explorer'},
-    );
+    _logMode('explorer');
 
     // Go straight to app (no API keys needed!)
     if (context.mounted) context.go('/');
   }
 
   void _selectProMode(BuildContext context) async {
-    // Save mode selection
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_mode', 'pro');
-
-    // Mark mode as selected
     await StartupService().markModeSelected();
-
-    // Track analytics
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'mode_selected',
-      parameters: {'mode': 'pro'},
-    );
+    _logMode('pro');
 
     // Show API key setup
     if (context.mounted) context.push('/api-key-setup');
+  }
+
+  /// Fire-and-forget analytics that never blocks navigation. Firebase may be
+  /// unconfigured on device (no google-services.json), so guard both the
+  /// synchronous `.instance` access and the async logEvent.
+  void _logMode(String mode) {
+    try {
+      FirebaseAnalytics.instance
+          .logEvent(name: 'mode_selected', parameters: {'mode': mode})
+          .catchError((_) {});
+    } catch (_) {}
   }
 }
 
@@ -157,10 +152,10 @@ class _ModeCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: VxColors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.3), width: 2),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 0,
             ),
@@ -174,7 +169,7 @@ class _ModeCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -194,7 +189,7 @@ class _ModeCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 40, color: color),

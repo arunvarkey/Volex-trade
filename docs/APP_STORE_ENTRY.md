@@ -3,38 +3,44 @@
 ## App Name: Volex Terminal
 
 ### Short Description (Google Play):
-Institutional-grade trading terminal with AI strategy generation & real-time data.
+The flight simulator for traders — learn, build & backtest strategies on real market data. Zero risk.
 
 ### Full Description:
-**VOLEX TERMINAL: THE EDGE IN YOUR POCKET**
+**VOLEX: THE FLIGHT SIMULATOR FOR TRADERS**
 
-Experience the most powerful trading engine ever built for mobile. Volex Terminal bridges the gap between retail trading and institutional execution, giving you the tools to analyze, generate, and deploy strategies with neon-fast precision.
+Master the markets before you ever risk a dollar. Volex is a high-fidelity
+trading simulator that gives you an institutional-grade terminal to learn,
+build, backtest, and prove your strategies on real market data — with zero
+financial risk. No real money. No gambling. Just skill.
 
-#### ⚡ INSTITUTIONAL CHARTING
-- Powered by the proprietary **VxCandleEngine** for fluid, 120fps data rendering.
-- Real-time WebSocket streaming directly from Binance.
+#### ⚡ PROFESSIONAL CHARTING
+- Fluid, custom-rendered candlestick charts built for real-time analysis.
+- Live market data streaming directly from Binance public feeds.
 - Professional indicators and multi-timeframe analysis.
 
-#### 🤖 AI STRATEGY GENERATOR
-- Turn your trading ideas into code instantly.
-- Describe your edge, and our AI constructs a deployable strategy for you.
-- Backtest instantly against historical data.
+#### 🤖 AI STRATEGY LAB
+- Turn your trading ideas into strategies in plain language.
+- Describe your edge, and our AI drafts a strategy you can test.
+- Backtest instantly against historical data — with honest, clearly-labelled results.
 
-#### 🛡️ RISK-FIRST EXECUTION
-- Capped risk management and tuition limits to protect your capital.
-- Biometric-locked identity verification and cold-storage API keys.
-- Paper trading mode to sharpen your skills without risk.
+#### 🛡️ RISK-FREE BY DESIGN
+- 100% paper trading — practice with virtual capital, never real money.
+- Built-in risk caps and the AI Guardian to build disciplined habits.
+- Biometric lock and encrypted storage keep your account secure.
 
-#### 💎 ELITE SUBSCRIPTIONS
-- **PRO:** unlock higher leverage limits and advanced AI generation.
-- **ELITE:** get dedicated liquidity routing and absolute strategy secrecy.
+#### 💎 SUBSCRIPTIONS
+- **PRO:** unlimited backtests, advanced AI strategy generation, and the full indicator suite.
+- **CREATOR:** publish your strategies to the marketplace and build a following.
 
-Join the Volex Elite today. Establish your connection.
+Start training today. Become the trader you want to be — before you risk a thing.
+
+> Volex is an educational trading simulator. It is not a broker, does not hold
+> funds, and does not execute real-money trades. All trading is simulated.
 
 ---
 
 ### Keywords:
-trading, crypto, binance, terminal, ai trading, strategy, backtesting, forex, candles, indicators, risk management, institutional.
+trading simulator, paper trading, learn trading, crypto, binance, strategy builder, ai trading, backtesting, candles, indicators, risk management, trading education.
 
 ### Support URL:
 https://volexlabs.com/support

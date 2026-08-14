@@ -33,7 +33,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
       backgroundColor: VxColors.deepBlack,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+        side: BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.3)),
       ),
       child: Container(
         height: 500,
@@ -45,11 +45,11 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "SMART BUILDER",
-                  style: GoogleFonts.robotoMono(
-                    color: VxColors.neonPurple,
+                  "Smart Builder",
+                  style: GoogleFonts.dmSans(
+                    color: VxColors.neonCyan,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+                    letterSpacing: 0.2,
                   ),
                 ),
                 IconButton(
@@ -109,7 +109,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
         ElevatedButton(
           onPressed: _nextStep,
           style: ElevatedButton.styleFrom(
-            backgroundColor: VxColors.neonPurple,
+            backgroundColor: VxColors.neonCyan,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           ),
           child: const Text("NEXT STEP"),
@@ -175,7 +175,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
           border: Border.all(color: isSelected ? color : Colors.white10),
           borderRadius: BorderRadius.circular(12),
         ),
@@ -224,7 +224,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
           min: min,
           max: max,
           divisions: (max - min).toInt(),
-          activeColor: VxColors.neonPurple,
+          activeColor: VxColors.neonCyan,
           onChanged: onChanged,
         ),
       ],

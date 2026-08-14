@@ -48,9 +48,8 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         title: const Text(
           'BACKTEST CONFIGURATION',
           style: TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
-            letterSpacing: 2,
+            letterSpacing: 0.3,
             fontSize: 16,
           ),
         ),
@@ -110,14 +109,14 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                             ),
                           ),
                           SizedBox(width: 12),
-                          Text('RUNNING BACKTEST...'),
+                          Text('Running backtest…'),
                         ],
                       )
                     : const Text(
                         'RUN BACKTEST',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
+                          letterSpacing: 0.3,
                         ),
                       ),
               ),
@@ -183,8 +182,8 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: VxColors.neonCyan.withOpacity(0.1),
-          border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+          color: VxColors.neonCyan.withValues(alpha: 0.1),
+          border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -199,13 +198,13 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                       color: VxColors.neonCyan,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
+                      letterSpacing: 0.3,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      _buildInfoChip(symbol, VxColors.neonPurple),
+                      _buildInfoChip(symbol, VxColors.neonCyan),
                       const SizedBox(width: 8),
                       _buildInfoChip(timeframe, VxColors.neonGreen),
                     ],
@@ -225,7 +224,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         border: Border.all(color: color),
         borderRadius: BorderRadius.circular(4),
       ),
@@ -247,7 +246,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -317,7 +316,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: VxColors.neonGreen.withOpacity(0.2),
+                color: VxColors.neonGreen.withValues(alpha: 0.2),
                 border: Border.all(color: VxColors.neonGreen),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -326,7 +325,6 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                 style: const TextStyle(
                   color: VxColors.neonGreen,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Courier',
                   fontSize: 16,
                 ),
               ),
@@ -339,7 +337,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             activeTrackColor: VxColors.neonGreen,
             inactiveTrackColor: Colors.grey[800],
             thumbColor: VxColors.neonGreen,
-            overlayColor: VxColors.neonGreen.withOpacity(0.2),
+            overlayColor: VxColors.neonGreen.withValues(alpha: 0.2),
           ),
           child: Slider(
             value: _initialEquity,
@@ -435,7 +433,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         setState(() => _isRunning = false);
 
         if (result.isSuccess) {
-          context.push('/simulator/backtest-results', extra: result);
+          context.push('/lab/backtest/results', extra: result);
         } else {
           _showError(result.error!);
         }
@@ -476,9 +474,9 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         title: const Text(
           'UPGRADE TO PREMIUM',
           style: TextStyle(
-            color: VxColors.neonPurple,
+            color: VxColors.neonCyan,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         content: Text(message, style: const TextStyle(color: Colors.white)),

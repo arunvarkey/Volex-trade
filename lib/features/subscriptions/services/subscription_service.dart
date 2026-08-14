@@ -18,9 +18,22 @@ class SubscriptionService extends ChangeNotifier {
       'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp8rHarIy5Xhthe99e59imTdOBLel8Okox+NrEvcPqn5f+TGcTMjEPZfPX1CRzSnmm/9U1yZe4RyNaabWj9aMA5Gi8NQy4O16igwKxNknj1+BIvUaFq3mX9HhTO8mPBueRsJNGHkfE7KhAhUNFw07DfZEpaKVD3lB/d2FTrMvab6fXCpxYOjk5KVtLFdsxTO6xYtSci3+YdXEKFidvciLjLwywb8q1Dq3NeXNx4CuzWrMgZP/5pAZD4NcNgcyVlVM6jhSOjcGO/Te/7+qRTNsxud8RDYEywwd54b5/g2NEms1lEAXz2r1ThDfXkVAA3jmM/PgFOjlhQ856MqYaN8r3wIDAQAB';
 
   final InAppPurchase _iap = InAppPurchase.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  // Accessed lazily so construction never touches Firebase. On platforms where
+  // Firebase isn't configured (e.g. web preview), these are simply never read
+  // because IAP is unavailable and initialize() returns early.
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+  FirebaseAnalytics get _analytics => FirebaseAnalytics.instance;
+
+  /// Signed-in user id, or null when auth/Firebase is unavailable (e.g. web
+  /// preview). Callers treat null as "no cloud usage tracking".
+  String? get _safeUserId {
+    try {
+      return _auth.currentUser?.uid;
+    } catch (_) {
+      return null;
+    }
+  }
 
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   final _statusController = StreamController<SubscriptionStatus>.broadcast();
@@ -44,6 +57,14 @@ class SubscriptionService extends ChangeNotifier {
   // Initialize subscription service
   Future<void> initialize() async {
     AppLogger.info('💳 SubscriptionService: Initializing...');
+
+    // In-app purchases aren't supported on web; default to the free tier so
+    // the app can boot for preview without the IAP plugin.
+    if (kIsWeb) {
+      AppLogger.warning('🌐 Web: IAP unavailable, defaulting to free tier');
+      _updateStatus(SubscriptionStatus.free());
+      return;
+    }
 
     // Check if IAP is available with timeout to prevent boot hang
     final available = await _iap.isAvailable().timeout(
@@ -88,7 +109,7 @@ class SubscriptionService extends ChangeNotifier {
 
   // Load subscription status from Firestore
   Future<void> _loadSubscriptionStatus() async {
-    final userId = _auth.currentUser?.uid;
+    final userId = _safeUserId;
     if (userId == null) {
       _updateStatus(SubscriptionStatus.free());
       return;
@@ -199,7 +220,7 @@ class SubscriptionService extends ChangeNotifier {
       AppLogger.info('🔐 Verifying purchase: ${purchase.productID}');
 
       // Get user ID
-      final userId = _auth.currentUser?.uid;
+      final userId = _safeUserId;
       if (userId == null) {
         AppLogger.error('❌ No user logged in');
         return;
@@ -268,7 +289,7 @@ class SubscriptionService extends ChangeNotifier {
   Future<void> cancelSubscription() async {
     // Note: Actual cancellation happens through App Store/Play Store
     // This just updates our records
-    final userId = _auth.currentUser?.uid;
+    final userId = _safeUserId;
     if (userId == null) return;
 
     await _firestore
@@ -331,7 +352,7 @@ class SubscriptionService extends ChangeNotifier {
 
   // Generic daily usage tracker
   Future<void> _trackDailyUsage(String collectionName) async {
-    final userId = _auth.currentUser?.uid;
+    final userId = _safeUserId;
     if (userId == null) return;
 
     await _firestore
@@ -345,7 +366,7 @@ class SubscriptionService extends ChangeNotifier {
 
   // Generic daily usage counter
   Future<int> _getDailyUsageCount(String collectionName) async {
-    final userId = _auth.currentUser?.uid;
+    final userId = _safeUserId;
     if (userId == null) return 0;
 
     final today = DateTime.now();

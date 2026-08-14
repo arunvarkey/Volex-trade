@@ -6,7 +6,9 @@ import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/providers/strategy_provider.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/services/strategy_repository.dart';
 import 'package:volex_terminal/services/analytics_service.dart';
+import 'package:get_it/get_it.dart';
 import 'components/ai_input_form.dart';
 import 'components/ai_strategy_results.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
@@ -122,9 +124,9 @@ class _AIStrategyGeneratorScreenState extends State<AIStrategyGeneratorScreen> {
             margin: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
             decoration: BoxDecoration(
-              color: VxColors.neonCyan.withOpacity(0.1),
+              color: VxColors.neonCyan.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+              border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
             ),
             child: Center(
               child: Text(
@@ -258,17 +260,34 @@ class _AIStrategyGeneratorScreenState extends State<AIStrategyGeneratorScreen> {
     }
   }
 
-  void _deployStrategy() {
-    HapticService.instance.successPulse();
-    AnalyticsService.instance.logEvent('strategy_deployed');
+  Future<void> _deployStrategy() async {
+    final provider = context.read<StrategyProvider>();
+    final strategy = provider.currentStrategy;
+    if (strategy == null) return;
 
+    HapticService.instance.successPulse();
+
+    // Honest action: persist the generated strategy to the user's library
+    // (My Strategies) — where they can review, backtest, and paper-trade it.
+    // (Previously this only showed a "deployed!" toast and did nothing.)
+    try {
+      await GetIt.I<StrategyRepository>().save(strategy);
+      AnalyticsService.instance.logEvent('strategy_saved');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not save strategy — try again.')),
+      );
+      return;
+    }
+
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Strategy deployed successfully!'),
+        content: Text('Saved to your strategies'),
         backgroundColor: VxColors.neonGreen,
       ),
     );
-
     Navigator.pop(context);
   }
 

@@ -51,14 +51,14 @@ class _VxDrawingToolbarState extends State<VxDrawingToolbar> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: VxColors.surface.withOpacity(0.95),
+              color: VxColors.surface.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: VxColors.neonCyan.withOpacity(0.2),
+                color: VxColors.neonCyan.withValues(alpha: 0.2),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -138,10 +138,10 @@ class _VxDrawingToolbarState extends State<VxDrawingToolbar> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: widget.selectedTool.color.withOpacity(0.2),
+              color: widget.selectedTool.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: widget.selectedTool.color.withOpacity(0.5),
+                color: widget.selectedTool.color.withValues(alpha: 0.5),
               ),
             ),
             child: Row(
@@ -181,10 +181,10 @@ class _VxDrawingToolbarState extends State<VxDrawingToolbar> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color:
-                isSelected ? tool.color.withOpacity(0.15) : Colors.transparent,
+                isSelected ? tool.color.withValues(alpha: 0.15) : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected ? tool.color : Colors.white.withOpacity(0.1),
+              color: isSelected ? tool.color : Colors.white.withValues(alpha: 0.1),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -227,7 +227,7 @@ class _VxDrawingToolbarState extends State<VxDrawingToolbar> {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -310,10 +310,10 @@ class VxDrawingInfoPanel extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: selectedTool.color.withOpacity(0.1),
+        color: selectedTool.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: selectedTool.color.withOpacity(0.3),
+          color: selectedTool.color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -324,7 +324,7 @@ class VxDrawingInfoPanel extends StatelessWidget {
             child: Text(
               _getInstructions(selectedTool),
               style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 12,
               ),
             ),

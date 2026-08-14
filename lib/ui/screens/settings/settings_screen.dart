@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,8 +20,8 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: Text("SETTINGS",
-            style: GoogleFonts.robotoMono(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context).settingsTitle,
+            style: const TextStyle(fontWeight: FontWeight.w700)),
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -79,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
           Center(
             child: Text(
               "Version 1.0.0 (Build 15)",
-              style: GoogleFonts.firaCode(color: Colors.white24, fontSize: 12),
+              style: GoogleFonts.jetBrainsMono(color: Colors.white24, fontSize: 12),
             ),
           ),
         ],
@@ -92,7 +93,7 @@ class SettingsScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title.toUpperCase(),
-        style: GoogleFonts.robotoMono(
+        style: GoogleFonts.jetBrainsMono(
           color: Colors.grey,
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -144,14 +145,14 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              isPro ? "Live Trading Active" : "Paper Trading (Simulation)",
+              isPro ? "Pro Simulator Active" : "Paper Trading (Simulation)",
               style: const TextStyle(
                 color: VxColors.textSecondary,
                 fontSize: 12,
               ),
             ),
             value: isPro,
-            activeColor: VxColors.neonCyan,
+            activeThumbColor: VxColors.neonCyan,
             onChanged: (value) async {
               final newMode = value ? UserMode.pro : UserMode.explorer;
               await getIt<UserModeService>().setMode(newMode);

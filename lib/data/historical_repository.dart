@@ -2,6 +2,7 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/domain/symbol_info.dart';
 import 'package:volex_terminal/data/binance/binance_exchange_service.dart';
 import 'package:volex_terminal/core/app_logger.dart';
+import 'package:volex_terminal/core/synthetic_candles.dart';
 
 class HistoricalRepository {
   final BinanceExchangeService? _exchange; // Injectable, nullable if offline
@@ -27,17 +28,18 @@ class HistoricalRepository {
         final data =
             await _exchange.getKlines(symbolInfo, interval, limit: limit);
         AppLogger.info("HISTORY: Received ${data.length} candles.");
-        return data;
+        if (data.isNotEmpty) return data;
+        AppLogger.warning(
+            "HISTORY: Empty real data for $symbol; using synthetic candles.");
       } catch (e) {
-        AppLogger.error("HISTORY: Failed to fetch real data: $e.");
-        rethrow;
+        AppLogger.error(
+            "HISTORY: Failed to fetch real data: $e. Using synthetic candles.");
       }
     }
 
-    // No Mock Fallback available (Cleanup)
-    AppLogger.warning(
-        "HISTORY: No exchange service available and Mock data removed.");
-    return [];
+    // Synthetic fallback so the simulator (scanner, charts, offline preview)
+    // always has plausible data instead of an empty screen.
+    return SyntheticCandles.generate(symbol, interval, limit);
   }
 
   /// Fetch history for multiple symbols in parallel.

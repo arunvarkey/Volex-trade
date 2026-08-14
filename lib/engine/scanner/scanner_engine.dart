@@ -4,7 +4,7 @@ import '../../data/historical_repository.dart';
 import '../../domain/symbol_info.dart';
 import '../../domain/candle_model.dart';
 import '../../core/app_logger.dart';
-import 'package:volex_terminal/ui/design_system/charts/vx_technical_indicators.dart'; // For RSI
+import 'package:volex_terminal/core/chart_math.dart'; // RSI (shared core math)
 import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/engine/notifications/notification_model.dart';
 
@@ -153,8 +153,9 @@ class ScannerEngine extends ChangeNotifier {
   }
 
   double _calculateLastRSI(List<Candle> candles) {
-    // Reuse the existing library logic
-    final rsiSeries = TechnicalIndicators.rsi(candles, 14);
+    // Wilder's RSI via the shared core math (same algorithm the chart uses).
+    final closes = [for (final c in candles) c.close];
+    final rsiSeries = ChartMath.rsiSeries(closes, period: 14);
     // Get the last non-null value
     for (int i = rsiSeries.length - 1; i >= 0; i--) {
       if (rsiSeries[i] != null) return rsiSeries[i]!;

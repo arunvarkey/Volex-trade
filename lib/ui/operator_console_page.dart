@@ -139,7 +139,7 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
                         Expanded(
                             child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               border: Border.all(color: Colors.white10),
                               borderRadius: BorderRadius.circular(12)),
                           child: ListView.builder(
@@ -166,7 +166,7 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
         children: [
           FloatingActionButton.extended(
             heroTag: "creator",
-            backgroundColor: Colors.purpleAccent.withOpacity(0.8),
+            backgroundColor: Colors.purpleAccent.withValues(alpha: 0.8),
             label: VxText.bodyBold("CREATOR_DASH"),
             icon: const Icon(Icons.analytics, size: 20),
             onPressed: () {
@@ -178,7 +178,7 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
           const SizedBox(height: 16),
           FloatingActionButton.extended(
             heroTag: "marketplace",
-            backgroundColor: VxColors.neonMagenta.withOpacity(0.8),
+            backgroundColor: VxColors.neonMagenta.withValues(alpha: 0.8),
             label: VxText.bodyBold("MARKETPLACE"),
             icon: const Icon(Icons.store, size: 20),
             onPressed: () {
@@ -202,8 +202,8 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.01),
-          border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+          color: Colors.white.withValues(alpha: 0.01),
+          border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
           borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
@@ -226,8 +226,8 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: VxColors.neonRed.withOpacity(0.02),
-          border: Border.all(color: VxColors.neonRed.withOpacity(0.2)),
+          color: VxColors.neonRed.withValues(alpha: 0.02),
+          border: Border.all(color: VxColors.neonRed.withValues(alpha: 0.2)),
           borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
@@ -272,7 +272,7 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
                       label: VxText.body("RECONCILE", color: VxColors.neonCyan),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                            color: VxColors.neonCyan.withOpacity(0.3)),
+                            color: VxColors.neonCyan.withValues(alpha: 0.3)),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       onPressed: () {
@@ -290,32 +290,41 @@ class _OperatorConsolePageState extends State<OperatorConsolePage> {
   Widget _buildExecutionModePanel(ExecutionManager mgr) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.01),
+        color: Colors.white.withValues(alpha: 0.01),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white10),
       ),
-      child: Column(
-        children: [
-          _modeButton(mgr, LiveExecutionMode.manualOnly, "MANUAL_CONTROL"),
-          _modeButton(mgr, LiveExecutionMode.autoCapped, "AUTO_CAPPED"),
-          _modeButton(mgr, LiveExecutionMode.fullAuto, "FULL_AUTONOMY"),
-        ],
+      child: RadioGroup<LiveExecutionMode>(
+        groupValue: mgr.liveExecutionMode,
+        onChanged: (val) {
+          if (val == null) return;
+          mgr.setLiveExecutionMode(val);
+          _addLog("MODE_SHIFT: ${_modeLabels[val]} active.");
+        },
+        child: Column(
+          children: [
+            _modeButton(LiveExecutionMode.manualOnly),
+            _modeButton(LiveExecutionMode.autoCapped),
+            _modeButton(LiveExecutionMode.fullAuto),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _modeButton(
-      ExecutionManager mgr, LiveExecutionMode mode, String label) {
+  static const Map<LiveExecutionMode, String> _modeLabels = {
+    LiveExecutionMode.manualOnly: "MANUAL_CONTROL",
+    LiveExecutionMode.autoCapped: "AUTO_CAPPED",
+    LiveExecutionMode.fullAuto: "FULL_AUTONOMY",
+  };
+
+  Widget _modeButton(LiveExecutionMode mode) {
     return RadioListTile<LiveExecutionMode>(
-      title: VxText.monoBold(label, fontSize: 13, color: Colors.white),
+      title: VxText.monoBold(_modeLabels[mode]!,
+          fontSize: 13, color: Colors.white),
       value: mode,
-      groupValue: mgr.liveExecutionMode,
       activeColor: VxColors.neonCyan,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-      onChanged: (val) {
-        mgr.setLiveExecutionMode(val!);
-        _addLog("MODE_SHIFT: ${label.toUpperCase()} active.");
-      },
     );
   }
 

@@ -16,6 +16,9 @@ import '../ui/providers/dashboard_provider.dart';
 import '../engine/scanner/scanner_engine.dart';
 import '../engine/terminal_settings_provider.dart';
 import '../features/simulator/ai_strategy/providers/strategy_provider.dart';
+import '../features/simulator/ai_strategy/services/strategy_repository.dart';
+import '../features/simulator/backtest/backtest_engine.dart';
+import 'config/app_mode_service.dart';
 
 /// Returns the list of providers for the application root
 List<SingleChildWidget> getApplicationProviders() {
@@ -35,6 +38,11 @@ List<SingleChildWidget> getApplicationProviders() {
     ),
     ChangeNotifierProvider<ExecutionManager>.value(
       value: getIt<ExecutionManager>(),
+    ),
+    // LabScreen watches BacktestEngine; without this it throws
+    // ProviderNotFoundException on every platform.
+    ChangeNotifierProvider<BacktestEngine>.value(
+      value: getIt<BacktestEngine>(),
     ),
     ChangeNotifierProvider<StrategyEngine>.value(
       value: getIt<StrategyEngine>(),
@@ -62,5 +70,14 @@ List<SingleChildWidget> getApplicationProviders() {
     ChangeNotifierProvider<StrategyProvider>(
       create: (_) => StrategyProvider(),
     ),
+    // Strategy Studio: hub watches AppModeService; screens resolve the repo.
+    if (getIt.isRegistered<AppModeService>())
+      ChangeNotifierProvider<AppModeService>.value(
+        value: getIt<AppModeService>(),
+      ),
+    if (getIt.isRegistered<StrategyRepository>())
+      Provider<StrategyRepository>.value(
+        value: getIt<StrategyRepository>(),
+      ),
   ];
 }

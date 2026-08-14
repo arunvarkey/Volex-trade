@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -40,6 +41,14 @@ class _SplashScreenState extends State<SplashScreen>
     final startTime = DateTime.now();
 
     try {
+      // Web preview: Firebase/auth aren't configured on web, so skip the
+      // Firebase-dependent startup routing and go straight to the app.
+      if (kIsWeb) {
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) context.go('/');
+        return;
+      }
+
       // Determine startup route
       final startupService = StartupService();
       final destination = await startupService.determineStartupRoute();
@@ -115,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: VxColors.primary.withOpacity(0.3),
+                            color: VxColors.primary.withValues(alpha: 0.3),
                             blurRadius: 30,
                             spreadRadius: 5,
                           ),

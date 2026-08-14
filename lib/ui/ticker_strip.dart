@@ -45,8 +45,8 @@ class TickerStrip extends StatelessWidget {
                 underline: const SizedBox(),
                 icon: const Icon(Icons.arrow_drop_down,
                     color: Colors.white24, size: 14),
-                style: const TextStyle(
-                  fontFamily: 'RobotoMono',
+                style: TextStyle(
+                  fontFamily: VxTypography.monoFamily,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                   color: Colors.white,

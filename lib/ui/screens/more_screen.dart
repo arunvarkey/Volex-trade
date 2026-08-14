@@ -33,10 +33,38 @@ class MoreScreen extends StatelessWidget {
           _buildSection('LEARN & PRACTICE'),
           _buildMenuItem(
             context,
+            icon: Icons.bolt,
+            title: 'Volex Daily',
+            subtitle: '5 quick calls a day — build your streak',
+            route: '/daily',
+          ),
+          _buildMenuItem(
+            context,
+            icon: Icons.school,
+            title: 'Trading Academy',
+            subtitle: 'Learn to trade step by step — free, zero risk',
+            route: '/learn',
+          ),
+          _buildMenuItem(
+            context,
+            icon: Icons.insights,
+            title: 'Buzz & Predictions',
+            subtitle: 'Trade events, politics & crypto on sentiment — virtual',
+            route: '/predictions',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.auto_awesome,
             title: 'AI Strategy Builder',
             subtitle: 'Describe an idea, AI builds a strategy',
             route: '/ai-strategy',
+          ),
+          _buildMenuItem(
+            context,
+            icon: Icons.tune,
+            title: 'Strategy Studio',
+            subtitle: 'Pick a template, tune it, and save your strategies',
+            route: '/simulator',
           ),
           _buildMenuItem(
             context,
@@ -251,9 +279,9 @@ class MoreScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: VxColors.neonCyan.withOpacity(0.05),
+                color: VxColors.neonCyan.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: VxColors.neonCyan.withOpacity(0.1)),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.1)),
               ),
               child: Icon(icon, color: VxColors.neonCyan, size: 20),
             ),

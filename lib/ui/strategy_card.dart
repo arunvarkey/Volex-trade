@@ -56,8 +56,8 @@ class StrategyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: trustColor.withOpacity(0.1),
-              border: Border.all(color: trustColor.withOpacity(0.5)),
+              color: trustColor.withValues(alpha: 0.1),
+              border: Border.all(color: trustColor.withValues(alpha: 0.5)),
               borderRadius: BorderRadius.circular(4),
             ),
             child: VxText.monoBold(
@@ -78,8 +78,8 @@ class StrategyCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: hasAccess
-                  ? VxColors.neonCyan.withOpacity(0.1)
-                  : VxColors.neonRed.withOpacity(0.1),
+                  ? VxColors.neonCyan.withValues(alpha: 0.1)
+                  : VxColors.neonRed.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: VxText.monoBold(
@@ -118,7 +118,7 @@ class StrategyCard extends StatelessWidget {
                     fontSize: 10, color: VxColors.neonCyan),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: VxColors.neonCyan,
-                  side: BorderSide(color: VxColors.neonCyan.withOpacity(0.5)),
+                  side: BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.5)),
                   padding: EdgeInsets.zero,
                   minimumSize: const Size(0, 32),
                 ),
@@ -133,7 +133,7 @@ class StrategyCard extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: VxText.caption(tag, fontSize: 9, color: Colors.white54),

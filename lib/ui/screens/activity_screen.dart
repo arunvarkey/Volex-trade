@@ -28,7 +28,7 @@ class ActivityScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              VxText.subtitle("SYSTEM LOGS", color: Colors.white54),
+              VxText.subtitle("Activity Log", color: Colors.white54),
               const Icon(Icons.filter_list, color: Colors.white24, size: 16),
             ],
           ),
@@ -94,7 +94,7 @@ class _AnalyticsSummaryCard extends StatelessWidget {
           value,
           style: TextStyle(
             color: valueColor,
-            fontFamily: 'JetBrainsMono',
+            fontFamily: VxTypography.monoFamily,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -135,7 +135,7 @@ class _ActivityLogList extends StatelessWidget {
 
     if (logs.isEmpty) {
       return Center(
-        child: VxText.body("NO RECENT ACTIVITY", color: Colors.white10),
+        child: VxText.body("No recent activity", color: Colors.white10),
       );
     }
 
@@ -181,10 +181,10 @@ class _ActivityLogList extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(8),
               border: Border(
-                  left: BorderSide(color: color.withOpacity(0.5), width: 3)),
+                  left: BorderSide(color: color.withValues(alpha: 0.5), width: 3)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +216,7 @@ class _ActivityLogList extends StatelessWidget {
                           ),
                         ],
                           VxText.caption(log.strategyName,
-                              color: VxColors.neonCyan.withOpacity(0.5)),
+                              color: VxColors.neonCyan.withValues(alpha: 0.5)),
                         ],
                       ),
                     ],

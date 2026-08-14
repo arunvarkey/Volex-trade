@@ -32,11 +32,12 @@ class VxColors {
   // REFINED DATA COLORS
   // ========================================
 
-  /// Electric Teal (Primary Action)
-  static const neonCyan = Color(0xFF34D399); // Teal-green, easier on eyes
+  /// Primary action / brand accent — a calm professional blue. Kept distinct
+  /// from the market-direction green/red so accents never read as "up/down".
+  static const neonCyan = Color(0xFF3B82F6); // Refined blue (brand/primary)
 
-  /// Cyber Emerald (Success)
-  static const neonGreen = Color(0xFF34D399); // Same as primary for consistency
+  /// Market up / success — emerald, reserved for positive P&L and buys.
+  static const neonGreen = Color(0xFF34D399);
 
   /// Crimson Pulse (Danger)
   static const neonRed = Color(0xFFF87171); // Soft coral red, less aggressive
@@ -117,20 +118,20 @@ class VxColors {
   // PRIMARY COLOR SHADES
   // ========================================
 
-  /// Primary 100 - Lightest cyan
-  static const primary100 = Color(0xFFB2EBF2);
+  /// Primary 100 - Lightest blue
+  static const primary100 = Color(0xFFDBEAFE);
 
   /// Primary 300
-  static const primary300 = Color(0xFF4DD0E1);
+  static const primary300 = Color(0xFF93C5FD);
 
   /// Primary 500 - Base
   static const primary500 = neonCyan;
 
-  /// Primary 700 - Darker cyan
-  static const primary700 = Color(0xFF0097A7);
+  /// Primary 700 - Darker blue
+  static const primary700 = Color(0xFF1D4ED8);
 
-  /// Primary 900 - Darkest cyan
-  static const primary900 = Color(0xFF006064);
+  /// Primary 900 - Darkest blue
+  static const primary900 = Color(0xFF1E3A8A);
 
   // ========================================
   // GRADIENTS
@@ -194,6 +195,11 @@ class VxColors {
   /// Bearish candle
   static const bearish = neonRed;
 
+  /// Vivid candle colors — brighter/higher-contrast than the UI green/red so
+  /// the chart reads crisp and "hi-def" against the dark background.
+  static const chartUp = Color(0xFF26E29A);
+  static const chartDown = Color(0xFFFF5A6E);
+
   /// Grid lines
   static const gridLines = Color(0xFF1E2836);
 
@@ -224,11 +230,11 @@ class VxColors {
   // ========================================
 
   /// Glassmorphic translucent surface
-  static Color get glassSurface => Colors.white.withOpacity(0.03);
+  static Color get glassSurface => Colors.white.withValues(alpha: 0.03);
 
   /// Luminous holographic border
-  static Color get holographicBorder => Colors.white.withOpacity(0.12);
+  static Color get holographicBorder => Colors.white.withValues(alpha: 0.12);
 
   /// Subtle cyan glow for active elements
-  static Color get primaryGlow => neonCyan.withOpacity(0.15);
+  static Color get primaryGlow => neonCyan.withValues(alpha: 0.15);
 }

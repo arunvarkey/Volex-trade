@@ -11,8 +11,8 @@ class SimulationBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: VxColors.neonGreen.withOpacity(0.15),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.5)),
+        color: VxColors.neonGreen.withValues(alpha: 0.15),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(4),
       ),
       child: const Row(

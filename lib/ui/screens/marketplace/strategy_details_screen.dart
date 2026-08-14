@@ -101,10 +101,10 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                  color: tierColor.withOpacity(0.2),
+                                  color: tierColor.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
-                                      color: tierColor.withOpacity(0.5))),
+                                      color: tierColor.withValues(alpha: 0.5))),
                               child: Text(
                                   widget.strategy.tier.name.toUpperCase(),
                                   style: TextStyle(

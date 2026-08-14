@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../navigation/vx_navigation_helper.dart';
 import 'package:provider/provider.dart';
 import '../providers/dashboard_provider.dart';
@@ -77,11 +78,11 @@ class _VxCockpitState extends State<VxCockpit> {
           const SizedBox(height: 8),
           Text(
             '\$${totalBalance.toStringAsFixed(2)}',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 48,
               fontWeight: FontWeight.bold,
-              fontFamily: 'RobotoMono',
+              fontFamily: VxTypography.monoFamily,
             ),
           ),
           const SizedBox(height: 8),
@@ -123,7 +124,7 @@ class _VxCockpitState extends State<VxCockpit> {
         color: VxColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: VxColors.neonPurple.withOpacity(0.3),
+          color: VxColors.neonPurple.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -138,7 +139,7 @@ class _VxCockpitState extends State<VxCockpit> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: dashboard.riskColor.withOpacity(0.5),
+                  color: dashboard.riskColor.withValues(alpha: 0.5),
                   blurRadius: 8,
                   spreadRadius: 2,
                 ),
@@ -296,7 +297,7 @@ class _MarketTile extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: changeColor.withOpacity(0.1),
+                    color: changeColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
@@ -335,11 +336,11 @@ class _MarketTile extends StatelessWidget {
                   children: [
                     Text(
                       '\$${price.toStringAsFixed(2)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'RobotoMono',
+                        fontFamily: VxTypography.monoFamily,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -349,7 +350,7 @@ class _MarketTile extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: changeColor.withOpacity(0.1),
+                        color: changeColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

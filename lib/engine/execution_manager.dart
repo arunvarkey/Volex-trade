@@ -11,6 +11,7 @@ import 'package:volex_terminal/engine/exchange/paper_exchange_client.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
 import 'package:volex_terminal/services/analytics_service.dart';
 import 'package:volex_terminal/engine/execution/i_execution_service.dart';
+import 'package:volex_terminal/features/academy/services/xp_service.dart';
 import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
 import 'package:volex_terminal/features/ai_guardian/ui/ai_guardian_warning_dialog.dart';
 import 'package:volex_terminal/core/service_locator.dart';
@@ -58,6 +59,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   // Active orders and positions
   final List<Order> _orders = [];
   final List<Position> _positions = [];
+
+  // Strategies the user has activated for paper trading this session.
+  final Set<String> _activeStrategyIds = {};
 
   // Execution status
   bool _isExecuting = false;
@@ -132,7 +136,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   /// If true, trading is disabled.
   bool get isReadOnly => _isReadOnly;
 
-  Set<String> get activeStrategyIds => {};
+  Set<String> get activeStrategyIds => Set.unmodifiable(_activeStrategyIds);
 
   ExchangeService get exchange => _exchange;
 
@@ -173,7 +177,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
           'pattern_count': analysis.patterns.length,
         });
 
-        if (!context.mounted) return placeOrder(order);
+        if (!context.mounted) return await placeOrder(order);
 
         final proceed = await showDialog<bool>(
           context: context,
@@ -263,6 +267,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       _orders.add(order);
       _updatePositionAfterTrade(order);
 
+      // Placing a paper trade is a repeatable, XP-earning action.
+      XpService.instance.addXp(XpService.tradeXp);
+
       AnalyticsService.instance.logEvent('order_placed', parameters: {
         'symbol': symbol,
         'side': side.name,
@@ -348,6 +355,28 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     if (changed) notifyListeners();
   }
 
+  /// Updates unrealized PnL for open positions of a single [symbol] only.
+  /// Used by the multi-symbol strategy runner, where each symbol has its own
+  /// mark price and applying one price to every position would be wrong.
+  void updateUnrealizedPnlForSymbol(String symbol, double currentPrice) {
+    bool changed = false;
+    for (final pos in _positions) {
+      if (pos.isOpen && pos.symbol == symbol) {
+        final pnlCents = FinancialMath.calculatePnL(
+            quantity: pos.quantity,
+            entryPrice: pos.entryPrice,
+            exitPrice: currentPrice,
+            isLong: pos.side == OrderSide.buy);
+        final pnl = FinancialMath.centsToDollars(pnlCents);
+        if (pos.unrealizedPnl != pnl) {
+          pos.unrealizedPnl = pnl;
+          changed = true;
+        }
+      }
+    }
+    if (changed) notifyListeners();
+  }
+
   void _checkPendingOrders(double currentPrice) {
     final pending = _orders
         .where((o) => o.status == OrderStatus.open && o.type == OrderType.limit)
@@ -414,11 +443,27 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       orElse: () => throw Exception("Position not found"),
     );
 
+    // placeMarketOrder requires a mark price; derive it from the position's
+    // last-known unrealized PnL when the caller doesn't supply one, so a
+    // manual "Close" always works instead of throwing.
+    final mark = currentPrice ?? _positionMarkPrice(pos);
+
     await placeMarketOrder(
       symbol: pos.symbol,
       side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
       quantity: pos.quantity,
+      currentPrice: mark,
     );
+  }
+
+  /// Best-estimate current price of an open position, backed out from its
+  /// entry and last-marked unrealized PnL. Falls back to the entry price.
+  double _positionMarkPrice(Position pos) {
+    final pnl = pos.unrealizedPnl;
+    if (pnl == null || pos.quantity == 0) return pos.entryPrice;
+    return pos.side == OrderSide.buy
+        ? pos.entryPrice + pnl / pos.quantity
+        : pos.entryPrice - pnl / pos.quantity;
   }
 
   /// Closes all open positions immediately.
@@ -432,23 +477,37 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
 
   /// Checks if a specific strategy is active.
   @override
-  bool isStrategyRunning(String id) => false;
+  bool isStrategyRunning(String id) => _activeStrategyIds.contains(id);
 
   /// Starts an automated trading strategy.
   @override
   Future<void> startStrategy(String id) async {
-    AppLogger.info("EXEC: Starting Strategy $id");
+    if (_activeStrategyIds.add(id)) {
+      AppLogger.info("EXEC: Starting Strategy $id");
+      AnalyticsService.instance
+          .logEvent('strategy_started', parameters: {'strategy_id': id});
+      notifyListeners();
+    }
   }
 
   /// Stops an automated trading strategy.
   @override
   Future<void> stopStrategy(String id) async {
-    AppLogger.info("EXEC: Stopping Strategy $id");
+    if (_activeStrategyIds.remove(id)) {
+      AppLogger.info("EXEC: Stopping Strategy $id");
+      AnalyticsService.instance
+          .logEvent('strategy_stopped', parameters: {'strategy_id': id});
+      notifyListeners();
+    }
   }
 
   /// Emergency stop for all running strategies.
   void stopAllStrategy() {
-    AppLogger.info("EXEC: Stopping all strategies");
+    if (_activeStrategyIds.isNotEmpty) {
+      AppLogger.info("EXEC: Stopping all strategies");
+      _activeStrategyIds.clear();
+      notifyListeners();
+    }
   }
 
   /// Manually injects an order into the local history (mainly for tests).
@@ -462,6 +521,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   void reset() {
     _orders.clear();
     _positions.clear();
+    _activeStrategyIds.clear();
     _paperBalance = 100000.0;
     _liveBalance = 0.0;
     _isReadOnly = false;

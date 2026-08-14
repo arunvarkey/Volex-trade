@@ -52,10 +52,10 @@ class VxBarChart extends StatelessWidget {
         barGroups: [
           _buildGroup(0, data.longWins.toDouble(), VxColors.neonGreen),
           _buildGroup(
-              1, data.longLosses.toDouble(), VxColors.neonRed.withOpacity(0.5)),
+              1, data.longLosses.toDouble(), VxColors.neonRed.withValues(alpha: 0.5)),
           _buildGroup(2, data.shortWins.toDouble(), VxColors.neonCyan),
           _buildGroup(3, data.shortLosses.toDouble(),
-              VxColors.neonPurple.withOpacity(0.5)),
+              VxColors.neonPurple.withValues(alpha: 0.5)),
         ],
       ),
     );

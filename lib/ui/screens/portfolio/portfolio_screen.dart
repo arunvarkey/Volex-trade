@@ -6,6 +6,7 @@ import '../../../engine/execution_manager.dart';
 import '../../../domain/order.dart';
 import '../../../domain/position.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_coin_icon.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
 import 'package:intl/intl.dart';
@@ -99,12 +100,12 @@ class PortfolioScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: (em.isLiveMode ? VxColors.neonRed : VxColors.neonCyan)
-                      .withOpacity(0.1),
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color:
                         (em.isLiveMode ? VxColors.neonRed : VxColors.neonCyan)
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -122,7 +123,7 @@ class PortfolioScreen extends StatelessWidget {
           Text(
             '\$${balance.toStringAsFixed(2)}',
             style: VxTypography.hero.copyWith(
-              fontFamily: GoogleFonts.spaceMono().fontFamily,
+              fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
               fontSize: 32,
             ),
           ),
@@ -140,7 +141,7 @@ class PortfolioScreen extends StatelessWidget {
                 style: VxTypography.body.copyWith(
                   color: isLoss ? VxColors.neonRed : VxColors.neonGreen,
                   fontWeight: FontWeight.w700,
-                  fontFamily: GoogleFonts.spaceMono().fontFamily,
+                  fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
                 ),
               ),
             ],
@@ -182,8 +183,8 @@ class PortfolioScreen extends StatelessWidget {
                           show: true,
                           gradient: LinearGradient(
                             colors: [
-                              VxColors.neonCyan.withOpacity(0.15),
-                              VxColors.neonCyan.withOpacity(0),
+                              VxColors.neonCyan.withValues(alpha: 0.15),
+                              VxColors.neonCyan.withValues(alpha: 0),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -264,11 +265,6 @@ class PortfolioScreen extends StatelessWidget {
           'Open Positions',
           style: VxTypography.caption.copyWith(letterSpacing: 2.0),
         ),
-        TextButton(
-          onPressed: () {},
-          child: Text('Details',
-              style: VxTypography.caption.copyWith(color: VxColors.neonCyan)),
-        ),
       ],
     );
   }
@@ -298,8 +294,6 @@ class PortfolioScreen extends StatelessWidget {
   }
 
   Widget _buildPositionCard(BuildContext context, Position pos) {
-    final isLong = pos.side == OrderSide.buy;
-
     return InkWell(
       onTap: () => context.push('/chart?symbol=${pos.symbol}'),
       borderRadius: BorderRadius.circular(12),
@@ -308,19 +302,7 @@ class PortfolioScreen extends StatelessWidget {
         borderRadius: 12,
         child: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: (isLong ? VxColors.neonGreen : VxColors.neonRed)
-                    .withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                isLong ? Icons.radar : Icons.align_vertical_bottom,
-                color: isLong ? VxColors.neonGreen : VxColors.neonRed,
-                size: 18,
-              ),
-            ),
+            VxCoinIcon(pos.symbol, size: 40),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -357,10 +339,35 @@ class PortfolioScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(width: 4),
+            IconButton(
+              tooltip: 'Close position',
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.close, size: 18, color: Colors.white38),
+              onPressed: () => _closePosition(context, pos),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _closePosition(BuildContext context, Position pos) async {
+    final em = context.read<ExecutionManager>();
+    final messenger = ScaffoldMessenger.of(context);
+    final pnl = pos.unrealizedPnl ?? 0.0;
+    try {
+      await em.closeOrder(pos.id);
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: pnl >= 0 ? VxColors.neonGreen : VxColors.neonRed,
+        content: Text(
+          'Closed ${pos.symbol} · ${pnl >= 0 ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
+        ),
+      ));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('Could not close: $e')));
+    }
   }
 
   Widget _buildRecentOrdersHeader() {
@@ -397,7 +404,7 @@ class PortfolioScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           border:
-              Border(bottom: BorderSide(color: Colors.white.withOpacity(0.02))),
+              Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.02))),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

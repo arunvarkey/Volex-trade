@@ -95,7 +95,7 @@ class _HapticScaleButtonState extends State<HapticScaleButton>
                   const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               decoration: BoxDecoration(
                 color: widget.onPressed == null
-                    ? Colors.grey.withOpacity(0.3)
+                    ? Colors.grey.withValues(alpha: 0.3)
                     : widget.backgroundColor ?? Theme.of(context).primaryColor,
                 borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
               ),

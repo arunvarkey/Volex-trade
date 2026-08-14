@@ -58,7 +58,7 @@ class _PrivacyShieldState extends State<PrivacyShield>
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
-                color: VxColors.background.withOpacity(0.8),
+                color: VxColors.background.withValues(alpha: 0.8),
                 child: const Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

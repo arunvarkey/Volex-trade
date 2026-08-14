@@ -35,7 +35,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: VxColors.surface.withOpacity(0.95),
+      backgroundColor: VxColors.surface.withValues(alpha: 0.95),
       child: Column(
         children: [
           _buildHeader(),
@@ -107,7 +107,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
         padding: const EdgeInsets.all(VxSpacing.md),
         decoration: BoxDecoration(
           color:
-              note.isRead ? Colors.transparent : Colors.white.withOpacity(0.03),
+              note.isRead ? Colors.transparent : Colors.white.withValues(alpha: 0.03),
           border: const Border(bottom: BorderSide(color: Colors.white10)),
         ),
         child: Row(
@@ -116,7 +116,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -163,8 +163,6 @@ class _NotificationCenterState extends State<NotificationCenter> {
         return Icons.terminal_outlined;
       case NotificationType.user:
         return Icons.person_outline;
-      default:
-        return Icons.notifications_none;
     }
   }
 }

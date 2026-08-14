@@ -17,7 +17,9 @@ dependencies:
   crypto: ^3.0.3
   encrypt: ^5.0.3
   uuid: ^4.5.1
-  intl: ^0.19.0
+  intl: ^0.20.0
+  flutter_localizations:
+    sdk: flutter
   shared_preferences: ^2.5.3
   provider: ^6.1.5+1
   path_provider: ^2.1.5
@@ -133,7 +135,8 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
-  
+  generate: true
+
   assets:
     - assets/images/
     - assets/market_data/

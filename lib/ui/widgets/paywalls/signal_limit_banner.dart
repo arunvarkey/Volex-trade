@@ -40,9 +40,9 @@ class SignalLimitBanner extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: VxColors.primary.withOpacity(0.1),
+        color: VxColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.primary.withOpacity(0.3)),
+        border: Border.all(color: VxColors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -85,12 +85,12 @@ class SignalLimitBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonPurple.withOpacity(0.2),
-            VxColors.primary.withOpacity(0.2),
+            VxColors.neonCyan.withValues(alpha: 0.2),
+            VxColors.primary.withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.primary.withOpacity(0.5), width: 2),
+        border: Border.all(color: VxColors.primary.withValues(alpha: 0.5), width: 2),
       ),
       child: Column(
         children: [
@@ -99,7 +99,7 @@ class SignalLimitBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: VxColors.primary.withOpacity(0.2),
+                  color: VxColors.primary.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.workspace_premium,

@@ -54,7 +54,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             itemCount: notifications.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
-              color: VxColors.border.withOpacity(0.3),
+              color: VxColors.border.withValues(alpha: 0.3),
             ),
             itemBuilder: (context, index) {
               final notification = notifications[index];
@@ -109,7 +109,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: VxColors.neonRed.withOpacity(0.2),
+        color: VxColors.neonRed.withValues(alpha: 0.2),
         child: const Icon(Icons.delete, color: VxColors.neonRed),
       ),
       onDismissed: (direction) {
@@ -137,7 +137,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),

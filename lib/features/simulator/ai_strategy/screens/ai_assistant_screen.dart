@@ -1,7 +1,6 @@
 // lib/features/simulator/ai_strategy/screens/ai_assistant_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../ui/design_system/vx_colors.dart';
 import '../../../../features/subscriptions/services/subscription_service.dart';
@@ -40,15 +39,15 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Row(
           children: [
-            Icon(Icons.psychology, color: VxColors.neonPurple, size: 24),
+            Icon(Icons.psychology, color: VxColors.neonCyan, size: 24),
             SizedBox(width: 8),
             Text(
-              'AI STRATEGY ASSISTANT',
+              'AI Strategy Assistant',
               style: TextStyle(
-                fontFamily: 'Courier',
-                color: VxColors.neonPurple,
-                letterSpacing: 2,
-                fontSize: 16,
+                color: VxColors.neonCyan,
+                letterSpacing: 0.2,
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -65,11 +64,11 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    VxColors.neonPurple.withOpacity(0.2),
-                    VxColors.neonCyan.withOpacity(0.1),
+                    VxColors.neonCyan.withValues(alpha: 0.2),
+                    VxColors.neonCyan.withValues(alpha: 0.1),
                   ],
                 ),
-                border: Border.all(color: VxColors.neonPurple.withOpacity(0.5)),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -77,14 +76,14 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.lightbulb, color: VxColors.neonPurple),
+                      Icon(Icons.lightbulb, color: VxColors.neonCyan),
                       SizedBox(width: 8),
                       Text(
-                        'HOW IT WORKS',
+                        'How it works',
                         style: TextStyle(
-                          color: VxColors.neonPurple,
+                          color: VxColors.neonCyan,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ],
@@ -108,14 +107,14 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
             const SizedBox(height: 24),
 
             // Template selector
-            _buildSectionHeader('CHOOSE TEMPLATE'),
+            _buildSectionHeader('Choose template'),
             const SizedBox(height: 12),
             _buildTemplateDropdown(),
 
             const SizedBox(height: 24),
 
             // Description input
-            _buildSectionHeader('DESCRIBE YOUR GOAL'),
+            _buildSectionHeader('Describe your goal'),
             const SizedBox(height: 12),
             TextField(
               controller: _controller,
@@ -131,7 +130,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide:
-                      BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+                      BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.3)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -140,7 +139,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide:
-                      const BorderSide(color: VxColors.neonPurple, width: 2),
+                      const BorderSide(color: VxColors.neonCyan, width: 2),
                 ),
               ),
             ),
@@ -167,9 +166,9 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                         ),
                       )
                     : const Icon(Icons.auto_awesome),
-                label: Text(_loading ? 'THINKING...' : 'GET AI SUGGESTION'),
+                label: Text(_loading ? 'Thinking…' : 'Get AI Suggestion'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: VxColors.neonPurple,
+                  backgroundColor: VxColors.neonCyan,
                   foregroundColor: VxColors.deepBlack,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -197,7 +196,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         backgroundColor: VxColors.deepBlack,
         iconTheme: const IconThemeData(color: Colors.white),
         title:
-            const Text('AI ASSISTANT', style: TextStyle(color: Colors.white)),
+            const Text('AI Assistant', style: TextStyle(color: Colors.white)),
       ),
       body: Center(
         child: Padding(
@@ -205,15 +204,15 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lock, color: VxColors.neonPurple, size: 80),
+              const Icon(Icons.lock, color: VxColors.neonCyan, size: 80),
               const SizedBox(height: 24),
               const Text(
                 'PREMIUM FEATURE',
                 style: TextStyle(
-                  color: VxColors.neonPurple,
+                  color: VxColors.neonCyan,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+                  letterSpacing: 0.3,
                 ),
               ),
               const SizedBox(height: 16),
@@ -226,12 +225,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               ElevatedButton(
                 onPressed: () => context.push('/paywall'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: VxColors.neonPurple,
+                  backgroundColor: VxColors.neonCyan,
                   foregroundColor: VxColors.deepBlack,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
-                child: const Text('UPGRADE TO PREMIUM'),
+                child: const Text('Upgrade to Premium'),
               ),
             ],
           ),
@@ -247,7 +246,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -299,11 +298,11 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonGreen.withOpacity(0.1),
-            VxColors.neonCyan.withOpacity(0.1),
+            VxColors.neonGreen.withValues(alpha: 0.1),
+            VxColors.neonCyan.withValues(alpha: 0.1),
           ],
         ),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.5)),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -318,7 +317,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 style: TextStyle(
                   color: VxColors.neonGreen,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -343,7 +342,6 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     style: const TextStyle(
                       color: VxColors.neonCyan,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Courier',
                     ),
                   ),
                 ],
@@ -359,7 +357,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Icons.psychology,
-                    color: VxColors.neonPurple, size: 20),
+                    color: VxColors.neonCyan, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -386,7 +384,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                     backgroundColor: VxColors.neonGreen,
                     foregroundColor: VxColors.deepBlack,
                   ),
-                  child: const Text('ACCEPT & BACKTEST'),
+                  child: const Text('Accept & Backtest'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -394,10 +392,10 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 child: OutlinedButton(
                   onPressed: _generateSuggestion,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: VxColors.neonPurple,
-                    side: const BorderSide(color: VxColors.neonPurple),
+                    foregroundColor: VxColors.neonCyan,
+                    side: const BorderSide(color: VxColors.neonCyan),
                   ),
-                  child: const Text('REGENERATE'),
+                  child: const Text('Regenerate'),
                 ),
               ),
             ],
@@ -416,28 +414,28 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       _reasoning = null;
     });
 
+    // Construct the service directly — it isn't in the DI container, and
+    // depending on GetIt here previously crashed the screen.
+    final aiService = AIService();
+    AIResult<Map<String, dynamic>> result;
     try {
-      final aiService = GetIt.I<AIService>();
-      final result = await aiService.suggestParameters(
+      result = await aiService.suggestParameters(
         template: _selectedTemplate!,
         userDescription: _controller.text,
       );
-
-      if (result.isSuccess && mounted && result.value != null) {
-        final fullReasoning = result.value!['reasoning'] as String? ?? '';
-        await _typeSuggestion(result.value!, fullReasoning);
-      } else if (mounted) {
-        setState(() => _loading = false);
-        _showError(result.error ?? 'Failed to get suggestion');
-        VxHaptics.error();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        _showError('Error: $e');
-        VxHaptics.error();
-      }
+    } catch (_) {
+      result = AIResult.error('unavailable');
     }
+
+    // The AI backend needs Firebase + a paid key. When it isn't reachable,
+    // fall back to honest local demo defaults instead of a raw error dialog.
+    if (!result.isSuccess || result.value == null) {
+      result = aiService.demoSuggestParameters(_selectedTemplate!);
+    }
+
+    if (!mounted) return;
+    final fullReasoning = result.value!['reasoning'] as String? ?? '';
+    await _typeSuggestion(result.value!, fullReasoning);
   }
 
   Future<void> _typeSuggestion(
@@ -472,23 +470,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       'name': 'AI: ${_controller.text.split(' ').take(4).join(' ')}',
     });
 
-    context.push('/simulator/backtest', extra: strategy);
+    context.push('/lab/backtest/config', extra: strategy);
   }
 
-  void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: VxColors.deepBlack,
-        title: const Text('ERROR', style: TextStyle(color: VxColors.neonRed)),
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: VxColors.neonCyan)),
-          ),
-        ],
-      ),
-    );
-  }
 }

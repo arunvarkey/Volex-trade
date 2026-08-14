@@ -1,8 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
-import 'package:volex_terminal/domain/symbol_info.dart';
-import 'package:get_it/get_it.dart';
 import '../../test_helper.dart';
 
 void main() {

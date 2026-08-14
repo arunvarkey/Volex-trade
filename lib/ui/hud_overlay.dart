@@ -38,9 +38,9 @@ class HudOverlay extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(VxSpacing.md),
             decoration: BoxDecoration(
-              color: VxColors.surface.withOpacity(0.5),
+              color: VxColors.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +69,7 @@ class HudOverlay extends StatelessWidget {
                               color: (isConnected
                                       ? VxColors.neonGreen
                                       : VxColors.neonRed)
-                                  .withOpacity(0.4),
+                                  .withValues(alpha: 0.4),
                               blurRadius: 6,
                               spreadRadius: 1,
                             )
@@ -85,7 +85,7 @@ class HudOverlay extends StatelessWidget {
                   width: 160,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: [
-                      VxColors.neonCyan.withOpacity(0.3),
+                      VxColors.neonCyan.withValues(alpha: 0.3),
                       Colors.transparent,
                     ]),
                   ),
@@ -121,7 +121,7 @@ class HudOverlay extends StatelessWidget {
                                 ? VxColors.neonGreen
                                 : VxColors.neonRed),
                         _row("WALLET", "\$${balance.toStringAsFixed(2)}",
-                            Colors.white.withOpacity(0.7)),
+                            Colors.white.withValues(alpha: 0.7)),
                       ],
                     );
                   },
@@ -204,10 +204,10 @@ class HudOverlay extends StatelessWidget {
                                             top: 4, bottom: 4),
                                         decoration: BoxDecoration(
                                           color:
-                                              VxColors.neonRed.withOpacity(0.1),
+                                              VxColors.neonRed.withValues(alpha: 0.1),
                                           border: Border.all(
                                               color: VxColors.neonRed
-                                                  .withOpacity(0.5)),
+                                                  .withValues(alpha: 0.5)),
                                           borderRadius:
                                               BorderRadius.circular(4),
                                         ),

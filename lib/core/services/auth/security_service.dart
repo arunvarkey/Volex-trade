@@ -219,6 +219,16 @@ class SecurityService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// First-run friction reducer: let a brand-new user explore the simulator
+  /// before creating a PIN (value first, security later — everything here is
+  /// virtual). Session-only; a PIN can be set any time in Security settings,
+  /// and once one exists this path is never offered again.
+  void skipSetupForNow() {
+    _isAuthenticated = true;
+    _lastActivityTime = DateTime.now();
+    notifyListeners();
+  }
+
   void recordActivity() {
     _lastActivityTime = DateTime.now();
     _resetAutoLockTimer();

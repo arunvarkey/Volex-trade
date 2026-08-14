@@ -79,11 +79,11 @@ class _ParameterEditorState extends State<ParameterEditor> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(canEdit ? 0.02 : 0.01),
+        color: Colors.white.withValues(alpha: canEdit ? 0.02 : 0.01),
         border: Border.all(
             color: error != null
-                ? VxColors.neonRed.withOpacity(0.5)
-                : Colors.white.withOpacity(0.05)),
+                ? VxColors.neonRed.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.05)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -164,7 +164,7 @@ class _ParameterEditorState extends State<ParameterEditor> {
       case ParameterType.boolean:
         return Switch(
           value: value as bool,
-          activeColor: VxColors.neonCyan,
+          activeThumbColor: VxColors.neonCyan,
           onChanged:
               enabled ? (v) => _updateValue(schema.name, v, schema) : null,
         );
@@ -174,8 +174,8 @@ class _ParameterEditorState extends State<ParameterEditor> {
           dropdownColor: VxColors.surface,
           isExpanded: true,
           underline: const SizedBox(),
-          style: const TextStyle(
-              fontFamily: 'RobotoMono', color: Colors.white70, fontSize: 12),
+          style: TextStyle(
+              fontFamily: VxTypography.monoFamily, color: Colors.white70, fontSize: 12),
           items: schema.options!
               .map((o) => DropdownMenuItem(value: o, child: Text(o)))
               .toList(),
@@ -183,7 +183,6 @@ class _ParameterEditorState extends State<ParameterEditor> {
               enabled ? (v) => _updateValue(schema.name, v, schema) : null,
         );
       case ParameterType.string:
-      default:
         return VxText.mono(value.toString(), color: Colors.white70);
     }
   }

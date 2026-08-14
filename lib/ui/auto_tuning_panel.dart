@@ -49,13 +49,13 @@ class _AutoTuningPanelState extends State<AutoTuningPanel> {
             width: 740,
             height: 520,
             decoration: BoxDecoration(
-                color: VxColors.background.withOpacity(0.95),
+                color: VxColors.background.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(20),
                 border:
-                    Border.all(color: VxColors.neonMagenta.withOpacity(0.2)),
+                    Border.all(color: VxColors.neonMagenta.withValues(alpha: 0.2)),
                 boxShadow: [
                   BoxShadow(
-                      color: VxColors.neonMagenta.withOpacity(0.05),
+                      color: VxColors.neonMagenta.withValues(alpha: 0.05),
                       blurRadius: 40)
                 ]),
             child: Column(
@@ -108,7 +108,7 @@ class _AutoTuningPanelState extends State<AutoTuningPanel> {
     return Container(
       width: 240,
       padding: const EdgeInsets.all(VxSpacing.lg),
-      color: Colors.white.withOpacity(0.01),
+      color: Colors.white.withValues(alpha: 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,7 +146,7 @@ class _AutoTuningPanelState extends State<AutoTuningPanel> {
                     }
                   },
             style: ElevatedButton.styleFrom(
-              backgroundColor: VxColors.neonMagenta.withOpacity(0.8),
+              backgroundColor: VxColors.neonMagenta.withValues(alpha: 0.8),
               foregroundColor: Colors.white,
               minimumSize: const Size(double.infinity, 56),
               shape: RoundedRectangleBorder(
@@ -183,11 +183,11 @@ class _AutoTuningPanelState extends State<AutoTuningPanel> {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.02),
+            color: Colors.white.withValues(alpha: 0.02),
             border: Border.all(
                 color: event.accepted
-                    ? VxColors.neonGreen.withOpacity(0.2)
-                    : Colors.red.withOpacity(0.1)),
+                    ? VxColors.neonGreen.withValues(alpha: 0.2)
+                    : Colors.red.withValues(alpha: 0.1)),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -207,15 +207,15 @@ class _AutoTuningPanelState extends State<AutoTuningPanel> {
               const SizedBox(height: 10),
               VxText.body(event.reason,
                   color: event.accepted
-                      ? VxColors.neonGreen.withOpacity(0.8)
-                      : Colors.redAccent.withOpacity(0.8),
+                      ? VxColors.neonGreen.withValues(alpha: 0.8)
+                      : Colors.redAccent.withValues(alpha: 0.8),
                   fontSize: 11),
               if (event.accepted) ...[
                 const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: VxText.mono(
@@ -244,8 +244,8 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        border: Border.all(color: color.withOpacity(0.3)),
+        color: color.withValues(alpha: 0.1),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

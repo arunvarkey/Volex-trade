@@ -51,7 +51,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Emergency Stop",
-            style: GoogleFonts.jetBrainsMono(
+            style: GoogleFonts.dmSans(
                 color: VxColors.neonRed, fontWeight: FontWeight.bold)),
         content: const Text(
           "This will IMMEDIATELY halt all strategies and block new orders.\n\nAre you sure?",
@@ -94,7 +94,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Risk Settings", style: GoogleFonts.jetBrainsMono()),
+        title: const Text("Risk Settings"),
         centerTitle: true,
       ),
       body: ListView(
@@ -105,8 +105,8 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: isLocked
-                  ? VxColors.neonRed.withOpacity(0.1)
-                  : VxColors.neonGreen.withOpacity(0.1),
+                  ? VxColors.neonRed.withValues(alpha: 0.1)
+                  : VxColors.neonGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                   color: isLocked ? VxColors.neonRed : VxColors.neonGreen,
@@ -122,7 +122,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(isLocked ? "System Locked" : "System Active",
-                        style: GoogleFonts.jetBrainsMono(
+                        style: GoogleFonts.dmSans(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: isLocked
@@ -144,7 +144,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
           // Daily Loss Configuration
           Text("Daily Loss Limit",
-              style: GoogleFonts.jetBrainsMono(
+              style: GoogleFonts.dmSans(
                   color: VxColors.neonCyan, fontSize: 12)),
           const SizedBox(height: 16),
 
@@ -213,9 +213,9 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              border: Border.all(color: VxColors.neonRed.withOpacity(0.3)),
+              border: Border.all(color: VxColors.neonRed.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(16),
-              color: VxColors.neonRed.withOpacity(0.05),
+              color: VxColors.neonRed.withValues(alpha: 0.05),
             ),
             child: Column(
               children: [

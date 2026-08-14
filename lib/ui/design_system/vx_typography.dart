@@ -5,11 +5,11 @@ import 'vx_colors.dart';
 class VxTypography {
   VxTypography._();
 
-  static TextStyle hero = GoogleFonts.jetBrainsMono(
+  static TextStyle hero = GoogleFonts.dmSans(
     fontSize: 38,
     fontWeight: FontWeight.w700,
     color: VxColors.textPrimary,
-    letterSpacing: -1.0,
+    letterSpacing: -1.2,
   );
 
   static TextStyle h1 = GoogleFonts.dmSans(
@@ -59,15 +59,19 @@ class VxTypography {
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: VxColors.textTertiary,
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
   );
 
-  static TextStyle button = GoogleFonts.plusJakartaSans(
+  static TextStyle button = GoogleFonts.dmSans(
     fontSize: 16,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
-    letterSpacing: 1.0,
+    letterSpacing: 0.2,
   );
+
+  /// The single mono family for numeric/tabular text, exposed so raw
+  /// `fontFamily:` usages can align to it without re-importing google_fonts.
+  static String? get monoFamily => GoogleFonts.jetBrainsMono().fontFamily;
 }
 
 class VxText extends StatelessWidget {
@@ -250,7 +254,7 @@ class VxText extends StatelessWidget {
       int? maxLines,
       TextOverflow? overflow}) {
     return VxText(text,
-        style: GoogleFonts.robotoMono(
+        style: GoogleFonts.jetBrainsMono(
             textStyle: VxTypography.bodySmall
                 .copyWith(fontSize: fontSize, fontWeight: weight)),
         color: color,
@@ -267,7 +271,7 @@ class VxText extends StatelessWidget {
       int? maxLines,
       TextOverflow? overflow}) {
     return VxText(text,
-        style: GoogleFonts.robotoMono(
+        style: GoogleFonts.jetBrainsMono(
             textStyle: VxTypography.bodySmall.copyWith(
                 fontWeight: weight ?? FontWeight.bold, fontSize: fontSize)),
         color: color,

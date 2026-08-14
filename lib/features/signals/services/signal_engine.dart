@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
@@ -17,6 +18,18 @@ class SignalEngine {
   final _signalsController = StreamController<TradeSignal>.broadcast();
 
   Stream<TradeSignal> get signalStream => _signalsController.stream;
+
+  // Retain recently generated signals so a screen opened *after* generation
+  // (broadcast streams don't replay) can seed itself instead of showing an
+  // endless "Scanning markets…" spinner.
+  final List<TradeSignal> _recent = [];
+  List<TradeSignal> get recentSignals => List.unmodifiable(_recent);
+
+  bool _hasScanned = false;
+  bool get hasScanned => _hasScanned;
+
+  /// Runs a single scan on demand (used by the feed to force a refresh).
+  Future<void> scanNow() => _generateSignals();
 
   SignalEngine({
     required StrategyEngine strategyEngine,
@@ -59,8 +72,21 @@ class SignalEngine {
         final recommendations =
             await _strategyEngine.analyzeSymbol(symbol, history);
 
-        for (final rec in recommendations) {
-          if (!rec.shouldTrade) continue;
+        // Prefer actionable (shouldTrade) recommendations; if none fire this
+        // scan, still surface the single strongest recommendation so the feed
+        // always shows current opportunities instead of staying empty.
+        final tradeable =
+            recommendations.where((r) => r.shouldTrade).toList();
+        final toEmit = tradeable.isNotEmpty
+            ? tradeable
+            : (recommendations.isEmpty
+                ? recommendations
+                : [
+                    recommendations.reduce(
+                        (a, b) => a.confidence >= b.confidence ? a : b)
+                  ]);
+
+        for (final rec in toEmit) {
 
           // Construct a mock order for analysis
           final mockOrder = Order(
@@ -92,9 +118,14 @@ class SignalEngine {
             strategyName: rec.strategyName,
             timestamp: DateTime.now(),
             expiresAt: DateTime.now().add(const Duration(minutes: 5)),
+            // Honest: a confirmed trigger (shouldTrade) vs. the strongest
+            // current setup surfaced for the watchlist.
+            isActionable: rec.shouldTrade,
           );
 
-          // Emit signal
+          // Retain + emit
+          _recent.insert(0, signal);
+          if (_recent.length > 50) _recent.removeRange(50, _recent.length);
           _signalsController.add(signal);
 
           // Save to history (fire and forget)
@@ -107,6 +138,7 @@ class SignalEngine {
         AppLogger.error('Error generating signal for $symbol: $e');
       }
     }
+    _hasScanned = true;
   }
 
   String _generateSignalId() {
@@ -114,6 +146,9 @@ class SignalEngine {
   }
 
   Future<void> _saveSignal(TradeSignal signal) async {
+    // Firebase-free run (no google-services.json / web preview): skip cloud
+    // persistence instead of throwing on FirebaseAuth.instance every scan.
+    if (Firebase.apps.isEmpty) return;
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;

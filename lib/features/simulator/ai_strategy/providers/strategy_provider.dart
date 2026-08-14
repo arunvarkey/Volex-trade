@@ -40,24 +40,19 @@ class StrategyProvider extends ChangeNotifier {
           userPrompt: prompt, useCompanyKey: useCompanyKey);
       _backtestResult = null; // Reset backtest on new strategy
     } catch (e) {
-      // Fallback to Mock Strategy (Demo Mode) if key missing/invalid
-      if (e is AiStrategyError &&
-          (e.type == AiErrorType.missingKey ||
-              e.type == AiErrorType.invalidKey)) {
+      // Only a genuine bad-AI-output parse error surfaces to the user.
+      // Everything else — no key, no auth, offline, rate-limited, or (as on
+      // web where Firebase is skipped) the callable being unavailable — falls
+      // back to a demo strategy, so this simulator always produces something
+      // usable rather than dead-ending on an error snackbar.
+      if (e is AiStrategyError && e.type == AiErrorType.parsingError) {
+        _error = e.message;
+        AppLogger.error('Strategy Generation Failed', e);
+      } else {
         AppLogger.warning(
-            'No valid API key found/accessible. Falling back to Demo Mode.');
+            'Cloud AI unavailable ($e). Falling back to Demo Mode strategy.');
         _currentStrategy = await _aiService.generateMockStrategy(query: prompt);
         _backtestResult = null;
-        // Optionally notify user via snackbar that we used Demo Mode?
-        // _error = "Running in Demo Mode (No API Key)"; // Or keep silent?
-        // Silent fallback is smoother, maybe add a flag to strategy?
-      } else {
-        _error = e.toString();
-        // Improve error message for users if it's our typed error
-        if (e is AiStrategyError) {
-          _error = e.message;
-        }
-        AppLogger.error('Strategy Generation Failed', e);
       }
     } finally {
       _isLoading = false;

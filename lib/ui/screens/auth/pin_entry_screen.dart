@@ -132,6 +132,8 @@ class _PinEntryScreenState extends State<PinEntryScreen>
                     const SizedBox(height: 20),
                     if (widget.mode == PinEntryMode.verify)
                       _buildBiometricButton(),
+                    if (widget.mode == PinEntryMode.setup && !_isConfirming)
+                      _buildSkipForNowButton(),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -174,7 +176,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
           height: 80,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [VxColors.neonCyan, VxColors.neonPurple],
+              colors: [VxColors.neonCyan, VxColors.neonCyan],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -235,7 +237,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
             boxShadow: isFilled
                 ? [
                     BoxShadow(
-                      color: VxColors.neonCyan.withOpacity(0.5),
+                      color: VxColors.neonCyan.withValues(alpha: 0.5),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -253,10 +255,10 @@ class _PinEntryScreenState extends State<PinEntryScreen>
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: VxColors.neonRed.withOpacity(0.1),
+          color: VxColors.neonRed.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: VxColors.neonRed.withOpacity(0.3),
+            color: VxColors.neonRed.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -325,9 +327,9 @@ class _PinEntryScreenState extends State<PinEntryScreen>
         height: 70,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: VxColors.surface.withOpacity(0.3),
+          color: VxColors.surface.withValues(alpha: 0.3),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -346,6 +348,21 @@ class _PinEntryScreenState extends State<PinEntryScreen>
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkipForNowButton() {
+    return TextButton(
+      onPressed: () => getIt<SecurityService>().skipSetupForNow(),
+      child: const Text(
+        'Explore first — set up PIN later',
+        style: TextStyle(
+          color: VxColors.textSecondary,
+          fontSize: 13,
+          decoration: TextDecoration.underline,
+          decorationColor: Colors.white24,
         ),
       ),
     );
@@ -389,7 +406,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: VxColors.neonRed.withOpacity(0.2),
+                    color: VxColors.neonRed.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

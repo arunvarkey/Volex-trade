@@ -68,6 +68,26 @@ class AIService {
     }
   }
 
+  /// Offline fallback used when the AI backend is unavailable (no Firebase /
+  /// no AI key). Returns each parameter's sensible default with an honest
+  /// "demo" note instead of blocking the user with an error — the AI Assistant
+  /// still does something useful without a paid backend.
+  AIResult<Map<String, dynamic>> demoSuggestParameters(
+      StrategyTemplate template) {
+    final out = <String, dynamic>{};
+    for (final p in template.parameters) {
+      if (p is NumericParameter) {
+        out[p.id] = p.defaultValue;
+      } else if (p is DropdownParameter) {
+        out[p.id] = p.options.isNotEmpty ? p.options.first : '';
+      }
+    }
+    out['reasoning'] =
+        'Demo mode: balanced default values for "${template.name}". '
+        'Tune them below, then backtest to see how they perform.';
+    return AIResult.success(out);
+  }
+
   Future<GeneratedStrategy> generateMockStrategy({String? query}) async {
     if (_allowDelay) {
       await Future.delayed(const Duration(seconds: 1));

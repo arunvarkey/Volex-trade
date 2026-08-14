@@ -51,6 +51,7 @@ class VxTradeSheet extends StatefulWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      useRootNavigator: true,
       builder: (context) => VxTradeSheet(
         symbol: symbol,
         currentPrice: currentPrice,
@@ -92,7 +93,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
         color: VxColors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
-          color: VxColors.neonCyan.withOpacity(0.2),
+          color: VxColors.neonCyan.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -130,7 +131,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             width: 1,
           ),
         ),
@@ -158,10 +159,10 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: VxColors.neonGreen.withOpacity(0.1),
+                        color: VxColors.neonGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: VxColors.neonGreen.withOpacity(0.3),
+                          color: VxColors.neonGreen.withValues(alpha: 0.3),
                         ),
                       ),
                       child: const Text(
@@ -180,7 +181,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                   '\$${widget.currentPrice.toStringAsFixed(2)}',
                   style: VxTypography.body.copyWith(
                     color: Colors.white70,
-                    fontFamily: 'SpaceMono', // Theme aligned
+                    fontFamily: VxTypography.monoFamily, // Theme aligned
                   ),
                 ),
               ],
@@ -266,10 +267,10 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                     ),
                     Text(
                       '${(_sliderValue * 100).toInt()}% of Portfolio',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
-                        fontFamily: 'RobotoMono',
+                        fontFamily: VxTypography.monoFamily,
                       ),
                     ),
                   ],
@@ -284,7 +285,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                         _isBuyMode ? VxColors.neonGreen : VxColors.neonRed,
                     overlayColor:
                         (_isBuyMode ? VxColors.neonGreen : VxColors.neonRed)
-                            .withOpacity(0.2),
+                            .withValues(alpha: 0.2),
                   ),
                   child: Slider(
                     value: _sliderValue,
@@ -351,7 +352,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.15) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.15) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? color : Colors.white24,

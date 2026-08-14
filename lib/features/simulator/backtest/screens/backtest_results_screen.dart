@@ -4,7 +4,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
+import '../../../../core/glossary.dart';
 import '../../../../ui/design_system/vx_colors.dart';
+import '../../../../ui/widgets/guidance_banner.dart';
+import '../../../../ui/widgets/glossary_sheet.dart';
 import '../models/backtest_result.dart';
 import '../models/trade_marker.dart';
 
@@ -21,11 +24,10 @@ class BacktestResultsScreen extends StatelessWidget {
         backgroundColor: VxColors.deepBlack,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          'BACKTEST RESULTS',
+          'Backtest Results',
           style: TextStyle(
-            fontFamily: 'Courier',
             color: VxColors.neonCyan,
-            letterSpacing: 2,
+            letterSpacing: 0.3,
             fontSize: 16,
           ),
         ),
@@ -35,12 +37,12 @@ class BacktestResultsScreen extends StatelessWidget {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: _getGradeColor(result.metrics.grade).withOpacity(0.2),
+              color: _getGradeColor(result.metrics.grade).withValues(alpha: 0.2),
               border: Border.all(color: _getGradeColor(result.metrics.grade)),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              'GRADE: ${result.metrics.grade}',
+              'Grade ${result.metrics.grade}',
               style: TextStyle(
                 color: _getGradeColor(result.metrics.grade),
                 fontWeight: FontWeight.bold,
@@ -55,20 +57,27 @@ class BacktestResultsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const GuidanceBanner(
+              id: 'backtest_results_intro',
+              text:
+                  'A backtest replays real history to show how your strategy '
+                  'would have done. Win rate and return are the headline numbers; '
+                  'max drawdown is the worst dip along the way.',
+            ),
             // Overall performance card
             _buildPerformanceCard(),
 
             const SizedBox(height: 24),
 
             // Equity curve
-            _buildSectionHeader('EQUITY CURVE'),
+            _buildSectionHeader('Equity Curve'),
             const SizedBox(height: 12),
             _buildEquityCurveChart(),
 
             const SizedBox(height: 24),
 
             // Key metrics grid
-            _buildSectionHeader('KEY METRICS'),
+            _buildSectionHeader('Key Metrics'),
             const SizedBox(height: 12),
             _buildMetricsGrid(),
 
@@ -76,7 +85,7 @@ class BacktestResultsScreen extends StatelessWidget {
 
             // Trade list
             _buildSectionHeader(
-                'TRADE HISTORY (${result.trades.length} trades)'),
+                'Trade History (${result.trades.length} trades)'),
             const SizedBox(height: 12),
             _buildTradeList(),
 
@@ -116,11 +125,11 @@ class BacktestResultsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(0.2),
-            color.withOpacity(0.05),
+            color.withValues(alpha: 0.2),
+            color.withValues(alpha: 0.05),
           ],
         ),
-        border: Border.all(color: color.withOpacity(0.5), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.5), width: 2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -135,12 +144,12 @@ class BacktestResultsScreen extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                isProfit ? 'PROFITABLE' : 'UNPROFITABLE',
+                isProfit ? 'Profitable' : 'Unprofitable',
                 style: TextStyle(
                   color: color,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -173,12 +182,33 @@ class BacktestResultsScreen extends StatelessWidget {
     );
   }
 
+  static const Map<String, String> _labelTerms = {
+    'Win Rate': 'win_rate',
+    'Total Return': 'total_return',
+    'Max Drawdown': 'max_drawdown',
+    'Profit Factor': 'profit_factor',
+    'Sharpe Ratio': 'sharpe_ratio',
+    'Sortino Ratio': 'sortino_ratio',
+    'Calmar Ratio': 'calmar_ratio',
+    'P&L': 'pnl',
+  };
+
+  /// A metric label that becomes tappable (with a "?") when we have a plain
+  /// English definition for it; otherwise plain text.
+  Widget _termLabel(String label, TextStyle style) {
+    final id = _labelTerms[label];
+    if (id != null && Glossary.has(id)) {
+      return InfoLabel(text: label, termId: id, style: style);
+    }
+    return Text(label, style: style);
+  }
+
   Widget _buildStatColumn(String label, String value, Color color) {
     return Column(
       children: [
-        Text(
+        _termLabel(
           label,
-          style: TextStyle(
+          TextStyle(
             color: Colors.grey[400],
             fontSize: 11,
             letterSpacing: 1,
@@ -191,7 +221,6 @@ class BacktestResultsScreen extends StatelessWidget {
             color: color,
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Courier',
           ),
         ),
       ],
@@ -205,7 +234,7 @@ class BacktestResultsScreen extends StatelessWidget {
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -294,7 +323,7 @@ class BacktestResultsScreen extends StatelessWidget {
                 color: (result.isProfitable
                         ? VxColors.neonGreen
                         : VxColors.neonRed)
-                    .withOpacity(0.1),
+                    .withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -329,6 +358,16 @@ class BacktestResultsScreen extends StatelessWidget {
               result.metrics.isGoodSharpe),
           Divider(color: Colors.grey[800]),
           _buildMetricRow(
+              'Sortino Ratio',
+              result.metrics.sortinoRatio.toStringAsFixed(2),
+              result.metrics.sortinoRatio > 2),
+          Divider(color: Colors.grey[800]),
+          _buildMetricRow(
+              'Calmar Ratio',
+              result.metrics.calmarRatio.toStringAsFixed(2),
+              result.metrics.calmarRatio > 1),
+          Divider(color: Colors.grey[800]),
+          _buildMetricRow(
               'Max Drawdown',
               '${result.metrics.maxDrawdownPercent.toStringAsFixed(2)}%',
               result.metrics.maxDrawdownPercent < 20),
@@ -350,9 +389,9 @@ class BacktestResultsScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        _termLabel(
           label,
-          style: TextStyle(color: Colors.grey[400], fontSize: 13),
+          TextStyle(color: Colors.grey[400], fontSize: 13),
         ),
         Row(
           children: [
@@ -362,7 +401,6 @@ class BacktestResultsScreen extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                fontFamily: 'Courier',
               ),
             ),
             const SizedBox(width: 8),
@@ -438,7 +476,6 @@ class BacktestResultsScreen extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Courier',
                   fontSize: 13,
                 ),
               ),
@@ -449,7 +486,6 @@ class BacktestResultsScreen extends StatelessWidget {
                     color:
                         trade.pnl! >= 0 ? VxColors.neonGreen : VxColors.neonRed,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Courier',
                     fontSize: 12,
                   ),
                 ),
@@ -517,7 +553,7 @@ class BacktestResultsScreen extends StatelessWidget {
               context.go('/');
             },
             icon: const Icon(Icons.play_arrow),
-            label: const Text('GO TO TERMINAL'),
+            label: const Text('Go to Terminal'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.grey[800],
               foregroundColor: Colors.white,
@@ -537,7 +573,7 @@ class BacktestResultsScreen extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: () => _deployStrategy(context),
             icon: const Icon(Icons.rocket_launch),
-            label: const Text('DEPLOY STRATEGY'),
+            label: const Text('Deploy Strategy'),
             style: ElevatedButton.styleFrom(
               backgroundColor: VxColors.neonCyan,
               foregroundColor: VxColors.deepBlack,
@@ -557,7 +593,7 @@ class BacktestResultsScreen extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: () => context.pop(),
             icon: const Icon(Icons.edit),
-            label: const Text('MODIFY STRATEGY'),
+            label: const Text('Modify Strategy'),
             style: OutlinedButton.styleFrom(
               foregroundColor: VxColors.neonCyan,
               side: const BorderSide(color: VxColors.neonCyan),
@@ -577,10 +613,10 @@ class BacktestResultsScreen extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: () => _showComingSoon(context, 'Share results'),
             icon: const Icon(Icons.share),
-            label: const Text('SHARE RESULTS'),
+            label: const Text('Share Results'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: VxColors.neonPurple,
-              side: const BorderSide(color: VxColors.neonPurple),
+              foregroundColor: VxColors.neonCyan,
+              side: const BorderSide(color: VxColors.neonCyan),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),

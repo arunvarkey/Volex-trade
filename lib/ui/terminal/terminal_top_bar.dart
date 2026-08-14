@@ -30,7 +30,7 @@ class TerminalTopBar extends StatelessWidget {
         color: VxColors.surface,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             width: 1,
           ),
         ),
@@ -92,7 +92,7 @@ class TerminalTopBar extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isReplayMode ? VxColors.neonCyan : Colors.transparent,
-                border: Border.all(color: VxColors.neonCyan.withOpacity(0.5)),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -115,7 +115,7 @@ class TerminalTopBar extends StatelessWidget {
         decoration: BoxDecoration(
           color: VxColors.deepBlack,
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -170,7 +170,7 @@ class TerminalTopBar extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.15),
+                color: Colors.green.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(3),
               ),
               child: const Text(
@@ -196,8 +196,8 @@ class TerminalTopBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
         color: isPaper
-            ? VxColors.neonCyan.withOpacity(0.1)
-            : VxColors.neonRed.withOpacity(0.1),
+            ? VxColors.neonCyan.withValues(alpha: 0.1)
+            : VxColors.neonRed.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isPaper ? VxColors.neonCyan : VxColors.neonRed,
@@ -241,8 +241,8 @@ class TerminalTopBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: VxColors.neonCyan.withOpacity(0.1),
-          border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+          color: VxColors.neonCyan.withValues(alpha: 0.1),
+          border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(Icons.notifications_active,

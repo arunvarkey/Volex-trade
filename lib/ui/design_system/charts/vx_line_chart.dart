@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../vx_colors.dart';
@@ -53,10 +54,10 @@ class VxLineChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toStringAsFixed(0),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white54,
                     fontSize: 10,
-                    fontFamily: 'RobotoMono',
+                    fontFamily: VxTypography.monoFamily,
                   ),
                 );
               },
@@ -86,10 +87,10 @@ class VxLineChart extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Text(
                     DateFormat('MM/dd').format(ts),
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white54,
                         fontSize: 10,
-                        fontFamily: 'RobotoMono'),
+                        fontFamily: VxTypography.monoFamily),
                   ),
                 );
               },
@@ -132,16 +133,16 @@ class VxLineChart extends StatelessWidget {
       Color bandColor = Colors.transparent;
       switch (regime) {
         case MarketRegime.bull:
-          bandColor = VxColors.neonGreen.withOpacity(0.05);
+          bandColor = VxColors.neonGreen.withValues(alpha: 0.05);
           break;
         case MarketRegime.bear:
-          bandColor = VxColors.neonRed.withOpacity(0.05);
+          bandColor = VxColors.neonRed.withValues(alpha: 0.05);
           break;
         case MarketRegime.volatile:
-          bandColor = VxColors.neonPurple.withOpacity(0.05);
+          bandColor = VxColors.neonPurple.withValues(alpha: 0.05);
           break;
         case MarketRegime.trending:
-          bandColor = VxColors.neonCyan.withOpacity(0.05);
+          bandColor = VxColors.neonCyan.withValues(alpha: 0.05);
           break;
         case MarketRegime.sideways:
           bandColor = Colors.transparent;
@@ -194,7 +195,7 @@ class VxLineChart extends StatelessWidget {
           if (spot.x.toInt() == points.length - 1) {
             return FlDotCirclePainter(
               color: ChartTheme.cyberpunk.lineColor,
-              strokeColor: ChartTheme.cyberpunk.lineColor.withOpacity(0.3),
+              strokeColor: ChartTheme.cyberpunk.lineColor.withValues(alpha: 0.3),
               strokeWidth: 4,
               radius: 4,
             );
@@ -235,13 +236,13 @@ class VxLineChart extends StatelessWidget {
             e.key.toDouble(), e.value.equity * (1 - e.value.drawdown));
       }).toList(),
       isCurved: true,
-      color: VxColors.neonRed.withOpacity(0.3),
+      color: VxColors.neonRed.withValues(alpha: 0.3),
       barWidth: 1,
       dashArray: [5, 5],
       dotData: const FlDotData(show: false),
       belowBarData: BarAreaData(
         show: true,
-        color: VxColors.neonRed.withOpacity(0.05),
+        color: VxColors.neonRed.withValues(alpha: 0.05),
       ),
     );
   }

@@ -68,7 +68,7 @@ class _VxLogTileState extends State<_VxLogTile> {
       case VxLogSeverity.success:
         return VxColors.success;
       case VxLogSeverity.debug:
-        return VxColors.neonPurple;
+        return VxColors.neonCyan;
     }
   }
 

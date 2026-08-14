@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../sheets/vx_trade_sheet.dart';
@@ -6,6 +7,7 @@ import '../navigation/vx_navigation_helper.dart';
 import '../screens/strategies/ai_strategy_generator_screen.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
+import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import '../../core/app_router.dart';
 import 'package:volex_terminal/engine/alerts/alert_engine.dart';
@@ -52,7 +54,7 @@ class _VxActionCenterState extends State<VxActionCenter>
             boxShadow: [
               BoxShadow(
                 color: VxColors.neonCyan
-                    .withOpacity(0.3 + _pulseController.value * 0.2),
+                    .withValues(alpha: 0.3 + _pulseController.value * 0.2),
                 blurRadius: 20 + _pulseController.value * 10,
                 spreadRadius: 2 + _pulseController.value * 3,
               ),
@@ -71,7 +73,7 @@ class _VxActionCenterState extends State<VxActionCenter>
                 ),
                 gradient: RadialGradient(
                   colors: [
-                    VxColors.neonCyan.withOpacity(0.1),
+                    VxColors.neonCyan.withValues(alpha: 0.1),
                     Colors.transparent,
                   ],
                 ),
@@ -145,7 +147,7 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
         description: isRunning
             ? 'Active: ${activeStrategy.name}'
             : 'Deploy automated trading',
-        color: isRunning ? VxColors.neonGreen : VxColors.neonPurple,
+        color: isRunning ? VxColors.neonGreen : VxColors.neonCyan,
         action: _handleStartStrategy,
       ),
       _Command(
@@ -193,7 +195,7 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
       decoration: BoxDecoration(
         color: VxColors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.2), width: 1),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         children: [
@@ -320,7 +322,7 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
         isScrollControlled: true,
         builder: (context) => _StrategyDashboardSheet(
           strategyName: activeStrategy.name,
-          currentPnL: 124.50, // Mock PnL
+          currentPnL: context.read<ExecutionManager>().totalPnL,
           onStop: () {
             // Stop logic
             final engine = context.read<StrategyEngine>();
@@ -403,10 +405,10 @@ class _CommandTile extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: command.color.withOpacity(0.1),
+                    color: command.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: command.color.withOpacity(0.3),
+                      color: command.color.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -435,17 +437,17 @@ class _CommandTile extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: VxColors.neonPurple.withOpacity(0.2),
+                                color: VxColors.neonCyan.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                  color: VxColors.neonPurple,
+                                  color: VxColors.neonCyan,
                                   width: 1,
                                 ),
                               ),
                               child: const Text(
                                 'PRO',
                                 style: TextStyle(
-                                  color: VxColors.neonPurple,
+                                  color: VxColors.neonCyan,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -516,7 +518,7 @@ class _StrategyDashboardSheet extends StatelessWidget {
         color: VxColors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
-          color: VxColors.neonGreen.withOpacity(0.3),
+          color: VxColors.neonGreen.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
@@ -546,7 +548,7 @@ class _StrategyDashboardSheet extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: VxColors.neonGreen.withOpacity(0.5),
+                        color: VxColors.neonGreen.withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -588,11 +590,11 @@ class _StrategyDashboardSheet extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: (isProfitable ? VxColors.neonGreen : VxColors.neonRed)
-                  .withOpacity(0.1),
+                  .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: (isProfitable ? VxColors.neonGreen : VxColors.neonRed)
-                    .withOpacity(0.3),
+                    .withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -612,7 +614,7 @@ class _StrategyDashboardSheet extends StatelessWidget {
                     color: isProfitable ? VxColors.neonGreen : VxColors.neonRed,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'RobotoMono',
+                    fontFamily: VxTypography.monoFamily,
                   ),
                 ),
               ],
@@ -641,7 +643,7 @@ class _StrategyDashboardSheet extends StatelessWidget {
                     Switch(
                       value: false,
                       onChanged: (_) {},
-                      activeColor: VxColors.warning,
+                      activeThumbColor: VxColors.warning,
                     ),
                   ],
                 ),
@@ -778,7 +780,7 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: VxColors.neonCyan.withOpacity(0.1),
+              color: VxColors.neonCyan.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -790,11 +792,11 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
                 const SizedBox(width: 8),
                 Text(
                   widget.symbol,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: VxColors.neonCyan,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'RobotoMono',
+                    fontFamily: VxTypography.monoFamily,
                   ),
                 ),
               ],
@@ -822,11 +824,11 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
           TextField(
             controller: _priceController,
             keyboardType: TextInputType.number,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'RobotoMono',
+              fontFamily: VxTypography.monoFamily,
             ),
             decoration: InputDecoration(
               labelText: 'Target Price',
@@ -834,11 +836,11 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
               prefixText: '\$ ',
               prefixStyle: const TextStyle(color: Colors.white54),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
+              fillColor: Colors.white.withValues(alpha: 0.05),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide:
-                    BorderSide(color: VxColors.warning.withOpacity(0.3)),
+                    BorderSide(color: VxColors.warning.withValues(alpha: 0.3)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -918,7 +920,7 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? VxColors.warning.withOpacity(0.2)
+              ? VxColors.warning.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
@@ -949,7 +951,7 @@ class _SetAlertDialogState extends State<_SetAlertDialog> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            border: Border.all(color: VxColors.warning.withOpacity(0.3)),
+            border: Border.all(color: VxColors.warning.withValues(alpha: 0.3)),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Center(
@@ -1087,7 +1089,7 @@ class _ProUpgradeDialogState extends State<_ProUpgradeDialog>
                   appRouter.push('/subscription');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: VxColors.neonPurple,
+                  backgroundColor: VxColors.neonCyan,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1123,7 +1125,7 @@ class _ProUpgradeDialogState extends State<_ProUpgradeDialog>
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon, color: VxColors.neonPurple, size: 20),
+          Icon(icon, color: VxColors.neonCyan, size: 20),
           const SizedBox(width: 12),
           Text(
             label,
@@ -1214,8 +1216,8 @@ class _VxSymbolSearchDelegate extends SearchDelegate<String> {
               children: [
                 Text(
                   '\$${market['price']}',
-                  style: const TextStyle(
-                      color: Colors.white70, fontFamily: 'RobotoMono'),
+                  style: TextStyle(
+                      color: Colors.white70, fontFamily: VxTypography.monoFamily),
                 ),
                 Text(
                   '${isPositive ? '+' : ''}${market['change']}%',

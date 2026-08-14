@@ -24,9 +24,9 @@ class OrderLogPanel extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: Container(
             decoration: BoxDecoration(
-              color: VxColors.surface.withOpacity(0.5),
+              color: VxColors.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -36,10 +36,10 @@ class OrderLogPanel extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     border: Border(
                         bottom:
-                            BorderSide(color: Colors.white.withOpacity(0.05))),
+                            BorderSide(color: Colors.white.withValues(alpha: 0.05))),
                   ),
                   child: Row(
                     children: [

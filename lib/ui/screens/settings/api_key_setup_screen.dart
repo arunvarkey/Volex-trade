@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/features/trading/services/secure_trading_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -79,9 +80,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
               TextFormField(
                 controller: _apiKeyController,
                 enabled: !_hasExistingKeys,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'JetBrainsMono',
+                  fontFamily: VxTypography.monoFamily,
                   fontSize: 13,
                 ),
                 decoration: InputDecoration(
@@ -121,9 +122,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
                 controller: _secretKeyController,
                 enabled: !_hasExistingKeys,
                 obscureText: _obscureSecret,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'JetBrainsMono',
+                  fontFamily: VxTypography.monoFamily,
                   fontSize: 13,
                 ),
                 decoration: InputDecoration(
@@ -186,9 +187,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: VxColors.danger.withOpacity(0.1),
+        color: VxColors.danger.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.danger.withOpacity(0.3), width: 2),
+        border: Border.all(color: VxColors.danger.withValues(alpha: 0.3), width: 2),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,7 +259,7 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-              color: VxColors.primary.withOpacity(0.2),
+              color: VxColors.primary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -397,9 +398,9 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: VxColors.positive.withOpacity(0.1),
+            color: VxColors.positive.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: VxColors.positive.withOpacity(0.3)),
+            border: Border.all(color: VxColors.positive.withValues(alpha: 0.3)),
           ),
           child: const Row(
             children: [

@@ -1,0 +1,246 @@
+# Volex — Execution Roadmap
+
+> Companion to [VISION.md](VISION.md). The vision says *what* and *why*;
+> this document says *in what order, to what standard*.
+> Nothing gets built that isn't specified here first.
+
+## The process (how every feature ships)
+
+Every feature — no exceptions — moves through five gates:
+
+1. **Plan** — a milestone entry in this file with Goal, Scope, Acceptance
+   criteria, and Required tests. If acceptance criteria can't be written,
+   the feature isn't understood yet.
+2. **Build** — as a self-contained feature module
+   (`lib/features/<name>/` or `lib/ui/<area>/`), using design-system
+   tokens (`VxColors`/`VxTypography`), singleton services for state,
+   no new global coupling.
+3. **Test** — unit tests for every money, progress, or math path in
+   `test/features/`. Logic that can't be unit-tested gets a manual
+   verification checklist in the PR/commit description.
+4. **Verify** — run on a real target (device or web preview) and walk the
+   acceptance criteria one by one.
+5. **Ship** — push through CI (analyze + full test suite). Red CI means
+   not shipped, full stop.
+
+**Standing rules**
+- No real-money execution paths (see VISION.md guardrails).
+- All user-facing copy reflects the simulator identity.
+- New screens must handle: loading, empty, and error states.
+- First-user experience is sacred: no new feature may add friction before
+  the first lesson/trade (progressive disclosure only).
+
+---
+
+## M0 — Engineering foundation  `IN PROGRESS`
+
+**Goal:** every change is machine-verified; the codebase stops accruing debt.
+
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| CI quality gate on all branches | analyze + full test suite run on every push; red = blocked | ✅ |
+| Warning cleanup | `flutter analyze` has 0 warnings; CI flips to `--fatal-warnings` | ✅ (gate is fatal-warnings; also fixed a CI-caught TextDirection compile error in VxProChart) |
+| Repair quarantined legacy tests | the 11 tests skipped with `@Skip('Quarantined…')` (dashboard_provider, notifications_screen, backtest timeout, execution_manager) are fixed and un-skipped | ☐ investigated: `execution_manager` needs `build_runner` codegen (not runnable in the cloud CI env); `backtest/timeout` un-skip proved a real behavioral drift — the engine now completes the hanging run and returns `result.error == null`, so it needs the timeout semantics revisited, not a trivial fix; `dashboard_provider` & `notifications_screen` depend on shared `test_helper` mocks + Firebase. Best done at device-time with a local toolchain. |
+| withOpacity migration + zero infos | 0 analyzer issues of any severity; CI at `--fatal-infos` | ✅ (509 withOpacity migrated; Switch/Dropdown/Radio deprecations modernized; gate fully strict) |
+| fl_chart retirement | remaining fl_chart screens migrated to VxProChart or explicitly kept with a reason; unused chart widgets deleted | ☐ |
+
+**Required tests:** existing 27 must stay green throughout.
+
+## M1 — Real device & first testers
+
+**Goal:** Volex runs on real hardware and reaches its first outside users.
+
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| **13+ age gate** | birth-agnostic 13+ confirmation before the app; stores only a derived boolean (no birthdate); under-13 gets a polite block; tested | ✅ |
+| Android device run | app boots, all 5 tabs + Academy + Predictions + chart verified on a physical phone; issues logged and fixed | 🟡 app builds & runs Firebase-free on a physical Android device (AGP 8.9.1 / Gradle 8.11.1 / compileSdk 36 / NDK 28; google-services optional; native auth guarded). Verified on-device and fixed this pass: AI Strategy Builder generation, strategy start/stop, editable profile, bottom-sheet-behind-nav overlap, Live Signals population, Predict contract selection, chart trade-sheet alignment, chart candle clarity, All-Markets synthetic data, and a full app-wide font/design consistency pass (one DM Sans + one JetBrains Mono; blue accent). Remaining: full Academy/Optimizer/Wallet walkthrough, release build, Play internal testing. |
+| Release build | `flutter build apk --release` succeeds; app icon, name, version correct | ☐ |
+| Play internal testing | listing assets from docs/APP_STORE_ENTRY.md; ≥3 testers installed; crash-free sessions in Crashlytics | ☐ |
+
+**Compliance decisions (need legal review before public launch):**
+- Floor is **13+** (chosen): covers students, avoids COPPA's under-13 regime.
+- **Store age *rating* risk:** Buzz & Predictions reads as "simulated
+  gambling" to Apple/Google reviewers and may force a 17+ rating regardless
+  of the 13+ floor. Options tracked: gate/hide Predictions for a lower
+  rating, or accept 17+ and ship a **School Mode** build (Predictions off,
+  data minimised) for the student/classroom channel.
+- **Data minimisation for minors:** review Firebase Analytics/Crashlytics
+  defaults; keep opt-in; no ad SDKs (none present).
+
+**Required tests:** no new unit tests; manual device checklist executed twice
+(fresh install + upgrade install).
+
+## M2 — Retention core (the daily loop)
+
+**Goal:** a reason to open Volex every day. Headlined by **Volex Daily** —
+the daily ritual that unifies streaks, prediction, and learning into one
+shareable loop (Predict → Resolve → Rank → Share). This is the retention *and*
+acquisition engine: the shareable result card is the growth mechanism.
+
+| Item | Scope | Acceptance criteria | Status |
+|---|---|---|---|
+| **Volex Daily v1** | 5 deterministic trading-judgment calls/day; instant resolution; streak; shareable card; wrong answers deep-link the relevant lesson | same set for everyone per date; timezone-safe streak (extend/reset/idempotent replay); share text correct; tested | ✅ this commit |
+| Volex Daily v2 | layer in real resolving event markets (BTC close, Fed) from a data backend, alongside the judgment calls | resolution idempotent; honest "not yet resolved" state; true global rank | ☐ |
+| Lesson quizzes | 3 questions per lesson; must pass (2/3) to mark complete | quiz UI matches lesson reader; progress only on pass; existing completions unaffected | ✅ (48 questions; checkpoint gate; reading no longer auto-completes) |
+| XP + levels | XP from lessons/backtests/trades/Daily; Novice→Operator→Analyst→Pro; feeds the Daily streak | levels derived from XP; persisted; tested | ✅ (all four sources wired — lessons, Daily, backtests, paper trades; awardOnce for milestones + addXp for repeatable actions; badge on Academy hub) |
+| Local notifications | daily "your calls are ready" nudge (opt-in), "market resolved" | permission asked in context, never on first launch | ☐ |
+
+**Required tests:** streak date math (rollover, gap, idempotent replay) ✅,
+deterministic daily-set generation ✅, share-text formatting ✅, quiz
+well-formedness + pass gating ✅, XP idempotency + level thresholds ✅ (+13
+tests). Remaining: XP hooks from paper trades and backtests.
+
+### Strategy Studio activation (mission-critical, device-gated)
+
+> **Status: 🟡 wired — pending on-device validation.** DI + routing done:
+> `AppModeService` and `StrategyRepository` (Hive box `strategies`, boot-guarded)
+> registered and provided; routes live under `/simulator` (`templates`,
+> `templates/config` with `StrategyTemplate` extra, `ai-assistant`,
+> `my-strategies`); the studio's backtest repointed to the corrected
+> `/lab/backtest/config` (no parallel path); More-menu entry added, with the
+> `/ai-strategy` generator kept as fallback. Green under `--fatal-infos`.
+> Remaining: walk the hub → template → config → backtest → save loop on device.
+
+
+A complete **AI Strategy Studio** (1,808 LOC: hub → template picker → template
+config → backtest, plus AI Assistant and a My-Strategies manager) exists under
+`lib/features/simulator/` but was never connected — its DI plumbing was never
+finished. This is the **"build"** pillar of the north-star loop
+(learn → **build → backtest** → paper-trade) and its paywalled AI Assistant is
+the Act-1 subscription mechanism, so activating it is on-mission. Do this at
+device-time where boot/DI changes can be validated:
+
+1. **Provide `AppModeService`** (ctor takes `SharedPreferences`) in the
+   `providers_setup` tree — the hub reads it via `context.watch`.
+2. **Register + initialize `StrategyRepository`** (Hive box `strategies`) in the
+   boot sequence (Hive is already `initFlutter`'d in `persistence_service`);
+   `template_config` and `my_strategies` resolve it via `GetIt`.
+3. **Register routes** under a `/simulator` parent: `templates`,
+   `templates/config` (extra `StrategyTemplate`), `ai-assistant`,
+   `my-strategies`, and point its backtest at the **existing corrected**
+   `/lab/backtest/config` (do NOT re-create a `/simulator/backtest*` path — the
+   backtest-results nav bug there is already fixed to `/lab/backtest/results`).
+4. **Entry point** behind progressive disclosure (More menu), leaving the
+   current `/ai-strategy` generator in place as fallback until the studio is
+   judged live. Promote the winner; delete the loser.
+
+Credibility guardrail (per Vision): the studio's backtest must run through the
+corrected engine (Wilder RSI, real MACD signal, fixed Bollinger) — guaranteed
+by reusing `/lab/backtest/*`, not a parallel path.
+
+## M3 — Chart engine v2
+
+**Goal:** VxProChart reaches genuine TradingView-tier depth.
+
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Indicator panes | RSI + MACD in a sub-pane; toggleable; math unit-tested against known values | 🟡 RSI(14) pane live with 70/30 guides + `showRsi` toggle; MACD(12/26/9) histogram shown in the chart legend; RSI & MACD/EMA math unit-tested (StockCharts reference + invariants). Full stacked MACD sub-pane deferred (avoids a 4th blind-layout pane before on-device validation) |
+| Trade markers | paper-trade entries/exits drawn on the chart at their price/time | ✅ (filled buys/sells on the live chart via `markers`; buy▲ below bar, sell▼ above; nearest-candle positioning unit-tested) |
+| Drawing tools | trendline + horizontal level, drag to edit, persisted per symbol | 🟡 horizontal levels: add-at-price + manage/delete sheet, rendered on chart, persisted per symbol (DrawingService, tested); trendline model + rendering + segment hit-test math ready; on-canvas drag-to-edit deferred to device-time (needs touch validation) |
+
+**Required tests:** RSI/MACD math vs reference values ✅; marker positioning
+math (nearestIndexByTime: clamp, exact, nearest, tie) ✅ (+18 total).
+
+## M4 — Monetization readiness
+
+**Goal:** the subscription can actually be bought and measured.
+
+| Item | Acceptance criteria |
+|---|---|
+| Play Console products | `volex_pro` monthly + yearly configured and testable via internal track |
+| Funnel analytics | events: paywall_viewed, trial_started, purchase, restore; visible in Firebase |
+| Limit polish | free-tier limits (3 gens / 1 backtest / 10 signals) enforced consistently and communicated in-UI before the wall is hit |
+
+**Required tests:** limit-gating logic unit-tested.
+
+## M5 — Act 2 opens: marketplace
+
+**Goal:** the creator economy from VISION.md, paper-first.
+
+| Item | Acceptance criteria |
+|---|---|
+| Publish a strategy | from Lab to marketplace with description + backtest stats attached |
+| Real leaderboard | ranked by verified paper performance, not self-reported numbers |
+| Paper copy-trading | follow a strategy → mirrored simulated fills; clearly labelled |
+
+Specs to be detailed when M2 ships (sequencing rule: retention before
+marketplace — an empty marketplace helps no one).
+
+---
+
+## M6 — International-grade launch readiness  `NOT STARTED`
+
+**Goal:** the honest gate between "runs on a device" and a global public
+launch. Nothing here is optional for GA; each item has a binary done/not-done.
+
+> Reality check (2026-08): the app runs end-to-end on device in a
+> **Firebase-free / synthetic-data** preview mode. That is a demo, not a
+> launch. The items below are what stand between the two.
+
+### 6a — Functional completeness (verified on device, not just compiling)
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Signals engine | Produces real signals from live data on a physical device | ⬜ (offline synthetic fallback added) |
+| Backtest loop | describe → generate → backtest → **honest** results screen with real metrics | ⬜ |
+| Strategy activation | "Deploy" actually runs a paper-trading loop that opens/closes positions | ⬜ (state tracked only) |
+| Replay | Loads history, plays, seeks, and renders throughout | ⬜ (warmup + seek fixed; needs device pass) |
+| Every screen | Handles loading / empty / error states; **zero** RenderFlex overflows across phone sizes | ⬜ |
+
+### 6b — Real backend & data (no more mocks)
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Firebase project | Real `google-services.json` / `firebase_options`; auth, Firestore, analytics live | ⬜ |
+| Market data | A production data feed (Binance or licensed vendor) with fallback + rate-limit handling | ⬜ |
+| Real AI strategy gen | Cloud function + key wired; demo mode only when offline, clearly labelled | ⬜ |
+| Accounts | Sign-up / sign-in / verify / reset all work; guest → account upgrade path | ⬜ |
+
+### 6c — International grade (the literal bar)
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| i18n / l10n | All user-facing strings externalized; at least EN + 2 launch languages; `intl` wired | ⬜ |
+| Formatting | Locale-aware number / currency / date formatting; RTL layout sanity | ⬜ |
+| Performance | Cold start < 3s on mid-tier Android; chart stays 60fps; no jank on scroll | ⬜ |
+| Accessibility | Semantic labels, tap targets ≥ 48dp, contrast AA, dynamic text scaling | ⬜ |
+
+### 6d — Trust, compliance & store readiness
+| Item | Acceptance criteria | Status |
+|---|---|---|
+| Disclaimers | "Simulated — not financial advice" surfaced where trades/signals appear | ⬜ |
+| Legal | Privacy Policy + Terms live at real URLs; age gate verified; data-deletion path | ⬜ |
+| Store assets | Icon, screenshots, listing copy, content rating, privacy nutrition labels | ⬜ |
+| Release build | Signed release APK/IPA builds green; ProGuard/R8 keeps app working; crash-free | ⬜ |
+| QA matrix | Manual pass on ≥3 device sizes + a tester cohort before public listing | ⬜ |
+
+**GA definition of done:** a new user on a fresh device can sign up, complete a
+full learn → build → backtest → paper-trade loop on real data, in their
+language, with no dead-ends, overflows, or mock placeholders — and a signed
+release build passes store review.
+
+---
+
+## Decision log
+
+- 2026-07: Simulator-first identity locked (VISION.md). Live execution
+  deferred to a regulated-partner integration, Act 3.
+- 2026-07: Custom chart engine (VxProChart) chosen over fl_chart and over
+  embedding web TradingView widgets — owning the chart is the moat.
+- 2026-07: Predictions promoted to first-class tab — "everything in one
+  app" (charts + events) is the differentiator vs. single-purpose apps.
+- 2026-07: CI on all branches; the working branch is no longer ungated.
+- 2026-07: Engine audit — backtest indicators consolidated onto the tested
+  `ChartMath`. Fixed a real MACD bug (signal line was stubbed to 0, so every
+  signal-cross was actually a zero-cross) and aligned backtest RSI to Wilder's
+  smoothing so the backtest and the on-screen RSI(14) pane now agree.
+  Remaining engine follow-ups: backtest timeout regression (M0), backtest EMA
+  is O(n²) over long histories, Sharpe assumes daily periods.
+
+- 2026-08: Device preview runs Firebase-free on synthetic data. Added an
+  offline synthetic-candle fallback (charts/scanner/signals), fixed the
+  onboarding mode-selection blocker, AI-results overflow, chart 24h stats,
+  and replay's blank-start. Added **M6 — international-grade launch
+  readiness** as the honest gate to GA: real backend + data, functional
+  completeness on device, i18n/perf/a11y, and compliance/store readiness.
+
+_Last updated: 2026-08-02_
+
+<!-- CI verification re-trigger: 2026-08-07T12:16Z -->

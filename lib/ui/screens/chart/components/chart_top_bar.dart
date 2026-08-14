@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../design_system/vx_colors.dart';
 import '../../../design_system/vx_typography.dart';
+import '../../../design_system/vx_coin_icon.dart';
 import '../../../widgets/vx_holographic_card.dart';
 
 class ChartTopBar extends StatelessWidget {
@@ -44,12 +45,14 @@ class ChartTopBar extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: VxColors.neonCyan.withOpacity(0.05),
+                  color: VxColors.neonCyan.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+                  border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   children: [
+                    VxCoinIcon(symbol, size: 22),
+                    const SizedBox(width: 8),
                     Text(
                       symbol,
                       style: VxTypography.body
@@ -68,7 +71,7 @@ class ChartTopBar extends StatelessWidget {
               onPressed: onReplayTap,
               icon: Icon(
                 Icons.history_toggle_off,
-                color: isReplayMode ? VxColors.neonPurple : Colors.white54,
+                color: isReplayMode ? VxColors.neonCyan : Colors.white54,
                 size: 20,
               ),
               tooltip: "Time Machine Check",
@@ -84,7 +87,7 @@ class ChartTopBar extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white10),
                 ),

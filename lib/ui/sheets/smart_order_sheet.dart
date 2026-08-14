@@ -4,8 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
+import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
 
 class SmartOrderSheet extends StatefulWidget {
   final String symbol;
@@ -28,17 +31,38 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
   bool _isMarket = true;
   final TextEditingController _amountController =
       TextEditingController(text: '0.1');
+  late final TextEditingController _limitPriceController;
 
   @override
   void initState() {
     super.initState();
     _isBuy = widget.isBuy;
+    _limitPriceController = TextEditingController(
+        text: widget.currentPrice.toStringAsFixed(2));
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _limitPriceController.dispose();
+    super.dispose();
   }
 
   // Future: Leverage slider, Take Profit, Stop Loss
 
+  /// Price the order will execute at: the live price for market orders, or the
+  /// user's chosen limit price otherwise.
+  double get _effectivePrice => _isMarket
+      ? widget.currentPrice
+      : (double.tryParse(_limitPriceController.text) ?? widget.currentPrice);
+
   @override
   Widget build(BuildContext context) {
+    final balance = context.watch<ExecutionManager>().balance;
+    final qty = double.tryParse(_amountController.text) ?? 0.0;
+    final cost = qty * _effectivePrice;
+    final insufficient = _isBuy && qty > 0 && cost > balance;
+
     // Glassmorphism wrapper
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -46,7 +70,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: VxColors.surface.withOpacity(0.9), // Slightly transparent
+            color: VxColors.surface.withValues(alpha: 0.9), // Slightly transparent
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             border: const Border(top: BorderSide(color: VxColors.neutral800)),
           ),
@@ -54,7 +78,9 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               left: 20,
               right: 20,
               top: 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+              bottom: MediaQuery.of(context).viewInsets.bottom +
+                  MediaQuery.of(context).padding.bottom +
+                  20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,7 +89,13 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  VxText.heading3("Trade ${widget.symbol}"),
+                  Row(
+                    children: [
+                      VxCoinIcon(widget.symbol, size: 28),
+                      const SizedBox(width: 10),
+                      VxText.heading3("Trade ${widget.symbol}"),
+                    ],
+                  ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close, color: VxColors.neutral500),
@@ -99,6 +131,13 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                 ],
               ),
 
+              const GuidanceBanner(
+                id: 'trade_sheet_intro',
+                text:
+                    'Market fills instantly at the current price. Limit waits '
+                    'until the price reaches the amount you set.',
+              ),
+
               const SizedBox(height: 16),
 
               // Input
@@ -123,48 +162,90 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                 onChanged: (val) => setState(() {}),
               ),
 
-              // Visual Slider
-              SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: _isBuy ? VxColors.success : VxColors.danger,
-                  thumbColor: VxColors.textPrimary,
-                  overlayColor: (_isBuy ? VxColors.success : VxColors.danger)
-                      .withOpacity(0.2),
+              // Limit price (only relevant for limit orders)
+              if (!_isMarket) ...[
+                const SizedBox(height: 12),
+                VxText.caption("Limit price"),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _limitPriceController,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  style: VxTypography.h3.copyWith(color: VxColors.textPrimary),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: VxColors.neutral900,
+                    prefixText: "\$ ",
+                    prefixStyle: VxTypography.h3
+                        .copyWith(color: VxColors.neutral500),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: (val) => setState(() {}),
                 ),
-                child: Slider(
-                  value: (double.tryParse(_amountController.text) ?? 0.0)
-                      .clamp(0.0, 10.0),
-                  min: 0,
-                  max: 10.0,
-                  onChanged: (val) {
-                    HapticFeedback.selectionClick();
-                    setState(() {
-                      _amountController.text = val.toStringAsFixed(3);
-                    });
-                  },
-                ),
+              ],
+
+              const SizedBox(height: 10),
+
+              // Order cost vs available balance
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  VxText.caption(
+                      'Order value  ≈ \$${cost.toStringAsFixed(2)}'),
+                  VxText.caption('Balance  \$${balance.toStringAsFixed(2)}'),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Quick-size buttons (fraction of what the balance can buy)
+              Row(
+                children: [
+                  Expanded(child: _buildQuickSize('25%', 0.25)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildQuickSize('50%', 0.50)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildQuickSize('75%', 0.75)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildQuickSize('Max', 1.0)),
+                ],
               ),
 
               const SizedBox(height: 12),
+
+              const Center(
+                child: VxDisclaimer(text: 'Paper trade — simulated funds.'),
+              ),
+              const SizedBox(height: 10),
 
               // Execute Button
               SizedBox(
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    HapticFeedback.mediumImpact();
-                    _handleTrade();
-                  },
+                  onPressed: insufficient
+                      ? null
+                      : () {
+                          HapticFeedback.mediumImpact();
+                          _handleTrade();
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         _isBuy ? VxColors.success : VxColors.danger,
                     foregroundColor: VxColors.textPrimary,
+                    disabledBackgroundColor: VxColors.neutral800,
+                    disabledForegroundColor: VxColors.neutral500,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
                   ),
                   child: VxText.bodyBold(
-                    _isBuy ? "BUY ${widget.symbol}" : "SELL ${widget.symbol}",
+                    insufficient
+                        ? "Insufficient balance"
+                        : (_isBuy
+                            ? "Buy ${widget.symbol.replaceAll('USDT', '')}"
+                            : "Sell ${widget.symbol.replaceAll('USDT', '')}"),
                     fontSize: 16,
                   ),
                 ),
@@ -188,7 +269,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isSelected
               ? Border.all(color: color)
@@ -224,17 +305,44 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
     );
   }
 
+  Widget _buildQuickSize(String label, double pct) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        final balance = context.read<ExecutionManager>().balance;
+        final affordable =
+            _effectivePrice > 0 ? balance / _effectivePrice : 0.0;
+        setState(() {
+          _amountController.text = (affordable * pct).toStringAsFixed(4);
+        });
+      },
+      child: Container(
+        height: 36,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: VxColors.neutral900,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: VxColors.neutral800),
+        ),
+        child: VxText.caption(label, color: VxColors.textSecondary),
+      ),
+    );
+  }
+
   Future<void> _handleTrade() async {
+    final messenger = ScaffoldMessenger.of(context);
     final qty = double.tryParse(_amountController.text);
     if (qty == null || qty <= 0) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Invalid Quantity")));
+      messenger.showSnackBar(
+          const SnackBar(content: Text("Enter a valid amount")));
       return;
     }
 
+    final base = widget.symbol.replaceAll('USDT', '');
+    final price = _effectivePrice;
     try {
       final manager = context.read<ExecutionManager>();
-      await manager.placeOrderWithGuard(
+      final result = await manager.placeOrderWithGuard(
           context,
           Order(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -242,15 +350,32 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
             type: _isMarket ? OrderType.market : OrderType.limit,
             side: _isBuy ? OrderSide.buy : OrderSide.sell,
             quantity: qty,
-            price: widget.currentPrice, // Simplified for market
+            price: price,
             status: OrderStatus.pending,
           ));
 
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+
+      // The order can be declined without throwing (e.g. AI Guardian cancel).
+      if (result != null && !result.success) {
+        messenger.showSnackBar(SnackBar(
+          content: Text(result.message ?? 'Order was not placed'),
+        ));
+        return;
+      }
+
+      Navigator.pop(context);
+      messenger.showSnackBar(SnackBar(
+        backgroundColor: _isBuy ? VxColors.success : VxColors.danger,
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          '${_isMarket ? (_isBuy ? 'Bought' : 'Sold') : 'Limit order placed:'} '
+          '${qty.toStringAsFixed(4)} $base @ \$${price.toStringAsFixed(2)}',
+        ),
+      ));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Error: $e")));
+        messenger.showSnackBar(SnackBar(content: Text("Order failed: $e")));
       }
     }
   }

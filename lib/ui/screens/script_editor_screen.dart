@@ -97,7 +97,7 @@ def on_candle(candle):
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              const Icon(Icons.code, color: VxColors.neonPurple, size: 20),
+              const Icon(Icons.code, color: VxColors.neonCyan, size: 20),
               const SizedBox(width: 8),
               VxText.monoBold("Script Editor", fontSize: 14),
             ],
@@ -195,7 +195,7 @@ def on_candle(candle):
                 focusNode: _focusNode,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
-                style: GoogleFonts.firaCode(
+                style: GoogleFonts.jetBrainsMono(
                   color: const Color(0xFFD4D4D4), // VS Code text
                   fontSize: 14,
                   height: 1.5,
@@ -253,16 +253,16 @@ class _SnippetButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: VxColors.background,
-          foregroundColor: VxColors.neonPurple,
+          foregroundColor: VxColors.neonCyan,
           elevation: 0,
-          side: BorderSide(color: VxColors.neonPurple.withOpacity(0.3)),
+          side: BorderSide(color: VxColors.neonCyan.withValues(alpha: 0.3)),
           padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         onPressed: onTap,
         child: Text(
           label,
           style:
-              GoogleFonts.firaCode(fontSize: 12, fontWeight: FontWeight.bold),
+              GoogleFonts.jetBrainsMono(fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ),
     );

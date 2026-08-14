@@ -17,8 +17,11 @@ import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/ui/design_system/theme_service.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
 import 'package:volex_terminal/engine/persistence/persistence_service.dart';
+import 'package:volex_terminal/core/config/app_mode_service.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/services/strategy_repository.dart';
 import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
+import 'package:volex_terminal/engine/strategy/strategy_runner.dart';
 import 'package:volex_terminal/engine/chart_controller.dart';
 import 'package:volex_terminal/providers/execution_mode_provider.dart';
 // import 'package:volex_terminal/services/secure_auth_service.dart'; // REMOVED
@@ -29,7 +32,8 @@ import 'package:volex_terminal/core/app_logger.dart';
 
 // Exchange Services
 import 'package:volex_terminal/engine/exchange/exchange_service.dart';
-// import 'package:volex_terminal/data/binance/binance_api_service.dart';
+import 'package:volex_terminal/data/binance/binance_api_service.dart';
+import 'package:volex_terminal/data/binance/binance_exchange_service.dart';
 import 'package:volex_terminal/engine/exchange/paper_exchange_client.dart';
 import 'package:volex_terminal/engine/sandbox/python_sandbox_service.dart';
 import 'package:volex_terminal/services/alert_service.dart';
@@ -98,6 +102,10 @@ class ServiceLocator {
       getIt.registerSingleton<SharedPreferences>(prefs);
       _log('SHPREFS: OK.');
 
+      // App mode (paper/testnet/live) — read by the Strategy Studio hub.
+      getIt.registerSingleton<AppModeService>(AppModeService(prefs));
+      _log('APP_MODE: OK.');
+
       onProgress?.call('Initializing secure storage...', 0.1);
       _log('SECURE: Vault check...');
       final secureStorage = SecureStorageService();
@@ -121,6 +129,17 @@ class ServiceLocator {
       await persistence.initialize();
       getIt.registerSingleton<PersistenceService>(persistence);
       _log('HIVE: OK.');
+
+      // Strategy Studio persistence (Hive box 'strategies'). Guarded so a box
+      // failure can't abort boot — the studio simply has no saved strategies.
+      final strategyRepository = StrategyRepository();
+      try {
+        await strategyRepository.initialize();
+      } catch (e) {
+        _log('STRATEGY_REPO: init failed ($e) — continuing.');
+      }
+      getIt.registerSingleton<StrategyRepository>(strategyRepository);
+      _log('STRATEGY_REPO: OK.');
 
       onProgress?.call('Initializing terminal settings...', 0.16);
       final terminalSettings = TerminalSettingsProvider.inject(persistence);
@@ -282,7 +301,12 @@ class ServiceLocator {
 
       // Register AI Guardian
       onProgress?.call('Setting up AI Guardian...', 0.885);
-      final userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+      String userId = 'anonymous';
+      try {
+        userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+      } catch (_) {
+        // Firebase may be unavailable (e.g. web preview); default to anonymous.
+      }
       getIt.registerLazySingleton(() => AIGuardianService(userId));
       _log('GUARDIAN: OK.');
 
@@ -300,13 +324,31 @@ class ServiceLocator {
 
       // --- SCANNER INIT ---
       _log('SCANNER: Core init...');
-      // For now, passing null exchange to force mock/safe data or relying on internal logic
-      final historicalRepo = HistoricalRepository();
+      // Real market data via Binance's PUBLIC klines endpoint (no API key or
+      // secret needed — read-only). HistoricalRepository transparently falls
+      // back to synthetic candles if the network/region blocks the request, so
+      // the simulator is never empty.
+      final publicMarketData = BinanceExchangeService(
+        BinanceApiService(apiKey: '', apiSecret: ''),
+      );
+      final historicalRepo =
+          HistoricalRepository(exchange: publicMarketData);
       getIt.registerSingleton<HistoricalRepository>(historicalRepo);
 
       final scannerEngine = ScannerEngine(historicalRepo);
       getIt.registerSingleton<ScannerEngine>(scannerEngine);
       _log('SCANNER: OK.');
+
+      // --- STRATEGY RUNNER (live paper-trading loop) ---
+      // Turns activated strategies into real paper trades. Listens to the
+      // ExecutionManager and runs only while strategies are active.
+      final strategyRunner = StrategyRunner(
+        getIt<ExecutionManager>(),
+        strategyEngine,
+        historicalRepo,
+      );
+      getIt.registerSingleton<StrategyRunner>(strategyRunner);
+      _log('RUNNER: OK.');
 
       _log('ALGO: Hyper-Thread init...');
       getIt.registerLazySingleton(() => PythonSandboxService());
@@ -364,6 +406,9 @@ class ServiceLocator {
       // Sentry cleans itself up, but we can log specific shutdown if needed
       // getIt<CrashReportingService>().dispose();
       getIt<IMarketDataRepository>().dispose();
+      if (getIt.isRegistered<StrategyRunner>()) {
+        getIt<StrategyRunner>().dispose();
+      }
       getIt<ExecutionManager>().dispose();
       getIt<RiskManager>().dispose();
       getIt<NotificationBus>().dispose();

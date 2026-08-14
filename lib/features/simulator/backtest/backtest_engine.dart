@@ -6,7 +6,7 @@ import 'package:volex_terminal/data/market_data_repository.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/domain/order.dart' as dom;
-import 'package:volex_terminal/domain/order.dart'; // Added by user instruction
+import 'package:volex_terminal/features/academy/services/xp_service.dart';
 import 'models/backtest_request.dart';
 import 'models/backtest_result.dart';
 import 'models/trade_marker.dart';
@@ -44,6 +44,22 @@ class BacktestEngine extends ChangeNotifier {
             'Insufficient data for backtest (min 100 candles)');
       }
 
+      // No isolates on web: run the backtest inline on the main thread.
+      if (kIsWeb) {
+        final result = await runBacktest(BacktestIsolateParams(
+          candles: candles,
+          strategy: request.strategy,
+          runtimeStrategy: request.runtimeStrategy,
+          initialEquity: request.initialEquity,
+        )).timeout(
+          timeout,
+          onTimeout: () => BacktestResult.error(
+              'Backtest timed out after ${timeout.inSeconds} seconds.'),
+        );
+        _record(result);
+        return result;
+      }
+
       final receivePort = ReceivePort();
       final isolate = await Isolate.spawn(
         _isolateEntry,
@@ -68,12 +84,21 @@ class BacktestEngine extends ChangeNotifier {
         },
       ) as BacktestResult;
 
-      _history.insert(0, result); // Add to history
-      notifyListeners();
+      _record(result); // Add to history (+ XP on success)
       return result;
     } catch (e) {
       return BacktestResult.error('Backtest Engine Error: $e');
     }
+  }
+
+  /// Records a finished result and, when it succeeded, awards XP for running a
+  /// backtest. Repeatable action, so it uses [XpService.addXp] (not once-only).
+  void _record(BacktestResult result) {
+    _history.insert(0, result);
+    if (result.isSuccess) {
+      XpService.instance.addXp(XpService.backtestXp);
+    }
+    notifyListeners();
   }
 
   static void _isolateEntry(_BacktestJob job) async {
@@ -94,6 +119,17 @@ class BacktestEngine extends ChangeNotifier {
       return _runRuntimeStrategyBacktest(params);
     }
     return BacktestResult.error("No strategy provided.");
+  }
+
+  /// Bars per year, derived from the spacing between candle timestamps, used
+  /// to annualize the Sharpe ratio. Robust across timeframes and independent
+  /// of any strategy metadata. Crypto trades 24/7 (365-day year).
+  static int _barsPerYear(List<Candle> candles) {
+    if (candles.length < 2) return 8760; // fall back to hourly
+    final ms = candles[1].time - candles[0].time;
+    if (ms <= 0) return 8760;
+    const yearMs = 365 * 24 * 60 * 60 * 1000;
+    return (yearMs / ms).round().clamp(52, 525600);
   }
 
   static Future<BacktestResult> _runRuntimeStrategyBacktest(
@@ -170,6 +206,7 @@ class BacktestEngine extends ChangeNotifier {
       trades: markers,
       equityCurve: equityCurve,
       initialEquity: params.initialEquity,
+      periodsPerYear: _barsPerYear(params.candles),
     );
 
     return BacktestResult(
@@ -211,7 +248,8 @@ class BacktestEngine extends ChangeNotifier {
       _handlePositionManagement(simulator, strategy, indicators, candle);
 
       // 4. Check Entry Signals
-      _handleEntryLogic(simulator, strategy, indicators, candle);
+      _handleEntryLogic(
+          simulator, strategy, indicators, candle, params.initialEquity);
 
       // 5. Update Equity Curve
       double floatingPnl = 0;
@@ -261,6 +299,7 @@ class BacktestEngine extends ChangeNotifier {
       trades: markers,
       equityCurve: equityCurve,
       initialEquity: params.initialEquity,
+      periodsPerYear: _barsPerYear(params.candles),
     );
 
     return BacktestResult(
@@ -384,7 +423,9 @@ class BacktestEngine extends ChangeNotifier {
           break;
         case 'breakout':
           if (order.direction == dom.OrderDirection.short &&
-              candle.close > indicators['bb_upper']!) shouldExit = true;
+              candle.close > indicators['bb_upper']!) {
+            shouldExit = true;
+          }
           break;
         case 'macd_trend':
           final macdLine = indicators['macd_line'] ?? 0;
@@ -407,7 +448,8 @@ class BacktestEngine extends ChangeNotifier {
       ExecutionSimulator simulator,
       GeneratedStrategy strategy,
       Map<String, double> indicators,
-      Candle candle) {
+      Candle candle,
+      double initialEquity) {
     if (simulator.orders.any((o) => o.status == dom.OrderStatus.filled)) {
       return;
     }
@@ -460,13 +502,27 @@ class BacktestEngine extends ChangeNotifier {
     }
 
     if (signal != null) {
+      // Honest fill: we decided at this candle's OPEN (on data through i-1), so
+      // we can only transact at the open — never the not-yet-known close.
+      final entryPrice = candle.open;
+      if (entryPrice <= 0) return;
+
+      // Honest sizing: a real fraction of *current* equity (positionSizePercent),
+      // not a fixed 1 unit. Since we only enter when flat, realized net result
+      // is the whole equity delta so far.
+      final equity = initialEquity + simulator.netResult;
+      final sizeFraction =
+          (strategy.riskParams.positionSizePercent / 100).clamp(0.01, 1.0);
+      final qty = (equity * sizeFraction) / entryPrice;
+      if (qty <= 0) return;
+
       simulator.placeOrder(dom.Order(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         symbol: strategy.symbol,
         type: dom.OrderType.market,
         direction: signal,
-        quantity: 1.0,
-        price: candle.close,
+        quantity: qty,
+        price: entryPrice,
         timestamp: candle.date,
       ));
     }

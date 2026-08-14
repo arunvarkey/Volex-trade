@@ -64,7 +64,11 @@ Future<void> main() async {
       // Unified Error Handling within the zone (AFTER Firebase init)
       FlutterError.onError = (details) {
         FlutterError.presentError(details);
-        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        // Crashlytics has no web support; calling it here would make the
+        // error handler itself throw and cascade.
+        if (!kIsWeb) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        }
       };
     } catch (e, stack) {
       AppLogger.error("❌ Firebase init failed: $e", e, stack);

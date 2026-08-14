@@ -20,21 +20,14 @@ class SimulatorHomeScreen extends StatelessWidget {
       backgroundColor: VxColors.deepBlack,
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
-        title: const Text(
-          'STRATEGY SIMULATOR',
-          style: TextStyle(
-            fontFamily: 'Courier',
-            color: VxColors.neonCyan,
-            letterSpacing: 2,
-          ),
-        ),
+        title: const Text('Strategy Simulator'),
         actions: [
           // Mode indicator
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             margin: const EdgeInsets.only(right: 16),
             decoration: BoxDecoration(
-              color: appMode.currentMode.themeColor.withOpacity(0.2),
+              color: appMode.currentMode.themeColor.withValues(alpha: 0.2),
               border: Border.all(color: appMode.currentMode.themeColor),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -85,11 +78,11 @@ class SimulatorHomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.neonCyan.withOpacity(0.1),
-            VxColors.neonPurple.withOpacity(0.1),
+            VxColors.neonCyan.withValues(alpha: 0.12),
+            VxColors.neonCyan.withValues(alpha: 0.03),
           ],
         ),
-        border: Border.all(color: VxColors.neonCyan.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -104,12 +97,12 @@ class SimulatorHomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'WELCOME TO THE SIMULATOR',
+                      'Welcome to the Simulator',
                       style: TextStyle(
                         color: VxColors.neonCyan,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        letterSpacing: 0.3,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -136,17 +129,6 @@ class SimulatorHomeScreen extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          if (subscription.currentTier == SubscriptionTier.free) ...[
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => context.push('/paywall'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: VxColors.neonPurple,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('UPGRADE FOR AI ASSISTANT'),
-            ),
-          ],
         ],
       ),
     );
@@ -158,12 +140,12 @@ class SimulatorHomeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'QUICK ACTIONS',
+          'Quick Actions',
           style: TextStyle(
             color: VxColors.neonCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 12),
@@ -185,13 +167,9 @@ class SimulatorHomeScreen extends StatelessWidget {
                 context: context,
                 icon: Icons.psychology,
                 title: 'AI Assistant',
-                subtitle: subscription.canUseAiAssistant ? 'Premium' : 'Locked',
-                color: subscription.canUseAiAssistant
-                    ? VxColors.neonPurple
-                    : Colors.grey,
-                onTap: subscription.canUseAiAssistant
-                    ? () => context.push('/simulator/ai-assistant')
-                    : () => context.push('/paywall'),
+                subtitle: 'Demo',
+                color: VxColors.neonCyan,
+                onTap: () => context.push('/simulator/ai-assistant'),
               ),
             ),
           ],
@@ -222,8 +200,8 @@ class SimulatorHomeScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          border: Border.all(color: color.withOpacity(0.5)),
+          color: color.withValues(alpha: 0.1),
+          border: Border.all(color: color.withValues(alpha: 0.5)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -258,12 +236,12 @@ class SimulatorHomeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'RECENT STRATEGIES',
+          'Recent Strategies',
           style: TextStyle(
             color: VxColors.neonCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 12),
@@ -287,12 +265,12 @@ class SimulatorHomeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'LEARNING RESOURCES',
+          'Learning Resources',
           style: TextStyle(
             color: VxColors.neonCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
         const SizedBox(height: 12),

@@ -47,7 +47,7 @@ class PaywallGate extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: VxColors.primary.withOpacity(0.1),
+                  color: VxColors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -163,9 +163,9 @@ class FeatureCheck extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: VxColors.primary.withOpacity(0.1),
+        color: VxColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.primary.withOpacity(0.3)),
+        border: Border.all(color: VxColors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

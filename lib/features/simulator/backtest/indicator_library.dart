@@ -1,5 +1,6 @@
 // lib/engine/backtest/indicator_library.dart
 import 'package:volex_terminal/domain/candle_model.dart';
+import 'package:volex_terminal/core/chart_math.dart';
 import 'dart:math' as math;
 
 class IndicatorLibrary {
@@ -33,30 +34,16 @@ class IndicatorLibrary {
     return ema;
   }
 
-  // RSI (Relative Strength Index)
+  // RSI (Relative Strength Index) — Wilder's smoothing, via the shared
+  // ChartMath so the backtest and the on-screen RSI(14) pane agree exactly.
   static double calculateRSI(List<Candle> candles, int period,
       {int atIndex = -1}) {
     if (atIndex == -1) atIndex = candles.length - 1;
     if (atIndex < period) return 50.0;
 
-    double gains = 0;
-    double losses = 0;
-
-    for (int i = atIndex - period + 1; i <= atIndex; i++) {
-      final change = candles[i].close - candles[i - 1].close;
-      if (change > 0) {
-        gains += change;
-      } else {
-        losses += change.abs();
-      }
-    }
-
-    final avgGain = gains / period;
-    final avgLoss = losses / period;
-
-    if (avgLoss == 0) return 100.0;
-    final rs = avgGain / avgLoss;
-    return 100 - (100 / (1 + rs));
+    final closes = [for (int i = 0; i <= atIndex; i++) candles[i].close];
+    final series = ChartMath.rsiSeries(closes, period: period);
+    return series[atIndex] ?? 50.0;
   }
 
   // Bollinger Bands
@@ -89,7 +76,9 @@ class IndicatorLibrary {
     );
   }
 
-  // MACD (Moving Average Convergence Divergence)
+  // MACD (Moving Average Convergence Divergence) — full line/signal/histogram
+  // via the shared ChartMath. The signal line is a real EMA of the MACD line
+  // (previously stubbed to 0, which turned every signal-cross into a zero-cross).
   static MACD calculateMACD(
     List<Candle> candles, {
     int fastPeriod = 12,
@@ -99,18 +88,18 @@ class IndicatorLibrary {
   }) {
     if (atIndex == -1) atIndex = candles.length - 1;
 
-    final fastEMA = calculateEMA(candles, fastPeriod, atIndex: atIndex);
-    final slowEMA = calculateEMA(candles, slowPeriod, atIndex: atIndex);
-    final macdLine = fastEMA - slowEMA;
-
-    // Signal line is EMA of MACD line.
-    // For now, returning simplified version to avoid complexity of stateful calculation in static context.
-    // Future improvement: Implement lookback for signal line.
+    final closes = [for (int i = 0; i <= atIndex; i++) candles[i].close];
+    final r = ChartMath.macd(
+      closes,
+      fast: fastPeriod,
+      slow: slowPeriod,
+      signalPeriod: signalPeriod,
+    );
 
     return MACD(
-      macdLine: macdLine,
-      signalLine: 0,
-      histogram: macdLine,
+      macdLine: r.macd[atIndex] ?? 0,
+      signalLine: r.signal[atIndex] ?? 0,
+      histogram: r.histogram[atIndex] ?? 0,
     );
   }
 }

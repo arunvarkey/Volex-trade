@@ -5,6 +5,13 @@ class BacktestMetrics extends Equatable {
   final double totalReturnPercent;
   final double maxDrawdownPercent;
   final double sharpeRatio;
+
+  /// Downside-risk-adjusted return (penalizes only losing volatility).
+  final double sortinoRatio;
+
+  /// Annualized return divided by max drawdown — return per unit of worst-case
+  /// pain. A staple of any analyst's tearsheet.
+  final double calmarRatio;
   final double winRate;
   final double profitFactor;
   final double avgWinPercent;
@@ -19,6 +26,8 @@ class BacktestMetrics extends Equatable {
     required this.totalReturnPercent,
     required this.maxDrawdownPercent,
     required this.sharpeRatio,
+    this.sortinoRatio = 0,
+    this.calmarRatio = 0,
     required this.winRate,
     required this.profitFactor,
     required this.avgWinPercent,
@@ -35,6 +44,8 @@ class BacktestMetrics extends Equatable {
         totalReturnPercent,
         maxDrawdownPercent,
         sharpeRatio,
+        sortinoRatio,
+        calmarRatio,
         winRate,
         profitFactor,
         avgWinPercent,

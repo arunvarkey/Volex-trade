@@ -1,13 +1,17 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/features/signals/services/signal_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_card.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/widgets/paywalls/signal_limit_banner.dart';
+import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/services/startup_service.dart';
@@ -23,21 +27,43 @@ class SignalFeedScreen extends StatefulWidget {
 class _SignalFeedScreenState extends State<SignalFeedScreen> {
   final SignalEngine _engine = getIt<SignalEngine>();
   final List<TradeSignal> _signals = [];
+  StreamSubscription<TradeSignal>? _sub;
+  bool _scanning = true;
+  bool _upgradeDismissed = false;
 
   @override
   void initState() {
     super.initState();
-    // Start generating signals if not already running (or just listen)
-    // _engine.startGenerating(); // Ideally moved to service locator or a provider
-    _engine.signalStream.listen((signal) {
+    // Seed from any signals the engine already generated — the broadcast
+    // stream doesn't replay, so without this the feed would sit empty.
+    _signals.addAll(_engine.recentSignals);
+
+    _sub = _engine.signalStream.listen((signal) {
       if (mounted) {
         setState(() {
           _signals.insert(0, signal);
-          // Keep list manageable
           if (_signals.length > 50) _signals.removeLast();
         });
       }
     });
+
+    if (_signals.isEmpty) {
+      _refresh();
+    } else {
+      _scanning = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    setState(() => _scanning = true);
+    await _engine.scanNow();
+    if (mounted) setState(() => _scanning = false);
   }
 
   @override
@@ -52,12 +78,13 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
             const SignalLimitBanner(),
             Expanded(
               child: _signals.isEmpty
-                  ? _buildEmptyState()
+                  ? (_scanning ? _buildScanningState() : _buildNoSignalsState())
                   : Consumer<SubscriptionService>(
                       builder: (context, subscription, child) {
                         final limit = subscription.maxSignals;
-                        final showUpgrade =
-                            _signals.length > limit && !subscription.isPremium;
+                        final showUpgrade = _signals.length > limit &&
+                            !subscription.isPremium &&
+                            !_upgradeDismissed;
                         final displayCount =
                             showUpgrade ? limit : _signals.length;
 
@@ -81,29 +108,61 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   }
 
   Widget _buildHeader() {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          VxText.heading2('Live Signals', color: Colors.white),
+          VxText.heading2(l10n.signalsTitle, color: Colors.white),
           const SizedBox(height: 8),
-          VxText.body('Real-time AI opportunities from the Volex Engine.',
-              color: Colors.white54),
+          VxText.body(l10n.signalsSubtitle, color: Colors.white54),
+          const SizedBox(height: 10),
+          VxDisclaimer(text: l10n.signalsDisclaimer),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildScanningState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(color: VxColors.neonCyan),
+          const CircularProgressIndicator(color: VxColors.primary),
           const SizedBox(height: 16),
           VxText.body('Scanning markets...', color: Colors.white54),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNoSignalsState() {
+    final l10n = AppLocalizations.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.radar_rounded,
+                color: VxColors.textTertiary, size: 48),
+            const SizedBox(height: 16),
+            VxText.subtitle(l10n.signalsNoneTitle, color: Colors.white70),
+            const SizedBox(height: 8),
+            VxText.body(
+              l10n.signalsNoneBody,
+              color: Colors.white38,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              onPressed: _refresh,
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: Text(l10n.actionScanNow),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -115,11 +174,11 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            VxColors.primary.withOpacity(0.1),
-            VxColors.primary.withOpacity(0.2),
+            VxColors.primary.withValues(alpha: 0.1),
+            VxColors.primary.withValues(alpha: 0.2),
           ],
         ),
-        border: Border.all(color: VxColors.primary.withOpacity(0.5)),
+        border: Border.all(color: VxColors.primary.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -156,7 +215,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {}, // Just scroll back up or ignore
+                  onPressed: () => setState(() => _upgradeDismissed = true),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
                     side: const BorderSide(color: Colors.white24),
@@ -179,6 +238,7 @@ class _SignalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isBuy = signal.side.name.toLowerCase() == 'buy';
     final color = isBuy ? VxColors.neonGreen : VxColors.neonRed;
 
@@ -199,30 +259,54 @@ class _SignalCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: color.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isBuy ? Icons.arrow_upward : Icons.arrow_downward,
-                            color: color,
-                            size: 20,
-                          ),
-                        ),
+                        VxCoinIcon(signal.symbol, size: 40),
                         const SizedBox(width: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            VxText.bodyBold(signal.symbol),
+                            Row(
+                              children: [
+                                Icon(
+                                  isBuy
+                                      ? Icons.arrow_upward
+                                      : Icons.arrow_downward,
+                                  color: color,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                VxText.bodyBold(signal.symbol),
+                              ],
+                            ),
                             VxText.caption(signal.strategyName,
                                 color: Colors.white38),
                           ],
                         ),
                       ],
                     ),
-                    _ConfidenceBadge(confidence: signal.confidence),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!signal.isActionable) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color:
+                                  VxColors.textTertiary.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(l10n.signalsWatch,
+                                style: const TextStyle(
+                                    color: VxColors.textSecondary,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5)),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                        _ConfidenceBadge(confidence: signal.confidence),
+                      ],
+                    ),
                   ],
                 ),
                 const Divider(color: Colors.white10, height: 24),
@@ -253,7 +337,7 @@ class _SignalCard extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.03),
+                    color: Colors.white.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -321,7 +405,7 @@ class _SignalCard extends StatelessWidget {
                       }
                     },
                     icon: const Icon(Icons.copy, size: 16),
-                    label: const Text('COPY SIGNAL'),
+                    label: const Text('Copy Signal'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white10,
                       foregroundColor: Colors.white,
@@ -333,7 +417,7 @@ class _SignalCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 if (signal.isExpired)
                   Center(
-                      child: VxText.caption("EXPIRED", color: Colors.white24))
+                      child: VxText.caption("Expired", color: Colors.white24))
                 else
                   Center(
                       child: VxText.caption(
@@ -385,14 +469,14 @@ class _ConfidenceBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: VxColors.neonPurple.withOpacity(0.2),
+        color: VxColors.neonCyan.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.neonPurple.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
       ),
       child: Text(
         "${confidence.toStringAsFixed(0)}%",
         style: const TextStyle(
-            color: VxColors.neonPurple,
+            color: VxColors.neonCyan,
             fontSize: 12,
             fontWeight: FontWeight.bold),
       ),

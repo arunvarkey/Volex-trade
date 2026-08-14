@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/scanner/scanner_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 
 class MarketScannerScreen extends StatefulWidget {
@@ -39,6 +41,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scanner = context.watch<ScannerEngine>();
     final isLive = context.read<ExecutionManager>().isLiveMode;
 
@@ -71,9 +74,8 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
-        title: Text("All Markets",
-            style: GoogleFonts.spaceMono(
-                fontWeight: FontWeight.bold, fontSize: 18)),
+        title: Text(l10n.marketsTitle,
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -89,6 +91,12 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
       ),
       body: Column(
         children: [
+          const GuidanceBanner(
+            id: 'markets_intro',
+            text:
+                'Browse the market. Tap any coin to open its live practice chart, '
+                'or filter by Gainers, Losers and Most Active.',
+          ),
           // Search Bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -102,14 +110,14 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
               child: TextField(
                 controller: _searchController,
                 style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText: "Search coins...",
-                  hintStyle: TextStyle(
+                decoration: InputDecoration(
+                  hintText: l10n.marketsSearchHint,
+                  hintStyle: const TextStyle(
                       color: VxColors.textTertiary, fontSize: 14),
-                  prefixIcon: Icon(Icons.search,
+                  prefixIcon: const Icon(Icons.search,
                       color: VxColors.textTertiary, size: 20),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
@@ -188,11 +196,11 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color:
-              isActive ? VxColors.neonCyan.withOpacity(0.1) : VxColors.surface,
+              isActive ? VxColors.neonCyan.withValues(alpha: 0.1) : VxColors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color:
-                isActive ? VxColors.neonCyan.withOpacity(0.3) : VxColors.border,
+                isActive ? VxColors.neonCyan.withValues(alpha: 0.3) : VxColors.border,
           ),
         ),
         child: Text(
@@ -218,7 +226,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
           border: Border(
-              bottom: BorderSide(color: VxColors.border.withOpacity(0.5))),
+              bottom: BorderSide(color: VxColors.border.withValues(alpha: 0.5))),
         ),
         child: Row(
           children: [
@@ -227,21 +235,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
               flex: 2,
               child: Row(
                 children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        name[0],
-                        style: TextStyle(
-                            color: color, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                  VxCoinIcon(result.symbol, size: 38),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,7 +277,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
                 children: [
                   Text(
                     "\$${result.history.isNotEmpty ? result.history.last.close.toStringAsFixed(2) : "0.00"}",
-                    style: GoogleFonts.spaceMono(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -307,6 +301,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -315,7 +310,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
           const SizedBox(height: 16),
           Text(
             _searchQuery.isEmpty
-                ? "No coins found"
+                ? l10n.marketsNoCoins
                 : "No results for '$_searchQuery'",
             style: const TextStyle(color: Colors.white70, fontSize: 16),
           ),

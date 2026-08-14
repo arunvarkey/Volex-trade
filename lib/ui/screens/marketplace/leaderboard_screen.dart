@@ -20,9 +20,6 @@ class LeaderboardScreen extends StatelessWidget {
       backgroundColor: VxColors.background,
       appBar: VxToolbar(
         title: VxText.heading3('Top Strategies'),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),
-        ],
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),

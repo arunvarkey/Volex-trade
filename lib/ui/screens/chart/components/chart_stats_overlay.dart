@@ -24,102 +24,71 @@ class ChartStatsOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPos = change24h >= 0;
+    final chgColor = isPos ? VxColors.success : VxColors.danger;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '\$${currentPrice.toStringAsFixed(currentPrice >= 1 ? 2 : 4)}',
-              style: VxTypography.hero.copyWith(
-                fontFamily: GoogleFonts.spaceMono().fontFamily,
-                fontSize: 28,
-                letterSpacing: -1.0,
-                color: Colors.white,
+    // A single compact stats strip. The live price already lives in the top
+    // bar and the chart's OHLC legend, so we don't repeat a giant price here —
+    // that duplicate used to overlap the chart header.
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: VxColors.surface.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: VxColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: chgColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              '${isPos ? '+' : ''}${change24h.toStringAsFixed(2)}%',
+              style: VxTypography.caption.copyWith(
+                color: chgColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
               ),
             ),
-            const SizedBox(width: 8),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: (isPos ? VxColors.success : VxColors.danger)
-                      .withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  '${isPos ? '+' : ''}${change24h.toStringAsFixed(2)}%',
-                  style: VxTypography.caption.copyWith(
-                    color: isPos ? VxColors.success : VxColors.danger,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            _buildStatCard(
-              label: "24h High",
-              value: high24h.toStringAsFixed(high24h >= 1 ? 2 : 4),
-              color: VxColors.success,
-            ),
-            const SizedBox(width: 8),
-            _buildStatCard(
-              label: "24h Low",
-              value: low24h.toStringAsFixed(low24h >= 1 ? 2 : 4),
-              color: VxColors.danger,
-            ),
-            const SizedBox(width: 8),
-            _buildStatCard(
-              label: "24h Volume",
-              value: _formatVolume(volume24h),
-              color: VxColors.neonCyan,
-            ),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(width: 14),
+          _stat('24h H', '\$${high24h.toStringAsFixed(high24h >= 1 ? 2 : 4)}'),
+          const SizedBox(width: 14),
+          _stat('24h L', '\$${low24h.toStringAsFixed(low24h >= 1 ? 2 : 4)}'),
+          const SizedBox(width: 14),
+          _stat('Vol', _formatVolume(volume24h)),
+        ],
+      ),
     );
   }
 
-  Widget _buildStatCard(
-      {required String label, required String value, required Color color}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: VxColors.surface.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: VxColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: VxTypography.caption.copyWith(
-              color: VxColors.textTertiary,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-            ),
+  Widget _stat(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: VxTypography.caption.copyWith(
+            color: VxColors.textTertiary,
+            fontSize: 8.5,
+            fontWeight: FontWeight.w600,
           ),
-          const SizedBox(height: 2),
-          Text(
-            label == "24h Volume" ? value : '\$ $value',
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              fontFamily: GoogleFonts.spaceMono().fontFamily,
-            ),
+        ),
+        const SizedBox(height: 1),
+        Text(
+          value,
+          style: TextStyle(
+            color: VxColors.textSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

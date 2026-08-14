@@ -163,7 +163,7 @@ class _RiskDisclosureScreenState extends State<RiskDisclosureScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: value ? VxColors.neonGreen.withOpacity(0.1) : Colors.grey[900],
+          color: value ? VxColors.neonGreen.withValues(alpha: 0.1) : Colors.grey[900],
           border: Border.all(
             color: value ? VxColors.neonGreen : Colors.grey[800]!,
             width: value ? 2 : 1,

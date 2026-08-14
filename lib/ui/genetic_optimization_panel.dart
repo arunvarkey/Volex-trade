@@ -102,12 +102,12 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
             width: 840,
             height: 620,
             decoration: BoxDecoration(
-                color: VxColors.background.withOpacity(0.95),
+                color: VxColors.background.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+                border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
                 boxShadow: [
                   BoxShadow(
-                      color: VxColors.neonCyan.withOpacity(0.05),
+                      color: VxColors.neonCyan.withValues(alpha: 0.05),
                       blurRadius: 40)
                 ]),
             child: Column(
@@ -161,17 +161,17 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
     return Container(
       width: 260,
       padding: const EdgeInsets.all(VxSpacing.lg),
-      color: Colors.white.withOpacity(0.01),
+      color: Colors.white.withValues(alpha: 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           VxText.monoBold("GENOME_CONFIG", fontSize: 10, color: Colors.white38),
           const SizedBox(height: 20),
           DropdownButtonFormField<Strategy>(
-            value: _selectedStrategy,
+            initialValue: _selectedStrategy,
             dropdownColor: VxColors.surface,
-            style: const TextStyle(
-                fontFamily: 'RobotoMono', color: Colors.white, fontSize: 13),
+            style: TextStyle(
+                fontFamily: VxTypography.monoFamily, color: Colors.white, fontSize: 13),
             decoration: const InputDecoration(
               labelText: "STRATEGY_TARGET",
               labelStyle: TextStyle(color: Colors.white24, fontSize: 10),
@@ -198,7 +198,7 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
             child: ElevatedButton.icon(
               onPressed: _isRunning ? null : _runEvolution,
               style: ElevatedButton.styleFrom(
-                backgroundColor: VxColors.neonCyan.withOpacity(0.8),
+                backgroundColor: VxColors.neonCyan.withValues(alpha: 0.8),
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 22),
                 shape: RoundedRectangleBorder(
@@ -279,7 +279,7 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
                     width: 120,
                     height: 2,
                     child: LinearProgressIndicator(
-                        backgroundColor: Colors.white.withOpacity(0.05),
+                        backgroundColor: Colors.white.withValues(alpha: 0.05),
                         color: VxColors.neonCyan)),
             ],
           ),
@@ -290,7 +290,7 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.white10),
-                color: Colors.white.withOpacity(0.01)),
+                color: Colors.white.withValues(alpha: 0.01)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: CustomPaint(
@@ -313,8 +313,8 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: VxColors.neonGreen.withOpacity(0.03),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.1)),
+        color: VxColors.neonGreen.withValues(alpha: 0.03),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.1)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -330,7 +330,7 @@ class _GeneticOptimizationPanelState extends State<GeneticOptimizationPanel> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Divider(color: Colors.white.withOpacity(0.05), height: 1),
+            child: Divider(color: Colors.white.withValues(alpha: 0.05), height: 1),
           ),
           Row(
             children: [
@@ -396,7 +396,7 @@ class _EvolutionChartPainter extends CustomPainter {
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     final avgPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -433,7 +433,7 @@ class _EvolutionChartPainter extends CustomPainter {
 
     // Add glow to best path
     final glowPaint = Paint()
-      ..color = VxColors.neonCyan.withOpacity(0.1)
+      ..color = VxColors.neonCyan.withValues(alpha: 0.1)
       ..strokeWidth = 6
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)
       ..style = PaintingStyle.stroke;

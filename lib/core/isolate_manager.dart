@@ -1,15 +1,19 @@
 import 'dart:async';
-import 'dart:isolate';
 import 'dart:convert';
+import 'dart:isolate';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'app_logger.dart';
 import '../data/binance/binance_stream_mapper.dart';
 
 /// Spawns a background isolate to handle heavy JSON parsing.
 /// Input: Raw JSON Strings (from WebSocket).
 /// Output: Candle objects (to Engine).
+///
+/// On web, dart:isolate is unavailable, so messages are parsed inline on the
+/// main thread instead (the browser is single-threaded anyway).
 class IsolateManager {
-  late Isolate _isolate;
-  late SendPort _sendPort;
+  Isolate? _isolate;
+  SendPort? _sendPort;
   final _receivePort = ReceivePort();
 
   final StreamController<dynamic> _outputController =
@@ -21,6 +25,13 @@ class IsolateManager {
   final Completer<void> _readyCompleter = Completer();
 
   Future<void> start() async {
+    if (kIsWeb) {
+      // No isolates on web: parse inline in processData.
+      _isReady = true;
+      _readyCompleter.complete();
+      return;
+    }
+
     _isolate = await Isolate.spawn(
       _isolateEntry,
       _receivePort.sendPort,
@@ -40,13 +51,60 @@ class IsolateManager {
 
   void processData(dynamic data) {
     if (!_isReady) return;
-    _sendPort.send(data);
+    if (kIsWeb) {
+      // Inline parse on the main thread.
+      if (data is String) {
+        final parsed = _parseMessage(data);
+        if (parsed != null) _outputController.add(parsed);
+      }
+      return;
+    }
+    _sendPort?.send(data);
   }
 
   void dispose() {
     _receivePort.close();
     _outputController.close();
-    _isolate.kill();
+    _isolate?.kill();
+  }
+
+  /// Parses one raw WebSocket message into a Candle, List<Candle>, or
+  /// List<MiniTicker>. Returns null for unrecognised/broken payloads.
+  /// Pure function shared by the isolate entry and the web inline path.
+  static dynamic _parseMessage(String message) {
+    try {
+      final json = jsonDecode(message);
+
+      // Combined Stream Handling
+      // Payload: {"stream": "<name>", "data": <payload>}
+      dynamic data = json;
+      if (json is Map && json.containsKey('stream') && json.containsKey('data')) {
+        data = json['data'];
+      }
+
+      // Case A: Stream Event (Single Object, e.g. kline)
+      if (data is Map && data.containsKey('e')) {
+        if (data['e'] == 'kline') {
+          return BinanceStreamMapper.mapKlineToCandle(data);
+        }
+        // NOTE: MiniTickers sometimes come as single events too
+      }
+      // Case B: Array (Snapshot OR MiniTicker List)
+      else if (data is List) {
+        if (data.isNotEmpty &&
+            data[0] is Map &&
+            data[0].containsKey('e') &&
+            data[0]['e'] == '24hrMiniTicker') {
+          return BinanceStreamMapper.mapMiniTickerList(data);
+        } else {
+          // Must be Kline Snapshot (List of Lists)
+          return BinanceStreamMapper.mapSnapshot(data);
+        }
+      }
+    } catch (e) {
+      AppLogger.error('PARSE ERROR', e);
+    }
+    return null;
   }
 
   /// The entry point for the background Isolate
@@ -55,46 +113,9 @@ class IsolateManager {
     mainSendPort.send(port.sendPort); // Send our address back
 
     port.listen((message) {
-      try {
-        if (message is String) {
-          final json = jsonDecode(message);
-
-          // Combined Stream Handling
-          // Payload: {"stream": "<name>", "data": <payload>}
-          dynamic data = json;
-          if (json is Map &&
-              json.containsKey('stream') &&
-              json.containsKey('data')) {
-            data = json['data'];
-          }
-
-          // Case A: Stream Event (Single Object, e.g. kline)
-          if (data is Map && data.containsKey('e')) {
-            if (data['e'] == 'kline') {
-              final candle = BinanceStreamMapper.mapKlineToCandle(data);
-              if (candle != null) mainSendPort.send(candle);
-            }
-            // NOTE: MiniTickers sometimes come as single events too
-          }
-          // Case B: Array (Snapshot OR MiniTicker List)
-          else if (data is List) {
-            if (data.isNotEmpty &&
-                data[0] is Map &&
-                data[0].containsKey('e') &&
-                data[0]['e'] == '24hrMiniTicker') {
-              final tickers = BinanceStreamMapper.mapMiniTickerList(data);
-              mainSendPort.send(tickers);
-            } else {
-              // Must be Kline Snapshot (List of Lists)
-              final candles = BinanceStreamMapper.mapSnapshot(data);
-              mainSendPort.send(candles);
-            }
-          }
-        }
-      } catch (e) {
-        // AppLogger is not available in Isolate usually unless passed or pure dart
-        // Use debugPrint which is safer in Flutter contexts
-        AppLogger.error('ISOLATE ERROR', e);
+      if (message is String) {
+        final parsed = _parseMessage(message);
+        if (parsed != null) mainSendPort.send(parsed);
       }
     });
   }

@@ -1,4 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
@@ -317,7 +318,7 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                        color: VxColors.neonCyan.withOpacity(0.4),
+                        color: VxColors.neonCyan.withValues(alpha: 0.4),
                         blurRadius: 12)
                   ],
                 ),
@@ -365,7 +366,7 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
                   height: 1,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [color.withOpacity(0), color],
+                      colors: [color.withValues(alpha: 0), color],
                     ),
                   ),
                 ),
@@ -376,7 +377,7 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
                   color: color,
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
-                    BoxShadow(color: color.withOpacity(0.3), blurRadius: 4)
+                    BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 4)
                   ],
                 ),
                 child: Text(
@@ -467,8 +468,8 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
               style: TextStyle(
                   color: color, fontSize: 12, fontWeight: FontWeight.bold)),
           Text("\$${price.toStringAsFixed(2)}",
-              style: const TextStyle(
-                  color: Colors.white, fontFamily: 'RobotoMono')),
+              style: TextStyle(
+                  color: Colors.white, fontFamily: VxTypography.monoFamily)),
         ],
       ),
     );
@@ -510,7 +511,7 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
               show: true,
               drawVerticalLine: false,
               getDrawingHorizontalLine: (val) => FlLine(
-                color: Colors.white.withOpacity(0.03),
+                color: Colors.white.withValues(alpha: 0.03),
                 strokeWidth: 1,
               ),
             ),
@@ -593,10 +594,10 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
                   return LineTooltipItem(
                     "O: ${c.open.toStringAsFixed(2)}\nH: ${c.high.toStringAsFixed(2)}\n"
                     "L: ${c.low.toStringAsFixed(2)}\nC: ${c.close.toStringAsFixed(2)}",
-                    const TextStyle(
+                    TextStyle(
                       color: Colors.white,
                       fontSize: 10,
-                      fontFamily: 'RobotoMono',
+                      fontFamily: VxTypography.monoFamily,
                     ),
                   );
                 }).toList(),
@@ -618,7 +619,7 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
                 if (_touchedIndex != null)
                   VerticalLine(
                     x: _touchedIndex!.toDouble(),
-                    color: VxColors.neonCyan.withOpacity(0.3),
+                    color: VxColors.neonCyan.withValues(alpha: 0.3),
                     strokeWidth: 1,
                   ),
               ],
@@ -636,9 +637,9 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
     if (_indicatorData.containsKey('bb_upper')) {
       final bbColor = _getIndicatorColor('bb');
       lines.addAll([
-        _createLine('bb_upper', bbColor.withOpacity(0.5), 1),
+        _createLine('bb_upper', bbColor.withValues(alpha: 0.5), 1),
         _createLine('bb_middle', bbColor, 1.5),
-        _createLine('bb_lower', bbColor.withOpacity(0.5), 1),
+        _createLine('bb_lower', bbColor.withValues(alpha: 0.5), 1),
       ]);
     }
 
@@ -722,12 +723,12 @@ class _VxEnhancedChartState extends State<VxEnhancedChart> {
           horizontalLines: [
             HorizontalLine(
                 y: 30,
-                color: VxColors.neonGreen.withOpacity(0.3),
+                color: VxColors.neonGreen.withValues(alpha: 0.3),
                 strokeWidth: 1,
                 dashArray: [2, 2]),
             HorizontalLine(
                 y: 70,
-                color: VxColors.neonRed.withOpacity(0.3),
+                color: VxColors.neonRed.withValues(alpha: 0.3),
                 strokeWidth: 1,
                 dashArray: [2, 2]),
           ],

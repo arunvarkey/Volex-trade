@@ -42,19 +42,19 @@ class _VxCardState extends State<VxCard> {
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: widget.backgroundColor ??
-            VxColors.surface.withOpacity(_isHovered ? 0.8 : 0.6),
+            VxColors.surface.withValues(alpha: _isHovered ? 0.8 : 0.6),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _isHovered
-              ? VxColors.neonCyan.withOpacity(0.3)
-              : Colors.white.withOpacity(0.05),
+              ? VxColors.neonCyan.withValues(alpha: 0.3)
+              : Colors.white.withValues(alpha: 0.05),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: _isHovered
-                ? VxColors.neonCyan.withOpacity(0.1)
-                : Colors.black.withOpacity(0.2),
+                ? VxColors.neonCyan.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.2),
             blurRadius: _isHovered ? 24 : 16,
             offset: Offset(0, _isHovered ? 12 : 8),
           ),
@@ -115,8 +115,8 @@ class _VxCardState extends State<VxCard> {
         child: InkWell(
           onTap: widget.onTap,
           borderRadius: BorderRadius.circular(16),
-          splashColor: VxColors.neonCyan.withOpacity(0.1),
-          highlightColor: VxColors.neonCyan.withOpacity(0.05),
+          splashColor: VxColors.neonCyan.withValues(alpha: 0.1),
+          highlightColor: VxColors.neonCyan.withValues(alpha: 0.05),
           child: result,
         ),
       );

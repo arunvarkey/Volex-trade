@@ -51,7 +51,9 @@ void main() async {
             // Filter out some false positives
             if (keyword == 'key' &&
                 (entity.path.endsWith('.yaml') ||
-                    entity.path.contains('widget'))) continue;
+                    entity.path.contains('widget'))) {
+              continue;
+            }
             if (keyword == 'token' && entity.path.contains('auth')) {
               continue; // Auth tokens are fine logic
             }

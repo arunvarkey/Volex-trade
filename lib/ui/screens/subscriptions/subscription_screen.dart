@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/features/subscriptions/models/subscription_tier.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
@@ -137,7 +138,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         border: Border.all(color: VxColors.primary, width: 2),
         boxShadow: [
           BoxShadow(
-            color: VxColors.primary.withOpacity(0.2),
+            color: VxColors.primary.withValues(alpha: 0.2),
             blurRadius: 20,
             spreadRadius: 0,
           ),
@@ -150,7 +151,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: VxColors.primary.withOpacity(0.15),
+              color: VxColors.primary.withValues(alpha: 0.15),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(18),
                 topRight: Radius.circular(18),
@@ -202,6 +203,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 _buildFeature('Unlimited trade signals'),
                 _buildFeature('All technical indicators'),
                 _buildFeature('Strategy Optimizer (genetic algo)'),
+                _buildFeature('Buzz & Predictions event markets'),
                 _buildFeature('Export trade history (CSV)'),
                 _buildFeature('Custom watchlists'),
 
@@ -381,7 +383,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
+  bool _blockOnWeb() {
+    if (!kIsWeb) return false;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content:
+            Text('Purchases are available in the Volex mobile app.'),
+      ),
+    );
+    return true;
+  }
+
   void _restorePurchases() async {
+    if (_blockOnWeb()) return;
     await getIt<SubscriptionService>().restorePurchases();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -391,6 +405,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   void _purchaseSelectedPlan() async {
+    if (_blockOnWeb()) return;
     final productToBuy = _isAnnual
         ? SubscriptionProduct.premiumYearly
         : SubscriptionProduct.explorerPremium;

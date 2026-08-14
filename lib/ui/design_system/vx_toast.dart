@@ -32,8 +32,8 @@ class VxToast extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(VxSpacing.md),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                border: Border.all(color: color.withOpacity(0.3)),
+                color: Colors.black.withValues(alpha: 0.6),
+                border: Border.all(color: color.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -41,7 +41,7 @@ class VxToast extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(icon, color: color, size: 20),

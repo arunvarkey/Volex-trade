@@ -8,11 +8,15 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/domain/trade_signal.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
-import 'package:volex_terminal/ui/design_system/charts/vx_candle_chart.dart';
+import 'package:volex_terminal/ui/chart_engine/vx_pro_chart.dart';
+import 'package:volex_terminal/ui/chart_engine/chart_marker.dart';
+import 'package:volex_terminal/ui/chart_engine/chart_drawing.dart';
+import 'package:volex_terminal/ui/chart_engine/drawing_service.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_top_bar.dart';
 import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.dart';
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
 import 'package:volex_terminal/ui/sheets/smart_order_sheet.dart';
+import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 // [NEW] Backtesting Imports
@@ -52,16 +56,33 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     _repository = widget.repository ?? MarketDataRepository();
     _chartController = ChartController();
     _currentSymbol = widget.symbol ?? 'BTCUSDT'; // Default to BTC if null
+    DrawingService.instance.ensureLoaded();
+    _replayController.addListener(_onReplaySeek);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
     });
   }
 
+  /// When replay is paused/seeked, resync the chart to the playhead so
+  /// dragging the slider actually moves the chart (play is handled by the
+  /// candle stream).
+  void _onReplaySeek() {
+    if (!_isReplayMode || _replayController.isPlaying || !mounted) return;
+    final soFar = _replayController.historySoFar;
+    if (soFar.isEmpty) return;
+    setState(() {
+      _candles = List.from(soFar);
+      _currentPrice = soFar.last.close;
+    });
+    _chartController.setData(_candles);
+  }
+
   @override
   void dispose() {
     _candleSubscription?.cancel();
     _replaySubscription?.cancel();
+    _replayController.removeListener(_onReplaySeek);
     _chartController.dispose();
     _replayController.dispose();
     super.dispose();
@@ -130,11 +151,14 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
       // The replayer will start from index 0 or user seeks.
       // Note: Realistically we might want to fetch a deeper history for backtesting.
       // For MVP, we play back what we have.
-      _replayController.loadHistory(List.from(_candles));
+      // Seed a warmup window so the chart isn't blank before playback, then
+      // replay reveals candles forward from there.
+      final full = List<Candle>.from(_candles);
+      final warmup = full.length > 60 ? 60 : (full.length ~/ 2);
+      _replayController.loadHistory(full, warmup: warmup);
 
-      // Clear chart to empty (or start point)
-      _candles = [];
-      _chartController.setData([]);
+      _candles = full.take(warmup).toList();
+      _chartController.setData(_candles);
 
       // Listen to Replayer
       _replaySubscription?.cancel();
@@ -226,6 +250,121 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     return signals;
   }
 
+  /// The user's own filled orders on the current symbol, as chart markers
+  /// (green triangle below the bar for buys, red above for sells).
+  List<ChartMarker> _buildTradeMarkers(BuildContext context) {
+    final manager = context.watch<ExecutionManager>();
+    final marks = <ChartMarker>[];
+    for (final o in manager.orders) {
+      if (o.symbol != _currentSymbol) continue;
+      if (o.status != OrderStatus.filled || o.filledAt == null) continue;
+      marks.add(ChartMarker(
+        timeMs: o.filledAt!.millisecondsSinceEpoch,
+        price: o.filledPrice ?? o.price,
+        isBuy: o.side == OrderSide.buy,
+      ));
+    }
+    return marks;
+  }
+
+  /// Adds a horizontal price level at the current price for this symbol.
+  void _addLevelAtCurrentPrice() {
+    if (_currentPrice <= 0) return;
+    final id = DateTime.now().microsecondsSinceEpoch.toString();
+    DrawingService.instance.add(
+      _currentSymbol,
+      ChartDrawing.horizontal(id: id, price: _currentPrice),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Level added at ${_currentPrice.toStringAsFixed(2)}'),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  /// A sheet to review and delete this symbol's drawings.
+  void _openDrawingsSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: VxColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return AnimatedBuilder(
+          animation: DrawingService.instance,
+          builder: (ctx, _) {
+            final items = DrawingService.instance.forSymbol(_currentSymbol);
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.draw_rounded,
+                            color: VxColors.neonCyan, size: 20),
+                        const SizedBox(width: 8),
+                        Text('Drawings · $_currentSymbol',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
+                        const Spacer(),
+                        if (items.isNotEmpty)
+                          TextButton(
+                            onPressed: () => DrawingService.instance
+                                .clearSymbol(_currentSymbol),
+                            child: const Text('CLEAR ALL',
+                                style: TextStyle(color: VxColors.neonRed)),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    if (items.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Text(
+                          'No drawings yet. Tap the line button to add a price '
+                          'level at the current price.',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                      )
+                    else
+                      for (final d in items)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.horizontal_rule_rounded,
+                              color: VxColors.neonCyan),
+                          title: Text(
+                            d.type == ChartDrawingType.horizontal
+                                ? 'Level ${d.price.toStringAsFixed(2)}'
+                                : 'Trendline',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete_outline_rounded,
+                                color: VxColors.neonRed),
+                            onPressed: () => DrawingService.instance
+                                .remove(_currentSymbol, d.id),
+                          ),
+                        ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 85% Chart Real Estate Goal
@@ -248,11 +387,17 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                       ? const Center(
                           child: CircularProgressIndicator(
                               color: VxColors.neonCyan))
-                      : VxCandleChart(
-                          candles: _candles,
-                          showVolume: true,
-                          showIndicators: true,
-                          activeSignals: _buildActiveSignals(_candles),
+                      : AnimatedBuilder(
+                          animation: DrawingService.instance,
+                          builder: (context, _) => VxProChart(
+                            candles: _candles,
+                            showVolume: true,
+                            showIndicators: true,
+                            markers: _buildTradeMarkers(context),
+                            drawings:
+                                DrawingService.instance.forSymbol(_currentSymbol),
+                            activeSignals: _buildActiveSignals(_candles),
+                          ),
                         ),
                 ),
 
@@ -271,20 +416,61 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   ),
                 ),
 
-                // Layer 2: Chart Stats Overlay
-                Positioned(
-                  top: 100,
-                  left: 20,
+                // Layer 1.5: first-time guidance (dismiss-once, never nags)
+                const Positioned(
+                  top: 62,
+                  left: 0,
+                  right: 0,
+                  child: GuidanceBanner(
+                    id: 'chart_intro',
+                    text:
+                        'A practice chart with live data. Tap the ⚡ button to place '
+                        'a risk-free trade — pinch to zoom, drag to pan.',
+                  ),
+                ),
+
+                // Layer 2: Chart Stats Overlay (compact strip below the
+                // one-time guidance banner; the chart draws its own OHLC
+                // legend at the very top, so these never stack anymore).
+                // Hidden in replay mode so it doesn't collide with the panel.
+                if (!_isReplayMode)
+                  Positioned(
+                    top: 124,
+                    left: 16,
                   child: Consumer<DashboardProvider>(
                     builder: (context, dashboard, _) {
                       final ticker = dashboard.getTicker(_currentSymbol);
+                      // Derive window stats from the loaded candles so the
+                      // header never shows zeros when there's no live ticker
+                      // (offline/synthetic data).
+                      double hi = 0, lo = 0, vol = 0, chg = 0;
+                      if (_candles.isNotEmpty) {
+                        hi = _candles.first.high;
+                        lo = _candles.first.low;
+                        for (final c in _candles) {
+                          if (c.high > hi) hi = c.high;
+                          if (c.low < lo) lo = c.low;
+                          vol += c.volume;
+                        }
+                        final f = _candles.first.close;
+                        if (_candles.length >= 2 && f != 0) {
+                          chg = ((_candles.last.close - f) / f) * 100;
+                        }
+                      }
                       return ChartStatsOverlay(
                         symbol: _currentSymbol,
                         currentPrice: _currentPrice,
-                        change24h: ticker?.changePercent ?? 0.0,
-                        high24h: ticker?.highPrice ?? 0.0,
-                        low24h: ticker?.lowPrice ?? 0.0,
-                        volume24h: ticker?.quoteVolume ?? 0.0,
+                        change24h: (ticker?.changePercent ?? 0) != 0
+                            ? ticker!.changePercent
+                            : chg,
+                        high24h: (ticker?.highPrice ?? 0) > 0
+                            ? ticker!.highPrice
+                            : hi,
+                        low24h:
+                            (ticker?.lowPrice ?? 0) > 0 ? ticker!.lowPrice : lo,
+                        volume24h: (ticker?.quoteVolume ?? 0) > 0
+                            ? ticker!.quoteVolume
+                            : vol,
                       );
                     },
                   ),
@@ -306,6 +492,29 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                 // [NEW] Layer 3.5: Replay Panel
                 if (_isReplayMode) ReplayPanel(controller: _replayController),
 
+                // Layer 3.6: Draw-level button (tap = add, long-press = manage)
+                if (!_isReplayMode)
+                  Positioned(
+                    bottom: 198,
+                    right: 26,
+                    child: GestureDetector(
+                      onTap: _addLevelAtCurrentPrice,
+                      onLongPress: _openDrawingsSheet,
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: VxColors.surfaceBright.withValues(alpha: 0.9),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: VxColors.neonCyan.withValues(alpha: 0.5)),
+                        ),
+                        child: const Icon(Icons.horizontal_rule_rounded,
+                            color: VxColors.neonCyan, size: 24),
+                      ),
+                    ),
+                  ),
+
                 // Layer 4: Trade FAB
                 if (!_isReplayMode)
                   Positioned(
@@ -316,6 +525,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
+                          useRootNavigator: true,
                           backgroundColor: Colors.transparent,
                           builder: (context) => SmartOrderSheet(
                             symbol: _currentSymbol,
@@ -331,13 +541,13 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: VxColors.neonCyan.withOpacity(0.3),
+                              color: VxColors.neonCyan.withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 2,
                             ),
                           ],
                           border:
-                              Border.all(color: Colors.white.withOpacity(0.2)),
+                              Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
                         child: const Icon(Icons.bolt,
                             color: Colors.white, size: 28),

@@ -28,8 +28,10 @@ class TechnicalAnalysis {
     if (candles.length < period) return 0.0;
     final sma = calculateSMA(candles, period);
 
-    // We need the data points corresponding to that SMA
-    final data = candles.take(period).map((c) => c.close);
+    // Use the SAME trailing window as the SMA. (Bug fix: this previously used
+    // candles.take(period) — the FIRST period candles — so Bollinger Bands
+    // measured deviation over a different window than their own mean.)
+    final data = candles.sublist(candles.length - period).map((c) => c.close);
 
     final variance =
         data.map((val) => math.pow(val - sma, 2)).reduce((a, b) => a + b) /

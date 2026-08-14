@@ -4,11 +4,23 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// Wrapper service for Firebase Authentication.
 /// Used by UI screens to abstract Firebase implementation.
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // Lazy so construction never touches Firebase (safe on web where Firebase
+  // may not be configured).
+  FirebaseAuth get _auth => FirebaseAuth.instance;
 
-  /// Returns the currently signed-in user.
-  User? get currentUser => _auth.currentUser;
+  // Lazy: constructing GoogleSignIn on web asserts if no client ID meta tag
+  // is configured, so defer until Google sign-in is actually used.
+  GoogleSignIn? _googleSignInInstance;
+  GoogleSignIn get _googleSignIn => _googleSignInInstance ??= GoogleSignIn();
+
+  /// Returns the currently signed-in user, or null if auth is unavailable.
+  User? get currentUser {
+    try {
+      return _auth.currentUser;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// Signs in a user with Google.
   Future<UserCredential?> signInWithGoogle() async {

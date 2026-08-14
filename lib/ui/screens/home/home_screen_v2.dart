@@ -15,6 +15,14 @@ import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/ui/widgets/quantum_switcher.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
+import 'package:volex_terminal/ui/widgets/market_ticker/vx_ticker_tape.dart';
+import 'package:volex_terminal/ui/widgets/market_ticker/vx_market_list.dart';
+import 'package:volex_terminal/ui/widgets/journey_strip.dart';
+import 'package:volex_terminal/ui/widgets/next_step_guide.dart';
+import 'package:volex_terminal/ui/widgets/first_user_guide.dart';
+import 'package:volex_terminal/features/daily/ui/daily_home_card.dart';
+import 'package:volex_terminal/services/profile_service.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
@@ -41,11 +49,18 @@ class HomeScreenV2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildStatusBar(context),
+                    const VxTickerTape(),
+                    const FirstUserGuide(),
+                    const DailyHomeCard(),
                     _buildBalanceSection(context),
+                    const NextStepGuide(),
+                    const JourneyStrip(),
                     _buildQuickActions(context),
+                    const VxMarketList(),
                     _buildQuickTradeSection(context),
                     _buildYourStrategiesSection(context),
                     _buildLearningCTA(context),
+                    _buildPredictionsCTA(context),
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -58,10 +73,11 @@ class HomeScreenV2 extends StatelessWidget {
   }
 
   Widget _buildStatusBar(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final hour = DateTime.now().hour;
-    String greeting = 'Good morning';
-    if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
-    if (hour >= 17) greeting = 'Good evening';
+    String greeting = l10n.greetingMorning;
+    if (hour >= 12 && hour < 17) greeting = l10n.greetingAfternoon;
+    if (hour >= 17) greeting = l10n.greetingEvening;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
@@ -74,9 +90,9 @@ class HomeScreenV2 extends StatelessWidget {
                   .copyWith(color: VxColors.textSecondary),
               children: [
                 TextSpan(text: '$greeting, '),
-                const TextSpan(
-                  text: 'Trader',
-                  style: TextStyle(
+                TextSpan(
+                  text: context.watch<ProfileService>().displayName,
+                  style: const TextStyle(
                     color: VxColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -88,6 +104,7 @@ class HomeScreenV2 extends StatelessWidget {
             children: [
               _buildIconButton(
                 icon: Icons.search_rounded,
+                semanticLabel: 'Search markets',
                 onPressed: () => QuantumSwitcher.show(context, (symbol) {
                   context.push('/chart?symbol=$symbol');
                 }),
@@ -97,6 +114,7 @@ class HomeScreenV2 extends StatelessWidget {
               const SizedBox(width: 8),
               _buildIconButton(
                 icon: Icons.person_outline_rounded,
+                semanticLabel: 'Profile',
                 onPressed: () => context.push('/profile'),
               ),
             ],
@@ -107,19 +125,28 @@ class HomeScreenV2 extends StatelessWidget {
   }
 
   Widget _buildIconButton(
-      {required IconData icon, required VoidCallback onPressed}) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: VxColors.surface,
-          shape: BoxShape.circle,
-          border: Border.all(color: VxColors.border),
+      {required IconData icon,
+      required VoidCallback onPressed,
+      String? semanticLabel}) {
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: Tooltip(
+        message: semanticLabel ?? '',
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: VxColors.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: VxColors.border),
+            ),
+            child: Icon(icon, size: 18, color: VxColors.textSecondary),
+          ),
         ),
-        child: Icon(icon, size: 18, color: VxColors.textSecondary),
       ),
     );
   }
@@ -197,7 +224,7 @@ class HomeScreenV2 extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: VxColors.neonCyan.withOpacity(0.1),
+                        color: VxColors.neonCyan.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -361,7 +388,7 @@ class HomeScreenV2 extends StatelessWidget {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: VxColors.success.withOpacity(0.1),
+                                  color: VxColors.success.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Center(
@@ -510,7 +537,7 @@ class HomeScreenV2 extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
       child: InkWell(
-        onTap: () => context.push('/signals'),
+        onTap: () => context.push('/learn'),
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -521,7 +548,7 @@ class HomeScreenV2 extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: VxColors.neonCyan.withOpacity(0.2)),
+            border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -529,7 +556,7 @@ class HomeScreenV2 extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: VxColors.neonCyan.withOpacity(0.12),
+                  color: VxColors.neonCyan.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -547,7 +574,66 @@ class HomeScreenV2 extends StatelessWidget {
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      'Try our guided first trade — takes 30 seconds',
+                      'Start free lessons — learn step by step, zero risk',
+                      style: VxTypography.bodySmall.copyWith(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: VxColors.neonCyan, size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPredictionsCTA(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+      child: InkWell(
+        onTap: () => context.go('/predictions'),
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                VxColors.neonCyan.withValues(alpha: 0.18),
+                VxColors.surface,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: VxColors.neonCyan.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: VxColors.neonCyan.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Text('🔮', style: TextStyle(fontSize: 22)),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Buzz & Predictions',
+                      style: VxTypography.body
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      'Trade politics, crypto & events on sentiment — virtual',
                       style: VxTypography.bodySmall.copyWith(fontSize: 12),
                     ),
                   ],
@@ -568,6 +654,7 @@ class HomeScreenV2 extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) => SmartOrderSheet(
         symbol: 'BTCUSDT',
@@ -622,7 +709,7 @@ class _ActionCard extends StatelessWidget {
                   child: Icon(
                 icon,
                 size: 16,
-                color: iconBgColor.withOpacity(0.95),
+                color: iconBgColor.withValues(alpha: 0.95),
               )),
             ),
             const SizedBox(height: 10),
@@ -671,9 +758,9 @@ class _TradeButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color.withOpacity(0.25)),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Center(
           child: Text(
@@ -732,7 +819,7 @@ class _StrategyCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
+                color: iconColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(

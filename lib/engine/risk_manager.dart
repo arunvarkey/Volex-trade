@@ -250,8 +250,11 @@ class RiskManager {
       }
     }
 
-    // 3. Global Size Limit
-    if (orderSize > _maxOrderSizeUsdt) {
+    // 3. Global Size Limit — a real-money guardrail. Paper trading is a
+    // practice sandbox (funded with a large simulated balance), so a single
+    // 0.1 BTC practice order (~$6k) must not be rejected against the live
+    // $1k cap. Enforce this ceiling only for live orders.
+    if (isLive && orderSize > _maxOrderSizeUsdt) {
       AppLogger.warning(
           "RISK: Order rejected. Size $orderSize exceeds max $_maxOrderSizeUsdt");
       return false;

@@ -61,7 +61,7 @@ class _VxSkeletonState extends State<VxSkeleton>
               ],
               colors: [
                 VxColors.surface,
-                VxColors.surface.withOpacity(0.8),
+                VxColors.surface.withValues(alpha: 0.8),
                 VxColors.surface,
               ],
               transform:

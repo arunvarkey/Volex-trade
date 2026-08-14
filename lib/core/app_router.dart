@@ -23,6 +23,12 @@ import 'package:volex_terminal/ui/screens/subscriptions/subscription_screen.dart
 import 'package:volex_terminal/ui/screens/strategies/optimizer_screen.dart';
 import 'package:volex_terminal/ui/screens/strategies/scanner_screen.dart'; // MarketScannerScreen
 import 'package:volex_terminal/ui/screens/strategies/ai_strategy_generator_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/simulator_home_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/template_selector_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/template_config_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/screens/ai_assistant_screen.dart';
+import 'package:volex_terminal/features/simulator/screens/my_strategies_screen.dart';
+import 'package:volex_terminal/features/simulator/ai_strategy/models/strategy_template.dart';
 import 'package:volex_terminal/ui/screens/lab/lab_screen.dart';
 import 'package:volex_terminal/ui/screens/marketplace/marketplace_screen.dart';
 import 'package:volex_terminal/ui/screens/marketplace/leaderboard_screen.dart';
@@ -38,6 +44,14 @@ import 'package:volex_terminal/features/simulator/backtest/screens/backtest_conf
 import 'package:volex_terminal/features/simulator/backtest/screens/backtest_results_screen.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
+import 'package:volex_terminal/features/academy/ui/academy_screen.dart';
+import 'package:volex_terminal/features/academy/ui/lesson_screen.dart';
+import 'package:volex_terminal/features/academy/ui/quiz_screen.dart';
+import 'package:volex_terminal/features/academy/models/academy_models.dart';
+import 'package:volex_terminal/features/predictions/ui/predictions_screen.dart';
+import 'package:volex_terminal/features/predictions/ui/event_market_detail_screen.dart';
+import 'package:volex_terminal/features/predictions/models/prediction_models.dart';
+import 'package:volex_terminal/features/daily/ui/daily_screen.dart';
 
 // Debug
 
@@ -130,6 +144,13 @@ final GoRouter appRouter = GoRouter(
           parentNavigatorKey: _shellNavigatorKey,
           builder: (context, state) => const SignalFeedScreen(),
         ),
+        // Buzz & Predictions (Kalshi-style event markets, simulated) —
+        // a first-class tab inside the shell.
+        GoRoute(
+          path: '/predictions',
+          parentNavigatorKey: _shellNavigatorKey,
+          builder: (context, state) => const PredictionsScreen(),
+        ),
       ],
     ),
 
@@ -145,6 +166,70 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/ai-strategy',
       builder: (context, state) => const AIStrategyGeneratorScreen(),
+    ),
+
+    // Strategy Studio (template-driven build pillar). Backtest reuses the
+    // corrected /lab/backtest/* engine, not a parallel path.
+    GoRoute(
+      path: '/simulator',
+      builder: (context, state) => const SimulatorHomeScreen(),
+    ),
+    GoRoute(
+      path: '/simulator/templates',
+      builder: (context, state) => const TemplateSelectorScreen(),
+    ),
+    GoRoute(
+      path: '/simulator/templates/config',
+      builder: (context, state) =>
+          TemplateConfigScreen(template: state.extra as StrategyTemplate),
+    ),
+    GoRoute(
+      path: '/simulator/ai-assistant',
+      builder: (context, state) => const AiAssistantScreen(),
+    ),
+    GoRoute(
+      path: '/simulator/my-strategies',
+      builder: (context, state) => const MyStrategiesScreen(),
+    ),
+
+    // Volex Daily (daily challenge ritual)
+    GoRoute(
+      path: '/daily',
+      builder: (context, state) => const DailyScreen(),
+    ),
+
+    // Trading Academy (guided learning)
+    GoRoute(
+      path: '/learn',
+      builder: (context, state) => const AcademyScreen(),
+      routes: [
+        GoRoute(
+          path: 'lesson',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra is! Lesson) return const AcademyScreen();
+            return LessonScreen(lesson: extra);
+          },
+        ),
+        GoRoute(
+          path: 'quiz',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra is! Lesson) return const AcademyScreen();
+            return QuizScreen(lesson: extra);
+          },
+        ),
+      ],
+    ),
+
+    // Buzz & Predictions market detail (pushed above the shell)
+    GoRoute(
+      path: '/predictions/market',
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! EventMarket) return const PredictionsScreen();
+        return EventMarketDetailScreen(market: extra);
+      },
     ),
     GoRoute(
       path: '/lab',

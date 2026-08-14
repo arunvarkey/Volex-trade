@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
 
@@ -63,9 +64,9 @@ class AIStrategyResults extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: VxColors.neonGreen.withOpacity(0.1),
+        color: VxColors.neonGreen.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.neonGreen.withOpacity(0.3)),
+        border: Border.all(color: VxColors.neonGreen.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -75,27 +76,29 @@ class AIStrategyResults extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text(
                       'Strategy Generated!',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                    const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: VxColors.warning.withOpacity(0.2),
+                        color: VxColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: VxColors.warning),
                       ),
                       child: Text(
-                        'CONFIDENCE: ${(strategy.confidenceScore * 100).toStringAsFixed(0)}%',
+                        'CONFIDENCE ${(strategy.confidenceScore * 100).toStringAsFixed(0)}%',
                         style: const TextStyle(
                           color: VxColors.warning,
                           fontSize: 10,
@@ -125,12 +128,11 @@ class AIStrategyResults extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          strategy.name.toUpperCase(),
+          strategy.name,
           style: const TextStyle(
             color: VxColors.neonCyan,
             fontSize: 24,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -161,6 +163,15 @@ class AIStrategyResults extends StatelessWidget {
     );
   }
 
+  static const Map<String, String> _indicatorTerms = {
+    'RSI': 'rsi',
+    'MACD': 'macd',
+    'SMA': 'sma',
+    'EMA': 'ema',
+    'BOLLINGER_BANDS': 'bollinger_bands',
+    'VOLUME': 'volume',
+  };
+
   Widget _buildConditionsSection(
     String title,
     List<StrategyCondition> conditions,
@@ -183,10 +194,10 @@ class AIStrategyResults extends StatelessWidget {
           const Text('None',
               style: TextStyle(color: Colors.white30, fontSize: 14)),
         ...conditions.map((condition) {
-          final text =
-              '${condition.indicator} ${condition.comparator} ${condition.value}';
-          final params =
-              condition.params.isNotEmpty ? ' (${condition.params})' : '';
+          final rest =
+              ' ${condition.comparator} ${condition.value}${condition.params.isNotEmpty ? ' (${condition.params})' : ''}';
+          final termId = _indicatorTerms[condition.indicator.toUpperCase()];
+          const valueStyle = TextStyle(color: Colors.white, fontSize: 14);
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
@@ -200,15 +211,15 @@ class AIStrategyResults extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    text + params,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
+                if (termId != null)
+                  InfoLabel(
+                    text: condition.indicator,
+                    termId: termId,
+                    style: valueStyle.copyWith(fontWeight: FontWeight.w600),
+                  )
+                else
+                  Text(condition.indicator, style: valueStyle),
+                Expanded(child: Text(rest, style: valueStyle)),
               ],
             ),
           );
@@ -220,13 +231,13 @@ class AIStrategyResults extends StatelessWidget {
   Widget _buildBacktestPlaceholder() {
     return Center(
       child: isBacktesting
-          ? const CircularProgressIndicator(color: VxColors.neonPurple)
+          ? const CircularProgressIndicator(color: VxColors.neonCyan)
           : OutlinedButton.icon(
-              icon: const Icon(Icons.play_arrow, color: VxColors.neonPurple),
+              icon: const Icon(Icons.play_arrow, color: VxColors.neonCyan),
               label: const Text('RUN BACKTEST (BTC-USD 1H)'),
               style: OutlinedButton.styleFrom(
-                  foregroundColor: VxColors.neonPurple,
-                  side: const BorderSide(color: VxColors.neonPurple)),
+                  foregroundColor: VxColors.neonCyan,
+                  side: const BorderSide(color: VxColors.neonCyan)),
               onPressed: onRunBacktest,
             ),
     );
@@ -245,7 +256,7 @@ class AIStrategyResults extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.analytics, color: VxColors.neonPurple, size: 24),
+              Icon(Icons.analytics, color: VxColors.neonCyan, size: 24),
               SizedBox(width: 12),
               Text(
                 'BACKTEST RESULTS',
@@ -271,10 +282,10 @@ class AIStrategyResults extends StatelessWidget {
               Expanded(
                 child: _buildMetric(
                   'Total Return',
-                  '+${results.totalReturnPercent.toStringAsFixed(1)}%',
+                  '${results.totalReturnPercent >= 0 ? '+' : ''}${results.totalReturnPercent.toStringAsFixed(1)}%',
                   results.totalReturnPercent >= 0
-                      ? VxColors.neonCyan
-                      : VxColors.neonRed,
+                      ? VxColors.positive
+                      : VxColors.negative,
                 ),
               ),
             ],
@@ -293,7 +304,7 @@ class AIStrategyResults extends StatelessWidget {
                 child: _buildMetric(
                   'Profit Factor',
                   results.metrics.profitFactor.toStringAsFixed(2),
-                  VxColors.neonPurple,
+                  VxColors.neonCyan,
                 ),
               ),
             ],
@@ -309,17 +320,25 @@ class AIStrategyResults extends StatelessWidget {
   }
 
   Widget _buildMetric(String label, String value, Color color) {
+    const terms = {
+      'Win Rate': 'win_rate',
+      'Total Return': 'total_return',
+      'Max Drawdown': 'max_drawdown',
+      'Profit Factor': 'profit_factor',
+    };
+    const labelStyle = TextStyle(
+      color: Colors.white54,
+      fontSize: 10,
+      letterSpacing: 1,
+    );
+    final id = terms[label];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 10,
-            letterSpacing: 1,
-          ),
-        ),
+        id != null
+            ? InfoLabel(
+                text: label.toUpperCase(), termId: id, style: labelStyle)
+            : Text(label.toUpperCase(), style: labelStyle),
         const SizedBox(height: 4),
         Text(
           value,
@@ -347,9 +366,9 @@ class AIStrategyResults extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.rocket_launch, size: 20),
+                Icon(Icons.bookmark_add_outlined, size: 20),
                 SizedBox(width: 8),
-                Text('DEPLOY STRATEGY'),
+                Text('SAVE STRATEGY'),
               ],
             ),
           ),
