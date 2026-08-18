@@ -368,14 +368,14 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       if (!pos.isOpen) continue;
       if (symbol != null && pos.symbol != symbol) continue;
       final isLong = pos.side == OrderSide.buy;
-      final sl = pos.stopLoss;
-      final tp = pos.takeProfit;
-      final hitStop = sl != null && (isLong ? price <= sl : price >= sl);
-      final hitTarget = tp != null && (isLong ? price >= tp : price <= tp);
-      if (hitStop || hitTarget) {
-        AppLogger.info(
-            "EXEC: ${hitStop ? 'Stop-loss' : 'Take-profit'} hit for "
-            "${pos.symbol} at $price — closing position.");
+      if (FinancialMath.shouldTriggerProtectiveExit(
+        isLong: isLong,
+        price: price,
+        stopLoss: pos.stopLoss,
+        takeProfit: pos.takeProfit,
+      )) {
+        AppLogger.info("EXEC: Protective exit hit for ${pos.symbol} at "
+            "$price — closing position.");
         toClose.add(pos);
       }
     }
