@@ -8,6 +8,7 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/domain/trade_signal.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
+import 'package:volex_terminal/domain/position.dart';
 import 'package:volex_terminal/ui/chart_engine/vx_pro_chart.dart';
 import 'package:volex_terminal/ui/chart_engine/chart_marker.dart';
 import 'package:volex_terminal/ui/chart_engine/chart_drawing.dart';
@@ -267,6 +268,120 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     return marks;
   }
 
+  /// Compact bar showing the open position for the charted symbol: side, size,
+  /// entry, its protective levels and live P&L, with a one-tap close. Renders
+  /// nothing when the symbol has no open position.
+  Widget _buildOpenPositionBar(BuildContext context) {
+    final manager = context.watch<ExecutionManager>();
+    Position? found;
+    for (final p in manager.openPositions) {
+      if (p.symbol == _currentSymbol) {
+        found = p;
+        break;
+      }
+    }
+    if (found == null) return const SizedBox.shrink();
+    final pos = found; // non-null for the rest of the build, closures included
+
+    final isLong = pos.side == OrderSide.buy;
+    final pnl = pos.unrealizedPnl ?? 0.0;
+    final up = pnl >= 0;
+    final sl = pos.stopLoss;
+    final tp = pos.takeProfit;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: VxColors.surface.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: (isLong ? VxColors.success : VxColors.danger)
+                .withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: (isLong ? VxColors.success : VxColors.danger)
+                  .withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              isLong ? 'LONG' : 'SHORT',
+              style: TextStyle(
+                color: isLong ? VxColors.success : VxColors.danger,
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${pos.quantity.toStringAsFixed(4)} @ '
+                  '\$${pos.entryPrice.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      color: Colors.white70, fontSize: 11.5),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (sl != null || tp != null)
+                  Text(
+                    [
+                      if (sl != null) 'SL ${sl.toStringAsFixed(2)}',
+                      if (tp != null) 'TP ${tp.toStringAsFixed(2)}',
+                    ].join('  ·  '),
+                    style: const TextStyle(
+                        color: Colors.white30, fontSize: 10),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${up ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
+            style: TextStyle(
+              color: up ? VxColors.success : VxColors.danger,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            tooltip: 'Close position',
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.close, size: 16, color: Colors.white38),
+            onPressed: () => _closeOpenPosition(pos),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _closeOpenPosition(Position pos) async {
+    final manager = context.read<ExecutionManager>();
+    final messenger = ScaffoldMessenger.of(context);
+    final pnl = pos.unrealizedPnl ?? 0.0;
+    try {
+      await manager.closeOrder(pos.id, _currentPrice);
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: pnl >= 0 ? VxColors.success : VxColors.danger,
+        content: Text('Closed ${pos.symbol} · '
+            '${pnl >= 0 ? '+' : ''}\$${pnl.toStringAsFixed(2)}'),
+      ));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('Could not close: $e')));
+    }
+  }
+
   /// Adds a horizontal price level at the current price for this symbol.
   void _addLevelAtCurrentPrice() {
     if (_currentPrice <= 0) return;
@@ -513,6 +628,16 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                             color: VxColors.neonCyan, size: 24),
                       ),
                     ),
+                  ),
+
+                // Layer 3.7: Open position for this symbol — entry, live P&L
+                // and a close action, right where the trade was placed.
+                if (!_isReplayMode)
+                  Positioned(
+                    bottom: 112,
+                    left: 16,
+                    right: 86, // clear of the trade FAB
+                    child: _buildOpenPositionBar(context),
                   ),
 
                 // Layer 4: Trade FAB
