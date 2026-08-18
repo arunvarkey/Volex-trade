@@ -33,6 +33,15 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       TextEditingController(text: '0.1');
   late final TextEditingController _limitPriceController;
 
+  /// Protective exits are ON by default: the Academy teaches that a trade
+  /// without a stop is "an open-ended bet on your ego", so the ticket should
+  /// make the good habit the default rather than an afterthought.
+  bool _useRiskControls = true;
+  final TextEditingController _slPercentController =
+      TextEditingController(text: '2');
+  final TextEditingController _tpPercentController =
+      TextEditingController(text: '4');
+
   @override
   void initState() {
     super.initState();
@@ -45,16 +54,47 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
   void dispose() {
     _amountController.dispose();
     _limitPriceController.dispose();
+    _slPercentController.dispose();
+    _tpPercentController.dispose();
     super.dispose();
   }
-
-  // Future: Leverage slider, Take Profit, Stop Loss
 
   /// Price the order will execute at: the live price for market orders, or the
   /// user's chosen limit price otherwise.
   double get _effectivePrice => _isMarket
       ? widget.currentPrice
       : (double.tryParse(_limitPriceController.text) ?? widget.currentPrice);
+
+  /// Stop-loss level, expressed as a % away from entry in the losing
+  /// direction (below entry for a long, above for a short). Percent input
+  /// means the level can never be set on the wrong side by accident.
+  double? get _stopLossPrice {
+    if (!_useRiskControls) return null;
+    final pct = double.tryParse(_slPercentController.text);
+    if (pct == null || pct <= 0) return null;
+    final p = _effectivePrice;
+    return _isBuy ? p * (1 - pct / 100) : p * (1 + pct / 100);
+  }
+
+  /// Take-profit level, a % away from entry in the winning direction.
+  double? get _takeProfitPrice {
+    if (!_useRiskControls) return null;
+    final pct = double.tryParse(_tpPercentController.text);
+    if (pct == null || pct <= 0) return null;
+    final p = _effectivePrice;
+    return _isBuy ? p * (1 + pct / 100) : p * (1 - pct / 100);
+  }
+
+  /// Cash at risk if the stop is hit, and the reward if the target is hit.
+  ({double risk, double reward, double? rr}) get _riskReward {
+    final qty = double.tryParse(_amountController.text) ?? 0.0;
+    final entry = _effectivePrice;
+    final sl = _stopLossPrice;
+    final tp = _takeProfitPrice;
+    final risk = sl == null ? 0.0 : (entry - sl).abs() * qty;
+    final reward = tp == null ? 0.0 : (tp - entry).abs() * qty;
+    return (risk: risk, reward: reward, rr: risk > 0 ? reward / risk : null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,6 +253,10 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                 ],
               ),
 
+              const SizedBox(height: 16),
+
+              _buildRiskControls(),
+
               const SizedBox(height: 12),
 
               const Center(
@@ -305,6 +349,132 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
     );
   }
 
+  /// Stop-loss / take-profit inputs plus the risk:reward read-out. Percent
+  /// inputs keep the levels on the correct side of entry automatically, and
+  /// the cash figures teach what the percentages actually cost.
+  Widget _buildRiskControls() {
+    final rr = _riskReward;
+    final sl = _stopLossPrice;
+    final tp = _takeProfitPrice;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+      decoration: BoxDecoration(
+        color: VxColors.neutral900,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: VxColors.neutral800),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: VxText.caption('Stop loss & take profit',
+                    color: VxColors.textSecondary),
+              ),
+              Switch(
+                value: _useRiskControls,
+                activeThumbColor: VxColors.primary,
+                onChanged: (v) {
+                  HapticFeedback.lightImpact();
+                  setState(() => _useRiskControls = v);
+                },
+              ),
+            ],
+          ),
+          if (_useRiskControls) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPercentField(
+                    controller: _slPercentController,
+                    label: 'Stop loss',
+                    level: sl,
+                    color: VxColors.danger,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildPercentField(
+                    controller: _tpPercentController,
+                    label: 'Take profit',
+                    level: tp,
+                    color: VxColors.success,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                VxText.caption('Risk \$${rr.risk.toStringAsFixed(2)}',
+                    color: VxColors.danger),
+                VxText.caption('Reward \$${rr.reward.toStringAsFixed(2)}',
+                    color: VxColors.success),
+                VxText.caption(
+                  rr.rr == null
+                      ? 'R:R —'
+                      : 'R:R 1:${rr.rr!.toStringAsFixed(2)}',
+                  color: VxColors.textSecondary,
+                ),
+              ],
+            ),
+          ] else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: VxText.caption(
+                'No stop set — the trade has no planned exit if it moves '
+                'against you.',
+                color: VxColors.textTertiary,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPercentField({
+    required TextEditingController controller,
+    required String label,
+    required double? level,
+    required Color color,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        VxText.caption(label, color: color),
+        const SizedBox(height: 4),
+        TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          style: VxTypography.body.copyWith(color: VxColors.textPrimary),
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: VxColors.surface,
+            suffixText: '%',
+            suffixStyle:
+                VxTypography.caption.copyWith(color: VxColors.neutral500),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: 4),
+        VxText.caption(
+          level == null ? '—' : '\$${level.toStringAsFixed(2)}',
+          color: VxColors.textTertiary,
+        ),
+      ],
+    );
+  }
+
   Widget _buildQuickSize(String label, double pct) {
     return GestureDetector(
       onTap: () {
@@ -351,6 +521,8 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
             side: _isBuy ? OrderSide.buy : OrderSide.sell,
             quantity: qty,
             price: price,
+            stopLossPrice: _stopLossPrice,
+            takeProfitPrice: _takeProfitPrice,
             status: OrderStatus.pending,
           ));
 

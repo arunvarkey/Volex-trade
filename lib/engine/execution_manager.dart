@@ -352,7 +352,37 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         }
       }
     }
+    _checkProtectiveExits(null, currentPrice);
     if (changed) notifyListeners();
+  }
+
+  /// Closes any open position whose stop-loss or take-profit has been reached
+  /// at [price]. Without this, a stop set on the order ticket would be shown
+  /// to the user but never actually trigger. Pass [symbol] to limit the check
+  /// to one market (the mark price only applies to that market).
+  void _checkProtectiveExits(String? symbol, double price) {
+    if (price <= 0) return;
+    // Collect first: closing mutates _positions.
+    final toClose = <Position>[];
+    for (final pos in _positions) {
+      if (!pos.isOpen) continue;
+      if (symbol != null && pos.symbol != symbol) continue;
+      final isLong = pos.side == OrderSide.buy;
+      final sl = pos.stopLoss;
+      final tp = pos.takeProfit;
+      final hitStop = sl != null && (isLong ? price <= sl : price >= sl);
+      final hitTarget = tp != null && (isLong ? price >= tp : price <= tp);
+      if (hitStop || hitTarget) {
+        AppLogger.info(
+            "EXEC: ${hitStop ? 'Stop-loss' : 'Take-profit'} hit for "
+            "${pos.symbol} at $price — closing position.");
+        toClose.add(pos);
+      }
+    }
+    for (final pos in toClose) {
+      // Fire and forget: closeOrder places the offsetting market order.
+      unawaited(closeOrder(pos.id, price));
+    }
   }
 
   /// Updates unrealized PnL for open positions of a single [symbol] only.
@@ -374,6 +404,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         }
       }
     }
+    _checkProtectiveExits(symbol, currentPrice);
     if (changed) notifyListeners();
   }
 
@@ -568,6 +599,10 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         quantity: order.quantity,
         entryPrice: order.filledPrice ?? order.price,
         openedAt: DateTime.now(),
+        // Carry the ticket's protective exits onto the position so they can
+        // actually be enforced (see _checkProtectiveExits).
+        stopLoss: order.stopLossPrice,
+        takeProfit: order.takeProfitPrice,
       ));
     } else {
       final existing = _positions[index];
