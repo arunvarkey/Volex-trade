@@ -45,6 +45,10 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
   late String _currentSymbol; // Changed from init assignment
   String _currentTimeframe = '1m';
   List<Candle> _candles = [];
+
+  /// True when the candles on screen are generated rather than live exchange
+  /// data (offline / feed blocked). Shown to the user rather than hidden.
+  bool _isSimulatedData = false;
   double _currentPrice = 0.0;
   bool _isLoading = true;
 
@@ -103,6 +107,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
           if (history.isNotEmpty) {
             _currentPrice = history.last.close;
           }
+          _isSimulatedData = _repository.isSimulatedFeed;
           _isLoading = false;
         });
 
@@ -543,6 +548,34 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                         'a risk-free trade — pinch to zoom, drag to pan.',
                   ),
                 ),
+
+                // Layer 1.8: honest "simulated data" badge — the chart falls
+                // back to generated candles when the exchange feed is
+                // unreachable, and the user must be able to tell.
+                if (_isSimulatedData && !_isReplayMode)
+                  Positioned(
+                    top: 96,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: VxColors.warning.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                            color: VxColors.warning.withValues(alpha: 0.5)),
+                      ),
+                      child: const Text(
+                        'SIMULATED DATA',
+                        style: TextStyle(
+                          color: VxColors.warning,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
 
                 // Layer 2: Chart Stats Overlay (compact strip below the
                 // one-time guidance banner; the chart draws its own OHLC

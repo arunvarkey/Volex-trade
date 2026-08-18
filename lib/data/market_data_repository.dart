@@ -51,6 +51,13 @@ class MarketDataRepository implements IMarketDataRepository {
 
   final Map<String, MiniTicker> _tickerCache = {};
 
+  /// True when the app is serving *generated* candles/ticks because the live
+  /// exchange feed was unreachable. Surfaced in the UI so simulated prices are
+  /// never mistaken for real market data — a learner reading a chart deserves
+  /// to know which one they're looking at.
+  bool _simulatedFeed = false;
+  bool get isSimulatedFeed => _simulatedFeed;
+
   bool _initialized = false;
 
   // Track current connected symbol and interval
@@ -139,6 +146,8 @@ class MarketDataRepository implements IMarketDataRepository {
   }
 
   void _emitSyntheticTick() {
+    // Live prices are being generated, not received — mark the feed simulated.
+    _simulatedFeed = true;
     final symbol = _currentSymbol.toUpperCase();
     final intervalMs = _synthIntervalMs(_currentInterval);
     final nowMs = DateTime.now().millisecondsSinceEpoch;
@@ -265,7 +274,10 @@ class MarketDataRepository implements IMarketDataRepository {
       if (response.statusCode == 200) {
         final List<dynamic> json = const JsonDecoder().convert(response.body);
         final candles = json.map((j) => Candle.fromJson(j)).toList();
-        if (candles.isNotEmpty) return candles;
+        if (candles.isNotEmpty) {
+          _simulatedFeed = false;
+          return candles;
+        }
       }
       AppLogger.warning(
           "History: empty/failed real data for $symbol (${response.statusCode}); using synthetic.");
@@ -273,6 +285,7 @@ class MarketDataRepository implements IMarketDataRepository {
       AppLogger.error("History Fetch Error: $e. Using synthetic candles.");
     }
     // Offline/blocked fallback so the scanner and signal engine always have data.
+    _simulatedFeed = true;
     return SyntheticCandles.generate(symbol, interval, limit);
   }
 
