@@ -47,6 +47,13 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.menu_book_outlined,
+            title: 'Trading Journal',
+            subtitle: 'Log why you traded and how you felt',
+            route: '/journal',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.insights,
             title: 'Buzz & Predictions',
             subtitle: 'Trade events, politics & crypto on sentiment — virtual',

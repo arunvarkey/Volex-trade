@@ -45,6 +45,7 @@ import 'package:volex_terminal/features/simulator/backtest/screens/backtest_resu
 import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
 import 'package:volex_terminal/features/academy/ui/academy_screen.dart';
+import 'package:volex_terminal/features/journal/ui/journal_screen.dart';
 import 'package:volex_terminal/features/academy/ui/lesson_screen.dart';
 import 'package:volex_terminal/features/academy/ui/quiz_screen.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
@@ -196,6 +197,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/daily',
       builder: (context, state) => const DailyScreen(),
+    ),
+
+    // Trading journal (the habit the Academy's psychology lesson prescribes)
+    GoRoute(
+      path: '/journal',
+      builder: (context, state) => const JournalScreen(),
     ),
 
     // Trading Academy (guided learning)
