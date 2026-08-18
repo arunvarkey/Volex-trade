@@ -253,6 +253,12 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                 ],
               ),
 
+              const SizedBox(height: 8),
+
+              // Size from risk, the way the Academy teaches it:
+              // position size = (1% of balance) / distance to the stop.
+              _buildRiskBasedSize(balance),
+
               const SizedBox(height: 16),
 
               _buildRiskControls(),
@@ -345,6 +351,61 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
         ),
         child: VxText.caption(label,
             color: isSelected ? VxColors.textPrimary : VxColors.neutral500),
+      ),
+    );
+  }
+
+  /// "Risk 1%" sizing — the position-sizing rule the Academy teaches:
+  /// size = (risk budget) / (distance from entry to the stop). Requires a
+  /// stop, because without one there is no defined risk to size from.
+  Widget _buildRiskBasedSize(double balance) {
+    final sl = _stopLossPrice;
+    final entry = _effectivePrice;
+    final stopDistance = sl == null ? 0.0 : (entry - sl).abs();
+    final enabled = stopDistance > 0 && balance > 0;
+
+    void applyRisk(double accountPercent) {
+      if (!enabled) return;
+      HapticFeedback.selectionClick();
+      final riskBudget = balance * (accountPercent / 100);
+      setState(() {
+        _amountController.text =
+            (riskBudget / stopDistance).toStringAsFixed(4);
+      });
+    }
+
+    return Opacity(
+      opacity: enabled ? 1 : 0.45,
+      child: Row(
+        children: [
+          Expanded(
+            child: VxText.caption(
+              enabled
+                  ? 'Size from risk'
+                  : 'Set a stop loss to size by risk',
+              color: VxColors.textTertiary,
+            ),
+          ),
+          _buildRiskChip('Risk 1%', () => applyRisk(1)),
+          const SizedBox(width: 8),
+          _buildRiskChip('2%', () => applyRisk(2)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRiskChip(String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: VxColors.primary.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(8),
+          border:
+              Border.all(color: VxColors.primary.withValues(alpha: 0.35)),
+        ),
+        child: VxText.caption(label, color: VxColors.primary),
       ),
     );
   }
