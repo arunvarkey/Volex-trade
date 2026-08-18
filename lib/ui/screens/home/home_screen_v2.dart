@@ -279,38 +279,45 @@ class HomeScreenV2 extends StatelessWidget {
   Widget _buildQuickActions(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ActionCard(
-              icon: Icons.auto_awesome_rounded,
-              title: 'AI Builder',
-              subtitle: 'Create a strategy with AI',
-              iconBgColor: const Color(0x1F63B3ED),
-              onTap: () => context.push('/ai-strategy'),
+      // IntrinsicHeight + stretch makes all three cards the height of the
+      // tallest one. Without it, a subtitle that wraps to two lines ("Create a
+      // strategy with AI") made its card taller than a one-line one ("AI trade
+      // ideas") and the Row centred them — so the boxes looked misaligned.
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.auto_awesome_rounded,
+                title: 'AI Builder',
+                subtitle: 'Create a strategy with AI',
+                iconBgColor: const Color(0x1F63B3ED),
+                onTap: () => context.push('/ai-strategy'),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _ActionCard(
-              icon: Icons.science_rounded,
-              title: 'Backtest',
-              subtitle: 'Test against real history',
-              iconBgColor: const Color(0x1FB794F4),
-              onTap: () => context.push('/lab'),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.science_rounded,
+                title: 'Backtest',
+                subtitle: 'Test against real history',
+                iconBgColor: const Color(0x1FB794F4),
+                onTap: () => context.push('/lab'),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _ActionCard(
-              icon: Icons.sensors_rounded,
-              title: 'Signals',
-              subtitle: 'AI trade ideas',
-              iconBgColor: const Color(0x1F34D399),
-              onTap: () => context.push('/signals'),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.sensors_rounded,
+                title: 'Signals',
+                subtitle: 'AI trade ideas',
+                iconBgColor: const Color(0x1F34D399),
+                onTap: () => context.push('/signals'),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
