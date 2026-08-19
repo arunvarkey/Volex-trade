@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/design_system/vx_card.dart';
-import 'package:volex_terminal/ui/design_system/vx_health_score.dart';
 import 'package:volex_terminal/ui/design_system/vx_spacing.dart';
-import 'package:volex_terminal/ui/design_system/charts/vx_line_chart.dart';
-import 'package:volex_terminal/ui/design_system/charts/mock_analytics_data.dart';
 
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/chart_controller.dart';
-import 'package:volex_terminal/engine/terminal_settings_provider.dart';
+import 'package:volex_terminal/engine/execution_manager.dart';
 
 class OverviewTab extends StatelessWidget {
   final String strategyId;
@@ -17,31 +14,34 @@ class OverviewTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<TerminalSettingsProvider>();
-    // Mock performance series
-    final performanceSeries = MockAnalyticsData.generateEquityPoints(30);
+    final execution = context.watch<ExecutionManager>();
+    final openPositions = execution.openPositions
+        .where((p) => p.strategyId == null || p.strategyId == strategyId)
+        .toList(growable: false);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(VxSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Hero Section (Health + Key Stats)
-          Row(
-            children: [
-              const VxHealthScore(score: 94, size: 80),
-              const SizedBox(width: VxSpacing.lg),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildHeroMetric("NET PNL", "+\$4,250", VxColors.neonGreen),
-                    _buildHeroMetric("WIN RATE", "68%", VxColors.neonGreen),
-                    _buildHeroMetric("SHARPE", "2.4", VxColors.neonCyan),
-                  ],
+          // Performance is only ever shown from a real backtest result. This
+          // screen previously displayed invented figures — a health score of
+          // 94, "+$4,250" net PnL, a 68% win rate, a 2.4 Sharpe and a fake
+          // 30-day equity curve — presented as this strategy's own record.
+          VxCard(
+            title: VxText.subtitle("Performance", color: Colors.white),
+            child: const Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Center(
+                child: Text(
+                  'No performance data yet.\n\n'
+                  'Run this strategy through the Backtest Lab to see real '
+                  'return, win rate, drawdown and risk-adjusted ratios.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white38, height: 1.5),
                 ),
               ),
-            ],
+            ),
           ),
 
           if (strategyId == 'ghost_trend_v1') ...[
@@ -51,68 +51,43 @@ class OverviewTab extends StatelessWidget {
 
           const SizedBox(height: VxSpacing.lg),
 
-          // 2. Performance Chart
+          // Current positions — read from the execution engine, not invented.
           VxCard(
-            title: VxText.subtitle("PERFORMANCE (30D)", color: Colors.white),
-            child: SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: VxLineChart(
-                points: performanceSeries,
-                showGrid: true,
-              ),
-            ),
+            title: VxText.subtitle("Active Positions", color: Colors.white),
+            child: openPositions.isEmpty
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text("No open positions",
+                          style: TextStyle(color: Colors.white38)),
+                    ),
+                  )
+                : Column(
+                    children: [
+                      for (final p in openPositions)
+                        Padding(
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 6.0),
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                            children: [
+                              VxText.body(
+                                  '${p.symbol}  ${p.quantity.toStringAsFixed(4)}',
+                                  color: Colors.white70),
+                              VxText.monoBold(
+                                '${(p.unrealizedPnl ?? 0) >= 0 ? '+' : ''}'
+                                '\$${(p.unrealizedPnl ?? 0).toStringAsFixed(2)}',
+                                color: (p.unrealizedPnl ?? 0) >= 0
+                                    ? VxColors.neonGreen
+                                    : VxColors.neonRed,
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
           ),
-
-          const SizedBox(height: VxSpacing.lg),
-
-          // 3. Current Positions / Risk State
-          VxCard(
-            title: VxText.subtitle("ACTIVE POSITIONS", color: Colors.white),
-            child: const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: Text("No open positions",
-                    style: TextStyle(color: Colors.white38)),
-              ),
-            ),
-          ),
-
-          if (settings.isProMode) ...[
-            const SizedBox(height: VxSpacing.lg),
-            // 4. Execution Diagnostics (Pro Only)
-            VxCard(
-              title: VxText.subtitle("EXECUTION DIAGNOSTICS",
-                  color: VxColors.neonCyan),
-              description: "Real-time engine performance and fill metrics.",
-              child: Column(
-                children: [
-                  _buildDiagnosticRow(
-                      "Engine Latency", "12ms", VxColors.neonGreen),
-                  _buildDiagnosticRow(
-                      "Avg. Slippage", "0.4 bps", Colors.white70),
-                  _buildDiagnosticRow(
-                      "Fill Quality", "99.2%", VxColors.neonGreen),
-                  _buildDiagnosticRow("Queue Time", "4ms", Colors.white70),
-                  const Divider(color: Colors.white10, height: 24),
-                  _buildDiagnosticRow("Last Rejection", "None", Colors.white38),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDiagnosticRow(String label, String value, Color valueColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          VxText.body(label, color: Colors.white54),
-          VxText.monoBold(value, color: valueColor),
         ],
       ),
     );
