@@ -3,8 +3,8 @@ import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/features/legal/ui/legal_screen.dart';
 import 'package:volex_terminal/ui/screens/settings/security_settings_screen.dart';
 import 'package:volex_terminal/ui/screens/settings/risk_settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -59,17 +59,22 @@ class SettingsScreen extends StatelessWidget {
           _buildSectionHeader("Legal & Support"),
           _buildCpuTile(
             context,
-            title: "Privacy Policy",
+            title: "Privacy",
             icon: Icons.privacy_tip,
-            onTap: () =>
-                _launchUrl('https://volexterminal.com/privacy'), // Placeholder
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) =>
+                        const LegalScreen(doc: LegalDoc.privacy))),
           ),
           _buildCpuTile(
             context,
-            title: "Terms of Service",
+            title: "Terms of Use",
             icon: Icons.description,
-            onTap: () =>
-                _launchUrl('https://volexterminal.com/terms'), // Placeholder
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const LegalScreen(doc: LegalDoc.terms))),
           ),
           _buildCpuTile(
             context,
@@ -179,10 +184,4 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    }
-  }
 }
