@@ -77,20 +77,52 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget _buildBrowseTab() {
-    return _loading
-        ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _buildSectionHeader('Featured Strategies'),
-              const SizedBox(height: 12),
-              _buildFeaturedCarousel(),
-              const SizedBox(height: 24),
-              _buildSectionHeader('Top Rated'),
-              const SizedBox(height: 12),
-              ..._featured.map((s) => _buildStrategyCard(s)),
-            ],
-          );
+    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_featured.isEmpty) return _buildEmptyState();
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _buildSectionHeader('Featured Strategies'),
+        const SizedBox(height: 12),
+        _buildFeaturedCarousel(),
+        const SizedBox(height: 24),
+        _buildSectionHeader('Top Rated'),
+        const SizedBox(height: 12),
+        ..._featured.map((s) => _buildStrategyCard(s)),
+      ],
+    );
+  }
+
+  /// Shown until a real strategy has been published. The marketplace is no
+  /// longer seeded with invented listings and invented performance.
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.storefront_outlined,
+                size: 44, color: VxColors.textTertiary),
+            const SizedBox(height: 16),
+            Text(
+              'No strategies published yet',
+              style: VxTypography.h3,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Build a strategy in the Simulator, backtest it, then publish it '
+              'here. Listings show only real, user-published strategies — no '
+              'invented performance figures.',
+              style: VxTypography.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSectionHeader(String title) {

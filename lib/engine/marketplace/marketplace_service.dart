@@ -14,54 +14,14 @@ import '../../domain/order.dart'; // For OrderSide
 ///
 /// Currently uses MOCK data for Phase 4B.
 class MarketplaceService extends ChangeNotifier {
-  final List<StrategyListing> _mockListings = [
-    StrategyListing.mock(
-      id: 'strat_001',
-      title: 'Golden Cross Alpha',
-      category: StrategyCategory.trendFollowing,
-    ),
-    StrategyListing.mock(
-      id: 'strat_002',
-      title: 'Volex AI Scalper',
-      category: StrategyCategory.aiExperimental,
-    ).copyWith(
-      title: 'Volex AI Scalper',
-      description:
-          'High-frequency scalping using LSTM models. Risky but high reward.',
-      monthlyPrice: 99.00,
-      tier: MarketplaceTier.premium,
-      totalReturn: 312.5,
-      winRate: 0.58,
-      rating: 4.5,
-    ),
-    StrategyListing.mock(
-      id: 'strat_003',
-      title: 'Safe Harbor Yield',
-      category: StrategyCategory.arbitrage,
-    ).copyWith(
-      title: 'Safe Harbor Yield',
-      description: 'Stable coin arbitrage across exchanges. Low risk.',
-      monthlyPrice: 9.99,
-      tier: MarketplaceTier.basic,
-      totalReturn: 12.4,
-      winRate: 0.98,
-      rating: 4.9,
-    ),
-    StrategyListing.mock(
-      id: 'strat_004',
-      title: 'CryptoBreakout V2',
-      category: StrategyCategory.breakout,
-    ).copyWith(
-      title: 'CryptoBreakout V2',
-      description:
-          'Monitors consolidation zones and enters on high volume breakouts.',
-      monthlyPrice: 49.99,
-      tier: MarketplaceTier.premium,
-      totalReturn: 88.2,
-      winRate: 0.45, // Lower win rate but high R:R
-      rating: 4.2,
-    ),
-  ];
+  /// Published strategy listings.
+  ///
+  /// Intentionally starts EMPTY. This used to be seeded with invented
+  /// strategies carrying invented performance ("+312.5% return", "98% win
+  /// rate", "$99/month") presented as though they were real products for sale
+  /// — indefensible in a tool whose whole promise is honest numbers. The
+  /// marketplace now shows only strategies a user has actually published.
+  final List<StrategyListing> _mockListings = [];
 
   final Set<String> _subscriptions = {}; // Set of Strategy IDs
 
@@ -140,7 +100,12 @@ class MarketplaceService extends ChangeNotifier {
       // Pick a random strategy to emit a signal
       // In reality, this would come from a websocket
       final randomStratId = _subscriptions.toList().first;
-      final strat = _mockListings.firstWhere((s) => s.id == randomStratId);
+      // The listing may no longer exist (nothing is seeded any more), so bail
+      // out rather than throwing inside a periodic timer.
+      final matches =
+          _mockListings.where((s) => s.id == randomStratId).toList();
+      if (matches.isEmpty) return;
+      final strat = matches.first;
 
       final signal = TradeSignal(
         timestamp: DateTime.now(),
