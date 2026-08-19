@@ -137,6 +137,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                     ],
                   ),
                   IconButton(
+                    tooltip: 'Close',
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close, color: VxColors.neutral500),
                   ),

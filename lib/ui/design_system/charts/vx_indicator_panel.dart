@@ -349,6 +349,7 @@ class _IndicatorTile extends StatelessWidget {
                 ),
                 if (indicator.isEnabled)
                   IconButton(
+                    tooltip: 'Settings',
                     icon: const Icon(Icons.settings, size: 16),
                     color: Colors.white38,
                     onPressed: onSettings,

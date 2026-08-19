@@ -59,6 +59,7 @@ class VxToast extends StatelessWidget {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'Close',
                     icon: const Icon(Icons.close,
                         color: Colors.white38, size: 18),
                     onPressed: onDismiss,

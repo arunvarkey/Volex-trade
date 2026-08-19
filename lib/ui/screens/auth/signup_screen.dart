@@ -33,6 +33,7 @@ class _SignupScreenState extends State<SignupScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
+          tooltip: 'Back',
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/onboarding'),
         ),
@@ -130,6 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip: _obscurePassword ? 'Show password' : 'Hide password',
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off
@@ -168,6 +170,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     labelText: 'Confirm Password',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip: _obscureConfirmPassword ? 'Show password' : 'Hide password',
                       icon: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility_off

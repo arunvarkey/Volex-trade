@@ -29,6 +29,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
+          tooltip: 'Close',
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),

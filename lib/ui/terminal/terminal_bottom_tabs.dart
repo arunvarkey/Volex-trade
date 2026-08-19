@@ -110,6 +110,7 @@ class TerminalBottomTabs extends StatelessWidget {
                           : VxColors.neonRed,
                       fontSize: 10)),
               trailing: IconButton(
+                tooltip: 'Close',
                 icon: const Icon(Icons.close, size: 16, color: Colors.white54),
                 onPressed: () {
                   final symbolInfo = SymbolRegistry.supportedSymbols.firstWhere(

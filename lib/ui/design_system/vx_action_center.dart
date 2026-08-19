@@ -1169,6 +1169,7 @@ class _VxSymbolSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
+        tooltip: 'Back',
         icon: const Icon(Icons.arrow_back),
         onPressed: () => close(context, ''),
       );

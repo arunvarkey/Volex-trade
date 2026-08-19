@@ -54,6 +54,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
         actions: [
           if (count < limit)
             IconButton(
+              tooltip: 'Add',
               icon: const Icon(Icons.add, color: VxColors.neonGreen),
               onPressed: () => context
                   .push('/simulator/templates')
@@ -156,6 +157,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                 ),
               ),
               IconButton(
+                tooltip: 'Delete',
                 icon: const Icon(Icons.delete_outline, color: VxColors.neonRed),
                 onPressed: () => _confirmDelete(strategy),
               ),

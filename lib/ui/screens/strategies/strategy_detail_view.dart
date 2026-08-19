@@ -33,6 +33,7 @@ class StrategyDetailView extends StatelessWidget {
                 title: VxText.subtitle("STRATEGY: ${strategy.name}",
                     overflow: TextOverflow.ellipsis),
                 leading: IconButton(
+                  tooltip: 'Back',
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
                 ),

@@ -90,6 +90,7 @@ def on_candle(candle):
       appBar: AppBar(
         backgroundColor: VxColors.surface,
         leading: IconButton(
+          tooltip: 'Close',
           icon: const Icon(Icons.close, color: Colors.white70),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -105,6 +106,7 @@ def on_candle(candle):
         ),
         actions: [
           IconButton(
+            tooltip: 'Save',
             icon: const Icon(Icons.save, color: VxColors.neonCyan),
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();

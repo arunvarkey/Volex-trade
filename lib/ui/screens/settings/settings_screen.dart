@@ -24,6 +24,7 @@ class SettingsScreen extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w700)),
         backgroundColor: Colors.transparent,
         leading: IconButton(
+          tooltip: 'Back',
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),

@@ -46,6 +46,7 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
         backgroundColor: Colors.transparent,
         title: const Text('Connect Exchange'),
         leading: IconButton(
+          tooltip: 'Close',
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
         ),
@@ -137,6 +138,7 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
                     borderSide: BorderSide.none,
                   ),
                   suffixIcon: IconButton(
+                    tooltip: 'Hide password',
                     icon: Icon(
                       _obscureSecret ? Icons.visibility : Icons.visibility_off,
                       color: Colors.white38,

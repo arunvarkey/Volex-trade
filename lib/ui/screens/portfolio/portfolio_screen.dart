@@ -65,6 +65,7 @@ class PortfolioScreen extends StatelessWidget {
       ),
       actions: [
         IconButton(
+          tooltip: 'Refresh',
           onPressed: () => em.syncLiveBalance(),
           icon: const Icon(Icons.refresh, color: VxColors.neonCyan, size: 20),
         ),
