@@ -141,6 +141,11 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   ExchangeService get exchange => _exchange;
 
   /// Standard interface method for placing orders.
+  ///
+  /// The protective levels used to be dropped here: the trade ticket sets
+  /// stopLossPrice/takeProfitPrice on the Order, and this forwarded
+  /// everything except those two, so a position opened through this path
+  /// never carried a stop no matter what the user chose on the ticket.
   @override
   Future<OrderResult?> placeOrder(Order order) async {
     return await placeMarketOrder(
@@ -149,6 +154,8 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       quantity: order.quantity,
       strategyId: order.strategyId,
       currentPrice: order.price,
+      stopLoss: order.stopLossPrice,
+      takeProfit: order.takeProfitPrice,
     );
   }
 
@@ -255,14 +262,46 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         wsStreamName: "${symbol.toLowerCase()}@kline_1m",
       );
 
-      final order = await _exchange.placeOrder(
+      // The paper simulator prices its fill (and the slippage on it) from the
+      // last price it was told about — and nothing ever told it, so
+      // _lastPrice sat at 0.0 and every market fill came back at zero. Hand
+      // it the price the caller validated against.
+      //
+      // This is done here rather than by passing `price:` to placeOrder,
+      // because on a real exchange that parameter means "limit price": a mark
+      // price sent that way would turn a market order into a limit order.
+      final exchange = _exchange;
+      if (exchange is PaperExchangeClient) {
+        exchange.updatePrice(executionPrice);
+      }
+
+      final filled = await _exchange.placeOrder(
         symbol: symbolInfo,
         side: side == OrderSide.buy ? "BUY" : "SELL",
         quantity: quantity,
       );
 
-      // We no longer need to manually construct the Order object from a Map response.
-      // The exchange adapter now returns a fully formed Order object.
+      // The exchange builds its own Order and knows nothing about the
+      // ticket's protective levels, so they have to be carried across —
+      // otherwise the stop-loss and take-profit the user set are silently
+      // dropped on the way to the position.
+      //
+      // The fill price is also belt-and-braces guarded: anything that comes
+      // back non-positive falls back to the validated price rather than
+      // opening a position at an entry of zero, which would report the whole
+      // mark price as profit.
+      final fillPrice = resolveFillPrice(
+        reported: filled.filledPrice ?? filled.price,
+        validated: executionPrice,
+      );
+
+      final order = filled.copyWith(
+        price: fillPrice,
+        filledPrice: fillPrice,
+        stopLossPrice: stopLoss,
+        takeProfitPrice: takeProfit,
+        strategyId: strategyId,
+      );
 
       _orders.add(order);
       _updatePositionAfterTrade(order);
@@ -583,6 +622,23 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   Future<void> reconcile() async {
     AppLogger.info("EXEC: Reconciling with exchange...");
     await syncLiveBalance();
+  }
+
+  /// Decide the price a position actually opens at.
+  ///
+  /// [reported] is whatever the exchange said it filled at; [validated] is the
+  /// price the caller checked risk against and the user saw on the ticket.
+  ///
+  /// A fill that comes back as zero, negative or non-finite is not a fill at
+  /// any price — opening a position at an entry of 0 makes the entire mark
+  /// price look like profit, and an entry of NaN poisons every P&L sum that
+  /// touches it. In those cases the validated price is the honest answer.
+  static double resolveFillPrice({
+    required double reported,
+    required double validated,
+  }) {
+    if (reported > 0 && reported.isFinite) return reported;
+    return validated;
   }
 
   /// Taker fee charged on every simulated fill, as a fraction of notional.
