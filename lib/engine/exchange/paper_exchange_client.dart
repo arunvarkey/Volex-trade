@@ -44,22 +44,21 @@ class PaperExchangeClient implements ExchangeService {
         ? executionPrice * (1 + slippagePercent)
         : executionPrice * (1 - slippagePercent);
 
-    final cost = quantity * finalPrice;
-
-    // 3. Update Virtual Balances
-    if (side == "BUY") {
-      if (_balances['USDT']! < cost) {
-        throw Exception("Insufficient virtual USDT");
-      }
-      _balances['USDT'] = _balances['USDT']! - cost;
-      _balances['BTC'] = _balances['BTC']! + quantity;
-    } else {
-      if (_balances['BTC']! < quantity) {
-        throw Exception("Insufficient virtual BTC");
-      }
-      _balances['BTC'] = _balances['BTC']! - quantity;
-      _balances['USDT'] = _balances['USDT']! + cost;
-    }
+    // This used to keep a spot ledger here: debit USDT and credit 'BTC' on a
+    // buy, and on a sell require that much 'BTC' to already be held. Two
+    // things were wrong with it.
+    //
+    // The asset was the literal string 'BTC' whatever the symbol, so an ETH
+    // trade moved the BTC balance.
+    //
+    // Worse, the BTC balance starts at zero, so *every short threw*
+    // "Insufficient virtual BTC" — you could not open a sell position in the
+    // simulator at all, in an app whose Academy teaches shorting and whose
+    // signal feed emits sell setups. A spot cash account cannot express a
+    // short, and this is not one: ExecutionManager holds the ledger, tracks
+    // long and short positions, computes P&L by direction, charges the fee
+    // and runs the risk checks. This client's job is to model latency and
+    // slippage and hand back a fill.
 
     AppLogger.info(
         "PAPER-LIVE: Order Filled. Side: $side, Qty: $quantity, Price: $finalPrice (Slippage: ${(slippagePercent * 100).toStringAsFixed(3)}%)");
