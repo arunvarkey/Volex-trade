@@ -562,28 +562,52 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     await _exchange.cancelOrder(orderId, symbol);
   }
 
+  /// Positions with a close already in flight.
+  ///
+  /// Closing is asynchronous — the simulated exchange takes 100-300ms — but
+  /// the position stays open until the offsetting order comes back. Anything
+  /// that re-checks in that window sees an open position and asks again, and
+  /// two offsetting orders do not close a position twice: the second one
+  /// opens an equal position the other way round.
+  ///
+  /// Two ways in. Protective exits run on every price update, and prices now
+  /// arrive from both the watchlist poll and the candle stream. And a user
+  /// double-tapping Close is the same thing by hand.
+  final Set<String> _closingPositionIds = {};
+
   /// Closes an open position by placing an offsetting market order.
   @override
   Future<void> closeOrder(String orderId, [double? currentPrice]) async {
+    if (_closingPositionIds.contains(orderId)) return;
+
     final pos = _positions.firstWhere(
       (p) => p.id == orderId,
       orElse: () => throw Exception("Position not found"),
     );
 
-    // placeMarketOrder requires a mark price; derive it from the position's
-    // last-known unrealized PnL when the caller doesn't supply one, so a
-    // manual "Close" always works instead of throwing.
-    final mark = currentPrice ?? _positionMarkPrice(pos);
+    if (!pos.isOpen) return;
+    _closingPositionIds.add(orderId);
 
-    await placeMarketOrder(
-      symbol: pos.symbol,
-      side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
-      quantity: pos.quantity,
-      currentPrice: mark,
-      // Exiting is always a reduction, so it is not blocked by the daily loss
-      // limit. See the note in placeMarketOrder.
-      isReduction: true,
-    );
+    try {
+      // placeMarketOrder requires a mark price; derive it from the position's
+      // last-known unrealized PnL when the caller doesn't supply one, so a
+      // manual "Close" always works instead of throwing.
+      final mark = currentPrice ?? _positionMarkPrice(pos);
+
+      await placeMarketOrder(
+        symbol: pos.symbol,
+        side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
+        quantity: pos.quantity,
+        currentPrice: mark,
+        // Exiting is always a reduction, so it is not blocked by the daily
+        // loss limit. See the note in placeMarketOrder.
+        isReduction: true,
+      );
+    } finally {
+      // Released even if the order threw, so a failed close can be retried
+      // rather than leaving the position permanently unclosable.
+      _closingPositionIds.remove(orderId);
+    }
   }
 
   /// Best-estimate current price of an open position, backed out from its
