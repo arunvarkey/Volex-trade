@@ -18,10 +18,10 @@ void main() {
 
   late ExecutionManager manager;
 
-  setUp(() {
+  setUp(() async {
     // Placing a trade awards XP, which persists through SharedPreferences.
     SharedPreferences.setMockInitialValues({});
-    setupServiceLocator();
+    await setupServiceLocator();
     manager = ExecutionManager();
   });
 

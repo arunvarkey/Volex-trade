@@ -51,7 +51,15 @@ class MockAuthService extends Mock implements AuthService {}
 
 class MockNotificationBus extends Mock implements NotificationBus {}
 
-void setupServiceLocator({
+/// Reset the service locator and register test doubles.
+///
+/// Must be awaited. GetIt.reset() is asynchronous, and this used to call it
+/// without awaiting, so the reset could land *after* the registrations below
+/// and quietly unregister everything. Tests that never hit an async gap got
+/// away with it; one that awaited mid-test then failed with "NotificationBus
+/// is not registered" from a service that had been registered correctly a
+/// moment earlier.
+Future<void> setupServiceLocator({
   IMarketDataRepository? marketRepo,
   ExecutionManager? execManager,
   RiskManager? riskManager,
@@ -61,7 +69,7 @@ void setupServiceLocator({
   NotificationBus? notificationBus,
 }) {
   final getIt = GetIt.instance;
-  getIt.reset();
+  await getIt.reset();
 
   // Create mocks
   final mockedMarketRepo = marketRepo ?? MockIMarketDataRepository();

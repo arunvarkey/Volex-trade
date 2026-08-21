@@ -22,10 +22,10 @@ void main() {
 
   late RiskManager risk;
 
-  setUp(() {
+  setUp(() async {
     // The reject path publishes to the notification bus, which resolves
     // through the service locator.
-    setupServiceLocator();
+    await setupServiceLocator();
     risk = RiskManager.inject();
   });
 
