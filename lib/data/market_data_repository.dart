@@ -69,6 +69,7 @@ class MarketDataRepository implements IMarketDataRepository {
   /// [updatesStream] otherwise has no way to know which market a tick belongs
   /// to — and applying one market's price to another's position is not a
   /// small error.
+  @override
   String get currentSymbol => _currentSymbol.toUpperCase();
   String _currentInterval = "1m";
 
