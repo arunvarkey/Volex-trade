@@ -49,8 +49,10 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^18.0.1
 
-  flutter_background_service: ^5.0.0
-  
+  # flutter_background_service was removed: every Dart call site was commented
+  # out, so no background worker ever ran, but the plugin's manifest still
+  # merged in a foreground service and its permissions.
+
   # Utils
   collection: ^1.18.0
   equatable: ^2.0.7
