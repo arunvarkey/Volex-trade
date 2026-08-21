@@ -67,7 +67,7 @@ Future<void> setupServiceLocator({
   UserModeService? userModeService,
   AuthService? authService,
   NotificationBus? notificationBus,
-}) {
+}) async {
   final getIt = GetIt.instance;
   await getIt.reset();
 
