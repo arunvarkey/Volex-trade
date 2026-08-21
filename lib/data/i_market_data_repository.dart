@@ -5,6 +5,14 @@ import 'data_status.dart';
 
 abstract class IMarketDataRepository {
   Stream<Candle> get updatesStream;
+
+  /// The symbol [updatesStream] is currently delivering, uppercased.
+  ///
+  /// Candles carry no symbol, so without this a listener cannot tell which
+  /// market a tick belongs to — and pricing one market's position with
+  /// another's tick is not a small error.
+  String get currentSymbol;
+
   Stream<Map<String, MiniTicker>> get watchlistStream;
   Stream<DataStatus> get statusStream;
   Stream<bool> get connectionStatusStream;

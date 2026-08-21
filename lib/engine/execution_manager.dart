@@ -148,6 +148,24 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   /// never carried a stop no matter what the user chose on the ticket.
   @override
   Future<OrderResult?> placeOrder(Order order) async {
+    // Route on the order's own type. This used to send everything to
+    // placeMarketOrder, so a limit order from the ticket filled instantly at
+    // whatever limit price was typed — you could "buy" far below the market
+    // and be filled on the spot — while the confirmation still read "Limit
+    // order placed". The resting-order machinery (_checkPendingOrders) was
+    // already there and simply never reached.
+    if (order.type == OrderType.limit) {
+      return await placeLimitOrder(
+        symbol: order.symbol,
+        side: order.side,
+        quantity: order.quantity,
+        limitPrice: order.price,
+        strategyId: order.strategyId,
+        stopLoss: order.stopLossPrice,
+        takeProfit: order.takeProfitPrice,
+      );
+    }
+
     return await placeMarketOrder(
       symbol: order.symbol,
       side: order.side,
@@ -337,12 +355,30 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     required double quantity,
     required double limitPrice,
     String? strategyId,
+    double? stopLoss,
+    double? takeProfit,
   }) async {
     _isExecuting = true;
     notifyListeners();
 
     try {
-      // Create a pending order instead of immediate market execution
+      // Limit orders used to skip risk validation entirely — only the market
+      // path checked — so an order the risk manager would have rejected could
+      // be rested and later filled without ever being examined.
+      final isValid = _riskManager.validateOrder(
+        quantity: quantity,
+        priceUsdt: limitPrice,
+        strategyId: strategyId,
+        isLive: isLiveMode,
+      );
+
+      if (!isValid) {
+        throw Exception("Risk Validation Failed.");
+      }
+
+      // Create a pending order instead of immediate market execution.
+      // The protective levels ride along on the resting order so they are
+      // still attached when it fills (see _fillOrderLocal).
       final order = Order(
         id: const Uuid().v4(),
         symbol: symbol,
@@ -351,6 +387,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         quantity: quantity,
         price: limitPrice,
         status: OrderStatus.open, // Status remains 'open' or 'pending'
+        strategyId: strategyId,
+        stopLossPrice: stopLoss,
+        takeProfitPrice: takeProfit,
         isLive: isLiveMode,
       );
 
@@ -374,7 +413,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     bool changed = false;
 
     // 1. Check pending limit orders (Task 38)
-    _checkPendingOrders(currentPrice);
+    _checkPendingOrders(null, currentPrice);
 
     // 2. Update existing positions
     for (final pos in _positions) {
@@ -443,13 +482,22 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         }
       }
     }
+    _checkPendingOrders(symbol, currentPrice);
     _checkProtectiveExits(symbol, currentPrice);
     if (changed) notifyListeners();
   }
 
-  void _checkPendingOrders(double currentPrice) {
+  /// Fill any resting limit order that [currentPrice] has crossed.
+  ///
+  /// [symbol] scopes the check to one market. It used to be unscoped, priced
+  /// off whichever market the chart happened to be on, so a sell limit resting
+  /// at 2000 would fill the instant *any* symbol printed above 2000.
+  void _checkPendingOrders(String? symbol, double currentPrice) {
     final pending = _orders
-        .where((o) => o.status == OrderStatus.open && o.type == OrderType.limit)
+        .where((o) =>
+            o.status == OrderStatus.open &&
+            o.type == OrderType.limit &&
+            (symbol == null || o.symbol == symbol))
         .toList();
 
     for (final order in pending) {

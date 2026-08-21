@@ -62,6 +62,14 @@ class MarketDataRepository implements IMarketDataRepository {
 
   // Track current connected symbol and interval
   String _currentSymbol = "btcusdt";
+
+  /// The symbol the live candle stream is currently connected to, uppercased.
+  ///
+  /// Exposed because candles carry no symbol of their own, so a listener on
+  /// [updatesStream] otherwise has no way to know which market a tick belongs
+  /// to — and applying one market's price to another's position is not a
+  /// small error.
+  String get currentSymbol => _currentSymbol.toUpperCase();
   String _currentInterval = "1m";
 
   // Connection State
