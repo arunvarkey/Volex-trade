@@ -101,7 +101,11 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
     final balance = context.watch<ExecutionManager>().balance;
     final qty = double.tryParse(_amountController.text) ?? 0.0;
     final cost = qty * _effectivePrice;
-    final insufficient = _isBuy && qty > 0 && cost > balance;
+    // The simulator charges a taker fee on every fill, so the affordability
+    // check has to include it — otherwise a "Max" buy would overdraw by
+    // exactly the fee.
+    final fee = ExecutionManager.feeFor(qty, _effectivePrice);
+    final insufficient = _isBuy && qty > 0 && (cost + fee) > balance;
 
     // Glassmorphism wrapper
     return ClipRRect(
@@ -239,6 +243,17 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                   VxText.caption('Balance  \$${balance.toStringAsFixed(2)}'),
                 ],
               ),
+              // Fees are charged on entry and again on exit, and a trader who
+              // cannot see them is being taught that they do not exist.
+              if (qty > 0) ...[
+                const SizedBox(height: 4),
+                VxText.caption(
+                  'Fee  ≈ \$${fee.toStringAsFixed(2)} per fill '
+                  '(${(ExecutionManager.takerFeeRate * 100).toStringAsFixed(3)}%) '
+                  '· round trip ≈ \$${(fee * 2).toStringAsFixed(2)}',
+                  color: VxColors.textTertiary,
+                ),
+              ],
               const SizedBox(height: 12),
 
               // Quick-size buttons (fraction of what the balance can buy)
@@ -542,8 +557,11 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       onTap: () {
         HapticFeedback.selectionClick();
         final balance = context.read<ExecutionManager>().balance;
-        final affordable =
-            _effectivePrice > 0 ? balance / _effectivePrice : 0.0;
+        // Leave room for the fee, so Max is actually affordable rather than
+        // one fee short.
+        final unitCost =
+            _effectivePrice * (1 + ExecutionManager.takerFeeRate);
+        final affordable = unitCost > 0 ? balance / unitCost : 0.0;
         setState(() {
           _amountController.text = (affordable * pct).toStringAsFixed(4);
         });

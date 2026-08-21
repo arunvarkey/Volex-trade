@@ -585,10 +585,43 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     await syncLiveBalance();
   }
 
+  /// Taker fee charged on every simulated fill, as a fraction of notional.
+  ///
+  /// 0.075% — the same rate the backtest engine models, deliberately. The
+  /// paper simulator used to fill for free while backtests charged fees and
+  /// slippage, so the same strategy looked better traded by hand than it did
+  /// in its own backtest. That gap teaches the single most expensive lesson a
+  /// new trader can learn wrong: that costs do not matter. It especially
+  /// flatters high-frequency behaviour — the overtrading this app's own
+  /// guardian warns about — because free execution is exactly what makes
+  /// churning look viable.
+  static const double takerFeeRate = 0.00075;
+
+  /// The fee on a fill of [quantity] at [price].
+  static double feeFor(double quantity, double price) {
+    final notional = (quantity * price).abs();
+    if (notional <= 0 || !notional.isFinite) return 0;
+    return notional * takerFeeRate;
+  }
+
+  /// Debit a fill's fee from whichever balance is in play.
+  void _chargeFee(double quantity, double price) {
+    final fee = feeFor(quantity, price);
+    if (fee <= 0) return;
+    if (isLiveMode) {
+      _liveBalance -= fee;
+    } else {
+      _paperBalance -= fee;
+    }
+  }
+
   // Helper Methods
   void _updatePositionAfterTrade(Order order) {
     final index =
         _positions.indexWhere((p) => p.symbol == order.symbol && p.isOpen);
+
+    // Every fill costs something, whichever branch below handles it.
+    _chargeFee(order.quantity, order.filledPrice ?? order.price);
 
     if (index == -1) {
       // New position
