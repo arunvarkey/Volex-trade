@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:volex_terminal/services/risk_state_sync_service.dart';
 import 'package:volex_terminal/core/service_locator.dart';
@@ -43,16 +44,31 @@ class RiskManager {
     final _ = RiskManager._internal();
     return getIt<RiskManager>();
   }
-  RiskManager._internal();
+  RiskManager._internal() : _persistence = null;
 
   // Registration: getIt.registerLazySingleton(() => RiskManager._internal());
 
-  RiskManager.inject({PersistenceService? persistence});
+  RiskManager.inject({PersistenceService? persistence})
+      : _persistence = persistence;
+
+  /// Local storage for the day's risk state.
+  ///
+  /// This was accepted by the constructor and thrown away. The only place the
+  /// daily loss and the lockout were kept was RiskStateSyncService, which
+  /// needs Firebase and no-ops without it — so on the current build, force
+  /// quitting the app cleared your lockout and reset the day's losses to
+  /// zero. A discipline control you escape by restarting teaches the opposite
+  /// of discipline, in an app that warns users about revenge trading by name.
+  final PersistenceService? _persistence;
+
+  static const String _stateKey = 'risk_daily_state_v1';
 
   /// Initializes the manager, loads local limits, and syncs with cloud state.
   Future<void> initialize() async {
-    // Load limits from persistence if available
     AppLogger.info("RISK: Manager initializing...");
+
+    // Local state first, so the lockout holds on a build with no Firebase.
+    _restoreLocalState();
 
     // Initialize Cloud Sync
     await RiskStateSyncService.instance.initialize();
@@ -75,6 +91,64 @@ class RiskManager {
     } else {
       AppLogger.info("RISK: No remote state found or sync disabled.");
     }
+  }
+
+  /// Reload today's loss and lockout, if the saved state is from today.
+  ///
+  /// Nothing resets the daily loss at midnight — [reset] is the only thing
+  /// that clears it — so the stored date is what rolls the day over. State
+  /// from an earlier day is discarded rather than carried forward, which is
+  /// what "daily" has to mean.
+  void _restoreLocalState() {
+    final store = _persistence;
+    if (store == null) return;
+
+    try {
+      final raw = store.getString(_stateKey);
+      if (raw == null || raw.isEmpty) return;
+
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      final savedDay = data['day'] as String?;
+      if (savedDay != _today()) {
+        AppLogger.info("RISK: Saved state is from $savedDay — new day, "
+            "starting clean.");
+        return;
+      }
+
+      _currentDailyLoss =
+          (data['currentDailyLoss'] as num?)?.toDouble() ?? 0.0;
+      _isEmergencyStopActive = data['isEmergencyStopActive'] == true;
+      if (_isEmergencyStopActive) _safetyController.add(true);
+
+      AppLogger.info("RISK: Restored today's loss "
+          "\$$_currentDailyLoss, locked: $_isEmergencyStopActive");
+    } catch (e) {
+      AppLogger.error("RISK: Could not restore local state", e);
+    }
+  }
+
+  void _persistLocalState() {
+    final store = _persistence;
+    if (store == null) return;
+
+    try {
+      unawaited(store.setString(
+        _stateKey,
+        jsonEncode({
+          'day': _today(),
+          'currentDailyLoss': _currentDailyLoss,
+          'isEmergencyStopActive': _isEmergencyStopActive,
+        }),
+      ));
+    } catch (e) {
+      AppLogger.error("RISK: Could not save local state", e);
+    }
+  }
+
+  /// Local calendar day, used to decide when the daily loss rolls over.
+  static String _today() {
+    final now = DateTime.now();
+    return "${now.year}-${now.month}-${now.day}";
   }
 
   NotificationBus get _bus => NotificationBus();
@@ -171,7 +245,7 @@ class RiskManager {
   void activateEmergencyStop() {
     _isEmergencyStopActive = true;
     _safetyController.add(true);
-    _syncToCloud();
+    _persistState();
     AppLogger.warning("RISK: EMERGENCY STOP ACTIVATED. Terminal locked.");
   }
 
@@ -184,7 +258,7 @@ class RiskManager {
     _dailyStrategyLoss.clear();
     _strategyOrderTimestamps.clear();
     _safetyController.add(false);
-    _syncToCloud();
+    _persistState();
     AppLogger.info("RISK: Global reset.");
   }
 
@@ -343,7 +417,7 @@ class RiskManager {
       if (_currentDailyLoss >= _dailyLossLimit) {
         activateEmergencyStop();
       }
-      _syncToCloud(); // Sync after loss update
+      _persistState(); // Save after loss update
     }
   }
 
@@ -353,6 +427,13 @@ class RiskManager {
   }
 
   // Helper to push state
+  /// Save locally and push to the cloud. Local first: it is the copy that
+  /// works without Firebase.
+  void _persistState() {
+    _persistLocalState();
+    _syncToCloud();
+  }
+
   void _syncToCloud() {
     RiskStateSyncService.instance.pushState(
       currentDailyLoss: _currentDailyLoss,
