@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:volex_terminal/domain/mini_ticker.dart';
 import 'package:volex_terminal/services/market_ticker_service.dart';
@@ -18,32 +17,52 @@ class VxTickerTape extends StatefulWidget {
   State<VxTickerTape> createState() => _VxTickerTapeState();
 }
 
-class _VxTickerTapeState extends State<VxTickerTape> {
+class _VxTickerTapeState extends State<VxTickerTape>
+    with SingleTickerProviderStateMixin {
   static const int _repeats = 40; // long enough that wrap-around is rare
+
+  /// Scroll speed. The old timer moved 0.8px every 40ms, so keep that pace.
+  static const double _pixelsPerSecond = 20;
+
   final MarketTickerService _service = MarketTickerService.instance;
   final ScrollController _controller = ScrollController();
-  Timer? _scrollTimer;
+
+  /// Driven by a vsync Ticker rather than a 40ms Timer.periodic.
+  ///
+  /// The timer produced a stepped 25fps crawl regardless of the display's
+  /// refresh rate, and it kept firing while the app was in the background.
+  /// A Ticker is frame-synced (so the tape is smooth on a 60 or 120Hz panel),
+  /// advances by real elapsed time rather than a fixed step, and is muted
+  /// automatically by the framework when the app is not visible.
+  Ticker? _ticker;
+  Duration _lastTick = Duration.zero;
 
   @override
   void initState() {
     super.initState();
     _service.start();
-    _scrollTimer = Timer.periodic(const Duration(milliseconds: 40), (_) {
-      if (!mounted || !_controller.hasClients) return;
-      final max = _controller.position.maxScrollExtent;
-      if (max <= 0) return;
-      final next = _controller.offset + 0.8;
-      if (next >= max) {
-        _controller.jumpTo(0);
-      } else {
-        _controller.jumpTo(next);
-      }
-    });
+    _ticker = createTicker(_onTick)..start();
+  }
+
+  void _onTick(Duration elapsed) {
+    final dt = (elapsed - _lastTick).inMicroseconds / Duration.microsecondsPerSecond;
+    _lastTick = elapsed;
+
+    // Skip the first frame (no previous timestamp) and any long gap, so the
+    // tape never lurches after the app has been paused.
+    if (dt <= 0 || dt > 0.5) return;
+    if (!_controller.hasClients) return;
+
+    final max = _controller.position.maxScrollExtent;
+    if (max <= 0) return;
+
+    final next = _controller.offset + _pixelsPerSecond * dt;
+    _controller.jumpTo(next >= max ? 0 : next);
   }
 
   @override
   void dispose() {
-    _scrollTimer?.cancel();
+    _ticker?.dispose();
     _controller.dispose();
     super.dispose();
   }

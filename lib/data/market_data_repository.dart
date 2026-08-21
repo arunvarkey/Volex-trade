@@ -70,6 +70,19 @@ class MarketDataRepository implements IMarketDataRepository {
   DateTime? _lastMsgTime;
   bool _usingPolling = false;
 
+  /// Our subscription to the socket client's broadcast stream.
+  ///
+  /// connectStream() used to call `_socketClient.stream.listen(...)` every
+  /// time without ever cancelling the previous subscription — and
+  /// switchStream() routes every symbol and timeframe change through it. So
+  /// each switch left another live listener behind, and every one of them ran
+  /// _isolateManager.processData() on every incoming tick. Browse ten symbols
+  /// and the app did ten times the parsing work per message, for good.
+  StreamSubscription<String>? _socketSubscription;
+
+  /// True while the app is backgrounded; see [pauseLiveFeeds].
+  bool _paused = false;
+
   // Synthetic live feed — keeps charts and tickers moving when the real
   // Binance feed is blocked/offline, so the app never looks frozen.
   Timer? _syntheticTimer;
@@ -298,13 +311,45 @@ class MarketDataRepository implements IMarketDataRepository {
         "wss://stream.binance.com:9443/ws/$symbol@kline_$interval";
     _socketClient.connect(urlOverride: streamUrl);
 
-    _socketClient.stream.listen((msg) {
+    // Replace, never stack: see the note on [_socketSubscription].
+    _socketSubscription?.cancel();
+    _socketSubscription = _socketClient.stream.listen((msg) {
       _lastMsgTime = DateTime.now();
       if (_usingPolling) {
         _stopPolling();
       }
       _isolateManager.processData(msg);
     });
+  }
+
+  /// Stop network and tick activity while the app is in the background.
+  ///
+  /// Without this the app kept a websocket open, polled Binance over REST
+  /// every 2 seconds, ran a 5-second watchdog and emitted synthetic ticks for
+  /// as long as it stayed in memory — burning battery and mobile data for
+  /// screens nobody was looking at.
+  void pauseLiveFeeds() {
+    if (_paused) return;
+    _paused = true;
+    _fallbackTimer?.cancel();
+    _pollingTimer?.cancel();
+    _syntheticTimer?.cancel();
+    _usingPolling = false;
+    _socketSubscription?.cancel();
+    _socketSubscription = null;
+    _socketClient.disconnect();
+    AppLogger.info("DATA: Live feeds paused (app backgrounded).");
+  }
+
+  /// Resume what [pauseLiveFeeds] stopped, on the symbol we were last on.
+  void resumeLiveFeeds() {
+    if (!_paused) return;
+    _paused = false;
+    _lastMsgTime = null;
+    connectStream(symbol: _currentSymbol, interval: _currentInterval);
+    _startWatchdog();
+    _startSyntheticFeed();
+    AppLogger.info("DATA: Live feeds resumed.");
   }
 
   void _stopPolling() {
@@ -337,6 +382,7 @@ class MarketDataRepository implements IMarketDataRepository {
 
   @override
   void dispose() {
+    _socketSubscription?.cancel();
     _socketClient.disconnect();
     _isolateManager.dispose();
     _updatesController.close();
