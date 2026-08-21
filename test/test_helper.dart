@@ -9,11 +9,39 @@ import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:get_it/get_it.dart';
 
 // Manual Mocks to avoid build_runner issues in this environment
-class MockIMarketDataRepository extends Mock implements IMarketDataRepository {}
+class MockIMarketDataRepository extends Mock implements IMarketDataRepository {
+  /// Same reasoning as [MockRiskManager.validateOrder]: currentSymbol returns
+  /// a non-nullable String, so leaving it to mockito's noSuchMethod would fail
+  /// with a null type error rather than a missing-stub message.
+  @override
+  String get currentSymbol => 'BTCUSDT';
+}
 
 class MockExecutionManager extends Mock implements ExecutionManager {}
 
-class MockRiskManager extends Mock implements RiskManager {}
+class MockRiskManager extends Mock implements RiskManager {
+  /// Approve orders by default.
+  ///
+  /// This is overridden directly rather than stubbed with `when(...)`, because
+  /// an unstubbed mockito mock returns null and validateOrder is declared to
+  /// return a non-nullable bool — so the `when(mock.validateOrder(...))` call
+  /// would itself blow up evaluating its own argument, before it could
+  /// register the stub.
+  ///
+  /// The effect of leaving it unstubbed was that any code path consulting the
+  /// risk manager died with "type 'Null' is not a subtype of type 'bool'"
+  /// instead of failing on its own merits. A test that wants a rejection
+  /// passes its own riskManager to [setupServiceLocator].
+  @override
+  bool validateOrder({
+    required double quantity,
+    required double priceUsdt,
+    String? strategyId,
+    bool isLive = false,
+    bool isReduction = false,
+  }) =>
+      true;
+}
 
 class MockStrategyEngine extends Mock implements StrategyEngine {}
 
@@ -63,6 +91,7 @@ void setupServiceLocator({
       _stubNotificationBus(mockedNotificationBus as MockNotificationBus);
     } catch (_) {}
   }
+
 }
 
 void _stubMarketRepo(MockIMarketDataRepository mock) {
