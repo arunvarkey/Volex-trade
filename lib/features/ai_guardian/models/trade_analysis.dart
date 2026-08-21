@@ -44,12 +44,27 @@ extension EmotionalStateExt on EmotionalState {
 class PatternWarning {
   final String name;
   final String description;
-  final double historicalWinRate;
+
+  /// The user's own win rate over [sampleSize] recent trades, as a
+  /// percentage, or null when there is not enough history to say.
+  ///
+  /// This replaces a `historicalWinRate` field that carried a hardcoded 5.0
+  /// or 15.0 depending on the pattern. The warning dialog printed it as
+  /// "Historical win rate: 5%" — an invented population statistic presented
+  /// as fact to someone in the middle of placing a trade. The guardian
+  /// already holds the user's real trade history, so it reports what that
+  /// history actually says instead.
+  final double? yourWinRate;
+
+  /// How many of the user's trades [yourWinRate] was computed over, so the
+  /// number is never shown without the sample behind it.
+  final int sampleSize;
 
   PatternWarning({
     required this.name,
     required this.description,
-    required this.historicalWinRate,
+    this.yourWinRate,
+    this.sampleSize = 0,
   });
 }
 

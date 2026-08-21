@@ -128,6 +128,9 @@ class AIGuardianService {
   ) {
     final patterns = <PatternWarning>[];
 
+    // The user's real win rate over the history we already have in hand.
+    final winRate = winRateFor(history);
+
     // PATTERN: Chasing losses
     final last5 = history.take(5).toList();
     if (last5.length == 5) {
@@ -138,7 +141,8 @@ class AIGuardianService {
         patterns.add(PatternWarning(
           name: 'Chasing Losses',
           description: 'You\'ve lost 5 trades in a row',
-          historicalWinRate: 5.0,
+          yourWinRate: winRate.rate,
+          sampleSize: winRate.sample,
         ));
       }
     }
@@ -154,11 +158,37 @@ class AIGuardianService {
       patterns.add(PatternWarning(
         name: 'Overtrading',
         description: 'You\'ve made $tradesLast24h trades in 24 hours',
-        historicalWinRate: 15.0,
+        yourWinRate: winRate.rate,
+        sampleSize: winRate.sample,
       ));
     }
 
     return patterns;
+  }
+
+  /// The user's win rate across [history], with the number of trades it was
+  /// actually computed over.
+  ///
+  /// The rate is null below a handful of trades: a "win rate" over two trades
+  /// is noise, and showing 0% or 100% off that would be worse than showing
+  /// nothing. Trades with no recorded P&L are excluded rather than counted as
+  /// losses, and the returned sample counts only what was included — quoting
+  /// a rate against a larger sample than it was measured on would be its own
+  /// small dishonesty.
+  static ({double? rate, int sample}) winRateFor(
+      List<Map<String, dynamic>> history) {
+    const minimumSample = 5;
+    final settled = history
+        .map((t) => (t['pnl'] as num?)?.toDouble())
+        .whereType<double>()
+        .toList();
+
+    if (settled.length < minimumSample) {
+      return (rate: null, sample: settled.length);
+    }
+
+    final wins = settled.where((pnl) => pnl > 0).length;
+    return (rate: (wins / settled.length) * 100, sample: settled.length);
   }
 
   /// Calculate risk score 0-100

@@ -286,22 +286,29 @@ class AIGuardianWarningDialog extends StatelessWidget {
             pattern.description,
             style: const TextStyle(color: VxColors.textPrimary, height: 1.4),
           ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: VxColors.neutral800,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              'Historical win rate: ${pattern.historicalWinRate.toStringAsFixed(0)}%',
-              style: const TextStyle(
-                color: VxColors.textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+          // Was "Historical win rate: 5%" from a hardcoded constant. Now the
+          // user's own rate over their own trades, with the sample size
+          // attached — and nothing at all when there isn't enough history to
+          // make the number mean something.
+          if (pattern.yourWinRate != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: VxColors.neutral800,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                'Your win rate: ${pattern.yourWinRate!.toStringAsFixed(0)}% '
+                'over your last ${pattern.sampleSize} trades',
+                style: const TextStyle(
+                  color: VxColors.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
