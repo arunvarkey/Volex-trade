@@ -99,11 +99,13 @@ class SettingsScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title.toUpperCase(),
-        style: GoogleFonts.jetBrainsMono(
+        // Section labels are UI text, not data — DM Sans like every other
+        // screen. Monospace is reserved for numbers.
+        style: GoogleFonts.dmSans(
           color: Colors.grey,
           fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
         ),
       ),
     );

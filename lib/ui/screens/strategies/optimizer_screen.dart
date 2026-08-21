@@ -241,8 +241,10 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                     _useRealData
                         ? "Loaded: Binance 1m History"
                         : "Loaded: Simulated Stream",
-                    style: GoogleFonts.jetBrainsMono(
-                        fontSize: 9, color: Colors.white38),
+                    // Descriptive label, not data — DM Sans, and 9pt was
+                    // below a comfortable reading size.
+                    style: GoogleFonts.dmSans(
+                        fontSize: 11, color: Colors.white38),
                   ),
                 ),
               ],

@@ -61,7 +61,7 @@ class LabScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: strategies
                       .where((s) => activeIds.contains(s.id))
-                      .map((s) => _buildActiveStrategyCard(s))
+                      .map((s) => _buildActiveStrategyCard(s, execution))
                       .toList(),
                 ),
               ),
@@ -296,7 +296,19 @@ class LabScreen extends StatelessWidget {
   }
 }
 
-Widget _buildActiveStrategyCard(Strategy strategy) {
+Widget _buildActiveStrategyCard(Strategy strategy, ExecutionManager execution) {
+  // Real P&L for this strategy's positions. This card used to print a
+  // hardcoded "+0.00%" in green regardless of what the strategy had actually
+  // done, with a comment noting the real value "would" be wired up.
+  double pnl = 0;
+  for (final p in execution.positions) {
+    if (p.strategyId != strategy.id) continue;
+    pnl += p.isOpen ? (p.unrealizedPnl ?? 0) : (p.realizedPnL ?? 0);
+  }
+  final hasPositions =
+      execution.positions.any((p) => p.strategyId == strategy.id);
+  final up = pnl >= 0;
+
   return VxHolographicCard(
     width: 160,
     margin: const EdgeInsets.only(right: 12),
@@ -325,13 +337,17 @@ Widget _buildActiveStrategyCard(Strategy strategy) {
         const Spacer(),
         Text(
           'P&L',
-          style:
-              VxTypography.caption.copyWith(fontSize: 7, color: Colors.white24),
+          style: VxTypography.caption
+              .copyWith(fontSize: 10, color: Colors.white24),
         ),
         Text(
-          "+0.00%", // Real PnL would link to ExecutionManager in real implementation
+          hasPositions
+              ? '${up ? '+' : ''}\$${pnl.toStringAsFixed(2)}'
+              : '—',
           style: VxTypography.price.copyWith(
-            color: VxColors.neonGreen,
+            color: !hasPositions
+                ? Colors.white38
+                : (up ? VxColors.neonGreen : VxColors.neonRed),
             fontSize: 12,
           ),
         ),
@@ -413,7 +429,7 @@ class _StrategyCard extends StatelessWidget {
                 statusText,
                 style: VxTypography.caption.copyWith(
                   color: statusColor,
-                  fontSize: 7,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
                 ),
               ),
