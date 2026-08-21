@@ -5,6 +5,13 @@ on:
     branches: [ "main", "master", "develop" ]
   pull_request:
     branches: [ "main", "master", "develop" ]
+  # Run on demand against any branch. Without this the APK lane only ran for
+  # pushes to the release branches and for open pull requests, so work on a
+  # feature branch with no PR open was checked by `flutter analyze` and
+  # `flutter test` alone — neither of which builds the Android app. Changes to
+  # the manifest, Gradle config or a native plugin could break the build and
+  # not be noticed until someone tried to install a build by hand.
+  workflow_dispatch:
 
 jobs:
   build:
