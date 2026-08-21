@@ -247,6 +247,10 @@ class ServiceLocator {
         exchange: exchangeService,
       );
       getIt.registerSingleton<ExecutionManager>(executionManager);
+      // Bring back the paper account saved on the last run — balance, open
+      // positions, resting orders and trade history. Guarded because a failed
+      // restore must never stop the app from booting.
+      await executionManager.restoreState();
       _log('EXEC: OK.');
 
       onProgress?.call('Initializing alert service...', 0.55);

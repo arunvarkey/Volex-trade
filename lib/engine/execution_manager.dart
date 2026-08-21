@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/domain/order.dart';
@@ -9,6 +10,7 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/engine/exchange/exchange_service.dart';
 import 'package:volex_terminal/engine/exchange/paper_exchange_client.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
+import 'package:volex_terminal/engine/persistence/persistence_service.dart';
 import 'package:volex_terminal/services/analytics_service.dart';
 import 'package:volex_terminal/engine/execution/i_execution_service.dart';
 import 'package:volex_terminal/features/academy/services/xp_service.dart';
@@ -67,11 +69,19 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   bool _isExecuting = false;
   String? _lastError;
 
+  /// Where the paper account is saved between launches.
+  ///
+  /// Optional so tests can build a manager with no storage behind it; when
+  /// null, saving and restoring are both no-ops.
+  final PersistenceService? _persistence;
+
   ExecutionManager({
     ExchangeService? exchange,
     RiskManager? riskManager,
+    PersistenceService? persistence,
   })  : _exchange = exchange ?? PaperExchangeClient(),
-        _riskManager = riskManager ?? RiskManager();
+        _riskManager = riskManager ?? RiskManager(),
+        _persistence = persistence;
 
   static ExecutionManager provide({
     required dynamic marketData,
@@ -82,6 +92,12 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     return ExecutionManager(
       riskManager: riskManager,
       exchange: exchange,
+      // This was accepted and dropped, along with marketData. Nothing about
+      // the paper account survived a restart: balance back to $100k, every
+      // position and order gone. For a simulator whose whole promise is
+      // practising over time and reviewing your record, that erased the
+      // record on every launch.
+      persistence: persistence is PersistenceService ? persistence : null,
     );
   }
 
@@ -332,6 +348,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
 
       _orders.add(order);
       _updatePositionAfterTrade(order);
+      _persist();
 
       // Placing a paper trade is a repeatable, XP-earning action.
       XpService.instance.addXp(XpService.tradeXp);
@@ -403,6 +420,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       );
 
       _orders.add(order);
+      // A resting order has to survive a restart too, or the user comes back
+      // to find a limit they placed has quietly vanished.
+      _persist();
 
       AnalyticsService.instance.logEvent('limit_order_placed', parameters: {
         'symbol': symbol,
@@ -535,6 +555,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         filledAt: DateTime.now(),
       );
       _updatePositionAfterTrade(_orders[index]);
+      _persist();
       notifyListeners();
     }
   }
@@ -679,6 +700,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     _paperBalance = 100000.0;
     _liveBalance = 0.0;
     _isReadOnly = false;
+    _persist();
     notifyListeners();
   }
 
@@ -706,6 +728,82 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   Future<void> reconcile() async {
     AppLogger.info("EXEC: Reconciling with exchange...");
     await syncLiveBalance();
+  }
+
+  /// Storage key for the saved paper account.
+  static const String _stateKey = 'exec_paper_state_v1';
+
+  /// How many orders to keep. The account is stored as a single JSON blob in
+  /// shared preferences, so the history cannot grow without bound.
+  static const int _maxStoredOrders = 200;
+
+  /// Reload the paper account saved by [_persist].
+  ///
+  /// Never throws: a blob written by an older build, or a corrupted one, must
+  /// not stop the app from starting. In that case the account simply begins
+  /// fresh, which is what happened on every launch before this existed.
+  Future<void> restoreState() async {
+    final store = _persistence;
+    if (store == null) return;
+
+    try {
+      final raw = store.getString(_stateKey);
+      if (raw == null || raw.isEmpty) return;
+
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+
+      _paperBalance =
+          (data['paperBalance'] as num?)?.toDouble() ?? _paperBalance;
+
+      final positions = (data['positions'] as List?) ?? const [];
+      _positions
+        ..clear()
+        ..addAll(positions
+            .whereType<Map<String, dynamic>>()
+            .map(Position.fromJson));
+
+      final orders = (data['orders'] as List?) ?? const [];
+      _orders
+        ..clear()
+        ..addAll(orders.whereType<Map<String, dynamic>>().map(Order.fromJson));
+
+      AppLogger.info(
+          "EXEC: Restored ${_positions.length} positions, ${_orders.length} "
+          "orders, balance ${_paperBalance.toStringAsFixed(2)}.");
+      notifyListeners();
+    } catch (e, stack) {
+      AppLogger.error("EXEC: Could not restore saved account — starting "
+          "fresh.", e, stack);
+    }
+  }
+
+  /// Save the paper account after anything that changes it.
+  ///
+  /// Deliberately not called from the price-update path: marking positions
+  /// happens many times a second and none of it needs to survive a restart,
+  /// since unrealized P&L is recomputed from the entry price on the next tick.
+  void _persist() {
+    final store = _persistence;
+    if (store == null) return;
+
+    try {
+      // Newest orders are the ones worth keeping if the list is trimmed.
+      final orders = _orders.length > _maxStoredOrders
+          ? _orders.sublist(_orders.length - _maxStoredOrders)
+          : _orders;
+
+      unawaited(store.setString(
+        _stateKey,
+        jsonEncode({
+          'paperBalance': _paperBalance,
+          'positions': _positions.map((p) => p.toJson()).toList(),
+          'orders': orders.map((o) => o.toJson()).toList(),
+        }),
+      ));
+    } catch (e) {
+      // Failing to save must never break the trade that just happened.
+      AppLogger.error("EXEC: Could not save account state", e);
+    }
   }
 
   /// Decide the price a position actually opens at.
