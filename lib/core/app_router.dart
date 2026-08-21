@@ -10,6 +10,7 @@ import 'package:volex_terminal/ui/navigation/main_navigator.dart';
 import 'package:volex_terminal/ui/screens/auth/email_verification_screen.dart';
 import 'package:volex_terminal/ui/screens/onboarding/onboarding_screen.dart';
 import 'package:volex_terminal/ui/screens/onboarding/mode_selection_screen.dart';
+import 'package:volex_terminal/ui/screens/risk_disclosure_screen.dart';
 import 'package:volex_terminal/ui/screens/chart/chart_screen_v2.dart';
 import 'package:volex_terminal/features/signals/ui/signal_feed_screen.dart';
 import 'package:volex_terminal/ui/screens/portfolio/portfolio_screen.dart';
@@ -92,6 +93,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/onboarding',
       builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/risk-disclosure',
+      builder: (context, state) => const RiskDisclosureScreen(),
     ),
     GoRoute(
       path: '/mode-selection',

@@ -68,6 +68,9 @@ class _SplashScreenState extends State<SplashScreen>
         case StartupDestination.onboarding:
           context.go('/onboarding');
           break;
+        case StartupDestination.riskDisclosure:
+          context.go('/risk-disclosure');
+          break;
         case StartupDestination.signup:
           context.go('/signup');
           break;
@@ -155,9 +158,11 @@ class _SplashScreenState extends State<SplashScreen>
 
               const SizedBox(height: 12),
 
-              // Tagline
+              // Tagline. This used to read "AI-Powered Trading Signals",
+              // which oversells a paper-trading simulator — the first thing
+              // a user (or a store reviewer) sees should say what this is.
               const Text(
-                'AI-Powered Trading Signals',
+                'Practice Trading · Virtual Money',
                 style: TextStyle(
                   fontSize: 16,
                   color: VxColors.textSecondary,
