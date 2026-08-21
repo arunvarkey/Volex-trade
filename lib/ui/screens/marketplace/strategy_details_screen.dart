@@ -27,7 +27,6 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
   Future<void> _handleSubscribe() async {
     setState(() => _isSubscribing = true);
 
-    // Simulate IAP / Subscribe flow with a delay
     final success = await _marketplace.subscribeToStrategy(widget.strategy.id);
 
     if (mounted) {
@@ -38,7 +37,7 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
           // Show Success Toast via ScaffoldMessenger if VxToast isn't global
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Subscribed successfully! Strategy is now active."),
+              content: Text("Added to your strategies."),
               backgroundColor: VxColors.positive,
             ),
           );
@@ -121,8 +120,15 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildStat("Return", "+${widget.strategy.totalReturn}%",
-                          VxColors.positive),
+                      // The "+" and the green were hardcoded, so a listing
+                      // reporting -12% rendered as "+-12%" in profit green.
+                      _buildStat(
+                          "Return",
+                          "${widget.strategy.totalReturn >= 0 ? '+' : ''}"
+                              "${widget.strategy.totalReturn}%",
+                          widget.strategy.totalReturn >= 0
+                              ? VxColors.positive
+                              : VxColors.negative),
                       _buildStat(
                           "Win Rate",
                           "${(widget.strategy.winRate * 100).toStringAsFixed(0)}%",
@@ -157,26 +163,35 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
 
             const SizedBox(height: 32),
 
-            // Performance Chart Placeholder
+            // This was a 200px empty box captioned "Equity Curve (Simulated)"
+            // — a chart frame with no chart in it, which implies a verified
+            // track record the app has never seen. The stats above come from
+            // whoever published the listing and nothing here checks them, so
+            // say that instead of drawing furniture around it.
             Container(
-              height: 200,
               margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: VxColors.neutral800,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: VxColors.neutral700),
               ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.show_chart,
-                        size: 48, color: VxColors.neutral600),
-                    SizedBox(height: 8),
-                    Text("Equity Curve (Simulated)",
-                        style: TextStyle(color: VxColors.neutral500)),
-                  ],
-                ),
+              child: const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline,
+                      size: 20, color: VxColors.neutral500),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      "The figures above are reported by the publisher and "
+                      "have not been independently verified. Run your own "
+                      "backtest before relying on this strategy.",
+                      style: TextStyle(
+                          color: VxColors.neutral400, fontSize: 13, height: 1.5),
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -205,10 +220,11 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2))
+                      // Was "Subscribe (\$X/mo)" / "Active Subscription" for
+                      // an action that appends to a local list and charges
+                      // nothing — the app has no payment provider at all.
                       : Text(
-                          _isSubscribed
-                              ? "Active Subscription"
-                              : "Subscribe (\$${widget.strategy.monthlyPrice}/mo)",
+                          _isSubscribed ? "Added" : "Add to My Strategies",
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),

@@ -41,7 +41,6 @@ import 'package:volex_terminal/services/crash_reporting_service.dart';
 import 'package:volex_terminal/services/feature_flag_service.dart';
 import 'package:volex_terminal/services/data_privacy_service.dart';
 import 'package:volex_terminal/engine/marketplace/marketplace_service.dart';
-import 'package:volex_terminal/engine/copy_trading/copy_trading_engine.dart';
 import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -310,11 +309,10 @@ class ServiceLocator {
       getIt.registerLazySingleton(() => AIGuardianService(userId));
       _log('GUARDIAN: OK.');
 
-      onProgress?.call('Initializing copy engine...', 0.89);
-      final copyEngine = CopyTradingEngine(marketplace, executionManager);
-      getIt.registerSingleton<CopyTradingEngine>(copyEngine);
-      // Auto-start for now, or make user opt-in
-      copyEngine.start();
+      // A CopyTradingEngine was constructed and started here on every launch.
+      // Its only signal source was MarketplaceService's simulation timer,
+      // which invented prices, so starting it meant standing ready to place
+      // paper orders from fabricated fills. Both are removed.
 
       onProgress?.call('Initializing theme...', 0.9);
       _log('THEME: UI refresh...');
