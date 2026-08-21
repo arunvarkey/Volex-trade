@@ -194,6 +194,15 @@ class AcademyCurriculum {
             LessonBlock.warning(
                 'A trade without a stop-loss is not a trade — it\'s an open-ended '
                 'bet on your ego.'),
+            LessonBlock.tryIt(
+                text:
+                    'Open the trade ticket and set one. Stop loss and take '
+                    'profit are on by default: you\'ll see the price levels, '
+                    'what you risk in dollars, and your reward-to-risk ratio '
+                    'before you commit — and the simulator closes the position '
+                    'for you when either level is reached.',
+                label: 'Set a stop on a paper trade',
+                route: '/chart?symbol=BTCUSDT'),
             LessonBlock.keyTakeaway(
                 'Every trade needs a pre-planned exit for both being wrong (stop) '
                 'and being right (target).'),
@@ -217,6 +226,14 @@ class AcademyCurriculum {
                 'Notice you never asked "how much do I want to make?" You start from '
                 '"how much can I lose?" and size backwards. That one reversal in '
                 'thinking separates survivors from gamblers.'),
+            LessonBlock.tryIt(
+                text:
+                    'The trade ticket does this arithmetic for you. Set a stop, '
+                    'then tap "Risk 1%" — it sizes the position with exactly '
+                    'this formula, so you can watch the number change as you '
+                    'move the stop.',
+                label: 'Try risk-based sizing',
+                route: '/chart?symbol=BTCUSDT'),
             LessonBlock.keyTakeaway(
                 'Let your stop-loss decide your position size — not your hopes.'),
           ],
@@ -395,6 +412,14 @@ class AcademyCurriculum {
             LessonBlock.tip(
                 'Journal every trade with why you entered and how you felt. Patterns '
                 'in your behaviour become obvious — and fixable.'),
+            LessonBlock.tryIt(
+                text:
+                    'The journal is built in. Tag each entry with how you felt '
+                    '— it counts how often you traded while anxious, greedy or '
+                    'chasing a loss, which is exactly the pattern this lesson '
+                    'is about.',
+                label: 'Open your trading journal',
+                route: '/journal'),
             LessonBlock.keyTakeaway(
                 'Discipline beats intelligence in trading. The edge is useless if '
                 'you can\'t follow it.'),
