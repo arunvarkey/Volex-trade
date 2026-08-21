@@ -196,12 +196,22 @@ class RiskManager {
     bool isLive = false,
     bool isReduction = false,
   }) {
-    if (_isEmergencyStopActive) {
+    // The emergency stop blocks new exposure, never an exit.
+    //
+    // It used to block every order without exception — and recordTradeResult
+    // trips it automatically the moment the daily loss limit is reached. So
+    // hitting the limit locked the user *into* their open positions: closes
+    // were rejected, and since protective exits close through the same path,
+    // their stop-losses stopped firing too. A kill switch that prevents you
+    // from flattening leaves the loss it was meant to cap running unbounded.
+    //
+    // Reductions are therefore allowed through. Opening or adding is not.
+    if (_isEmergencyStopActive && !isReduction) {
       _bus.publish(
         type: NotificationType.risk,
         severity: NotificationSeverity.critical,
         title: "Emergency Stop Active",
-        message: "All trading blocked due to emergency stop.",
+        message: "New trades blocked. You can still close open positions.",
         userId: "current_user",
       );
       AppLogger.warning("RISK: Order rejected. Emergency stop active.");

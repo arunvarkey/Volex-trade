@@ -251,6 +251,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     double? stopLoss,
     double? takeProfit,
     String? strategyId,
+    bool isReduction = false,
   }) async {
     _isExecuting = true;
     _lastError = null;
@@ -268,6 +269,14 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         priceUsdt: executionPrice,
         strategyId: strategyId,
         isLive: isLiveMode,
+        // A trade that closes or reduces a position is exempt from the daily
+        // loss limit. Nothing in the codebase ever passed this, so it was
+        // always false: once the limit was hit, closeOrder was rejected and
+        // the user could not exit a losing position — and because protective
+        // exits close through the same path, their stop-losses stopped firing
+        // at exactly the moment the limit says they are losing money. A risk
+        // control that traps you in a trade is worse than none.
+        isReduction: isReduction,
       );
 
       if (!isValid) {
@@ -571,6 +580,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
       quantity: pos.quantity,
       currentPrice: mark,
+      // Exiting is always a reduction, so it is not blocked by the daily loss
+      // limit. See the note in placeMarketOrder.
+      isReduction: true,
     );
   }
 
