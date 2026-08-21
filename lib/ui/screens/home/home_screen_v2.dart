@@ -24,6 +24,13 @@ import 'package:volex_terminal/features/daily/ui/daily_home_card.dart';
 import 'package:volex_terminal/services/profile_service.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
 
+/// Minimum size for anything tappable.
+///
+/// Android's accessibility guidance — and the automated scan in Play's
+/// pre-launch report — treat 48dp as the floor for a reliable touch target.
+/// Visuals can be drawn smaller inside it; the hit area should not be.
+const double _kMinTapTarget = 48;
+
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
 
@@ -133,18 +140,28 @@ class HomeScreenV2 extends StatelessWidget {
       label: semanticLabel,
       child: Tooltip(
         message: semanticLabel ?? '',
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: VxColors.surface,
-              shape: BoxShape.circle,
-              border: Border.all(color: VxColors.border),
+        // The tap area is 48dp even though the circle is drawn at 36dp.
+        // Android's accessibility scanner and Play's pre-launch report flag
+        // anything smaller than 48dp as too small to hit reliably, and the
+        // InkWell used to be sized to the 36dp circle itself.
+        child: SizedBox(
+          width: _kMinTapTarget,
+          height: _kMinTapTarget,
+          child: InkWell(
+            onTap: onPressed,
+            customBorder: const CircleBorder(),
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: VxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: VxColors.border),
+                ),
+                child: Icon(icon, size: 18, color: VxColors.textSecondary),
+              ),
             ),
-            child: Icon(icon, size: 18, color: VxColors.textSecondary),
           ),
         ),
       ),
@@ -156,38 +173,45 @@ class HomeScreenV2 extends StatelessWidget {
       stream: getIt<NotificationBus>().unreadCountStream,
       builder: (context, snapshot) {
         final unreadCount = snapshot.data ?? 0;
-        return InkWell(
-          onTap: () => context.push('/notifications'),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: VxColors.surface,
-              shape: BoxShape.circle,
-              border: Border.all(color: VxColors.border),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                const Icon(Icons.notifications_none_rounded,
-                    size: 18, color: VxColors.textSecondary),
-                if (unreadCount > 0)
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: VxColors.danger,
-                        shape: BoxShape.circle,
-                        border:
-                            Border.all(color: VxColors.background, width: 2),
+        return SizedBox(
+          // Same 48dp minimum tap target as _buildIconButton.
+          width: _kMinTapTarget,
+          height: _kMinTapTarget,
+          child: InkWell(
+            onTap: () => context.push('/notifications'),
+            customBorder: const CircleBorder(),
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: VxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: VxColors.border),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(Icons.notifications_none_rounded,
+                        size: 18, color: VxColors.textSecondary),
+                    if (unreadCount > 0)
+                      Positioned(
+                        top: 6,
+                        right: 6,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: VxColors.danger,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: VxColors.background, width: 2),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         );

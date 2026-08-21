@@ -645,20 +645,31 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   Positioned(
                     bottom: 198,
                     right: 26,
-                    child: GestureDetector(
-                      onTap: _addLevelAtCurrentPrice,
-                      onLongPress: _openDrawingsSheet,
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: VxColors.surfaceBright.withValues(alpha: 0.9),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: VxColors.neonCyan.withValues(alpha: 0.5)),
+                    // 48dp, not 44 — Android treats 48 as the minimum
+                    // reliable touch target. The label is here because a bare
+                    // GestureDetector round an icon announces nothing to a
+                    // screen reader.
+                    child: Semantics(
+                      button: true,
+                      label: 'Add price level at current price. '
+                          'Long press to manage drawings.',
+                      child: GestureDetector(
+                        onTap: _addLevelAtCurrentPrice,
+                        onLongPress: _openDrawingsSheet,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color:
+                                VxColors.surfaceBright.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color:
+                                    VxColors.neonCyan.withValues(alpha: 0.5)),
+                          ),
+                          child: const Icon(Icons.horizontal_rule_rounded,
+                              color: VxColors.neonCyan, size: 24),
                         ),
-                        child: const Icon(Icons.horizontal_rule_rounded,
-                            color: VxColors.neonCyan, size: 24),
                       ),
                     ),
                   ),
@@ -678,37 +689,44 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   Positioned(
                     bottom: 130,
                     right: 20,
-                    child: GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          useRootNavigator: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => SmartOrderSheet(
-                            symbol: _currentSymbol,
-                            currentPrice: _currentPrice,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          gradient: VxColors.primaryGradient,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: VxColors.neonCyan.withValues(alpha: 0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
+                    // The bolt icon alone told a screen reader nothing about
+                    // what this opens.
+                    child: Semantics(
+                      button: true,
+                      label: 'Place a trade',
+                      child: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            useRootNavigator: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => SmartOrderSheet(
+                              symbol: _currentSymbol,
+                              currentPrice: _currentPrice,
                             ),
-                          ],
-                          border:
-                              Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                          );
+                        },
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            gradient: VxColors.primaryGradient,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    VxColors.neonCyan.withValues(alpha: 0.3),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                            border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2)),
+                          ),
+                          child: const Icon(Icons.bolt,
+                              color: Colors.white, size: 28),
                         ),
-                        child: const Icon(Icons.bolt,
-                            color: Colors.white, size: 28),
                       ),
                     ),
                   ),
