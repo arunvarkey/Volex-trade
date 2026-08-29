@@ -91,7 +91,8 @@ $emoji Volex Signal: $action $symbol
 ${aiWarning != null ? '⚠️ AI Warning: $aiWarning\n' : ''}
 ⏰ Valid for ${timeRemaining.inMinutes} minutes
 
-Download Volex Terminal: https://volex.app
+Simulated signal from Volex Terminal, a paper-trading app. Not financial advice.
+https://play.google.com/store/apps/details?id=com.antigravity.volextrade
 ''';
   }
 }
