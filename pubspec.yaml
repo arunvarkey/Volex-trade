@@ -23,7 +23,10 @@ dependencies:
   shared_preferences: ^2.5.3
   provider: ^6.1.5+1
   path_provider: ^2.1.5
-  google_fonts: ^6.3.0
+  # google_fonts removed: it downloads font files over the network on first
+  # use, so a fresh install rendered its first screens in a fallback face while
+  # waiting on fonts.gstatic.com. DM Sans and JetBrains Mono are bundled as
+  # assets below and referenced by family name instead.
   go_router: ^15.1.2
   fl_chart: 0.69.2
   hive: ^2.2.3
@@ -142,5 +145,39 @@ flutter:
   assets:
     - assets/images/
     - assets/market_data/
-    
-  # Using Google Fonts - no need to bundle fonts
+
+  # Fonts are bundled, not fetched.
+  #
+  # This used to say "Using Google Fonts - no need to bundle fonts", and that
+  # assumption was the bug: the google_fonts package downloads font files over
+  # the network on first use. Every fresh install therefore rendered its first
+  # screens in a fallback font, waited on fonts.gstatic.com, then swapped —
+  # slow on the sign-up and password screens, wrong-looking on the ones before
+  # them, and completely broken with no connection. It also meant a
+  # third-party request on first launch that the privacy policy did not
+  # mention.
+  #
+  # Latin subset, upright only — no italic is used anywhere in the app.
+  fonts:
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans-400.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans-500.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-600.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans-700.ttf
+          weight: 700
+        - asset: assets/fonts/DMSans-800.ttf
+          weight: 800
+        - asset: assets/fonts/DMSans-900.ttf
+          weight: 900
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-400.ttf
+          weight: 400
+        - asset: assets/fonts/JetBrainsMono-500.ttf
+          weight: 500
+        - asset: assets/fonts/JetBrainsMono-700.ttf
+          weight: 700

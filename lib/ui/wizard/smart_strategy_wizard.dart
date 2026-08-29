@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../design_system/vx_colors.dart';
 import '../../engine/wizard/script_templates.dart';
 import '../screens/script_editor_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 enum StrategyType { trend, reversion }
 
@@ -46,7 +46,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
               children: [
                 Text(
                   "Smart Builder",
-                  style: GoogleFonts.dmSans(
+                  style: const TextStyle(fontFamily: VxTypography.sans, 
                     color: VxColors.neonCyan,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.2,

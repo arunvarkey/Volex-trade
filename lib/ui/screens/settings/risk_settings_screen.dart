@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../design_system/vx_colors.dart';
 import '../../design_system/vx_icons.dart';
 import '../../../engine/risk_manager.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 class RiskSettingsScreen extends StatefulWidget {
   const RiskSettingsScreen({super.key});
@@ -51,7 +51,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Emergency Stop",
-            style: GoogleFonts.dmSans(
+            style: const TextStyle(fontFamily: VxTypography.sans, 
                 color: VxColors.neonRed, fontWeight: FontWeight.bold)),
         content: const Text(
           "This will IMMEDIATELY halt all strategies and block new orders.\n\nAre you sure?",
@@ -122,7 +122,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(isLocked ? "System Locked" : "System Active",
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(fontFamily: VxTypography.sans, 
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: isLocked
@@ -144,7 +144,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
           // Daily Loss Configuration
           Text("Daily Loss Limit",
-              style: GoogleFonts.dmSans(
+              style: const TextStyle(fontFamily: VxTypography.sans, 
                   color: VxColors.neonCyan, fontSize: 12)),
           const SizedBox(height: 16),
 
@@ -153,7 +153,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
               Expanded(
                 child: TextField(
                   controller: _dailyLimitController,
-                  style: GoogleFonts.jetBrainsMono(
+                  style: const TextStyle(fontFamily: VxTypography.mono, 
                       color: Colors.white, fontSize: 16),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(

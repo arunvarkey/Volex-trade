@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../design_system/vx_colors.dart';
 import '../design_system/vx_typography.dart';
 
@@ -197,8 +196,8 @@ def on_candle(candle):
                 focusNode: _focusNode,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
-                style: GoogleFonts.jetBrainsMono(
-                  color: const Color(0xFFD4D4D4), // VS Code text
+                style: const TextStyle(fontFamily: VxTypography.mono, 
+                  color: Color(0xFFD4D4D4), // VS Code text
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -264,7 +263,7 @@ class _SnippetButton extends StatelessWidget {
         child: Text(
           label,
           style:
-              GoogleFonts.jetBrainsMono(fontSize: 12, fontWeight: FontWeight.bold),
+              const TextStyle(fontFamily: VxTypography.mono, fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ),
     );

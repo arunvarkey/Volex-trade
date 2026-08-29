@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../design_system/vx_colors.dart';
 import '../../../design_system/vx_typography.dart';
 
@@ -85,7 +84,7 @@ class ChartStatsOverlay extends StatelessWidget {
             color: VxColors.textSecondary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+            fontFamily: VxTypography.mono,
           ),
         ),
       ],

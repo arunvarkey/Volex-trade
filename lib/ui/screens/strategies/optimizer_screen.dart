@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/data/historical_repository.dart';
 import 'package:volex_terminal/data/binance/binance_exchange_service.dart';
@@ -9,6 +8,7 @@ import 'package:volex_terminal/engine/optimization/optimization_job.dart';
 import 'package:volex_terminal/engine/strategy/built_in_strategies.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 class OptimizerScreen extends StatefulWidget {
   const OptimizerScreen({super.key});
@@ -105,7 +105,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Deploy Strategy?",
-            style: GoogleFonts.dmSans(color: VxColors.neonCyan)),
+            style: const TextStyle(fontFamily: VxTypography.sans, color: VxColors.neonCyan)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
             const SizedBox(height: 16),
             ..._bestParams!.entries.map((e) => Text(
                 "• ${e.key}: ${e.value is double ? e.value.toStringAsFixed(2) : e.value}",
-                style: GoogleFonts.jetBrainsMono(color: VxColors.neonCyan))),
+                style: const TextStyle(fontFamily: VxTypography.mono, color: VxColors.neonCyan))),
             const SizedBox(height: 16),
             const Text("Are you sure you want to proceed?",
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -196,7 +196,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Simulated",
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(fontFamily: VxTypography.sans, 
                                 fontSize: 12,
                                 color: !_useRealData
                                     ? VxColors.neonCyan
@@ -209,7 +209,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                           inactiveThumbColor: VxColors.neonCyan,
                         ),
                         Text("Binance Live",
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(fontFamily: VxTypography.sans, 
                                 fontSize: 12,
                                 color: _useRealData
                                     ? VxColors.neonCyan
@@ -243,7 +243,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                         : "Loaded: Simulated Stream",
                     // Descriptive label, not data — DM Sans, and 9pt was
                     // below a comfortable reading size.
-                    style: GoogleFonts.dmSans(
+                    style: const TextStyle(fontFamily: VxTypography.sans, 
                         fontSize: 11, color: Colors.white38),
                   ),
                 ),
@@ -255,7 +255,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
               if (_job != null) ...[
                 Text(
                   "Generation ${_job!.currentGeneration} / ${_job!.totalGenerations}",
-                  style: GoogleFonts.jetBrainsMono(
+                  style: const TextStyle(fontFamily: VxTypography.mono, 
                       fontSize: 24,
                       color: VxColors.neonCyan,
                       fontWeight: FontWeight.bold),
@@ -293,7 +293,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                   _job == null
                       ? "Start Evolution"
                       : (_job!.isRunning ? "Evolving..." : "Restart"),
-                  style: GoogleFonts.dmSans(
+                  style: const TextStyle(fontFamily: VxTypography.sans, 
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
@@ -316,7 +316,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       child: Column(
         children: [
           Text("Current Best",
-              style: GoogleFonts.dmSans(
+              style: const TextStyle(fontFamily: VxTypography.sans, 
                   color: VxColors.neonGreen, fontSize: 12)),
           if (params != null) ...[
             const SizedBox(height: 8),
@@ -372,7 +372,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
             style: const TextStyle(color: Colors.white54, fontSize: 12)),
         const SizedBox(height: 4),
         Text(value,
-            style: GoogleFonts.jetBrainsMono(
+            style: const TextStyle(fontFamily: VxTypography.mono, 
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),

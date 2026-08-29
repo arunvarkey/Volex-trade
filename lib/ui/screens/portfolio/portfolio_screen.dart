@@ -10,7 +10,6 @@ import '../../design_system/vx_coin_icon.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
 import 'package:intl/intl.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PortfolioScreen extends StatelessWidget {
   const PortfolioScreen({super.key});
@@ -124,7 +123,7 @@ class PortfolioScreen extends StatelessWidget {
           Text(
             '\$${balance.toStringAsFixed(2)}',
             style: VxTypography.hero.copyWith(
-              fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+              fontFamily: VxTypography.mono,
               fontSize: 32,
             ),
           ),
@@ -142,7 +141,7 @@ class PortfolioScreen extends StatelessWidget {
                 style: VxTypography.body.copyWith(
                   color: isLoss ? VxColors.neonRed : VxColors.neonGreen,
                   fontWeight: FontWeight.w700,
-                  fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+                  fontFamily: VxTypography.mono,
                 ),
               ),
             ],

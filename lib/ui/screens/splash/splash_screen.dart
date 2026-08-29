@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_logo.dart';
 import 'package:volex_terminal/services/startup_service.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 
@@ -106,68 +107,18 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Animated Logo
+              // The real product mark, not a stock trending_up glyph in a
+              // gradient circle. Same geometry as the launcher icon, drawn as
+              // vector so it is sharp at any density.
               TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0.0, end: 1.0),
-                duration: const Duration(milliseconds: 1000),
-                curve: Curves.elasticOut,
-                builder: (context, value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            VxColors.primary,
-                            VxColors.neonPurple,
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: VxColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 30,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.trending_up,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 40),
-
-              // App Name
-              const Text(
-                'Volex Terminal',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 2,
+                tween: Tween(begin: 0.92, end: 1.0),
+                duration: const Duration(milliseconds: 620),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, child) => Transform.scale(
+                  scale: value,
+                  child: child,
                 ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // Tagline. This used to read "AI-Powered Trading Signals",
-              // which oversells a paper-trading simulator — the first thing
-              // a user (or a store reviewer) sees should say what this is.
-              const Text(
-                'Practice Trading · Virtual Money',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: VxColors.textSecondary,
-                  letterSpacing: 1,
-                ),
+                child: const VxLogo(markSize: 104),
               ),
 
               const SizedBox(height: 60),

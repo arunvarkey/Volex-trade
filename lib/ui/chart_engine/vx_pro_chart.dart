@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 // intl exports its own TextDirection, which (package beats platform on name
 // conflicts) would shadow Flutter's and break TextDirection.ltr below.
 import 'package:intl/intl.dart' hide TextDirection;
@@ -12,6 +11,7 @@ import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/core/chart_math.dart';
 import 'chart_drawing.dart';
 import 'chart_marker.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 /// VxProChart — Volex's own TradingView-class chart engine.
 ///
@@ -318,7 +318,7 @@ class _ProChartPainter extends CustomPainter {
     final tp = TextPainter(
       text: TextSpan(
         text: s,
-        style: GoogleFonts.jetBrainsMono(
+        style: TextStyle(fontFamily: VxTypography.mono, 
             fontSize: size, color: color, fontWeight: weight),
       ),
       textDirection: TextDirection.ltr,

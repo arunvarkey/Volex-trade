@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -11,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/services/user_mode_service.dart';
 import 'package:volex_terminal/core/service_locator.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -86,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
           Center(
             child: Text(
               "Version 1.0.0 (Build 15)",
-              style: GoogleFonts.jetBrainsMono(color: Colors.white24, fontSize: 12),
+              style: const TextStyle(fontFamily: VxTypography.mono, color: Colors.white24, fontSize: 12),
             ),
           ),
         ],
@@ -101,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
         title.toUpperCase(),
         // Section labels are UI text, not data — DM Sans like every other
         // screen. Monospace is reserved for numbers.
-        style: GoogleFonts.dmSans(
+        style: const TextStyle(fontFamily: VxTypography.sans, 
           color: Colors.grey,
           fontSize: 12,
           fontWeight: FontWeight.w700,

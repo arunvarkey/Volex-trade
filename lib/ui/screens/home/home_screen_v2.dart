@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/domain/order.dart';
@@ -274,7 +273,7 @@ class HomeScreenV2 extends StatelessWidget {
                     Text(
                       '${dailyPnL == 0 ? '' : (dailyPnL > 0 ? '+' : '-')}\$${dailyPnL.abs().toStringAsFixed(2)} today',
                       style: TextStyle(
-                        fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+                        fontFamily: VxTypography.mono,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: dailyPnL == 0
@@ -891,7 +890,7 @@ class _StrategyCard extends StatelessWidget {
                 Text(
                   '${isPositive ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+                    fontFamily: VxTypography.mono,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: isPositive ? VxColors.success : VxColors.danger,

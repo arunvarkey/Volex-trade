@@ -1,68 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'vx_colors.dart';
 
 class VxTypography {
   VxTypography._();
 
-  static TextStyle hero = GoogleFonts.dmSans(
+  /// The app's two type families, bundled as assets in pubspec.yaml.
+  ///
+  /// Referenced by name rather than through the google_fonts package, which
+  /// downloads font files at runtime — the first screens of a fresh install
+  /// rendered in a fallback face while it waited on the network, then swapped.
+  ///
+  /// DM Sans for everything the user reads; JetBrains Mono for numbers only,
+  /// where fixed-width digits stop prices and P&L jittering as they tick.
+  static const String sans = 'DM Sans';
+  static const String mono = 'JetBrains Mono';
+
+  static const TextStyle hero = TextStyle(
+    fontFamily: sans,
     fontSize: 38,
     fontWeight: FontWeight.w700,
     color: VxColors.textPrimary,
     letterSpacing: -1.2,
   );
 
-  static TextStyle h1 = GoogleFonts.dmSans(
+  static const TextStyle h1 = TextStyle(
+    fontFamily: sans,
     fontSize: 28,
     fontWeight: FontWeight.w700,
     color: VxColors.textPrimary,
     letterSpacing: -0.5,
   );
 
-  static TextStyle h2 = GoogleFonts.dmSans(
+  static const TextStyle h2 = TextStyle(
+    fontFamily: sans,
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
   );
 
-  static TextStyle h3 = GoogleFonts.dmSans(
+  static const TextStyle h3 = TextStyle(
+    fontFamily: sans,
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
   );
 
-  static TextStyle bodyLarge = GoogleFonts.dmSans(
+  static const TextStyle bodyLarge = TextStyle(
+    fontFamily: sans,
     fontSize: 18,
     fontWeight: FontWeight.w400,
     color: VxColors.textPrimary,
   );
 
-  static TextStyle body = GoogleFonts.dmSans(
+  static const TextStyle body = TextStyle(
+    fontFamily: sans,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: VxColors.textPrimary,
   );
 
-  static TextStyle bodySmall = GoogleFonts.dmSans(
+  static const TextStyle bodySmall = TextStyle(
+    fontFamily: sans,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: VxColors.textSecondary,
   );
 
-  static TextStyle price = GoogleFonts.jetBrainsMono(
+  static const TextStyle price = TextStyle(
+    fontFamily: mono,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
   );
 
-  static TextStyle caption = GoogleFonts.dmSans(
+  static const TextStyle caption = TextStyle(
+    fontFamily: sans,
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: VxColors.textTertiary,
     letterSpacing: 0.2,
   );
 
-  static TextStyle button = GoogleFonts.dmSans(
+  static const TextStyle button = TextStyle(
+    fontFamily: sans,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
@@ -70,8 +90,8 @@ class VxTypography {
   );
 
   /// The single mono family for numeric/tabular text, exposed so raw
-  /// `fontFamily:` usages can align to it without re-importing google_fonts.
-  static String? get monoFamily => GoogleFonts.jetBrainsMono().fontFamily;
+  /// `fontFamily:` usages can align to it.
+  static String get monoFamily => mono;
 }
 
 class VxText extends StatelessWidget {
@@ -254,9 +274,9 @@ class VxText extends StatelessWidget {
       int? maxLines,
       TextOverflow? overflow}) {
     return VxText(text,
-        style: GoogleFonts.jetBrainsMono(
-            textStyle: VxTypography.bodySmall
-                .copyWith(fontSize: fontSize, fontWeight: weight)),
+        style: VxTypography.bodySmall
+            .copyWith(fontSize: fontSize, fontWeight: weight)
+            .copyWith(fontFamily: VxTypography.mono),
         color: color,
         textAlign: textAlign,
         maxLines: maxLines,
@@ -271,9 +291,9 @@ class VxText extends StatelessWidget {
       int? maxLines,
       TextOverflow? overflow}) {
     return VxText(text,
-        style: GoogleFonts.jetBrainsMono(
-            textStyle: VxTypography.bodySmall.copyWith(
-                fontWeight: weight ?? FontWeight.bold, fontSize: fontSize)),
+        style: VxTypography.bodySmall
+            .copyWith(fontWeight: weight ?? FontWeight.bold, fontSize: fontSize)
+            .copyWith(fontFamily: VxTypography.mono),
         color: color,
         textAlign: textAlign,
         maxLines: maxLines,
