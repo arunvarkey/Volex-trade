@@ -67,16 +67,23 @@ class DailyResult {
     required this.streakAfter,
   });
 
-  /// A rough, clearly-estimated percentile band from the score. Local-only
-  /// until a real backend provides true global ranking.
-  String get estimatedRank {
+  /// A plain description of how the round went.
+  ///
+  /// This used to return percentile bands -- "top 5%", "top 20%" -- computed
+  /// purely from the user's own score against nobody. There is no player
+  /// population to be in the top 5% of; the number was a relabelling of
+  /// score/total dressed as a ranking. It also went into the shareable text,
+  /// so a user posted a percentile claim about a leaderboard that does not
+  /// exist. If real global ranking arrives later it can be added as an
+  /// actual rank; until then the score describes itself.
+  String get scoreBand {
     if (total == 0) return '—';
     final pct = score / total;
-    if (pct >= 1.0) return 'top 5%';
-    if (pct >= 0.8) return 'top 20%';
-    if (pct >= 0.6) return 'top 45%';
-    if (pct >= 0.4) return 'top 70%';
-    return 'keep practising';
+    if (pct >= 1.0) return 'a perfect round';
+    if (pct >= 0.8) return 'a strong round';
+    if (pct >= 0.6) return 'a solid round';
+    if (pct >= 0.4) return 'a mixed round';
+    return 'a round to learn from';
   }
 
   /// Wordle-style shareable text (copied to clipboard).
@@ -86,7 +93,6 @@ class DailyResult {
       ..writeln('Volex Daily #$number')
       ..writeln('$grid  $score/$total')
       ..writeln('🔥 $streakAfter-day streak')
-      ..writeln('Estimated: $estimatedRank')
       ..write('The flight simulator for traders');
     return buf.toString();
   }
