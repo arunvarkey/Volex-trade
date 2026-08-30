@@ -148,8 +148,27 @@ class TerminalBottomTabs extends StatelessWidget {
 
             return ListTile(
               dense: true,
-              title: Text(pos.symbol,
-                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+              // The row showed a symbol, a size and a P&L but never which way
+              // the position was betting -- so a green number on a falling
+              // market was unreadable.
+              title: Row(
+                children: [
+                  Text(pos.symbol,
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 12)),
+                  const SizedBox(width: 6),
+                  Text(
+                    pos.side == OrderSide.buy ? 'LONG' : 'SHORT',
+                    style: TextStyle(
+                      color: pos.side == OrderSide.buy
+                          ? VxColors.neonGreen
+                          : VxColors.neonRed,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
               subtitle: Row(
                 children: [
                   Text(
@@ -157,7 +176,7 @@ class TerminalBottomTabs extends StatelessWidget {
                       style:
                           const TextStyle(color: Colors.white54, fontSize: 10)),
                   const SizedBox(width: 8),
-                  Text('PnL: \$${pnl.toStringAsFixed(2)}',
+                  Text('P&L: \$${pnl.toStringAsFixed(2)}',
                       style: TextStyle(
                           color: pnlColor,
                           fontSize: 10,

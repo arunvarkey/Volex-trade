@@ -10,6 +10,7 @@ import '../../design_system/vx_coin_icon.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
 import 'package:intl/intl.dart';
+import '../../widgets/glossary_sheet.dart';
 
 class PortfolioScreen extends StatelessWidget {
   const PortfolioScreen({super.key});
@@ -308,13 +309,26 @@ class PortfolioScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    pos.symbol,
-                    style:
-                        VxTypography.body.copyWith(fontWeight: FontWeight.w900),
+                  Row(
+                    children: [
+                      Text(
+                        pos.symbol,
+                        style: VxTypography.body
+                            .copyWith(fontWeight: FontWeight.w900),
+                      ),
+                      const SizedBox(width: 8),
+                      // Which way the position is betting was not shown at
+                      // all. Without it the row cannot be read: a green P&L
+                      // on a falling market only makes sense once you know
+                      // the position is short.
+                      _SideBadge(isLong: pos.side == OrderSide.buy),
+                    ],
                   ),
                   Text(
-                    '${pos.quantity} Q / \$${pos.entryPrice.toStringAsFixed(2)}',
+                    // "0.5 Q / 104532.10" -- Q was not defined anywhere in
+                    // the app, and the slash hid that the second number is
+                    // the price each unit was bought at.
+                    '${pos.quantity} units @ \$${pos.entryPrice.toStringAsFixed(2)}',
                     style: VxTypography.caption.copyWith(color: Colors.white38),
                   ),
                 ],
@@ -323,8 +337,9 @@ class PortfolioScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  'P&L',
+                InfoLabel(
+                  text: 'P&L',
+                  termId: 'pnl',
                   style: VxTypography.caption
                       .copyWith(fontSize: 8, color: Colors.white38),
                 ),
@@ -442,6 +457,39 @@ class PortfolioScreen extends StatelessWidget {
               style: VxTypography.price.copyWith(fontSize: 13),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Long or short, stated plainly rather than left for the reader to infer
+/// from the sign of a number.
+class _SideBadge extends StatelessWidget {
+  final bool isLong;
+
+  const _SideBadge({required this.isLong});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isLong ? VxColors.neonGreen : VxColors.neonRed;
+    return GestureDetector(
+      onTap: () => GlossarySheet.show(context, isLong ? 'long' : 'short'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: color.withValues(alpha: 0.4)),
+        ),
+        child: Text(
+          isLong ? 'LONG' : 'SHORT',
+          style: VxTypography.caption.copyWith(
+            color: color,
+            fontSize: 8,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );

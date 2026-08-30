@@ -12,6 +12,7 @@ import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import '../../core/app_router.dart';
 import 'package:volex_terminal/engine/alerts/alert_engine.dart';
 import 'package:volex_terminal/engine/alerts/alert_models.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 import '../../engine/strategy/built_in_strategies.dart';
 
 /// The Central Floating Action Button - "Command Palette"
@@ -599,9 +600,12 @@ class _StrategyDashboardSheet extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Text(
-                  'SESSION P&L',
-                  style: TextStyle(
+                InfoLabel(
+                  // The headline number of the whole panel, labelled with an
+                  // abbreviation the app never defined anywhere near it.
+                  text: 'SESSION PROFIT & LOSS',
+                  termId: 'pnl',
+                  style: VxTypography.caption.copyWith(
                     color: Colors.white54,
                     fontSize: 12,
                     letterSpacing: 1,
