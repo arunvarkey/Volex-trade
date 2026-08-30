@@ -79,7 +79,7 @@ Play asks whether the app provides financial services. The honest position:
 
 - **Is this a trading or investment app?** It is a **simulator**. It does not
   execute real trades, hold funds, or connect to a brokerage.
-- **Does it give financial advice?** No. Signals and AI suggestions are labelled
+- **Does it give financial advice?** No. Signals and strategy suggestions are labelled
   educational throughout, and the app shows a risk disclosure before first use.
 - **Do you need a financial services licence declaration?** Not for a simulator
   with no real money. **This changes completely if live trading is ever enabled**

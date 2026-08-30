@@ -22,9 +22,9 @@ Volex Terminal is a **high-fidelity educational trading simulator** designed for
 - **Secure Storage**: AES-256 encrypted storage for API keys and sensitive tokens.
 - **Biometric/PIN Lock**: Multi-factor authentication support via `SecureAuthService`.
 
-### 🧠 **AI Strategy Lab** (Beta)
-- **Generative Strategies**: Create trading bots using natural language prompts.
-- **Backtesting Engine**: validate strategies against historical data before going live.
+### 🧪 **Strategy Studio**
+- **Template-Driven**: Build a strategy from a ready-made template and tune its parameters.
+- **Backtesting Engine**: Validate strategies against historical data with modelled fees and slippage.
 
 ### 📊 **Pro-Level Analytics**
 - **Interactive Charts**: Custom-built candlestick charts with technical indicators.
@@ -35,10 +35,10 @@ Volex Terminal is a **high-fidelity educational trading simulator** designed for
 - **Quantum Switcher**: High-performance command palette for rapid symbol and screen switching.
 - **Tactile Feedback**: Multisensory haptic synthesis for all order executions and critical actions.
 
-### 🧿 **AI Guardian**
-- **Revenge Trading Protection**: Automatically detects and warns against emotional trading patterns.
-- **Sentiment Analysis**: Real-time evaluation of trading intent to prevent FOMO.
-- **Loss Limits**: Intelligent cooldown periods after significant drawdowns.
+### 🧿 **Trade Checks**
+- **Revenge Trading Protection**: Rules over your recent trades that flag re-entering too fast after a loss.
+- **Overtrading Detection**: Warns when trade frequency or size jumps away from your own baseline.
+- **Loss Limits**: A daily loss cap that blocks new positions while still letting you close what is open.
 
 ## 📱 Getting Started
 
