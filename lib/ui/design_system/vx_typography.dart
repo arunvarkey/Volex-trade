@@ -15,79 +15,67 @@ class VxTypography {
   static const String sans = 'DM Sans';
   static const String mono = 'JetBrains Mono';
 
-  static final TextStyle hero = const TextStyle(
-    fontFamily: sans,
-    fontSize: 38,
-    fontWeight: FontWeight.w700,
-    color: VxColors.textPrimary,
-    letterSpacing: -1.2,
-  );
+  /// Builds one entry in the scale.
+  ///
+  /// This exists to keep the styles *out* of the constant pool, which is a
+  /// deliberate choice rather than an oversight. A `static const TextStyle`
+  /// is a compile-time constant, so every `Text(...)` that uses one becomes
+  /// const-able, and so does the `Column` around it, and the `Padding` around
+  /// that — `prefer_const_constructors` then reports every widget in the
+  /// chain, in files that never referenced typography directly. Analysis runs
+  /// with `--fatal-infos`, so that is a red build spreading out from a change
+  /// to one file. Writing `static final x = const TextStyle(...)` only trades
+  /// it for `prefer_const_declarations` on the field itself.
+  ///
+  /// A function call is not a constant expression, so neither lint applies and
+  /// the styles stay where they belong: one definition each, read by everyone,
+  /// with no effect on how callers are written. The cost is a single lazy
+  /// allocation per style for the life of the process.
+  static TextStyle _scale(
+    String family,
+    double size,
+    FontWeight weight,
+    Color color, {
+    double? letterSpacing,
+  }) {
+    return TextStyle(
+      fontFamily: family,
+      fontSize: size,
+      fontWeight: weight,
+      color: color,
+      letterSpacing: letterSpacing,
+    );
+  }
 
-  static final TextStyle h1 = const TextStyle(
-    fontFamily: sans,
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
-    color: VxColors.textPrimary,
-    letterSpacing: -0.5,
-  );
+  static final TextStyle hero = _scale(
+      sans, 38, FontWeight.w700, VxColors.textPrimary, letterSpacing: -1.2);
 
-  static final TextStyle h2 = const TextStyle(
-    fontFamily: sans,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    color: VxColors.textPrimary,
-  );
+  static final TextStyle h1 = _scale(
+      sans, 28, FontWeight.w700, VxColors.textPrimary, letterSpacing: -0.5);
 
-  static final TextStyle h3 = const TextStyle(
-    fontFamily: sans,
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    color: VxColors.textPrimary,
-  );
+  static final TextStyle h2 =
+      _scale(sans, 24, FontWeight.w600, VxColors.textPrimary);
 
-  static final TextStyle bodyLarge = const TextStyle(
-    fontFamily: sans,
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    color: VxColors.textPrimary,
-  );
+  static final TextStyle h3 =
+      _scale(sans, 20, FontWeight.w600, VxColors.textPrimary);
 
-  static final TextStyle body = const TextStyle(
-    fontFamily: sans,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: VxColors.textPrimary,
-  );
+  static final TextStyle bodyLarge =
+      _scale(sans, 18, FontWeight.w400, VxColors.textPrimary);
 
-  static final TextStyle bodySmall = const TextStyle(
-    fontFamily: sans,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: VxColors.textSecondary,
-  );
+  static final TextStyle body =
+      _scale(sans, 16, FontWeight.w400, VxColors.textPrimary);
 
-  static final TextStyle price = const TextStyle(
-    fontFamily: mono,
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: VxColors.textPrimary,
-  );
+  static final TextStyle bodySmall =
+      _scale(sans, 14, FontWeight.w400, VxColors.textSecondary);
 
-  static final TextStyle caption = const TextStyle(
-    fontFamily: sans,
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    color: VxColors.textTertiary,
-    letterSpacing: 0.2,
-  );
+  static final TextStyle price =
+      _scale(mono, 16, FontWeight.w600, VxColors.textPrimary);
 
-  static final TextStyle button = const TextStyle(
-    fontFamily: sans,
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: VxColors.textPrimary,
-    letterSpacing: 0.2,
-  );
+  static final TextStyle caption = _scale(
+      sans, 12, FontWeight.w500, VxColors.textTertiary, letterSpacing: 0.2);
+
+  static final TextStyle button = _scale(
+      sans, 16, FontWeight.w600, VxColors.textPrimary, letterSpacing: 0.2);
 
   /// The single mono family for numeric/tabular text, exposed so raw
   /// `fontFamily:` usages can align to it.

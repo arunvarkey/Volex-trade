@@ -54,6 +54,72 @@ class VxProChart extends StatefulWidget {
   State<VxProChart> createState() => _VxProChartState();
 }
 
+/// Indicator series for the whole candle set, computed once per data change.
+///
+/// These used to be recomputed inside `paint`: RSI and MACD each ran over the
+/// full history, and every SMA point summed its own window, on every frame.
+/// Because the painter repaints on each price tick *and* each pointer move,
+/// dragging the crosshair across a 1,000-candle chart was re-running two EMA
+/// passes and ~30,000 additions per frame. Hoisting the maths out of the paint
+/// loop is the single biggest thing standing between this chart and a smooth
+/// 60fps.
+class _ChartSeries {
+  final int fingerprint;
+  final List<double?> sma20;
+  final List<double?> sma50;
+  final List<double?> rsi;
+  final List<double?> macdHistogram;
+
+  /// Candle open times, kept here so marker and drawing lookups don't rebuild
+  /// the list on every frame.
+  final List<int> times;
+
+  _ChartSeries({
+    required this.fingerprint,
+    required this.sma20,
+    required this.sma50,
+    required this.rsi,
+    required this.macdHistogram,
+    required this.times,
+  });
+
+  /// Cheap identity for a candle set. The last candle is the one that mutates
+  /// while a bar is forming, so its OHLCV is part of the key — otherwise a
+  /// live-updating final candle would keep serving stale indicator values.
+  static int fingerprintOf(List<Candle> candles) {
+    if (candles.isEmpty) return 0;
+    final last = candles.last;
+    return Object.hash(candles.length, last.time, last.open, last.high,
+        last.low, last.close, last.volume);
+  }
+
+  factory _ChartSeries.from(List<Candle> candles, {required int rsiPeriod}) {
+    final closes = [for (final c in candles) c.close];
+    return _ChartSeries(
+      fingerprint: fingerprintOf(candles),
+      sma20: _rollingSma(closes, 20),
+      sma50: _rollingSma(closes, 50),
+      rsi: ChartMath.rsiSeries(closes, period: rsiPeriod),
+      macdHistogram: ChartMath.macd(closes).histogram,
+      times: [for (final c in candles) c.time],
+    );
+  }
+
+  /// SMA in one pass with a sliding window, rather than re-summing `period`
+  /// values at every index.
+  static List<double?> _rollingSma(List<double> values, int period) {
+    final out = List<double?>.filled(values.length, null);
+    if (period <= 0 || values.length < period) return out;
+    double sum = 0;
+    for (int i = 0; i < values.length; i++) {
+      sum += values[i];
+      if (i >= period) sum -= values[i - period];
+      if (i >= period - 1) out[i] = sum / period;
+    }
+    return out;
+  }
+}
+
 class _VxProChartState extends State<VxProChart> {
   static const int _minVisible = 15;
   static const int _maxVisible = 400;
@@ -66,6 +132,16 @@ class _VxProChartState extends State<VxProChart> {
 
   // Gesture bookkeeping
   double _scaleStartVisible = 90;
+
+  _ChartSeries? _series;
+
+  _ChartSeries _seriesFor(List<Candle> candles) {
+    final cached = _series;
+    final fp = _ChartSeries.fingerprintOf(candles);
+    if (cached != null && cached.fingerprint == fp) return cached;
+    return _series =
+        _ChartSeries.from(candles, rsiPeriod: _ProChartPainter.rsiPeriod);
+  }
 
   @override
   void initState() {
@@ -146,42 +222,64 @@ class _VxProChartState extends State<VxProChart> {
       );
     }
 
+    final series = _seriesFor(widget.candles);
+
     return LayoutBuilder(builder: (context, constraints) {
       final chartWidth =
           constraints.maxWidth - _ProChartPainter.priceAxisWidth;
       final candleWidth = chartWidth / _visibleCount;
 
-      return Listener(
-        onPointerSignal: _onPointerSignal,
-        child: MouseRegion(
-          onHover: (e) => _setCursor(e.localPosition),
-          onExit: (_) => _setCursor(null),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onScaleStart: _onScaleStart,
-            onScaleUpdate: (d) => _onScaleUpdate(d, candleWidth),
-            onLongPressStart: (d) => _setCursor(d.localPosition),
-            onLongPressMoveUpdate: (d) => _setCursor(d.localPosition),
-            onLongPressEnd: (_) => _setCursor(null),
-            onDoubleTap: () => setState(_snapToLatest),
-            child: CustomPaint(
-              size: Size(constraints.maxWidth, constraints.maxHeight),
-              painter: _ProChartPainter(
-                candles: widget.candles,
-                rightIndex: _rightIndex,
-                visibleCount: _visibleCount,
-                cursor: _cursor,
-                showVolume: widget.showVolume,
-                showIndicators: widget.showIndicators,
-                showRsi: widget.showRsi,
-                markers: widget.markers,
-                drawings: widget.drawings,
+      return Semantics(
+        label: _semanticLabel(),
+        // The chart is one canvas with no child widgets, so without an
+        // explicit label a screen reader announces nothing at all here.
+        child: Listener(
+          onPointerSignal: _onPointerSignal,
+          child: MouseRegion(
+            onHover: (e) => _setCursor(e.localPosition),
+            onExit: (_) => _setCursor(null),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onScaleStart: _onScaleStart,
+              onScaleUpdate: (d) => _onScaleUpdate(d, candleWidth),
+              onLongPressStart: (d) => _setCursor(d.localPosition),
+              onLongPressMoveUpdate: (d) => _setCursor(d.localPosition),
+              onLongPressEnd: (_) => _setCursor(null),
+              onDoubleTap: () => setState(_snapToLatest),
+              child: CustomPaint(
+                size: Size(constraints.maxWidth, constraints.maxHeight),
+                painter: _ProChartPainter(
+                  candles: widget.candles,
+                  series: series,
+                  rightIndex: _rightIndex,
+                  visibleCount: _visibleCount,
+                  cursor: _cursor,
+                  showVolume: widget.showVolume,
+                  showIndicators: widget.showIndicators,
+                  showRsi: widget.showRsi,
+                  markers: widget.markers,
+                  drawings: widget.drawings,
+                ),
               ),
             ),
           ),
         ),
       );
     });
+  }
+
+  String _semanticLabel() {
+    final n = widget.candles.length;
+    final last = widget.candles.last;
+    final first = widget.candles[math.max(0, n - _visibleCount)];
+    final change = first.close == 0
+        ? 0.0
+        : ((last.close - first.close) / first.close) * 100;
+    final direction = change >= 0 ? 'up' : 'down';
+    return 'Price chart. $_visibleCount of $n candles shown. '
+        'Last price ${last.close}. '
+        '${change.abs().toStringAsFixed(2)} percent $direction across the '
+        'visible range.';
   }
 }
 
@@ -197,6 +295,7 @@ class _ProChartPainter extends CustomPainter {
   static const int rsiPeriod = 14;
 
   final List<Candle> candles;
+  final _ChartSeries series;
   final int rightIndex;
   final int visibleCount;
   final Offset? cursor;
@@ -208,6 +307,7 @@ class _ProChartPainter extends CustomPainter {
 
   _ProChartPainter({
     required this.candles,
+    required this.series,
     required this.rightIndex,
     required this.visibleCount,
     required this.cursor,
@@ -260,12 +360,26 @@ class _ProChartPainter extends CustomPainter {
     if (visible.isEmpty) return;
     _candleW = _chartW / visibleCount;
 
-    // Price range across visible candles (plus indicator values).
+    // Price range across visible candles *and* the indicator values drawn on
+    // top of them. The comment here used to claim indicators were included
+    // when they were not, and the consequence was visible: whenever price ran
+    // away from its average — which is exactly when a trader is watching — the
+    // SMA50 fell outside the scale and was painted straight across the volume
+    // histogram and the RSI pane below it.
     _minP = double.infinity;
     _maxP = -double.infinity;
     for (final c in visible) {
       _minP = math.min(_minP, c.low);
       _maxP = math.max(_maxP, c.high);
+    }
+    if (showIndicators) {
+      for (int i = _startIdx; i <= _endIdx; i++) {
+        for (final v in [series.sma20[i], series.sma50[i]]) {
+          if (v == null) continue;
+          _minP = math.min(_minP, v);
+          _maxP = math.max(_maxP, v);
+        }
+      }
     }
     final pad = (_maxP - _minP) * 0.07;
     _minP -= pad;
@@ -273,14 +387,25 @@ class _ProChartPainter extends CustomPainter {
 
     _drawGrid(canvas);
     if (showVolume) _drawVolume(canvas, visible, volH);
+
+    // Everything that maps a price through _y() is confined to the price pane.
+    // Widening the scale above covers the ordinary case, but a user trendline
+    // or a trade marker can still be anchored off-scale, and without a clip it
+    // would be drawn over the panes below.
+    canvas.save();
+    canvas.clipRect(Rect.fromLTRB(0, 0, _chartW, _priceBottom + 2));
     _drawCandles(canvas, visible);
     if (showIndicators) _drawSmas(canvas);
     if (drawings.isNotEmpty) _drawDrawings(canvas);
     if (markers.isNotEmpty) _drawMarkers(canvas);
+    _drawLastPriceLine(canvas);
+    canvas.restore();
+
     if (rsiOn) _drawRsi(canvas);
-    _drawLastPrice(canvas);
     _drawTimeAxis(canvas, visible);
     _drawPriceAxis(canvas);
+    _drawLastPriceTag(canvas);
+    _drawDrawingTags(canvas);
     _drawCrosshair(canvas, size);
     _drawLegend(canvas);
   }
@@ -389,6 +514,16 @@ class _ProChartPainter extends CustomPainter {
     }
   }
 
+  /// Volume in compact form — a raw 24,183,905.4 tells a reader nothing at a
+  /// glance, and does not fit beside the bars.
+  String _fmtCompact(double v) {
+    final a = v.abs();
+    if (a >= 1e9) return '${(v / 1e9).toStringAsFixed(2)}B';
+    if (a >= 1e6) return '${(v / 1e6).toStringAsFixed(2)}M';
+    if (a >= 1e3) return '${(v / 1e3).toStringAsFixed(1)}K';
+    return v.toStringAsFixed(2);
+  }
+
   void _drawVolume(Canvas canvas, List<Candle> visible, double volH) {
     double maxV = 0;
     for (final c in visible) {
@@ -408,22 +543,30 @@ class _ProChartPainter extends CustomPainter {
         Paint()..color = color,
       );
     }
+
+    // The bars had no scale and no label, so their height meant nothing on
+    // its own — you could see one bar was taller than another but not what
+    // either represented. A pane title and the peak of the visible window
+    // give the histogram a readable ceiling.
+    final top = base - (volH - 8);
+    canvas.drawLine(
+      Offset(0, top - 3),
+      Offset(_chartW, top - 3),
+      Paint()
+        ..color = Colors.white10
+        ..strokeWidth = 0.7,
+    );
+    _text('Vol', color: VxColors.textTertiary, weight: FontWeight.w600)
+        .paint(canvas, Offset(8, top));
+    final peak = _text(_fmtCompact(maxV));
+    peak.paint(canvas, Offset(_chartW - peak.width - 6, top));
   }
 
-  double? _sma(int index, int period) {
-    if (index + 1 < period) return null;
-    double sum = 0;
-    for (int i = index - period + 1; i <= index; i++) {
-      sum += candles[i].close;
-    }
-    return sum / period;
-  }
-
-  void _drawSmaLine(Canvas canvas, int period, Color color) {
+  void _drawSmaLine(Canvas canvas, List<double?> sma, Color color) {
     final path = Path();
     bool started = false;
     for (int i = _startIdx; i <= _endIdx; i++) {
-      final v = _sma(i, period);
+      final v = sma[i];
       if (v == null) continue;
       final p = Offset(_x(i), _y(v));
       if (!started) {
@@ -445,14 +588,13 @@ class _ProChartPainter extends CustomPainter {
   }
 
   void _drawSmas(Canvas canvas) {
-    _drawSmaLine(canvas, 20, VxColors.neonCyan);
-    _drawSmaLine(canvas, 50, VxColors.neonPurple);
+    _drawSmaLine(canvas, series.sma20, VxColors.neonCyan);
+    _drawSmaLine(canvas, series.sma50, VxColors.neonPurple);
   }
 
   // ── User drawings (levels & trendlines) ──────────────────────────
 
   void _drawDrawings(Canvas canvas) {
-    List<int>? times; // built lazily, only if a trendline needs it
     for (final d in drawings) {
       if (d.type == ChartDrawingType.horizontal) {
         if (d.price < _minP || d.price > _maxP) continue;
@@ -464,11 +606,9 @@ class _ProChartPainter extends CustomPainter {
             ..color = VxColors.neonPurple.withValues(alpha: 0.75)
             ..strokeWidth = 1.0,
         );
-        _axisTag(canvas, y, _fmtPrice(d.price), VxColors.neonPurple);
       } else {
-        final t = times ??= [for (final c in candles) c.time];
-        final ai = ChartMath.nearestIndexByTime(t, d.aTimeMs);
-        final bi = ChartMath.nearestIndexByTime(t, d.bTimeMs);
+        final ai = ChartMath.nearestIndexByTime(series.times, d.aTimeMs);
+        final bi = ChartMath.nearestIndexByTime(series.times, d.bTimeMs);
         if (ai < 0 || bi < 0) continue;
         canvas.drawLine(
           Offset(_x(ai), _y(d.aPrice)),
@@ -482,28 +622,41 @@ class _ProChartPainter extends CustomPainter {
     }
   }
 
+  /// Axis labels for user levels. Drawn after the price axis so the axis's own
+  /// background strip cannot wash them out, and outside the price-pane clip so
+  /// they are not cut off at the axis boundary.
+  void _drawDrawingTags(Canvas canvas) {
+    for (final d in drawings) {
+      if (d.type != ChartDrawingType.horizontal) continue;
+      if (d.price < _minP || d.price > _maxP) continue;
+      _axisTag(canvas, _y(d.price), _fmtPrice(d.price), VxColors.neonPurple);
+    }
+  }
+
   // ── Trade markers ─────────────────────────────────────────────────
 
   void _drawMarkers(Canvas canvas) {
-    final times = [for (final c in candles) c.time];
     const s = 5.0;
     for (final m in markers) {
-      final idx = ChartMath.nearestIndexByTime(times, m.timeMs);
+      final idx = ChartMath.nearestIndexByTime(series.times, m.timeMs);
       if (idx < _startIdx || idx > _endIdx) continue;
       final x = _x(idx);
       final c = candles[idx];
       final color = m.isBuy ? VxColors.neonGreen : VxColors.neonRed;
       final fill = Paint()..color = color;
       final path = Path();
+      // Clamped into the pane so a fill on a candle at the very top or bottom
+      // of the visible range still shows a whole triangle instead of being
+      // sliced off by the pane clip.
       if (m.isBuy) {
         // Upward triangle a little below the candle's low.
-        final y = _y(c.low) + 9;
+        final y = (_y(c.low) + 9).clamp(_priceTop + s, _priceBottom - s);
         path.moveTo(x, y - s);
         path.lineTo(x - s, y + s);
         path.lineTo(x + s, y + s);
       } else {
         // Downward triangle a little above the candle's high.
-        final y = _y(c.high) - 9;
+        final y = (_y(c.high) - 9).clamp(_priceTop + s, _priceBottom - s);
         path.moveTo(x, y + s);
         path.lineTo(x - s, y - s);
         path.lineTo(x + s, y - s);
@@ -516,8 +669,7 @@ class _ProChartPainter extends CustomPainter {
   // ── RSI sub-pane ──────────────────────────────────────────────────
 
   void _drawRsi(Canvas canvas) {
-    final closes = [for (final k in candles) k.close];
-    final rsi = ChartMath.rsiSeries(closes, period: rsiPeriod);
+    final rsi = series.rsi;
 
     final top = _rsiTop;
     final bottom = _rsiBottom;
@@ -609,20 +761,29 @@ class _ProChartPainter extends CustomPainter {
     tp.paint(canvas, Offset(_chartW + 6, y - tp.height / 2));
   }
 
-  void _drawLastPrice(Canvas canvas) {
+  /// The line and its axis label are drawn in two passes. Both used to run
+  /// before `_drawPriceAxis`, which paints a translucent background strip over
+  /// the whole axis column — so the last-price label, the one number a trader
+  /// looks at most, was being washed out by a 60% overlay every frame.
+  void _drawLastPriceLine(Canvas canvas) {
     final last = candles.last;
     if (last.close < _minP || last.close > _maxP) return;
-    final y = _y(last.close);
     final color = last.isGreen ? VxColors.neonGreen : VxColors.neonRed;
     _dashedLine(
       canvas,
-      Offset(0, y),
-      Offset(_chartW, y),
+      Offset(0, _y(last.close)),
+      Offset(_chartW, _y(last.close)),
       Paint()
         ..color = color.withValues(alpha: 0.55)
         ..strokeWidth = 0.8,
     );
-    _axisTag(canvas, y, _fmtPrice(last.close), color);
+  }
+
+  void _drawLastPriceTag(Canvas canvas) {
+    final last = candles.last;
+    if (last.close < _minP || last.close > _maxP) return;
+    final color = last.isGreen ? VxColors.neonGreen : VxColors.neonRed;
+    _axisTag(canvas, _y(last.close), _fmtPrice(last.close), color);
   }
 
   void _drawCrosshair(Canvas canvas, Size size) {
@@ -641,12 +802,18 @@ class _ProChartPainter extends CustomPainter {
     _dashedLine(canvas, Offset(0, c.dy), Offset(_chartW, c.dy), paint,
         dash: 3, gap: 3);
 
-    // Price tag at cursor height
-    final range = _maxP - _minP;
-    final priceAtCursor = range <= 0
-        ? _minP
-        : _maxP - ((c.dy - _priceTop) / (_priceBottom - _priceTop)) * range;
-    _axisTag(canvas, c.dy, _fmtPrice(priceAtCursor), const Color(0xFF4A5568));
+    // Price tag at cursor height — only while the cursor is actually inside
+    // the price pane. Below it the y-to-price mapping is an extrapolation off
+    // the end of the scale, and the old code tagged it anyway: hovering the
+    // volume histogram produced a confident-looking price that is not on the
+    // axis and never was. No number is better than an invented one.
+    if (c.dy >= _priceTop && c.dy <= _priceBottom) {
+      final range = _maxP - _minP;
+      final priceAtCursor = range <= 0
+          ? _minP
+          : _maxP - ((c.dy - _priceTop) / (_priceBottom - _priceTop)) * range;
+      _axisTag(canvas, c.dy, _fmtPrice(priceAtCursor), const Color(0xFF4A5568));
+    }
 
     // Time tag
     final t = _text(DateFormat('MM/dd HH:mm').format(candles[idx].date),
@@ -680,6 +847,7 @@ class _ProChartPainter extends CustomPainter {
       ('L ${_fmtPrice(k.low)}', VxColors.textSecondary),
       ('C ${_fmtPrice(k.close)}', chgColor),
       ('${chg >= 0 ? '+' : ''}${chg.toStringAsFixed(2)}%', chgColor),
+      if (showVolume) ('V ${_fmtCompact(k.volume)}', VxColors.textTertiary),
     ];
     double x = 8;
     for (final (label, color) in parts) {
@@ -687,31 +855,53 @@ class _ProChartPainter extends CustomPainter {
       tp.paint(canvas, Offset(x, 4));
       x += tp.width + 10;
     }
-    if (showIndicators) {
-      final s20 = _sma(idx, 20);
-      final s50 = _sma(idx, 50);
-      if (s20 != null) {
-        final tp = _text('SMA20 ${_fmtPrice(s20)}', color: VxColors.neonCyan);
-        tp.paint(canvas, const Offset(8, 18));
-      }
-      if (s50 != null) {
-        final tp =
-            _text('SMA50 ${_fmtPrice(s50)}', color: VxColors.neonPurple);
-        tp.paint(canvas, const Offset(96, 18));
-      }
-      // MACD(12/26/9) histogram readout — green above zero, red below.
-      final macd = ChartMath.macd([for (final cc in candles) cc.close]);
-      final hist = macd.histogram[idx];
-      if (hist != null) {
-        final col = hist >= 0 ? VxColors.neonGreen : VxColors.neonRed;
-        final tp = _text(
-            'MACD ${hist >= 0 ? '+' : ''}${hist.toStringAsFixed(2)}',
-            color: col);
-        tp.paint(canvas, const Offset(184, 18));
-      }
+    if (!showIndicators) return;
+
+    // Second row: the indicator readouts. These used to sit at fixed x
+    // offsets of 8 / 96 / 184, which assumed every price rendered to about
+    // the same width. It does not — a five-decimal altcoin price or a
+    // six-figure BTC price overruns its slot and collides with the next
+    // label. Laid out end-to-end like the OHLC row, they cannot overlap.
+    final second = <(String, Color)>[];
+    final s20 = series.sma20[idx];
+    if (s20 != null) {
+      second.add(('SMA20 ${_fmtPrice(s20)}', VxColors.neonCyan));
+    }
+    final s50 = series.sma50[idx];
+    if (s50 != null) {
+      second.add(('SMA50 ${_fmtPrice(s50)}', VxColors.neonPurple));
+    }
+    // MACD(12/26/9) histogram readout — green above zero, red below.
+    final hist = series.macdHistogram[idx];
+    if (hist != null) {
+      second.add((
+        'MACD ${hist >= 0 ? '+' : ''}${hist.toStringAsFixed(2)}',
+        hist >= 0 ? VxColors.neonGreen : VxColors.neonRed,
+      ));
+    }
+
+    x = 8;
+    for (final (label, color) in second) {
+      final tp = _text(label, color: color);
+      if (x + tp.width > _chartW - 4) break;
+      tp.paint(canvas, Offset(x, 18));
+      x += tp.width + 12;
     }
   }
 
   @override
-  bool shouldRepaint(covariant _ProChartPainter old) => true;
+  bool shouldRepaint(covariant _ProChartPainter old) =>
+      old.series.fingerprint != series.fingerprint ||
+      old.rightIndex != rightIndex ||
+      old.visibleCount != visibleCount ||
+      old.cursor != cursor ||
+      old.showVolume != showVolume ||
+      old.showIndicators != showIndicators ||
+      old.showRsi != showRsi ||
+      // Identity covers the usual case of a freshly built list; the length
+      // check catches an in-place append to a list the parent reuses.
+      !identical(old.markers, markers) ||
+      old.markers.length != markers.length ||
+      !identical(old.drawings, drawings) ||
+      old.drawings.length != drawings.length;
 }

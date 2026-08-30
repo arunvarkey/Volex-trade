@@ -80,11 +80,10 @@ class ChartStatsOverlay extends StatelessWidget {
         const SizedBox(height: 1),
         Text(
           value,
-          style: TextStyle(
+          style: VxTypography.price.copyWith(
             color: VxColors.textSecondary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            fontFamily: VxTypography.mono,
           ),
         ),
       ],
