@@ -175,13 +175,6 @@ class MoreScreen extends StatelessWidget {
                 ),
               ),
             ),
-            _buildMenuItem(
-              context,
-              icon: Icons.bug_report,
-              title: 'DEBUG: Test Navigation',
-              subtitle: 'Test all routes',
-              route: '/debug-nav',
-            ),
             ListTile(
               leading: const Icon(Icons.refresh, color: Colors.red),
               title: Text(
