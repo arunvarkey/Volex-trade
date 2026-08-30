@@ -109,8 +109,12 @@ Answer honestly — a wrong answer here is a policy violation, and it is checked
 | Shares user location | No |
 | Allows user-to-user communication | No |
 
-Expected outcome: **PEGI 3 / ESRB Everyone**, with a "Simulated Trading" style
-note. The 18+ confirmation inside the app is our own gate, not a store rating.
+Expected outcome: **PEGI 3 / ESRB Everyone** on content alone. Set the target
+audience to **18+** in the Play Console regardless: the app is Finance-category
+with in-app purchases and analytics, and declaring an adult audience keeps it
+out of the Families policy, whose extra obligations there is no reason to take
+on. The in-app age gate and the risk disclosure both ask for 18+, so the store
+declaration should agree with them.
 
 ---
 

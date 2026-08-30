@@ -11,8 +11,18 @@ class AgeGateService extends ChangeNotifier {
   static final AgeGateService instance = AgeGateService._();
 
   /// Minimum age to use Volex.
-  static const int minimumAge = 13;
+  ///
+  /// 18, not 13. The gate used to accept 13+ while the risk disclosure two
+  /// screens later required the user to confirm they were 18 or older — so a
+  /// 13-year-old passed the gate and was then stuck, or lied. 18 is also the
+  /// right line for a Finance-category app with in-app purchases and
+  /// analytics: it keeps the app out of Google Play's Families policy, whose
+  /// obligations this project has no reason to take on.
+  static const int minimumAge = 18;
 
+  // Storage keys keep their original names on purpose. Renaming them would
+  // silently re-prompt everyone who has already answered, and the value being
+  // stored — "confirmed" or "blocked" — has not changed meaning.
   static const String _kConfirmed = 'age_gate_confirmed_13plus_v1';
   static const String _kBlocked = 'age_gate_blocked_under13_v1';
 

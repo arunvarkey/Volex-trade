@@ -31,7 +31,7 @@ class ModeSelectionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Start exploring with zero pressure',
+                  'Both use virtual money. You can switch at any time.',
                   style: TextStyle(
                     fontSize: 16,
                     color: VxColors.textSecondary,
@@ -40,44 +40,51 @@ class ModeSelectionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // Explorer Mode Card (RECOMMENDED)
+                // Both modes are simulated. The only difference is how much
+                // control you get over the strategies — Pro unlocks editable
+                // parameters and the automated runner.
+                //
+                // Pro Mode used to be subtitled "Connect Your Exchange", which
+                // implies real exchange connectivity the app does not have and
+                // deliberately keeps switched off. Explorer listed "Community
+                // Insights", a feature with nothing behind it. Both are gone.
                 _ModeCard(
-                  title: 'Explorer Mode',
-                  subtitle: 'Start Free - No API Keys Needed',
+                  title: 'Explorer',
+                  subtitle: 'Guided — the place to start',
                   badge: 'RECOMMENDED',
                   icon: Icons.explore,
                   color: VxColors.primary,
                   features: const [
-                    'AI-Powered Trade Signals',
-                    'Paper Trading Practice',
-                    'Strategy Backtesting',
-                    'Market Scanner',
-                    'Community Insights',
-                    'Zero Risk',
+                    'Paper trading with virtual money',
+                    'Academy lessons and quizzes',
+                    'Backtesting with fees and slippage',
+                    'Trading journal',
+                    'Ready-made strategies',
                   ],
                   onTap: () => _selectExplorerMode(context),
                 ),
                 const SizedBox(height: 20),
 
-                // Pro Mode Card
                 _ModeCard(
-                  title: 'Pro Mode',
-                  subtitle: 'Connect Your Exchange',
-                  icon: Icons.rocket_launch,
+                  title: 'Pro',
+                  subtitle: 'Full control — still simulated',
+                  icon: Icons.tune,
                   color: VxColors.neonCyan,
                   features: const [
                     'Everything in Explorer',
-                    'Full Terminal & Realistic Execution (Simulated)',
-                    'Automated Strategies',
-                    'Advanced Risk Management',
+                    'Edit strategy parameters yourself',
+                    'Run strategies automatically on paper',
+                    'Risk limits you configure',
                   ],
                   onTap: () => _selectProMode(context),
                 ),
                 const SizedBox(height: 32),
 
                 // Can switch later
+                // "Upgrade" implied a paid tier. Switching modes is free and
+                // is a toggle in Settings.
                 const Text(
-                  'You can upgrade to Pro Mode anytime',
+                  'Switch modes any time in Settings',
                   style: TextStyle(
                     fontSize: 12,
                     color: VxColors.textTertiary,

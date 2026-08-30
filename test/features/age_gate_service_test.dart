@@ -12,8 +12,11 @@ void main() {
     await service.reset();
   });
 
-  test('minimum age is 13', () {
-    expect(AgeGateService.minimumAge, 13);
+  test('minimum age is 18', () {
+    // Must match the risk disclosure, which asks the user to confirm they are
+    // 18 or older. When these disagreed, the gate let a 13-year-old through to
+    // a screen they could not honestly get past.
+    expect(AgeGateService.minimumAge, 18);
   });
 
   test('fresh state: not confirmed, not blocked', () {
