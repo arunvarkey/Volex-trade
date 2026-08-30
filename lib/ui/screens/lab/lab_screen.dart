@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../design_system/vx_colors.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
+import '../../widgets/feature_intro.dart';
 import '../strategies/strategy_detail_view.dart';
 
 class LabScreen extends StatelessWidget {
@@ -40,6 +41,20 @@ class LabScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const FeatureIntro(
+              featureId: 'lab',
+              icon: Icons.science_outlined,
+              what: 'A strategy is a set of rules that decides when to buy and '
+                  'sell for you. This screen is where you run one against past '
+                  'prices to see how it would have done, and switch it on to '
+                  'trade your virtual balance automatically.',
+              when: 'Use it when you have a rule you want to check before '
+                  'trusting it — for example "buy when the 20-period average '
+                  'crosses above the 50-period one".',
+              caution: 'A strategy doing well on past prices is evidence, not '
+                  'proof. Markets change, and the period you tested is only '
+                  'one of the many the strategy will meet.',
+            ),
             _buildLabHeader(context),
             const SizedBox(height: 20),
 

@@ -47,6 +47,13 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.spellcheck_rounded,
+            title: 'Glossary',
+            subtitle: 'Every trading word the app uses, in plain English',
+            route: '/glossary',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.menu_book_outlined,
             title: 'Trading Journal',
             subtitle: 'Log why you traded and how you felt',
@@ -70,7 +77,7 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.tune,
             title: 'Strategy Studio',
-            subtitle: 'Pick a template, tune it, and save your strategies',
+            subtitle: 'Build a set of buy and sell rules from a ready-made template',
             route: '/simulator',
           ),
           _buildMenuItem(
@@ -84,7 +91,7 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.scanner,
             title: 'Market Scanner',
-            subtitle: 'Find trading opportunities across markets',
+            subtitle: 'Scan every market at once for setups worth a look',
             route: '/market-scanner',
           ),
 
@@ -93,14 +100,14 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.speed,
             title: 'Strategy Optimizer',
-            subtitle: 'Fine-tune with genetic algorithms',
+            subtitle: 'Search for better settings for a strategy you already have',
             route: '/optimizer',
           ),
           _buildMenuItem(
             context,
             icon: Icons.code,
             title: 'Script Editor',
-            subtitle: 'Write custom strategy code',
+            subtitle: 'Write your own trading rules in code — for programmers',
             route: '/script-editor',
           ),
 
@@ -109,7 +116,7 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.store,
             title: 'Marketplace',
-            subtitle: 'Browse and share strategies',
+            subtitle: 'Strategies other people have built and published',
             route: '/marketplace',
           ),
           _buildMenuItem(

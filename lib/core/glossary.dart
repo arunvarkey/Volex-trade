@@ -125,9 +125,144 @@ class Glossary {
       'Replaying past prices to see how a strategy would have done.',
       'Runs your strategy over historical data to estimate its performance. Useful for comparison, but past results don\'t guarantee the future — and over-tuning to history ("overfitting") is a common trap.',
     ),
+    // ── Terms the rest of the app puts on screen ──────────────────────
+    //
+    // Everything above this line came from the backtest results screen. The
+    // words below appear on the trade ticket, the risk settings, the chart,
+    // the optimizer and the signal feed, where until now they were shown bare
+    // and a beginner had no way to find out what they meant.
+    'long': GlossaryEntry(
+      'Long',
+      'Betting the price goes up. You profit if it rises.',
+      'Buying first and selling later. Your profit is the sell price minus the buy price, so a long gains when the market rises and loses when it falls. "Going long" and "buying" mean the same thing here.',
+    ),
+    'short': GlossaryEntry(
+      'Short',
+      'Betting the price goes down. You profit if it falls.',
+      'Selling first and buying back later. Your profit is the sell price minus the (lower) buy-back price, so a short gains when the market falls. Losses on a short have no natural ceiling, because a price can keep rising, which is why a stop loss matters more here than anywhere else.',
+    ),
+    'position': GlossaryEntry(
+      'Position',
+      'A trade you currently have open.',
+      'The quantity of an asset you are holding, long or short, together with the price you entered at. It stays open — with its profit or loss moving as the price moves — until you close it.',
+    ),
+    'position_size': GlossaryEntry(
+      'Position Size',
+      'How much you put into one trade.',
+      'The quantity you buy or sell. Volex works it out backwards from your risk: you say how much of your balance you are willing to lose and where your stop goes, and the size that produces exactly that loss is calculated for you. Sizing by feel instead is how most beginners lose money.',
+    ),
+    'risk_per_trade': GlossaryEntry(
+      'Risk Per Trade',
+      'The most you are prepared to lose if one trade goes wrong.',
+      'Usually set as a percentage of your balance — 1% is a common starting point. It, plus your stop-loss distance, determines your position size. Keeping it small is what lets you survive a losing streak: at 1% a run of ten losses costs about a tenth of your account, at 10% it costs almost all of it.',
+    ),
+    'risk_reward': GlossaryEntry(
+      'Risk / Reward',
+      'How much you stand to make compared with what you are risking.',
+      'The distance from entry to take-profit divided by the distance from entry to stop-loss. At 2:1 you make twice what you risk when right, which means you can be wrong more often than you are right and still come out ahead. It is the number that makes a modest win rate survivable.',
+    ),
+    'slippage': GlossaryEntry(
+      'Slippage',
+      'The gap between the price you expected and the price you got.',
+      'Markets move between the moment you press the button and the moment the order fills, so a market order rarely fills at exactly the quoted price. Volex models it in backtests because ignoring it is the single easiest way to make a losing strategy look profitable.',
+    ),
+    'fees': GlossaryEntry(
+      'Trading Fees',
+      'The exchange\'s cut, charged on every trade you make.',
+      'A percentage of each trade\'s value, charged when you open and again when you close. Volex applies a 0.075% taker fee, in line with a typical crypto exchange. It sounds trivial until you trade often: a strategy taking many small profits can hand all of them to fees.',
+    ),
+    'spread': GlossaryEntry(
+      'Spread',
+      'The gap between the buying price and the selling price.',
+      'Buyers bid slightly below what sellers ask, and the difference is the spread. You cross it every time you trade with a market order, so it acts as a cost on top of fees. Wider spreads mean a less liquid market.',
+    ),
+    'equity_curve': GlossaryEntry(
+      'Equity Curve',
+      'A line showing your account balance over time.',
+      'Plots total account value trade by trade. The shape matters as much as the endpoint: a steady climb is a strategy you could actually sit through, while the same final return reached via violent swings is one most people would abandon partway.',
+    ),
+    'volatility': GlossaryEntry(
+      'Volatility',
+      'How wildly a price swings around.',
+      'A measure of how much price moves, in either direction, over a period. High volatility means bigger opportunities and bigger losses, and it is why the same position size is not equally risky across two different markets.',
+    ),
+    'timeframe': GlossaryEntry(
+      'Timeframe',
+      'How much time each candle on the chart covers.',
+      'On the 1h chart, one candle is one hour of trading. Shorter timeframes give more signals and more noise; longer ones give fewer, slower, generally more reliable ones. A strategy that works on the daily chart often falls apart on the 5-minute.',
+    ),
+    'candlestick': GlossaryEntry(
+      'Candlestick',
+      'One bar on the chart, showing four prices for that period.',
+      'The body spans the open and close, and the thin wicks reach the high and low. Green means the close was above the open (price rose over that period), red means it fell. Four numbers in one shape, which is why charts use them.',
+    ),
+    'support_resistance': GlossaryEntry(
+      'Support & Resistance',
+      'Price levels where the market has repeatedly turned around.',
+      'Support is a level buyers have stepped in at before; resistance is one sellers have. They are not laws — they are places where enough people are watching that behaviour repeats, until it doesn\'t. Broken resistance often becomes support.',
+    ),
+    'trend': GlossaryEntry(
+      'Trend',
+      'The general direction price has been heading.',
+      'An uptrend makes higher highs and higher lows; a downtrend does the reverse; a range does neither. Most strategies work in one of these conditions and fail in the others, which is why a strategy that stopped working may just be facing a different market.',
+    ),
+    'breakout': GlossaryEntry(
+      'Breakout',
+      'Price pushing out of the range it has been stuck in.',
+      'A move beyond a level price has repeatedly failed to pass. Breakouts on strong volume can start a big trend; breakouts on weak volume often reverse straight back into the range — the "false breakout" that catches out beginners.',
+    ),
+    'signal': GlossaryEntry(
+      'Signal',
+      'The app pointing out that a setup it watches for has appeared.',
+      'A rules-based observation — an indicator crossed a level, a pattern completed — not a prediction and not advice. In Volex a signal tells you what the rule saw and why, so you can judge it. Acting on signals you do not understand is how a strategy becomes a lottery ticket.',
+    ),
+    'confidence': GlossaryEntry(
+      'Confidence',
+      'How well the setup matched the rules — not a chance of winning.',
+      'A score for how cleanly conditions lined up. It is easy to misread: 80% confidence does not mean an 80% chance of profit. It means the pattern was a strong example of itself, and strong examples still fail regularly.',
+    ),
+    'overfitting': GlossaryEntry(
+      'Overfitting',
+      'Tuning a strategy so tightly to the past that it only works on the past.',
+      'Push enough settings around and you will find some that would have made money on the exact history you tested, by memorising its noise rather than learning anything about markets. Such strategies look superb in a backtest and fail immediately in live conditions. It is the main risk of using an optimizer.',
+    ),
+    'optimization': GlossaryEntry(
+      'Optimization',
+      'Searching many setting combinations to find ones that did well.',
+      'Volex uses a genetic search: it tries a population of settings, keeps those that scored best, combines and mutates them, and repeats over successive generations. It finds good settings quickly, and it will happily find overfitted ones just as quickly — always retest a winner on a period it has never seen.',
+    ),
+    'drawdown': GlossaryEntry(
+      'Drawdown',
+      'How far you are currently down from your best balance.',
+      'The fall from a previous account peak. It is the number that decides whether a strategy is bearable in practice: a 40% drawdown means watching almost half your account disappear and still following the plan. Most people cannot, which is why they abandon strategies at the worst moment.',
+    ),
+    'daily_loss_limit': GlossaryEntry(
+      'Daily Loss Limit',
+      'A cap that stops you trading once you are down enough for one day.',
+      'When the day\'s losses reach the limit you set, no new positions can be opened until tomorrow. It exists to break "revenge trading" — the urge to win it back immediately, which reliably turns a bad day into a much worse one. You can still close and manage the positions you already have.',
+    ),
+    'emergency_stop': GlossaryEntry(
+      'Emergency Stop',
+      'One switch that halts all automated strategies and new orders.',
+      'A manual kill switch for when something is behaving in a way you did not intend. It blocks new positions and stops every running strategy at once. It never blocks you from reducing or closing what is already open — getting out must always stay possible.',
+    ),
+    'liquidation': GlossaryEntry(
+      'Liquidation',
+      'The exchange force-closing a leveraged position that ran out of margin.',
+      'With leverage you only post part of the position\'s value. If the market moves against you far enough that your deposit can no longer cover the loss, the position is closed for you at whatever the price is — and the deposit is gone. Higher leverage means a smaller move gets you there.',
+    ),
   };
 
   static GlossaryEntry? of(String id) => _entries[id];
 
   static bool has(String id) => _entries.containsKey(id);
+
+  /// Every term, alphabetical by display name — for a browsable glossary.
+  static List<MapEntry<String, GlossaryEntry>> get all {
+    final list = _entries.entries.toList()
+      ..sort((a, b) => a.value.term.toLowerCase().compareTo(
+            b.value.term.toLowerCase(),
+          ));
+    return list;
+  }
 }
