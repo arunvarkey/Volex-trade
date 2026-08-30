@@ -130,7 +130,7 @@ class SignalEngine {
             status: OrderStatus.open,
           );
 
-          // Get AI Guardian analysis
+          // Run the pre-trade checks
           final checkResult = await _tradeChecks.analyzeTradeIntent(mockOrder);
 
           // Create signal

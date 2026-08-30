@@ -302,7 +302,7 @@ class ServiceLocator {
       getIt.registerSingleton<MarketplaceService>(marketplace);
       _log('MARKET: OK.');
 
-      // Register AI Guardian
+      // Register the pre-trade checks
       onProgress?.call('Setting up trade checks...', 0.885);
       String userId = 'anonymous';
       try {

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:volex_terminal/features/trade_checks/services/trade_check_service.dart';
 
-/// The AI Guardian's warning dialog used to print "Historical win rate: 5%"
+/// The trade-check warning dialog used to print "Historical win rate: 5%"
 /// from a constant baked into the pattern — an invented population statistic
 /// shown as fact to someone in the middle of placing a trade. It now reports
 /// the user's own rate over their own trades, so what that computation counts

@@ -17,7 +17,7 @@ import 'package:volex_terminal/features/trade_checks/models/trade_analysis.dart'
 // I'll create a basic test that checks if the service can be instantiated and basic classes work.
 
 void main() {
-  group('AI Guardian Logic', () {
+  group('Trade check logic', () {
     test('EmotionalState enum has correct descriptions', () {
       expect(EmotionalState.revenge.name, 'Revenge Trading');
       expect(EmotionalState.fomo.name, 'FOMO Detected');

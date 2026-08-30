@@ -622,7 +622,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
 
       if (!mounted) return;
 
-      // The order can be declined without throwing (e.g. AI Guardian cancel).
+      // The order can be declined without throwing (e.g. a trade check cancel).
       if (result != null && !result.success) {
         messenger.showSnackBar(SnackBar(
           content: Text(result.message ?? 'Order was not placed'),

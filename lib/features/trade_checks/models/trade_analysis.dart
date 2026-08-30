@@ -1,5 +1,5 @@
 
-/// Emotional states that AI Guardian detects
+/// Emotional states the trade checks detect
 enum EmotionalState {
   calm,
   fomo,
@@ -68,7 +68,7 @@ class PatternWarning {
   });
 }
 
-/// Complete analysis from AI Guardian
+/// Complete result of the pre-trade checks
 class TradeAnalysis {
   final EmotionalState emotionalState;
   final List<PatternWarning> patterns;
