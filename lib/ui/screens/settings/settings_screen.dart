@@ -50,7 +50,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           _buildCpuTile(
             context,
-            title: "Risk Parameters",
+            title: "Risk Limits",
             icon: Icons.speed,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const RiskSettingsScreen())),
@@ -154,7 +154,11 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              isPro ? "Pro Simulator Active" : "Paper Trading (Simulation)",
+              isPro
+                  ? "On: you can edit strategy settings and run them "
+                      "automatically. Still simulated."
+                  : "Off: guided mode with ready-made strategies. Also "
+                      "simulated — the switch does not involve real money.",
               style: const TextStyle(
                 color: VxColors.textSecondary,
                 fontSize: 12,

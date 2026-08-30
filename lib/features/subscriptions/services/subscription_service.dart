@@ -316,9 +316,11 @@ class SubscriptionService extends ChangeNotifier {
       // checks everywhere the user can see it; renaming the key would
       // reset the flag and split the event history.
       case 'ai_guardian':
-      case 'advanced_analytics':
-      case 'custom_watchlists':
-      case 'export_history':
+      // 'advanced_analytics', 'custom_watchlists' and 'export_history'
+      // used to be listed here and sold on the paywall. None of them is
+      // implemented anywhere in the app, so gating them meant charging for
+      // nothing. They are removed rather than left as dormant keys.
+      case 'unlimited_strategies':
         return false;
       default:
         return true;

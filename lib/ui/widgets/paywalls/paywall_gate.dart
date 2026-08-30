@@ -137,12 +137,12 @@ class PaywallGate extends StatelessWidget {
         return 'Coming Soon!';
       case 'automated_strategies':
         return 'Upgrade to Premium to run automated trading strategies 24/7';
-      case 'advanced_analytics':
-        return 'Upgrade to Premium to access advanced performance analytics';
-      case 'custom_watchlists':
-        return 'Upgrade to Premium to create unlimited custom watchlists';
-      case 'priority_support':
-        return 'Upgrade to Premium to get priority customer support';
+      case 'unlimited_strategies':
+        return 'Upgrade to Premium to save more than three strategies';
+      // 'advanced_analytics', 'custom_watchlists' and 'priority_support'
+      // had messages here for features the app does not have. A paywall
+      // for something that does not exist is worse than no paywall.
+
       default:
         return 'Upgrade to unlock this feature';
     }
