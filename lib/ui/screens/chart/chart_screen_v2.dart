@@ -18,11 +18,13 @@ import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.da
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
 import 'package:volex_terminal/ui/sheets/smart_order_sheet.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 // [NEW] Backtesting Imports
 import 'package:volex_terminal/engine/replay_controller.dart';
 import 'package:volex_terminal/ui/replay_panel.dart';
+import 'components/chart_legend_sheet.dart';
 
 class ChartScreenV2 extends StatefulWidget {
   final MarketDataRepository? repository;
@@ -549,6 +551,17 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   ),
                 ),
 
+                // Layer 1.7: the key to what the chart is drawing. The chart
+                // is a single painted canvas, so its on-canvas labels
+                // (SMA20, Vol, RSI) cannot be tapped; this is the way in.
+                Positioned(
+                  left: 12,
+                  bottom: 8,
+                  child: _ChartLegendButton(
+                    onTap: () => ChartLegendSheet.show(context),
+                  ),
+                ),
+
                 // Layer 1.8: honest "simulated data" badge — the chart falls
                 // back to generated candles when the exchange feed is
                 // unreachable, and the user must be able to tell.
@@ -734,5 +747,49 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
             ),
           ),
         ));
+  }
+}
+
+/// Small, low-contrast affordance sitting over the chart. Deliberately quiet:
+/// it must not compete with the price, but it has to be findable by someone
+/// who does not yet know what they are looking at.
+class _ChartLegendButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _ChartLegendButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Explain the chart',
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: VxColors.surface.withValues(alpha: 0.82),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.help_outline_rounded,
+                  size: 13, color: VxColors.textSecondary),
+              const SizedBox(width: 5),
+              Text(
+                "What's this?",
+                style: VxTypography.caption.copyWith(
+                  color: VxColors.textSecondary,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
