@@ -27,7 +27,7 @@ You could lose some or all of the money you put in, so never trade money you
 cannot afford to lose. Seek advice from an independent, qualified financial
 adviser if you are in any doubt.
 
-Volex Terminal is educational software. Nothing in it — signals, AI
+Volex Terminal is educational software. Nothing in it — signals,
 suggestions, strategy templates, backtests or lessons — is investment advice or
 a recommendation to buy or sell anything. Simulated results have inherent
 limitations: they cannot reproduce real fees, real liquidity, or how a live

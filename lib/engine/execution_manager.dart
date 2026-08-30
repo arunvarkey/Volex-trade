@@ -14,8 +14,8 @@ import 'package:volex_terminal/engine/persistence/persistence_service.dart';
 import 'package:volex_terminal/services/analytics_service.dart';
 import 'package:volex_terminal/engine/execution/i_execution_service.dart';
 import 'package:volex_terminal/features/academy/services/xp_service.dart';
-import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
-import 'package:volex_terminal/features/ai_guardian/ui/ai_guardian_warning_dialog.dart';
+import 'package:volex_terminal/features/trade_checks/services/trade_check_service.dart';
+import 'package:volex_terminal/features/trade_checks/ui/trade_check_dialog.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/core/financial_math.dart';
@@ -193,24 +193,26 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     );
   }
 
-  /// Places an order with AI Guardian protection.
+  /// Places an order after the pre-trade checks.
   /// Used by UI components to intercept emotional trades.
   Future<OrderResult?> placeOrderWithGuard(
       BuildContext context, Order order) async {
     // 0. Feature Flag Check
     final flags = getIt<FeatureFlagService>();
-    if (!flags.isAIGuardianEnabled) {
+    if (!flags.areTradeChecksEnabled) {
       return placeOrder(order);
     }
 
-    // AI Guardian Check
+    // Pre-trade checks
     try {
-      final aiGuardian = getIt<AIGuardianService>();
+      final aiGuardian = getIt<TradeCheckService>();
       final analysis = await aiGuardian.analyzeTradeIntent(order);
 
       if (analysis.shouldWarn) {
         // Analytics: Warning Triggered
         AnalyticsService.instance
+            // Event names are kept as-is so the analytics series is
+            // continuous across the rename to "trade checks".
             .logEvent('ai_guardian_warning_shown', parameters: {
           'symbol': order.symbol,
           'risk_score': analysis.riskScore,
@@ -223,7 +225,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         final proceed = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
-          builder: (_) => AIGuardianWarningDialog(analysis: analysis),
+          builder: (_) => TradeCheckDialog(analysis: analysis),
         );
 
         if (proceed != true) {
@@ -231,14 +233,14 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
               parameters: {'action': 'cancelled'});
           return OrderResult(
               success: false,
-              message: "User canceled trade based on AI warning.");
+              message: "User canceled trade after a pre-trade warning.");
         }
 
         AnalyticsService.instance.logEvent('ai_guardian_action',
             parameters: {'action': 'proceeded'});
       }
     } catch (e) {
-      AppLogger.error("AI Guardian Check Failed: $e");
+      AppLogger.error("Trade check failed: $e");
       // Fallthrough to allow trade if AI fails
     }
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../sheets/vx_trade_sheet.dart';
 import '../navigation/vx_navigation_helper.dart';
-import '../screens/strategies/ai_strategy_generator_screen.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
@@ -136,11 +136,11 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
         action: _handleQuickSell,
       ),
       _Command(
-        icon: Icons.auto_awesome,
-        label: 'AI Strategy Gen',
-        description: 'Describe and build strategy',
+        icon: Icons.tune,
+        label: 'Build Strategy',
+        description: 'Start from a template',
         color: VxColors.neonCyan,
-        action: _handleAiStrategy,
+        action: _handleBuildStrategy,
       ),
       _Command(
         icon: isRunning ? Icons.auto_mode : Icons.auto_graph,
@@ -337,12 +337,9 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
     }
   }
 
-  void _handleAiStrategy() {
+  void _handleBuildStrategy() {
     Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AIStrategyGeneratorScreen()),
-    );
+    context.push('/simulator/templates');
   }
 
   void _handleFindSymbol() {

@@ -80,8 +80,8 @@ class TerminalTopBar extends StatelessWidget {
 
           const SizedBox(width: 4),
 
-          // AI Button - Compact
-          _buildAIButton(context),
+          // Strategy wizard (template-driven, not a model)
+          _buildStrategyWizardButton(context),
 
           const SizedBox(width: 4),
 
@@ -251,7 +251,7 @@ class TerminalTopBar extends StatelessWidget {
     );
   }
 
-  Widget _buildAIButton(BuildContext context) {
+  Widget _buildStrategyWizardButton(BuildContext context) {
     return InkWell(
       onTap: () {
         showDialog(
@@ -267,7 +267,7 @@ class TerminalTopBar extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+        child: const Icon(Icons.tune, color: Colors.white, size: 16),
       ),
     );
   }

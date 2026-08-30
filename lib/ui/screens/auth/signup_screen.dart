@@ -61,7 +61,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 12),
 
                 const Text(
-                  'Start your AI trading journey',
+                  'Practise trading without the risk',
                   style: TextStyle(
                     fontSize: 16,
                     color: VxColors.textSecondary,

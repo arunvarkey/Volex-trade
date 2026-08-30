@@ -312,11 +312,11 @@ class HomeScreenV2 extends StatelessWidget {
           children: [
             Expanded(
               child: _ActionCard(
-                icon: Icons.auto_awesome_rounded,
-                title: 'AI Builder',
-                subtitle: 'Create a strategy with AI',
+                icon: Icons.tune_rounded,
+                title: 'Build',
+                subtitle: 'Start from a template',
                 iconBgColor: const Color(0x1F63B3ED),
-                onTap: () => context.push('/ai-strategy'),
+                onTap: () => context.push('/simulator/templates'),
               ),
             ),
             const SizedBox(width: 10),

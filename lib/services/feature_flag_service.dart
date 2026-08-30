@@ -9,7 +9,6 @@ import '../core/app_logger.dart';
 /// **Common Flags:**
 /// *   `maintenance_mode` (bool): Blocks access to the app.
 /// *   `enable_live_trading` (bool): Global kill switch for live execution.
-/// *   `ai_model_version` (string): version of the AI model to use.
 /// *   `welcome_message` (string): Dynamic welcome text.
 class FeatureFlagService {
   final FirebaseRemoteConfig? _remoteConfig;
@@ -69,20 +68,16 @@ class FeatureFlagService {
           .getBool('enable_live_trading')
       : true;
 
-  /// Current AI model version.
-  String get aiModelVersion => !kIsWeb && _initialized
-      ? (_remoteConfig ?? FirebaseRemoteConfig.instance)
-          .getString('ai_model_version')
-      : 'v1.0.0';
-
   /// Max leverage allowed (risk control).
   double get maxLeverage => !kIsWeb && _initialized
       ? (_remoteConfig ?? FirebaseRemoteConfig.instance)
           .getDouble('max_leverage')
       : 3.0;
 
-  /// Master switch for AI Guardian features.
-  bool get isAIGuardianEnabled => !kIsWeb && _initialized
+  /// Master switch for the pre-trade checks (revenge-trading and
+  /// overtrading detection). The remote key keeps its original name so
+  /// existing Remote Config entries keep working.
+  bool get areTradeChecksEnabled => !kIsWeb && _initialized
       ? (_remoteConfig ?? FirebaseRemoteConfig.instance)
           .getBool('ai_guardian_enabled')
       : true;

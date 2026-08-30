@@ -18,7 +18,7 @@ import 'package:volex_terminal/ui/design_system/theme_service.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
 import 'package:volex_terminal/engine/persistence/persistence_service.dart';
 import 'package:volex_terminal/core/config/app_mode_service.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/services/strategy_repository.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/services/strategy_repository.dart';
 import 'package:volex_terminal/engine/notifications/notification_bus.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/engine/strategy/strategy_runner.dart';
@@ -41,7 +41,7 @@ import 'package:volex_terminal/services/crash_reporting_service.dart';
 import 'package:volex_terminal/services/feature_flag_service.dart';
 import 'package:volex_terminal/services/data_privacy_service.dart';
 import 'package:volex_terminal/engine/marketplace/marketplace_service.dart';
-import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
+import 'package:volex_terminal/features/trade_checks/services/trade_check_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:volex_terminal/engine/scanner/scanner_engine.dart';
@@ -310,7 +310,7 @@ class ServiceLocator {
       } catch (_) {
         // Firebase may be unavailable (e.g. web preview); default to anonymous.
       }
-      getIt.registerLazySingleton(() => AIGuardianService(userId));
+      getIt.registerLazySingleton(() => TradeCheckService(userId));
       _log('GUARDIAN: OK.');
 
       // A CopyTradingEngine was constructed and started here on every launch.
@@ -358,10 +358,10 @@ class ServiceLocator {
 
       // --- SIGNAL ENGINE (V2) ---
       onProgress?.call('Initializing signal engine...', 0.95);
-      _log('SIGNALS: Booting AI...');
+      _log('SIGNALS: Booting signal engine...');
       final signalEngine = SignalEngine(
         strategyEngine: strategyEngine,
-        aiGuardian: getIt<AIGuardianService>(),
+        tradeChecks: getIt<TradeCheckService>(),
         marketData: getIt<IMarketDataRepository>(),
       );
       getIt.registerSingleton<SignalEngine>(signalEngine);

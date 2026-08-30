@@ -59,10 +59,11 @@ class _NextStepGuideState extends State<NextStepGuide> {
       return const _NextStep(
         index: 2,
         title: 'Build your first strategy',
-        why: 'Turn a plain-English idea into a testable strategy with AI — no code.',
-        cta: 'Open AI Builder',
-        icon: Icons.auto_awesome_rounded,
-        route: '/ai-strategy',
+        why: 'Start from a ready-made template and change the parts you '
+            'understand — no code.',
+        cta: 'Open Strategy Studio',
+        icon: Icons.tune_rounded,
+        route: '/simulator/templates',
       );
     }
     if (!hasTraded) {

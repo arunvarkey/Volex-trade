@@ -68,13 +68,6 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
-            icon: Icons.auto_awesome,
-            title: 'AI Strategy Builder',
-            subtitle: 'Describe an idea, AI builds a strategy',
-            route: '/ai-strategy',
-          ),
-          _buildMenuItem(
-            context,
             icon: Icons.tune,
             title: 'Strategy Studio',
             subtitle: 'Build a set of buy and sell rules from a ready-made template',

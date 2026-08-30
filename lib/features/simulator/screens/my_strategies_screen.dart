@@ -3,11 +3,11 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../ui/design_system/vx_colors.dart';
 import '../../../features/subscriptions/services/subscription_service.dart';
-import '../ai_strategy/services/strategy_repository.dart';
+import '../strategy_builder/services/strategy_repository.dart';
 import '../../../engine/marketplace/marketplace_service.dart';
 import '../../../engine/marketplace/models/strategy_listing.dart';
 import '../../../services/profile_service.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import 'package:intl/intl.dart';
 
 class MyStrategiesScreen extends StatefulWidget {
@@ -94,7 +94,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Create your first AI-powered strategy',
+            'Create your first strategy',
             style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
           const SizedBox(height: 32),

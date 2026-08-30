@@ -174,12 +174,9 @@ class LabScreen extends StatelessWidget {
           Row(
             children: [
               _LabActionButton(
-                label: "Create with AI",
-                icon: Icons.auto_awesome,
-                onTap: () {
-                  // Navigate to AI Strategy Generator
-                  context.push('/ai-strategy');
-                },
+                label: "New Strategy",
+                icon: Icons.tune,
+                onTap: () => context.push('/simulator/templates'),
               ),
               const SizedBox(width: 12),
               _LabActionButton(

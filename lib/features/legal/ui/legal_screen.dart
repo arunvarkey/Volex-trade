@@ -73,7 +73,7 @@ class LegalScreen extends StatelessWidget {
             'trading with virtual funds. Nothing here executes a real order or '
             'holds real money.'),
         _h('Not financial advice'),
-        _p('Signals, AI suggestions, strategy templates, backtest results and '
+        _p('Signals, strategy templates, backtest results and '
             'Academy lessons are educational material, not investment advice '
             'and not a recommendation to buy or sell anything. Decisions you '
             'make with real money elsewhere are your own.'),

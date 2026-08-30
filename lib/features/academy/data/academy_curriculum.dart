@@ -438,10 +438,10 @@ class AcademyCurriculum {
                 'rules can.'),
             LessonBlock.tryIt(
                 text:
-                    'Describe a trading idea in plain English and let the AI '
-                    'Strategy Lab turn it into testable rules for you.',
-                label: 'Open the AI Strategy Lab',
-                route: '/ai-strategy'),
+                    'Take a ready-made template and change one number at a '
+                    'time, so you can see what each rule does.',
+                label: 'Open Strategy Studio',
+                route: '/simulator/templates'),
             LessonBlock.keyTakeaway(
                 'If you can\'t write your idea as rules, you can\'t test it — and if '
                 'you can\'t test it, you\'re guessing.'),

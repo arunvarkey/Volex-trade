@@ -111,7 +111,7 @@ class OverviewTab extends StatelessWidget {
     if (ghost == null) {
       return VxCard(
         title:
-            VxText.subtitle("AI Prediction", color: VxColors.neonCyan),
+            VxText.subtitle("Trend Line", color: VxColors.neonCyan),
         child: const Padding(
             padding: EdgeInsets.all(24.0),
             child: Center(
@@ -124,7 +124,7 @@ class OverviewTab extends StatelessWidget {
     final color = isUptrend ? VxColors.neonGreen : VxColors.neonRed;
 
     return VxCard(
-      title: VxText.subtitle("AI Metrics", color: VxColors.neonCyan),
+      title: VxText.subtitle("Trend Line", color: VxColors.neonCyan),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(

@@ -48,7 +48,6 @@ class SubscriptionService extends ChangeNotifier {
   bool get isPremium => _currentStatus.isPremium;
 
   // Legacy getter for compatibility, though AI is now available to all (limited for free)
-  bool get canUseAiAssistant => true;
 
   int get maxStrategies => isPremium ? 999999 : 3;
   int get maxBacktests => isPremium ? 999999 : 1;
@@ -312,6 +311,10 @@ class SubscriptionService extends ChangeNotifier {
     // Default to false for premium features if on free plan
     switch (feature) {
       case 'unlimited_signals':
+      // Wire key, not a label: this string is stored in Remote Config
+      // and in shipped analytics. The feature is now called trade
+      // checks everywhere the user can see it; renaming the key would
+      // reset the flag and split the event history.
       case 'ai_guardian':
       case 'advanced_analytics':
       case 'custom_watchlists':

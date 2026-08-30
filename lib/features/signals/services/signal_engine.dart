@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
-import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
+import 'package:volex_terminal/features/trade_checks/services/trade_check_service.dart';
 
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/core/app_logger.dart';
@@ -13,7 +13,7 @@ import 'package:volex_terminal/data/i_market_data_repository.dart';
 
 class SignalEngine {
   final StrategyEngine _strategyEngine;
-  final AIGuardianService _aiGuardian;
+  final TradeCheckService _tradeChecks;
   final IMarketDataRepository _marketData;
   final _signalsController = StreamController<TradeSignal>.broadcast();
 
@@ -33,10 +33,10 @@ class SignalEngine {
 
   SignalEngine({
     required StrategyEngine strategyEngine,
-    required AIGuardianService aiGuardian,
+    required TradeCheckService aiGuardian,
     required IMarketDataRepository marketData,
   })  : _strategyEngine = strategyEngine,
-        _aiGuardian = aiGuardian,
+        _tradeChecks = aiGuardian,
         _marketData = marketData;
 
   /// The scan timer.
@@ -131,7 +131,7 @@ class SignalEngine {
           );
 
           // Get AI Guardian analysis
-          final aiAnalysis = await _aiGuardian.analyzeTradeIntent(mockOrder);
+          final aiAnalysis = await _tradeChecks.analyzeTradeIntent(mockOrder);
 
           // Create signal
           final signal = TradeSignal(

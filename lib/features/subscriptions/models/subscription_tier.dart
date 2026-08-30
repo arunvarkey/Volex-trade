@@ -30,7 +30,7 @@ class SubscriptionProduct {
     id: 'free',
     tier: SubscriptionTier.free,
     name: 'Explorer Free',
-    description: 'Get started with AI signals',
+    description: 'Get started for free',
     price: 0,
     features: [
       '5 signals per day',
@@ -47,10 +47,9 @@ class SubscriptionProduct {
     id: 'explorer_premium',
     tier: SubscriptionTier.explorerPremium,
     name: 'Premium',
-    description: 'Unlimited AI & Analytics',
+    description: 'Unlimited backtests & analytics',
     price: 4.99,
     features: [
-      'Unlimited AI strategies',
       'Unlimited Backtesting',
       'Unlimited Signals',
       'Advanced indicators',

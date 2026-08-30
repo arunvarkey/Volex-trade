@@ -126,7 +126,11 @@ class PaywallGate extends StatelessWidget {
   String _getFeatureMessage(String feature) {
     switch (feature) {
       case 'unlimited_signals':
-        return 'Upgrade to Premium to get unlimited AI trading signals every day';
+        return 'Upgrade to Premium for unlimited trade signals every day';
+      // Wire key, not a label: this string is stored in Remote Config
+      // and in shipped analytics. The feature is now called trade
+      // checks everywhere the user can see it; renaming the key would
+      // reset the flag and split the event history.
       case 'ai_guardian':
         return 'Upgrade to Premium for trade checks that flag risky habits before you commit';
       case 'live_trading':
