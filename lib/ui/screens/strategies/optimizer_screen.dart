@@ -105,7 +105,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Deploy Strategy?",
-            style: const TextStyle(fontFamily: VxTypography.sans, color: VxColors.neonCyan)),
+            style: VxTypography.h3.copyWith(color: VxColors.neonCyan)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
             const SizedBox(height: 16),
             ..._bestParams!.entries.map((e) => Text(
                 "• ${e.key}: ${e.value is double ? e.value.toStringAsFixed(2) : e.value}",
-                style: const TextStyle(fontFamily: VxTypography.mono, color: VxColors.neonCyan))),
+                style: VxTypography.price.copyWith(color: VxColors.neonCyan))),
             const SizedBox(height: 16),
             const Text("Are you sure you want to proceed?",
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -243,8 +243,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                         : "Loaded: Simulated Stream",
                     // Descriptive label, not data — DM Sans, and 9pt was
                     // below a comfortable reading size.
-                    style: const TextStyle(fontFamily: VxTypography.sans, 
-                        fontSize: 11, color: Colors.white38),
+                    style: VxTypography.caption
+                        .copyWith(fontSize: 11, color: Colors.white38),
                   ),
                 ),
               ],
@@ -255,10 +255,10 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
               if (_job != null) ...[
                 Text(
                   "Generation ${_job!.currentGeneration} / ${_job!.totalGenerations}",
-                  style: const TextStyle(fontFamily: VxTypography.mono, 
+                  style: VxTypography.price.copyWith(
                       fontSize: 24,
                       color: VxColors.neonCyan,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.w700),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
@@ -293,8 +293,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                   _job == null
                       ? "Start Evolution"
                       : (_job!.isRunning ? "Evolving..." : "Restart"),
-                  style: const TextStyle(fontFamily: VxTypography.sans, 
-                      fontWeight: FontWeight.bold, fontSize: 18),
+                  style: VxTypography.button
+                      .copyWith(fontWeight: FontWeight.w700, fontSize: 18),
                 ),
               ),
             ],
@@ -316,8 +316,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       child: Column(
         children: [
           Text("Current Best",
-              style: const TextStyle(fontFamily: VxTypography.sans, 
-                  color: VxColors.neonGreen, fontSize: 12)),
+              style: VxTypography.caption
+                  .copyWith(color: VxColors.neonGreen, fontSize: 12)),
           if (params != null) ...[
             const SizedBox(height: 8),
             Wrap(
@@ -372,9 +372,9 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
             style: const TextStyle(color: Colors.white54, fontSize: 12)),
         const SizedBox(height: 4),
         Text(value,
-            style: const TextStyle(fontFamily: VxTypography.mono, 
+            style: VxTypography.price.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
                 color: Colors.white)),
       ],
     );

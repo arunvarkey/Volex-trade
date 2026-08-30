@@ -86,7 +86,8 @@ class SettingsScreen extends StatelessWidget {
           Center(
             child: Text(
               "Version 1.0.0 (Build 15)",
-              style: const TextStyle(fontFamily: VxTypography.mono, color: Colors.white24, fontSize: 12),
+              style: VxTypography.price
+                  .copyWith(color: Colors.white24, fontSize: 12),
             ),
           ),
         ],
@@ -101,7 +102,7 @@ class SettingsScreen extends StatelessWidget {
         title.toUpperCase(),
         // Section labels are UI text, not data — DM Sans like every other
         // screen. Monospace is reserved for numbers.
-        style: const TextStyle(fontFamily: VxTypography.sans, 
+        style: VxTypography.caption.copyWith(
           color: Colors.grey,
           fontSize: 12,
           fontWeight: FontWeight.w700,

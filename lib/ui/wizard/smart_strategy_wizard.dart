@@ -46,9 +46,9 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
               children: [
                 Text(
                   "Smart Builder",
-                  style: const TextStyle(fontFamily: VxTypography.sans, 
+                  style: VxTypography.h3.copyWith(
                     color: VxColors.neonCyan,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 0.2,
                   ),
                 ),

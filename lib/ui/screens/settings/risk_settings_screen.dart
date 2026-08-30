@@ -51,8 +51,8 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Emergency Stop",
-            style: const TextStyle(fontFamily: VxTypography.sans, 
-                color: VxColors.neonRed, fontWeight: FontWeight.bold)),
+            style: VxTypography.h3.copyWith(
+                color: VxColors.neonRed, fontWeight: FontWeight.w700)),
         content: const Text(
           "This will IMMEDIATELY halt all strategies and block new orders.\n\nAre you sure?",
           style: TextStyle(color: Colors.white70),
@@ -144,8 +144,8 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
           // Daily Loss Configuration
           Text("Daily Loss Limit",
-              style: const TextStyle(fontFamily: VxTypography.sans, 
-                  color: VxColors.neonCyan, fontSize: 12)),
+              style: VxTypography.caption
+                  .copyWith(color: VxColors.neonCyan, fontSize: 12)),
           const SizedBox(height: 16),
 
           Row(
@@ -153,8 +153,8 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
               Expanded(
                 child: TextField(
                   controller: _dailyLimitController,
-                  style: const TextStyle(fontFamily: VxTypography.mono, 
-                      color: Colors.white, fontSize: 16),
+                  style: VxTypography.price
+                      .copyWith(color: Colors.white, fontSize: 16),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     prefixText: "\$ ",

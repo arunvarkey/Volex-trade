@@ -15,7 +15,7 @@ class VxTypography {
   static const String sans = 'DM Sans';
   static const String mono = 'JetBrains Mono';
 
-  static const TextStyle hero = TextStyle(
+  static final TextStyle hero = const TextStyle(
     fontFamily: sans,
     fontSize: 38,
     fontWeight: FontWeight.w700,
@@ -23,7 +23,7 @@ class VxTypography {
     letterSpacing: -1.2,
   );
 
-  static const TextStyle h1 = TextStyle(
+  static final TextStyle h1 = const TextStyle(
     fontFamily: sans,
     fontSize: 28,
     fontWeight: FontWeight.w700,
@@ -31,49 +31,49 @@ class VxTypography {
     letterSpacing: -0.5,
   );
 
-  static const TextStyle h2 = TextStyle(
+  static final TextStyle h2 = const TextStyle(
     fontFamily: sans,
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
   );
 
-  static const TextStyle h3 = TextStyle(
+  static final TextStyle h3 = const TextStyle(
     fontFamily: sans,
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
   );
 
-  static const TextStyle bodyLarge = TextStyle(
+  static final TextStyle bodyLarge = const TextStyle(
     fontFamily: sans,
     fontSize: 18,
     fontWeight: FontWeight.w400,
     color: VxColors.textPrimary,
   );
 
-  static const TextStyle body = TextStyle(
+  static final TextStyle body = const TextStyle(
     fontFamily: sans,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: VxColors.textPrimary,
   );
 
-  static const TextStyle bodySmall = TextStyle(
+  static final TextStyle bodySmall = const TextStyle(
     fontFamily: sans,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: VxColors.textSecondary,
   );
 
-  static const TextStyle price = TextStyle(
+  static final TextStyle price = const TextStyle(
     fontFamily: mono,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: VxColors.textPrimary,
   );
 
-  static const TextStyle caption = TextStyle(
+  static final TextStyle caption = const TextStyle(
     fontFamily: sans,
     fontSize: 12,
     fontWeight: FontWeight.w500,
@@ -81,7 +81,7 @@ class VxTypography {
     letterSpacing: 0.2,
   );
 
-  static const TextStyle button = TextStyle(
+  static final TextStyle button = const TextStyle(
     fontFamily: sans,
     fontSize: 16,
     fontWeight: FontWeight.w600,

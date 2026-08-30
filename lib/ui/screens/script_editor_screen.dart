@@ -196,9 +196,10 @@ def on_candle(candle):
                 focusNode: _focusNode,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
-                style: const TextStyle(fontFamily: VxTypography.mono, 
-                  color: Color(0xFFD4D4D4), // VS Code text
+                style: VxTypography.price.copyWith(
+                  color: const Color(0xFFD4D4D4), // VS Code text
                   fontSize: 14,
+                  fontWeight: FontWeight.w400,
                   height: 1.5,
                 ),
                 decoration: const InputDecoration(
@@ -263,7 +264,7 @@ class _SnippetButton extends StatelessWidget {
         child: Text(
           label,
           style:
-              const TextStyle(fontFamily: VxTypography.mono, fontSize: 12, fontWeight: FontWeight.bold),
+              VxTypography.price.copyWith(fontSize: 12, fontWeight: FontWeight.w700),
         ),
       ),
     );
