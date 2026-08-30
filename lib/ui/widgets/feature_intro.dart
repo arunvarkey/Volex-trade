@@ -19,6 +19,13 @@ import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 /// uses one also keeps an "i" button in its app bar, so the explanation can
 /// always be brought back — a beginner who dismissed it too early should not
 /// have to reinstall the app to read it again.
+///
+/// Related, and easy to confuse: [GuidanceBanner] is the same shape of quiet,
+/// dismissible hint, but for a single line of "here is what to do on this
+/// screen". Reach for that when one sentence is genuinely enough, and for
+/// this when the reader needs to know why the screen exists at all before any
+/// instruction makes sense. The two keep separate dismissal keys on purpose,
+/// so a hint and an explanation are never dismissed by the same tap.
 class FeatureIntro extends StatefulWidget {
   /// Stable id for the feature; used as the dismissal key.
   final String featureId;

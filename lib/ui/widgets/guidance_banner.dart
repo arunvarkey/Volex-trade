@@ -12,6 +12,11 @@ import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 ///  - renders nothing until we know it hasn't been dismissed (no fl‑then‑hide flicker)
 ///
 /// Give every placement a unique, stable [id] (e.g. 'learn_intro').
+///
+/// For a screen whose *purpose* needs explaining rather than its controls —
+/// where one line cannot do it, and the reader will want the explanation back
+/// later — use FeatureIntro instead. It carries a what/when/caution structure
+/// and stays reachable from an app-bar button after dismissal.
 class GuidanceBanner extends StatefulWidget {
   final String id;
   final String text;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../design_system/vx_colors.dart';
 import '../design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class ScriptEditorScreen extends StatefulWidget {
   final String? initialScript;
@@ -186,6 +187,15 @@ def on_candle(candle):
       ),
       body: Column(
         children: [
+          const FeatureIntro(
+            featureId: 'script_editor',
+            icon: Icons.code_rounded,
+            what: 'Write your own trading rules as code, when the ready-made '
+                'templates cannot express the idea you have in mind.',
+            when: 'This one is for people who already program. If you do not, '
+                'nothing here is missing from the rest of the app — Strategy '
+                'Studio builds the same kinds of rules without code.',
+          ),
           // Code Editor Area
           Expanded(
             child: Container(
