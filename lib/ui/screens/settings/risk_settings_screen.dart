@@ -3,6 +3,8 @@ import '../../design_system/vx_colors.dart';
 import '../../design_system/vx_icons.dart';
 import '../../../engine/risk_manager.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class RiskSettingsScreen extends StatefulWidget {
   const RiskSettingsScreen({super.key});
@@ -100,6 +102,18 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
+          const FeatureIntro(
+            featureId: 'risk_settings',
+            icon: Icons.shield_outlined,
+            what: 'Limits you set on yourself in advance, which the app then '
+                'enforces so you cannot talk yourself out of them later.',
+            when: 'Set them while you are calm. They exist for the moments '
+                'you are not — chasing a loss is the most expensive habit in '
+                'trading, and it never feels like a mistake at the time.',
+            caution: 'Neither limit ever stops you closing or reducing a '
+                'position. Getting out always stays possible.',
+          ),
+          const SizedBox(height: 8),
           // Status Card
           Container(
             padding: const EdgeInsets.all(20),
@@ -121,7 +135,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(isLocked ? "System Locked" : "System Active",
+                    Text(isLocked ? "Trading paused" : "Trading allowed",
                         style: TextStyle(fontFamily: VxTypography.sans, 
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -130,8 +144,8 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                                 : VxColors.neonGreen)),
                     Text(
                         isLocked
-                            ? "Emergency Stop Engaged"
-                            : "Risk Gates Operational",
+                            ? "No new positions until you switch it back on"
+                            : "Your limits are on and being checked",
                         style: const TextStyle(
                             color: Colors.white54, fontSize: 12)),
                   ],
@@ -143,9 +157,12 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
           const SizedBox(height: 32),
 
           // Daily Loss Configuration
-          Text("Daily Loss Limit",
-              style: VxTypography.caption
-                  .copyWith(color: VxColors.neonCyan, fontSize: 12)),
+          InfoLabel(
+            text: "Daily Loss Limit",
+            termId: 'daily_loss_limit',
+            style: VxTypography.caption
+                .copyWith(color: VxColors.neonCyan, fontSize: 12),
+          ),
           const SizedBox(height: 16),
 
           Row(
@@ -224,7 +241,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                   children: [
                     Icon(VxIcons.warning, color: VxColors.neonRed),
                     SizedBox(width: 8),
-                    Text("Danger Zone",
+                    Text("Emergency Stop",
                         style: TextStyle(
                             color: VxColors.neonRed,
                             fontWeight: FontWeight.bold,
@@ -233,7 +250,19 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                     Icon(VxIcons.warning, color: VxColors.neonRed),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+                // "Kill Switch" is vivid but does not say what it does. The
+                // button now names the action and the line above it says what
+                // happens, including the part that matters most: that it does
+                // not trap you in the positions you already hold.
+                Text(
+                  "Immediately stops every running strategy and blocks new "
+                  "positions. You can still close or reduce what is open.",
+                  textAlign: TextAlign.center,
+                  style: VxTypography.caption
+                      .copyWith(color: Colors.white54, height: 1.4),
+                ),
+                const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -244,7 +273,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                       foregroundColor: Colors.white,
                     ),
                     icon: const Icon(VxIcons.power),
-                    label: const Text("Activate Kill Switch",
+                    label: const Text("Stop All Trading",
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
@@ -260,7 +289,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                         foregroundColor: VxColors.neonGreen,
                       ),
                       icon: const Icon(VxIcons.unlock),
-                      label: const Text("Unlock System",
+                      label: const Text("Resume Trading",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),

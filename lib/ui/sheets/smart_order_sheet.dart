@@ -9,6 +9,7 @@ import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 
 class SmartOrderSheet extends StatefulWidget {
   final String symbol;
@@ -395,11 +396,16 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       child: Row(
         children: [
           Expanded(
-            child: VxText.caption(
-              enabled
+            child: InfoLabel(
+              // The whole idea behind these two chips is the one thing a
+              // beginner most needs and is least likely to know, so the
+              // label itself opens the explanation.
+              text: enabled
                   ? 'Size from risk'
                   : 'Set a stop loss to size by risk',
-              color: VxColors.textTertiary,
+              termId: 'position_size',
+              style: VxTypography.caption
+                  .copyWith(color: VxColors.textTertiary),
             ),
           ),
           _buildRiskChip('Risk 1%', () => applyRisk(1)),
@@ -447,8 +453,12 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
           Row(
             children: [
               Expanded(
-                child: VxText.caption('Stop loss & take profit',
-                    color: VxColors.textSecondary),
+                child: InfoLabel(
+                  text: 'Stop loss & take profit',
+                  termId: 'stop_loss',
+                  style: VxTypography.caption
+                      .copyWith(color: VxColors.textSecondary),
+                ),
               ),
               Switch(
                 value: _useRiskControls,
@@ -490,11 +500,15 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                     color: VxColors.danger),
                 VxText.caption('Reward \$${rr.reward.toStringAsFixed(2)}',
                     color: VxColors.success),
-                VxText.caption(
-                  rr.rr == null
+                InfoLabel(
+                  // "R:R 1:2.00" is unreadable unless you already know the
+                  // convention it is written in.
+                  text: rr.rr == null
                       ? 'R:R —'
                       : 'R:R 1:${rr.rr!.toStringAsFixed(2)}',
-                  color: VxColors.textSecondary,
+                  termId: 'risk_reward',
+                  style: VxTypography.caption
+                      .copyWith(color: VxColors.textSecondary),
                 ),
               ],
             ),
