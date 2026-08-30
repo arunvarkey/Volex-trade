@@ -205,8 +205,8 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
 
     // Pre-trade checks
     try {
-      final aiGuardian = getIt<TradeCheckService>();
-      final analysis = await aiGuardian.analyzeTradeIntent(order);
+      final tradeChecks = getIt<TradeCheckService>();
+      final analysis = await tradeChecks.analyzeTradeIntent(order);
 
       if (analysis.shouldWarn) {
         // Analytics: Warning Triggered

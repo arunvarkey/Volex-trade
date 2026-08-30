@@ -360,7 +360,7 @@ class _SignalCard extends StatelessWidget {
                 ),
 
                 // AI Warning
-                if (signal.aiWarning != null) ...[
+                if (signal.riskWarning != null) ...[
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -369,7 +369,7 @@ class _SignalCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          signal.aiWarning!,
+                          signal.riskWarning!,
                           style: const TextStyle(
                               color: Colors.amber, fontSize: 12),
                         ),

@@ -33,10 +33,10 @@ class SignalEngine {
 
   SignalEngine({
     required StrategyEngine strategyEngine,
-    required TradeCheckService aiGuardian,
+    required TradeCheckService tradeChecks,
     required IMarketDataRepository marketData,
   })  : _strategyEngine = strategyEngine,
-        _tradeChecks = aiGuardian,
+        _tradeChecks = tradeChecks,
         _marketData = marketData;
 
   /// The scan timer.
@@ -131,7 +131,7 @@ class SignalEngine {
           );
 
           // Get AI Guardian analysis
-          final aiAnalysis = await _tradeChecks.analyzeTradeIntent(mockOrder);
+          final checkResult = await _tradeChecks.analyzeTradeIntent(mockOrder);
 
           // Create signal
           final signal = TradeSignal(
@@ -149,7 +149,7 @@ class SignalEngine {
                 rec.takeProfit ?? fallbackTarget(rec.side, rec.entryPrice),
             reasoning: rec.reasoning ?? 'Strategy detected opportunity',
             // Use 'recommendation' as the warning text if shouldWarn is true
-            aiWarning: aiAnalysis.shouldWarn ? aiAnalysis.recommendation : null,
+            riskWarning: checkResult.shouldWarn ? checkResult.recommendation : null,
             confidence: rec.confidence,
             strategyName: rec.strategyName,
             timestamp: DateTime.now(),
