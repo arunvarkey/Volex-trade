@@ -88,7 +88,7 @@ $emoji Volex Signal: $action $symbol
 
 📝 $reasoning
 
-${aiWarning != null ? '⚠️ AI Warning: $aiWarning\n' : ''}
+${aiWarning != null ? '⚠️ Warning: $aiWarning\n' : ''}
 ⏰ Valid for ${timeRemaining.inMinutes} minutes
 
 Simulated signal from Volex Terminal, a paper-trading app. Not financial advice.

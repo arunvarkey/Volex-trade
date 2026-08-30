@@ -91,7 +91,7 @@ class UpgradePromptDialog extends StatelessWidget {
             // Features
             ...[
               '✨ Unlimited signals every day',
-              '🤖 AI Guardian warnings',
+              '⚠️ Trade checks before you commit',
               '📊 Advanced analytics',
               '🎯 Custom watchlists',
             ].map((feature) => Padding(

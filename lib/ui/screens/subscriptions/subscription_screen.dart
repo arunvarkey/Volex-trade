@@ -109,7 +109,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           _buildFeature('1 backtest per day'),
           _buildFeature('10 trade signals per day'),
           _buildFeature('Basic candlestick charts'),
-          _buildFeature('AI Guardian protection'),
+          _buildFeature('Trade checks that flag risky habits'),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,

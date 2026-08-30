@@ -303,7 +303,7 @@ class ServiceLocator {
       _log('MARKET: OK.');
 
       // Register AI Guardian
-      onProgress?.call('Setting up AI Guardian...', 0.885);
+      onProgress?.call('Setting up trade checks...', 0.885);
       String userId = 'anonymous';
       try {
         userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';

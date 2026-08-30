@@ -287,7 +287,7 @@ class HomeScreenV2 extends StatelessWidget {
                 Text(
                   dailyPnL == 0
                       ? 'Place your first trade to get started'
-                      : 'Portfolio performance is tracking correctly',
+                      : 'Profit and loss across today\'s trades',
                   style: VxTypography.caption
                       .copyWith(color: VxColors.textTertiary),
                 ),
@@ -334,7 +334,7 @@ class HomeScreenV2 extends StatelessWidget {
               child: _ActionCard(
                 icon: Icons.sensors_rounded,
                 title: 'Signals',
-                subtitle: 'AI trade ideas',
+                subtitle: 'Setups our rules spotted',
                 iconBgColor: const Color(0x1F34D399),
                 onTap: () => context.push('/signals'),
               ),
@@ -550,8 +550,8 @@ class HomeScreenV2 extends StatelessWidget {
               _StrategyCard(
                 icon: '🤖',
                 iconColor: VxColors.success,
-                name: 'AI Signal Sentinel',
-                status: 'Idle · Listening for signals',
+                name: 'Signal Watcher',
+                status: 'Idle · watching for setups',
                 pnl: 0.00,
                 pnlPercent: 0.00,
                 onTap: () => context.push('/signals'),

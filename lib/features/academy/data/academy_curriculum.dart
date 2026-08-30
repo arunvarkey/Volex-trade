@@ -407,7 +407,7 @@ class AcademyCurriculum {
             LessonBlock.heading('Revenge trading'),
             LessonBlock.paragraph(
                 'After a loss, the urge to "win it back" immediately is powerful and '
-                'destructive. This app\'s AI Guardian is built to catch exactly this '
+                'destructive. This app\'s trade checks are built to catch exactly this '
                 'pattern — but the real fix is awareness and a hard daily stop.'),
             LessonBlock.tip(
                 'Journal every trade with why you entered and how you felt. Patterns '

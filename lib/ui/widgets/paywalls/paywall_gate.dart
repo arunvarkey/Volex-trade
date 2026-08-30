@@ -128,7 +128,7 @@ class PaywallGate extends StatelessWidget {
       case 'unlimited_signals':
         return 'Upgrade to Premium to get unlimited AI trading signals every day';
       case 'ai_guardian':
-        return 'Upgrade to Premium to get AI Guardian warnings that protect you from bad trades';
+        return 'Upgrade to Premium for trade checks that flag risky habits before you commit';
       case 'live_trading':
         return 'Coming Soon!';
       case 'automated_strategies':

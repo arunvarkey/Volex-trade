@@ -52,7 +52,7 @@ class AIGuardianWarningDialog extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'AI Guardian Alert',
+                              'Trade Check',
                               style: TextStyle(
                                 color: VxColors.textPrimary,
                                 fontSize: 20,
