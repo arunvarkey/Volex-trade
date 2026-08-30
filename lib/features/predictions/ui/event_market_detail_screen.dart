@@ -7,6 +7,7 @@ import '../data/prediction_data.dart';
 import '../models/prediction_models.dart';
 import '../services/prediction_portfolio_service.dart';
 import 'widgets/prediction_widgets.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 
 /// Detail + simulated trading for a single event market.
 class EventMarketDetailScreen extends StatefulWidget {
@@ -199,8 +200,11 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
           // Contracts stepper
           Row(
             children: [
-              Text('Contracts',
-                  style: VxTypography.bodySmall.copyWith(fontSize: 13)),
+              InfoLabel(
+                text: 'Contracts',
+                termId: 'contract',
+                style: VxTypography.bodySmall.copyWith(fontSize: 13),
+              ),
               const Spacer(),
               _stepBtn(Icons.remove, () => _setContracts(_contracts - 1)),
               Container(
@@ -260,6 +264,12 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
           const SizedBox(height: 6),
           _summaryRow('Payout if correct', '\$${_payout.toStringAsFixed(2)}',
               color: VxColors.neonGreen),
+          const SizedBox(height: 4),
+          Text(
+            '$_contracts contracts × \$1 each. You lose the '
+            '\$${_cost.toStringAsFixed(2)} if the answer goes the other way.',
+            style: VxTypography.caption.copyWith(height: 1.4),
+          ),
           const SizedBox(height: 6),
           _summaryRow('Profit if correct',
               '+\$${_profitIfWin.toStringAsFixed(2)}',
@@ -319,6 +329,15 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
             Text('$price¢',
                 style: VxTypography.caption
                     .copyWith(fontSize: 12, color: color)),
+            // A winning contract pays exactly $1, so the price in cents is
+            // the market's own estimate of the odds. Showing the price alone
+            // hides the most useful thing on the screen: whether you think
+            // the crowd has the probability wrong.
+            Text('≈$price% likely',
+                style: VxTypography.caption.copyWith(
+                    fontSize: 9,
+                    color: (selected ? color : Colors.white70)
+                        .withValues(alpha: 0.75))),
           ],
         ),
       ),

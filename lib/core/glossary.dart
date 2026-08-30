@@ -251,6 +251,22 @@ class Glossary {
       'The exchange force-closing a leveraged position that ran out of margin.',
       'With leverage you only post part of the position\'s value. If the market moves against you far enough that your deposit can no longer cover the loss, the position is closed for you at whatever the price is — and the deposit is gone. Higher leverage means a smaller move gets you there.',
     ),
+    // ── Event markets ─────────────────────────────────────────────────
+    'prediction_market': GlossaryEntry(
+      'Event Market',
+      'A market on whether something will happen, rather than on a price.',
+      'You buy Yes or No on a question with a definite answer — "will X happen by date Y". When the event resolves, the correct side is worth \$1 per contract and the other side is worth nothing. In Volex this runs entirely on virtual money.',
+    ),
+    'contract': GlossaryEntry(
+      'Contract',
+      'One unit of a bet, worth \$1 if you are right and \$0 if you are wrong.',
+      'The thing you buy in an event market. Buying 50 contracts at 40c costs \$20; if the outcome goes your way they pay \$50, and if it does not you lose the \$20. Buying more contracts scales both the cost and the payout in a straight line.',
+    ),
+    'implied_probability': GlossaryEntry(
+      'The Price Is A Probability',
+      'A contract priced at 40c means the market thinks it is about 40% likely.',
+      'Because a winning contract pays exactly \$1, its price is what people collectively think the chance is. 40c means roughly 40%. This is the single most useful thing to understand here: you are not judging whether the event will happen, you are judging whether the crowd has the odds wrong. Buying at 90c something you think is 95% likely is a better trade than buying at 40c something you think is 50% likely.',
+    ),
   };
 
   static GlossaryEntry? of(String id) => _entries[id];
