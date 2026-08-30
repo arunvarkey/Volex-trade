@@ -142,7 +142,14 @@ class StrategyDetailView extends StatelessWidget {
               : () async {
                   await manager.startStrategy(strategyId);
                   if (!context.mounted) return;
-                  _notify(context, 'Strategy activated — paper trading');
+                  // Says how long it runs for. The runner polls while the
+                  // app is open; there is no background service, so a user
+                  // who starts a strategy and locks their phone expecting
+                  // it to keep trading would be wrong about what they did.
+                  _notify(
+                      context,
+                      'Strategy running on paper. It trades while Volex is '
+                      'open and pauses when you close the app.');
                 },
         ),
         IconButton(

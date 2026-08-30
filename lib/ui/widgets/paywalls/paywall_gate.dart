@@ -136,7 +136,13 @@ class PaywallGate extends StatelessWidget {
       case 'live_trading':
         return 'Coming Soon!';
       case 'automated_strategies':
-        return 'Upgrade to Premium to run automated trading strategies 24/7';
+        // Not 24/7. The runner polls every 20 seconds while the app is
+        // open; the background service that would have kept it going was
+        // removed because its Dart side was never wired up. Promising
+        // round-the-clock execution for something that stops when the
+        // screen locks is a claim the app cannot keep.
+        return 'Upgrade to Premium to run strategies automatically while the '
+            'app is open';
       case 'unlimited_strategies':
         return 'Upgrade to Premium to save more than three strategies';
       // 'advanced_analytics', 'custom_watchlists' and 'priority_support'
