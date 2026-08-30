@@ -115,8 +115,11 @@ class ModeSelectionScreen extends StatelessWidget {
     await StartupService().markModeSelected();
     _logMode('pro');
 
-    // Show API key setup
-    if (context.mounted) context.push('/api-key-setup');
+    // Pro mode is still fully simulated -- it unlocks editable strategy
+    // parameters and the automated runner, not exchange access. Sending a new
+    // user straight to an API-key form implied the opposite, and asked for
+    // live exchange credentials the app has no use for.
+    if (context.mounted) context.go('/');
   }
 
   /// Fire-and-forget analytics that never blocks navigation. Firebase may be

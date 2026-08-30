@@ -35,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
           _buildModeSwitch(context),
           _buildCpuTile(
             context,
-            title: "Connect Exchange",
+            title: "Exchange Connection",
             icon: Icons.sync_alt,
             onTap: () => context.push('/api-key-setup'),
           ),

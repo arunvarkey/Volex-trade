@@ -9,6 +9,7 @@ import '../backtest_engine.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:provider/provider.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class BacktestConfigScreen extends StatefulWidget {
   final GeneratedStrategy? strategy;
@@ -46,7 +47,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'BACKTEST CONFIGURATION',
+          'SET UP A BACKTEST',
           style: TextStyle(
             color: VxColors.neonCyan,
             letterSpacing: 0.3,
@@ -59,6 +60,20 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const FeatureIntro(
+              featureId: 'backtest_config',
+              icon: Icons.history_toggle_off_rounded,
+              what: 'A backtest replays past prices and applies your '
+                  'strategy\'s rules to them, so you can see what it would '
+                  'have done without risking anything.',
+              when: 'Run one before trusting a strategy. Fees and slippage '
+                  'are applied, because a strategy that only works without '
+                  'costs does not work.',
+              caution: 'A good result on one stretch of history is not a '
+                  'forecast. Test more than one period, and expect live '
+                  'results to be worse than the backtest.',
+            ),
+            const SizedBox(height: 8),
             // Strategy Selection
             _buildSectionHeader('STRATEGY'),
             const SizedBox(height: 12),
@@ -74,7 +89,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             const SizedBox(height: 24),
 
             // Initial equity
-            _buildSectionHeader('INITIAL CAPITAL'),
+            _buildSectionHeader('STARTING BALANCE'),
             const SizedBox(height: 12),
             _buildEquitySlider(),
 
