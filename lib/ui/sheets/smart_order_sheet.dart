@@ -190,6 +190,10 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               VxText.caption("Amount"),
               const SizedBox(height: 8),
               TextField(
+                // Keyed so tests can assert what risk-based sizing actually
+                // put in the box. The number here decides how much a losing
+                // trade costs, which makes it the one field worth pinning.
+                key: const Key('ticket_amount'),
                 controller: _amountController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
