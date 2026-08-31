@@ -28,6 +28,14 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
   double _rsiSell = 70;
 
   @override
+  void dispose() {
+    // The wizard is a dialog, so it is built and torn down repeatedly; a
+    // PageController that is never released leaks its State every time.
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: VxColors.deepBlack,

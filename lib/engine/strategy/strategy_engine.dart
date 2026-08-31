@@ -228,6 +228,12 @@ class StrategyEngine extends ChangeNotifier {
 
   @override
   void dispose() {
+    // ExecutionManager outlives this engine — it is a singleton — so a
+    // listener registered in the constructor and never removed keeps a
+    // disposed StrategyEngine alive and keeps calling into it on every
+    // order. Disposing a ChangeNotifier drops its *own* listeners, not the
+    // ones it registered elsewhere, so this has to be explicit.
+    _executionManager.removeListener(_onExecutionUpdate);
     _logStream.close();
     _liveSubscription?.cancel();
     super.dispose();

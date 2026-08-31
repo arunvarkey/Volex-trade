@@ -31,6 +31,14 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
     // Let's rely on manual refresh or periodic call if needed.
   }
 
+  @override
+  void dispose() {
+    // A TextEditingController holds listeners and keeps the State alive; this
+    // screen created one and never released it.
+    _dailyLimitController.dispose();
+    super.dispose();
+  }
+
   void _refresh() {
     setState(() {
       _status = _riskManager.getStatus();
