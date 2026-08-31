@@ -352,8 +352,13 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       _updatePositionAfterTrade(order);
       _persist();
 
-      // Placing a paper trade is a repeatable, XP-earning action.
-      XpService.instance.addXp(XpService.tradeXp);
+      // Progression is paid for the habit, not the activity: a trade only
+      // earns XP if it carried a stop, and only for the first few each day.
+      // Paying per order placed rewarded churn, which is the behaviour the
+      // app's own trade checks exist to discourage.
+      if (stopLoss != null) {
+        XpService.instance.awardTradeWithStop(DateTime.now());
+      }
 
       AnalyticsService.instance.logEvent('order_placed', parameters: {
         'symbol': symbol,
