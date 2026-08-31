@@ -124,7 +124,12 @@ class StartupService {
   Future<void> resetOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    await _auth.signOut();
+    // Every other read in this class guards on Firebase being configured;
+    // this one did not, so the debug reset threw on a build without
+    // google-services.json — the exact build most likely to be reset.
+    if (Firebase.apps.isNotEmpty) {
+      await _auth.signOut();
+    }
     AppLogger.info('🔄 Reset complete - app will restart as fresh install');
   }
 }
