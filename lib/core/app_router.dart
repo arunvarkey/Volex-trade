@@ -185,8 +185,17 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/simulator/templates/config',
-      builder: (context, state) =>
-          TemplateConfigScreen(template: state.extra as StrategyTemplate),
+      builder: (context, state) {
+        // GoRouter restores a location after process death but cannot restore
+        // `extra` — it is not serialisable. An unguarded cast therefore threw
+        // on resume: background the app on this screen, let Android reclaim
+        // it, come back, and the app died on a null cast. Fall back to the
+        // picker, which is where the template comes from anyway. The lesson
+        // and quiz routes already did this; these did not.
+        final extra = state.extra;
+        if (extra is! StrategyTemplate) return const TemplateSelectorScreen();
+        return TemplateConfigScreen(template: extra);
+      },
     ),
     GoRoute(
       path: '/simulator/my-strategies',
@@ -253,8 +262,14 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
             path: 'backtest/results',
             builder: (context, state) {
-              final result = state.extra as BacktestResult;
-              return BacktestResultsScreen(result: result);
+              // Same restoration problem as the template config route. A
+              // result cannot be rebuilt from nothing, so send the user back
+              // to the config screen to run one rather than crashing.
+              final extra = state.extra;
+              if (extra is! BacktestResult) {
+                return const BacktestConfigScreen();
+              }
+              return BacktestResultsScreen(result: extra);
             }),
       ],
     ),
