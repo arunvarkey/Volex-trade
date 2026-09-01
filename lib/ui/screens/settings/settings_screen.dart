@@ -85,7 +85,11 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 48),
           Center(
             child: Text(
-              "Version 1.0.0 (Build 15)",
+              // Kept in step with pubspec.yaml's `version:` by hand. There
+              // is no package_info_plus dependency and adding a native
+              // plugin purely to print a string is not worth it, but the
+              // two had already drifted apart.
+              "Version 1.0.1 (Build 10)",
               style: VxTypography.price
                   .copyWith(color: Colors.white24, fontSize: 12),
             ),

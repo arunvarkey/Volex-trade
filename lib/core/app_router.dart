@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -67,7 +68,8 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/splash',
-  debugLogDiagnostics: true,
+  // Logged every navigation in release builds too.
+  debugLogDiagnostics: kDebugMode,
   redirect: AuthGuard.handleRedirect,
   routes: [
     // Splash
