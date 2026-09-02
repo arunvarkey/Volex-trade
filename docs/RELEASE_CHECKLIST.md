@@ -1,42 +1,90 @@
-# ✅ VOLEX TERMINAL - FINAL RELEASE CHECKLIST
+# Release checklist — Volex Terminal
 
-## 🛠️ TECHNICAL PRE-FLIGHT
-- [ ] **API Keys:** Ensure Binance API keys are removed from source and strictly handled via SecureStorage.
-- [ ] **Firebase:** Download productive `google-services.json` (Android) and `GoogleService-Info.plist` (iOS).
-- [ ] **Initialization:** Test that `ServiceLocator.setupServices()` handles slow connections without crashing.
-- [ ] **Clean Build:** Run `flutter clean` and `flutter pub get`
+The build commands are in [`RELEASE.md`](../RELEASE.md). This file is only the
+list of things to confirm before a public Play Store launch, in the order they
+block each other.
 
-## 🎨 ASSET PREPARATION
-- [ ] **App Icon:** Generate all project icon sizes (Asset Studio or similar).
-- [ ] **Screenshots:**
-    - 6.5" iPhone (iPhone 15 Pro Max)
-    - 5.5" iPhone (Legacy compatibility)
-    - Tablet screenshots (if supported)
-- [ ] **Feature Graphic:** 1024x500 for Google Play.
+The previous version of this file ticked off an AI strategy generator, a
+RevenueCat integration, a strategy marketplace, KYC ID-document scanning and
+$19.99/$199.99 pricing. None of those exist. A checklist that reports work as
+done when it was never built is worse than no checklist, because it is the
+document you trust on launch day.
 
-### 2. Feature Completion
-- [x] **Simulator Module**:
-    - [x] AI Strategy Generator (Template -> Config -> Generate).
-    - [x] Backtesting Engine (Result Charts, Metrics).
-    - [x] Paper Trading (Persistence, Models).
-- [x] **Monetization**:
-    - [x] Paywall Screen (UI & Logical Flow).
-    - [x] Subscription Service (RevenueCat Integration).
-    - [x] Entitlement Check (Premium vs Free).
-- [x] **Legal & Compliance**:
-    - [x] Risk Disclosure Screen (Mandatory on First Launch).
-    - [x] Terms of Service & Privacy Policy Links.
+---
 
-## ⚖️ LEGAL & COMPLIANCE
-- [x] **Privacy Policy:** Upload `PRIVACY_POLICY.md` content to your website.
-- [ ] **Terms of Service:** Upload `TERMS_OF_SERVICE.md` content.
-- [ ] **KYC Compliance:** Ensure the scanner correctly processes ID documents for the requested region.
+## What actually ships
 
-## 💰 MONETIZATION
-- [x] **Store Configuration:** Verify Entitlements (Pro/Elite) in RevenueCat or Play Console.
-- [ ] **Pricing:** Confirm regional pricing for Monthly ($19.99) vs Yearly ($199.99) plans.
+A single-purpose product: a trading simulator with virtual money on real
+crypto prices, plus an Academy that teaches how to use it.
 
-## 🚀 SUBMISSION TRACK
-- [ ] **Internal Testing:** Distribute to 5-10 trusted traders.
-- [ ] **Play Store:** Create "Release Track" and upload AAB.
-- [ ] **App Store:** Create "New Version" in App Store Connect and upload via Xcode.
+| Area | State |
+|---|---|
+| Paper trading (market/limit, stop-loss, take-profit, fees, slippage) | Working, persisted between sessions |
+| Charting (candles, indicators, drawings, crosshair) | Working, custom-rendered |
+| Backtesting with full metrics | Working, unlimited on every tier |
+| Academy — 21 lessons, 63 quiz questions | Complete |
+| Journal, XP, streaks | Working |
+| Signals from built-in strategies | Working; 10/day free, unlimited on Premium |
+| Strategy builder (form over indicator rules) | Working; 3 saved free, unlimited on Premium |
+| Live trading / broker or exchange execution | **Does not exist.** Not planned for this release |
+| Strategy marketplace payouts, creator tier | **Does not exist** |
+| iOS build | Not attempted. Android only for this launch |
+
+Billing is `in_app_purchase` (not RevenueCat). One product: **Premium, $4.99/mo**.
+
+---
+
+## Blocking — cannot launch without these
+
+- [ ] **Signing key.** `keytool` per `RELEASE.md` §B.1, then `android/key.properties`.
+      Back the `.jks` and its password up somewhere you will still have in five
+      years — losing it means the app can never be updated, only re-published
+      under a new package name.
+- [ ] **Contact email in the privacy policy.** `store/privacy-policy.html` still
+      reads `REPLACE_WITH_YOUR_EMAIL`. Play requires a working address, and it
+      must be one you are willing to publish.
+- [ ] **Host the policy.** Any stable public URL. The manifest currently points
+      at a GitHub gist; if you keep that, update the gist to match
+      `store/privacy-policy.html`, which is newer than what is hosted there.
+- [ ] **Play Console developer account** ($25, one time) and identity
+      verification. Verification can take days — start it first.
+- [ ] **Screenshots.** At least 2, ideally 4–8. Shot list and `adb` command in
+      `store/play-listing.md`.
+- [ ] **Feature graphic**, 1024x500. Spec in `store/play-listing.md`.
+- [ ] **Data safety form.** Answers are in `store/data-safety.md`; they must
+      match the hosted privacy policy exactly.
+- [ ] **Content rating questionnaire.** Answers and reasoning in
+      `store/play-listing.md`. Answer "no" to simulated gambling — there is no
+      wager and no prize of value — and set the target audience to 18+.
+- [ ] **Device test of the whole loop** on real hardware: install, age gate,
+      risk disclosure, onboarding, open a trade with a stop, close it, check
+      the balance moved by the right amount, force-quit, relaunch, confirm the
+      position and balance survived.
+
+## Before the build
+
+- [ ] `flutter clean && flutter pub get`
+- [ ] `flutter analyze --fatal-infos` and `flutter test` — both run in CI on
+      every push, so this is a re-check, not the gate.
+- [ ] Bump `version:` in `pubspec.yaml`. The `+N` build number must increase on
+      every upload or Play rejects the bundle.
+- [ ] `flutter build appbundle --release`, then install the equivalent APK on a
+      device and use it. A bundle that has never been run is not tested.
+
+## Optional, and deliberately not done
+
+- **Code shrinking.** `minifyEnabled` and `shrinkResources` are `false` in
+  `android/app/build.gradle`. ProGuard stripping Firebase reflection classes is
+  a classic release-only crash, and this branch has no way to run a release
+  build to check. Turn them on only when you can test the resulting APK on a
+  device; the app is small enough that the size saving is not worth a crash you
+  find in production.
+- **Firebase.** The app runs without `google-services.json`. Add one only if you
+  want accounts and cloud sync; the free Spark tier covers this app's usage.
+- **iOS.** Needs a $99/year Apple Developer account and a Mac to build.
+
+## If subscriptions are not live at launch
+
+Set **In-app purchases: No** in the Play Console and leave the Premium screen
+as it is — it degrades to showing the free tier when no products come back from
+billing. Declaring IAP you do not have is a listing mismatch.

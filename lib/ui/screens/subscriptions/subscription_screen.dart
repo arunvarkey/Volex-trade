@@ -391,12 +391,32 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   void _restorePurchases() async {
     if (_blockOnWeb()) return;
-    await getIt<SubscriptionService>().restorePurchases();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Restoring purchases...')),
-      );
-    }
+
+    // The "Restoring…" message used to be shown *after* the await, so it
+    // announced the start of something that had already finished, and nothing
+    // ever said whether it worked.
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Checking for previous purchases…')),
+    );
+
+    final service = getIt<SubscriptionService>();
+    await service.restorePurchases();
+    if (!mounted) return;
+
+    // Restored purchases arrive on the purchase stream rather than as a
+    // return value, so give that a moment to land before reporting.
+    await Future<void>.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(service.isPremium
+            ? 'Premium restored.'
+            : 'No previous purchase found on this account.'),
+      ),
+    );
   }
 
   void _purchaseSelectedPlan() async {
@@ -409,11 +429,30 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       final success =
           await getIt<SubscriptionService>().purchaseSubscription(productToBuy);
 
-      if (success && mounted) {
+      if (!mounted) return;
+
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Processing...')),
+          const SnackBar(content: Text('Opening Google Play…')),
         );
+        return;
       }
+
+      // purchaseSubscription catches its own exceptions and returns false, so
+      // a failure never reaches the catch below. Without this branch the
+      // button did nothing at all when the products were not configured in
+      // the Play Console — the single most likely state on launch day, and
+      // the one where silence looks exactly like a broken app.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 6),
+          backgroundColor: VxColors.danger,
+          content: Text(
+            'Premium is not available to buy yet. Nothing has been charged, '
+            'and everything you can see in the app still works.',
+          ),
+        ),
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
