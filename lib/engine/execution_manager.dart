@@ -241,7 +241,9 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
       }
     } catch (e) {
       AppLogger.error("Trade check failed: $e");
-      // Fallthrough to allow trade if AI fails
+      // The checks are advisory. If one throws, the order still goes
+      // through — blocking a trade because a warning could not be computed
+      // would be a worse failure than not showing the warning.
     }
 
     return placeOrder(order);

@@ -307,28 +307,13 @@ class SubscriptionService extends ChangeNotifier {
     _updateStatus(SubscriptionStatus.free());
   }
 
-  // Check if user has access to feature
-  bool hasAccessTo(String feature) {
-    if (_currentStatus.isPremium) return true;
-
-    // Default to false for premium features if on free plan
-    switch (feature) {
-      case 'unlimited_signals':
-      // Wire key, not a label: this string is stored in Remote Config
-      // and in shipped analytics. The feature is now called trade
-      // checks everywhere the user can see it; renaming the key would
-      // reset the flag and split the event history.
-      case 'ai_guardian':
-      // 'advanced_analytics', 'custom_watchlists' and 'export_history'
-      // used to be listed here and sold on the paywall. None of them is
-      // implemented anywhere in the app, so gating them meant charging for
-      // nothing. They are removed rather than left as dormant keys.
-      case 'unlimited_strategies':
-        return false;
-      default:
-        return true;
-    }
-  }
+  // hasAccessTo(String feature) used to live here, alongside a PaywallGate
+  // widget that consumed it. Nothing else ever called either one, and the
+  // table had drifted away from the product: it still locked trade checks
+  // behind Premium while ExecutionManager ran them for every user on every
+  // order. A gate that is both unreachable and wrong is worth deleting, not
+  // maintaining. What Premium actually lifts is maxStrategies and maxSignals
+  // above, enforced at the two call sites that count them.
 
   // Check strategy generation limit
   Future<bool> checkAndTrackStrategyGeneration() async {
