@@ -30,7 +30,8 @@ crypto prices, plus an Academy that teaches how to use it.
 | Strategy marketplace payouts, creator tier | **Does not exist** |
 | iOS build | Not attempted. Android only for this launch |
 
-Billing is `in_app_purchase` (not RevenueCat). One product: **Premium, $4.99/mo**.
+Billing is `in_app_purchase` (not RevenueCat). Two SKUs for one tier:
+**Premium, $4.99/mo** and **$39.99/yr**.
 
 ---
 

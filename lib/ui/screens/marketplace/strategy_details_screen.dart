@@ -35,10 +35,21 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
         if (success) {
           _isSubscribed = true;
           // Show Success Toast via ScaffoldMessenger if VxToast isn't global
+          // Say the limitation here rather than letting the user find it
+          // when they try to run the thing. Publishing records a listing —
+          // title, description, reported figures — not the rules, so the
+          // registry hands back an UnavailableStrategy that takes no
+          // trades. Adding it is still useful as a reading list; pretending
+          // it is runnable is not.
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Added to your strategies."),
+              duration: Duration(seconds: 6),
               backgroundColor: VxColors.positive,
+              content: Text(
+                "Added to your strategies. Its rules are not included, so it "
+                "cannot be run or backtested — rebuild it in the Strategy "
+                "Builder from the description.",
+              ),
             ),
           );
         }
@@ -185,8 +196,12 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
                   Expanded(
                     child: Text(
                       "The figures above are reported by the publisher and "
-                      "have not been independently verified. Run your own "
-                      "backtest before relying on this strategy.",
+                      "have not been independently verified.\n\n"
+                      "Publishing records a strategy's description and "
+                      "settings, not its code, so this listing cannot be run "
+                      "or backtested directly. Read the logic below and "
+                      "rebuild it in the Strategy Builder to test it "
+                      "yourself.",
                       style: TextStyle(
                           color: VxColors.neutral400, fontSize: 13, height: 1.5),
                     ),

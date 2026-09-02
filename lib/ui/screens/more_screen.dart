@@ -109,14 +109,18 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.store,
             title: 'Marketplace',
-            subtitle: 'Strategies other people have built and published',
+            // There is no server behind this, so "other people" was wrong:
+            // the listings are the ones published on this device.
+            subtitle: 'Strategies published from this device',
             route: '/marketplace',
           ),
           _buildMenuItem(
             context,
             icon: Icons.leaderboard,
             title: 'Leaderboard',
-            subtitle: 'See top performing traders',
+            // It ranks strategies on verified results, not people, and it
+            // stays empty until there are results to rank.
+            subtitle: 'Ranked strategies — empty until results are verified',
             route: '/leaderboard',
           ),
 
