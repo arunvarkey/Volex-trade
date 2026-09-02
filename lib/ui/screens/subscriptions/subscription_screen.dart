@@ -52,7 +52,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Unlimited backtests, signals and analytics.',
+                    'Unlimited signals and saved strategies.',
                     style: TextStyle(
                       fontSize: 16,
                       color: VxColors.textSecondary,
@@ -105,7 +105,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 16),
           _buildFeature('Simulated trading with \$100k balance'),
           _buildFeature('Real-time market data'),
-          _buildFeature('1 backtest per day'),
+          _buildFeature('Unlimited backtesting with full metrics'),
           _buildFeature('3 saved strategies'),
           _buildFeature('10 trade signals per day'),
           _buildFeature('Basic candlestick charts'),
@@ -199,7 +199,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                _buildFeature('Unlimited backtests (free: 1 per day)'),
                 _buildFeature('Unlimited signals (free: 10 per day)'),
                 _buildFeature('Unlimited saved strategies (free: 3)'),
 

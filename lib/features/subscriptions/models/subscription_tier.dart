@@ -47,10 +47,9 @@ class SubscriptionProduct {
     id: 'explorer_premium',
     tier: SubscriptionTier.explorerPremium,
     name: 'Premium',
-    description: 'Unlimited backtests & analytics',
+    description: 'Unlimited signals & strategies',
     price: 4.99,
     features: [
-      'Unlimited backtests',
       'Unlimited signals',
       'Unlimited saved strategies',
     ],

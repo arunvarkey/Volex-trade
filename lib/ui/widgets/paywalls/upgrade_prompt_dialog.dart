@@ -91,7 +91,6 @@ class UpgradePromptDialog extends StatelessWidget {
             // Features
             ...[
               '✨ Unlimited signals every day',
-              '🔬 Unlimited backtests',
               '📁 Unlimited saved strategies',
             ].map((feature) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),

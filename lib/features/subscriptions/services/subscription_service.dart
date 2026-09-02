@@ -47,11 +47,14 @@ class SubscriptionService extends ChangeNotifier {
   SubscriptionTier get currentTier => _currentStatus.tier;
   bool get isPremium => _currentStatus.isPremium;
 
-  // Legacy getter for compatibility, though AI is now available to all (limited for free)
-
+  // The two things Premium actually lifts. Both are counted server-side in
+  // Firestore, so the numbers here are the free ceilings, not the paid ones.
   int get maxStrategies => isPremium ? 999999 : 3;
-  int get maxBacktests => isPremium ? 999999 : 1;
   int get maxSignals => isPremium ? 999999 : 10;
+
+  // maxBacktests is deliberately absent. Backtesting is the core learning
+  // loop the Academy teaches, it runs on-device, and capping it sold a
+  // restriction that worked against the product's own purpose.
 
   // Initialize subscription service
   Future<void> initialize() async {
@@ -338,20 +341,6 @@ class SubscriptionService extends ChangeNotifier {
     }
 
     await _trackDailyUsage('strategy_generations');
-    return true;
-  }
-
-  // Check backtest limit
-  Future<bool> checkAndTrackBacktest() async {
-    if (_currentStatus.isPremium) return true;
-
-    final todayCount = await _getDailyUsageCount('backtest_runs');
-    if (todayCount >= 1) {
-      AppLogger.warning('⚠️ Backtest limit reached');
-      return false;
-    }
-
-    await _trackDailyUsage('backtest_runs');
     return true;
   }
 

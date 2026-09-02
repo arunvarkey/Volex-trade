@@ -6,7 +6,6 @@ import '../../../../ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import '../models/backtest_request.dart';
 import '../backtest_engine.dart';
-import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/widgets/feature_intro.dart';
@@ -420,17 +419,15 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
   Future<void> _runBacktest() async {
     setState(() => _isRunning = true);
 
-    // Check subscription limit (Soft Gate)
-    final canRun = await GetIt.I<SubscriptionService>().checkAndTrackBacktest();
-    if (!canRun) {
-      setState(() => _isRunning = false);
-      if (mounted) {
-        _showUpgradeDialog(
-            "Free accounts get 1 backtest per day. Want to test this strategy now? Premium gives you unlimited backtests.");
-      }
-      return;
-    }
-
+    // Backtesting is not rationed.
+    //
+    // It used to be capped at one a day on the free tier. That gated the one
+    // activity the Academy spends four lessons telling people to do, and the
+    // lesson on sample size explicitly says a handful of results is noise --
+    // so the app was teaching "test it properly" while charging for the
+    // second attempt. A backtest is also a local computation over data the
+    // device already has: it costs nothing to serve, so rationing it was
+    // never about capacity.
     try {
       final isGenerated = _selectedStrategy is GeneratedStrategy;
 
@@ -481,36 +478,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
     );
   }
 
-  void _showUpgradeDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: VxColors.deepBlack,
-        title: const Text(
-          'UPGRADE TO PREMIUM',
-          style: TextStyle(
-            color: VxColors.neonCyan,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.3,
-          ),
-        ),
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.push('/subscription');
-            },
-            child: const Text('Start Free Trial',
-                style: TextStyle(color: VxColors.neonCyan)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Wait Until Tomorrow',
-                style: TextStyle(color: Colors.grey)),
-          ),
-        ],
-      ),
-    );
-  }
+  // The upgrade dialog that used to live here was only ever shown when a free
+  // account hit the one-backtest-a-day limit. With that limit gone there is
+  // nothing to upsell on this screen, and a dialog with no caller is dead code.
 }
