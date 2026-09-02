@@ -89,7 +89,7 @@ class TradeCheckDialog extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // AI Recommendation
+                  // The verdict from the rule checks.
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(

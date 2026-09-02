@@ -359,7 +359,7 @@ class _SignalCard extends StatelessWidget {
                   ),
                 ),
 
-                // AI Warning
+                // What could go wrong with this setup.
                 if (signal.riskWarning != null) ...[
                   const SizedBox(height: 12),
                   Row(

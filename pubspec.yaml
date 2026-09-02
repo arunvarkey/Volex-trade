@@ -1,5 +1,5 @@
 name: volex_terminal
-description: "Educational trading simulator - Learn with AI-powered strategy builder. No real money."
+description: "Educational trading simulator. Practise with virtual money on real market prices."
 publish_to: 'none'
 version: 1.0.1+10
 
@@ -71,17 +71,6 @@ dependencies:
   # Permissions
   permission_handler: ^11.3.1
 
-  # AI & Machine Learning
-
-  
-  # Time Utils
-  # Time Utils
-  # timeago: ^3.7.0 (removed duplicate)
-  
-  # Media & Video Testing
-  # Media (Removed)
-
-  
   # Share & Deep linking
   share_plus: ^10.1.2
   
