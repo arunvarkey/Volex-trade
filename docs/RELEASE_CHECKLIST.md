@@ -87,5 +87,29 @@ Billing is `in_app_purchase` (not RevenueCat). Two SKUs for one tier:
 ## If subscriptions are not live at launch
 
 Set **In-app purchases: No** in the Play Console and leave the Premium screen
-as it is — it degrades to showing the free tier when no products come back from
-billing. Declaring IAP you do not have is a listing mismatch.
+as it is. Tapping Upgrade with no products configured now says Premium is not
+buyable yet and that nothing was charged, instead of doing nothing. Declaring
+IAP you do not have is a listing mismatch, so leave the declaration off until
+the products exist.
+
+### Before turning IAP on
+
+- [ ] **Report in-flight purchase failures to the user.** A purchase that fails
+      *after* the Play sheet opens — declined card, cancelled, pending — arrives
+      on `purchaseStream` and lands in `SubscriptionService._handlePurchaseError`
+      and `_showPendingUI`, both of which only write a log line. The user sees
+      nothing. Surface it (a `lastPurchaseError` field plus `notifyListeners`,
+      read by the subscription screen) before anyone can actually be charged.
+      It is left as-is for now because there is no way to exercise the path
+      without live products, and an untested error handler in a payment flow is
+      not an improvement.
+- [ ] **Confirm both SKUs exist** with the ids in
+      `lib/features/subscriptions/models/subscription_tier.dart`
+      (`explorer_premium`, `premium_yearly`) — a mismatch is what makes the
+      button fail in the first place.
+- [ ] **Check what Premium actually lifts still matches the copy.** It is two
+      things: signals shown per day (10 → unlimited, capped in the signals
+      feed) and saved strategies (3 → unlimited, capped against the local
+      strategy repository). Both hold without Firebase. The Firestore daily
+      counters in `SubscriptionService` are inert in guest mode — they are not
+      what enforces either limit.
