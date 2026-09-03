@@ -112,11 +112,26 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+# Icon regeneration: `dart run flutter_launcher_icons`.
+#
+# The android key was "launcher_icon", which generates mipmap/launcher_icon.*
+# while AndroidManifest.xml asks for @mipmap/ic_launcher — so running the
+# generator produced a second, unused set of icons and changed nothing on the
+# device. It now writes the names the manifest actually references.
+#
+# min_sdk_android was 21 against a real minSdk of 26; below 26 the tool skips
+# adaptive icons entirely, which is part of why there were none.
+#
+# The adaptive layers are committed under android/app/src/main/res, so a build
+# does not depend on anyone running this first.
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: "ic_launcher"
   ios: true
   image_path: "assets/images/app_icon.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
+  min_sdk_android: 26
+  adaptive_icon_background: "#0A0E14"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/images/app_icon_foreground.png"
 
 flutter:
   uses-material-design: true
