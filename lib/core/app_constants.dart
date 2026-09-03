@@ -1,26 +1,33 @@
+/// App-wide constants.
+///
+/// This file used to hold a dozen more, none of them referenced anywhere, and
+/// most of them disagreeing with the values the app actually uses:
+///
+/// - `appVersion = '1.2.2'` while pubspec.yaml said something else. A second
+///   place to read the version is a place to read the wrong one.
+/// - `proMonthlyId = 'explorer_premium_monthly'` and
+///   `premiumMonthlyId = 'pro_mode_monthly'` — a whole second set of billing
+///   product ids. The real ones live on [SubscriptionProduct] and are
+///   `premium_monthly` / `premium_yearly` on Google Play. Anyone configuring
+///   the Play Console from this file would have created the wrong SKUs and
+///   then debugged a purchase flow that could never find them.
+/// - `freeDailySignalLimit = 5` against a real limit of 10, and
+///   `premiumStrategyLimit = 999` against a real 999999.
+///
+/// Unused constants that contradict the live values are worse than no
+/// constants: they read as the source of truth. Anything genuinely shared
+/// belongs here; anything one feature owns belongs with that feature.
 class AppConstants {
-  // Legal Documents
-  static const String privacyPolicyUrl =
-      'https://gist.github.com/arunvarkey/5d932d686c40e4c49fe4d00394752b66';
-  static const String termsOfServiceUrl =
-      'https://gist.github.com/arunvarkey/4c0fb1db00e081df548c1490bb878e32';
-
-  // App Info
   static const String appName = 'Volex Terminal';
-  static const String appVersion = '1.2.2';
+
+  /// Contact address in the privacy policy, the Terms screen and the Play
+  /// listing. Deletion requests arrive here, so it has to be a monitored
+  /// inbox, not a forwarding alias that bounces.
   static const String supportEmail = 'dailyvolex@gmail.com';
 
-  // Subscription Product IDs
-  static const String proMonthlyId = 'explorer_premium_monthly';
-  static const String premiumMonthlyId = 'pro_mode_monthly';
-
-  // Feature Limits
-  static const int freeStrategyLimit = 3;
-  static const int premiumStrategyLimit = 999;
-  static const int freeDailySignalLimit = 5;
-
-  // Trading Limits
-  static const double paperTradingBalance = 100000.0; // $100K virtual money
-  static const int maxOrderHistory = 1000;
-  static const int maxPositionHistory = 100;
+  // The hosted policy URLs and the paper starting balance were here too. Both
+  // were copies: the URLs are declared in AndroidManifest.xml, which is what
+  // Play actually reads, and the balance is ExecutionManager's own default.
+  // A second copy that nothing reads is a value waiting to disagree with the
+  // one that matters, so each now lives in exactly one place.
 }

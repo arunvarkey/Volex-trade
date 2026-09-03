@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/app_constants.dart';
 import '../../../ui/design_system/vx_colors.dart';
 import '../../../ui/design_system/vx_typography.dart';
 
@@ -48,9 +49,12 @@ class LegalScreen extends StatelessWidget {
           'If you sign in, your account email and synced data go to Google '
               'Firebase. Sign-in is optional: without it the app runs as a '
               'guest and nothing is uploaded.',
-          'If you choose to connect exchange API keys, they are held in the '
-              'device\'s encrypted secure storage. They are not sent to us.',
         ]),
+        _h('What we do not ask for'),
+        _p('Volex does not collect exchange API keys. An earlier version had a '
+            'screen that did, even though nothing in the app could use them; '
+            'that screen now offers to delete anything it saved. There is no '
+            'live trading here, so there is nothing for such a key to do.'),
         _h('Analytics and crash reports'),
         _p('Anonymous usage events and crash reports are sent through Firebase '
             'Analytics and Crashlytics, and only when the app is built with a '
@@ -62,9 +66,15 @@ class LegalScreen extends StatelessWidget {
               'location, or device identifiers for advertising.',
           'We do not take custody of any money — there is none to take.',
         ]),
-        _note('This page describes how this build behaves. Before publishing '
-            'to an app store you should have it reviewed and hosted at a '
-            'public URL, as store policies require.'),
+        _h('Deleting your data'),
+        _p('Uninstalling the app removes everything held on the device. If you '
+            'signed in and want the account and any synced data deleted, email '
+            '${AppConstants.supportEmail} and we will remove it.'),
+        _h('Contact'),
+        _p('Questions about privacy, or a deletion request: '
+            '${AppConstants.supportEmail}'),
+        _note('This page describes how this build behaves. The same policy is '
+            'published at a public URL for the app store listing.'),
       ];
 
   List<Widget> _terms() => [
@@ -89,10 +99,12 @@ class LegalScreen extends StatelessWidget {
             'labelled "simulated data" on the chart and are not real prices.'),
         _h('Your responsibilities'),
         _b([
-          'Keep your device and any API keys you add secure.',
+          'Keep your device and, if you sign in, your account secure.',
           'Use the app for learning and practice.',
           'The app is provided as-is, without warranty.',
         ]),
+        _h('Contact'),
+        _p('Questions about these terms: ${AppConstants.supportEmail}'),
         _note('This page describes how this build behaves. Before publishing '
             'to an app store you should have it reviewed by someone qualified.'),
       ];

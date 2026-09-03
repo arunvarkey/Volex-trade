@@ -41,12 +41,14 @@ Billing is `in_app_purchase` (not RevenueCat). Two SKUs for one tier:
       Back the `.jks` and its password up somewhere you will still have in five
       years — losing it means the app can never be updated, only re-published
       under a new package name.
-- [ ] **Contact email in the privacy policy.** `store/privacy-policy.html` still
-      reads `REPLACE_WITH_YOUR_EMAIL`. Play requires a working address, and it
-      must be one you are willing to publish.
-- [ ] **Host the policy.** Any stable public URL. The manifest currently points
-      at a GitHub gist; if you keep that, update the gist to match
-      `store/privacy-policy.html`, which is newer than what is hosted there.
+- [x] **Contact email.** `dailyvolex@gmail.com`, in `store/privacy-policy.html`,
+      in the in-app Privacy and Terms screens, and in
+      `AppConstants.supportEmail`. Make sure someone reads that inbox — Play
+      requires deletion requests sent there to be actioned.
+- [ ] **Host the policy.** Any stable public URL. The manifest points at a
+      GitHub gist; update that gist to the current
+      `store/privacy-policy.html`, which is newer than what is hosted there and
+      now carries the contact address.
 - [ ] **Play Console developer account** ($25, one time) and identity
       verification. Verification can take days — start it first.
 - [ ] **Screenshots.** At least 2, ideally 4–8. Shot list and `adb` command in
@@ -103,10 +105,15 @@ the products exist.
       It is left as-is for now because there is no way to exercise the path
       without live products, and an untested error handler in a payment flow is
       not an improvement.
-- [ ] **Confirm both SKUs exist** with the ids in
-      `lib/features/subscriptions/models/subscription_tier.dart`
-      (`explorer_premium`, `premium_yearly`) — a mismatch is what makes the
-      button fail in the first place.
+- [ ] **Confirm both SKUs exist** with the exact ids the app asks Play for.
+      `platformProductId` returns the **`googleProductId`** on Android, so the
+      Play Console products must be named **`premium_monthly`** and
+      **`premium_yearly`** — not the internal `id` fields (`explorer_premium`,
+      `premium_yearly`) that sit next to them in
+      `lib/features/subscriptions/models/subscription_tier.dart`. Getting this
+      wrong is what makes the button fail in the first place. (iOS, if it ever
+      ships, wants `com.antigravity.volextrade.premium_monthly` and
+      `...premium_yearly`.)
 - [ ] **Check what Premium actually lifts still matches the copy.** It is two
       things: signals shown per day (10 → unlimited, capped in the signals
       feed) and saved strategies (3 → unlimited, capped against the local

@@ -87,6 +87,16 @@ are unsure.
 
 ---
 
+## Contact details (required by Play)
+
+- **Support email:** `dailyvolex@gmail.com` — must match the address in the
+  privacy policy, and must be monitored: Play expects account-deletion requests
+  sent there to be actioned.
+- **Website / phone:** optional, and better left blank than filled with a
+  domain you do not own.
+
+---
+
 ## Category and tags
 
 - **Category:** Finance (Education is defensible, but Finance matches user intent
