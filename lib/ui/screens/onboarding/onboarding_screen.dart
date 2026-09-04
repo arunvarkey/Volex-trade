@@ -15,27 +15,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  // These are the first words anyone reads, so they say what the app is
+  // rather than what it would be impressive to be.
+  //
+  // The previous three slides led with "AI Trading Signals ... based on
+  // advanced market analysis", which oversells a simulator the same way the
+  // old splash tagline did, and closed with "Join thousands of traders using
+  // AI to make better decisions" — invented social proof for an app that has
+  // not launched and has no users. Claiming a crowd that does not exist is
+  // both untrue and the kind of statement a store reviewer treats as
+  // misleading.
+  //
+  // The order now follows the product: what it is, how you improve, how deep
+  // it goes. Every claim below is something the app actually does.
   final List<OnboardingPage> _pages = [
     const OnboardingPage(
-      icon: Icons.auto_awesome,
-      title: 'AI Trading Signals',
-      description:
-          'Get AI-powered buy and sell signals based on advanced market analysis',
-      color: VxColors.primary,
-    ),
-    const OnboardingPage(
       icon: Icons.shield_outlined,
-      title: 'Risk-Free Practice',
+      title: 'Trade without the risk',
       description:
-          'Test strategies with paper trading before risking real money',
+          'Practise with virtual money against real market prices. Nothing '
+          'here touches a real account.',
       color: VxColors.neonGreen,
     ),
     const OnboardingPage(
-      icon: Icons.rocket_launch,
-      title: 'Start Trading Smarter',
+      icon: Icons.school_outlined,
+      title: 'Learn as you go',
       description:
-          'Join thousands of traders using AI to make better decisions',
+          'Short lessons on orders, stop-losses and position sizing — each '
+          'one opens the screen where you can try it straight away.',
       color: VxColors.neonCyan,
+    ),
+    const OnboardingPage(
+      icon: Icons.insights_rounded,
+      title: 'Test before you trust',
+      description:
+          'Backtest a strategy on historical data with fees and slippage '
+          'applied, and keep a journal of every trade you make.',
+      color: VxColors.neonPurple,
     ),
   ];
 

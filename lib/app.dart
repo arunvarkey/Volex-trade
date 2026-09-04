@@ -13,6 +13,9 @@ import 'package:volex_terminal/ui/components/privacy_shield.dart';
 import 'package:volex_terminal/core/services/auth/security_service.dart';
 import 'package:volex_terminal/ui/screens/auth/pin_entry_screen.dart';
 import 'package:volex_terminal/core/app_logger.dart';
+import 'package:volex_terminal/data/market_data_repository.dart';
+import 'package:volex_terminal/services/market_ticker_service.dart';
+import 'package:volex_terminal/features/signals/services/signal_engine.dart';
 import 'package:volex_terminal/core/providers_setup.dart';
 import 'package:volex_terminal/services/feature_flag_service.dart';
 import 'package:volex_terminal/features/compliance/age_gate_screen.dart';
@@ -121,12 +124,47 @@ class _VolexTerminalAppState extends State<VolexTerminalApp>
   void _onAppPaused() {
     AppLogger.debug('📱 App paused');
     AnalyticsService.instance.logEvent('app_paused');
+    // Backgrounding used to change nothing: the websocket stayed open, the
+    // REST fallback kept polling Binance every 2 seconds and the synthetic
+    // tick timer kept firing, for as long as the process lived.
+    _withMarketData((repo) => repo.pauseLiveFeeds());
+    MarketTickerService.instance.stop();
+    // The heaviest job of the lot: four 500-candle fetches every minute.
+    _withSignalEngine((engine) => engine.pause());
   }
 
   void _onAppResumed() {
     AppLogger.debug('📱 App resumed');
     AnalyticsService.instance.logEvent('app_resumed');
     getIt<SecurityService>().recordActivity();
+    _withMarketData((repo) => repo.resumeLiveFeeds());
+    // Only restarts if the tape is actually on screen — the widget calls
+    // start() itself, and start() is idempotent.
+    if (MarketTickerService.instance.hasData) {
+      MarketTickerService.instance.start();
+    }
+    _withSignalEngine((engine) => engine.resume());
+  }
+
+  void _withSignalEngine(void Function(SignalEngine) action) {
+    if (!getIt.isRegistered<SignalEngine>()) return;
+    try {
+      action(getIt<SignalEngine>());
+    } catch (e) {
+      AppLogger.warning('Signal engine lifecycle hook failed: $e');
+    }
+  }
+
+  /// The repository is registered during boot; a lifecycle callback can fire
+  /// before that finishes (or in a test with no service locator), so never let
+  /// a missing registration take down the app.
+  void _withMarketData(void Function(MarketDataRepository) action) {
+    if (!getIt.isRegistered<MarketDataRepository>()) return;
+    try {
+      action(getIt<MarketDataRepository>());
+    } catch (e) {
+      AppLogger.warning('Market data lifecycle hook failed: $e');
+    }
   }
 
   void _onAppTerminating() {

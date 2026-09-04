@@ -51,7 +51,7 @@ class ChartController extends ChangeNotifier {
   List<Candle> _allCandles = [];
   List<Candle> get allCandles => _allCandles;
 
-  // --- AI Ghost ---
+  // --- Trend line (a straight-line fit over recent closes) ---
   GhostModel? _ghost;
   GhostModel? get ghost => _ghost;
 

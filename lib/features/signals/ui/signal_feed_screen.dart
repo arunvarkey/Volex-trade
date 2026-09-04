@@ -16,6 +16,7 @@ import 'package:volex_terminal/features/subscriptions/services/subscription_serv
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/services/startup_service.dart';
 import 'package:volex_terminal/ui/widgets/paywalls/upgrade_prompt_dialog.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class SignalFeedScreen extends StatefulWidget {
   const SignalFeedScreen({super.key});
@@ -75,6 +76,17 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(),
+            const FeatureIntro(
+              featureId: 'signals',
+              icon: Icons.notifications_active_outlined,
+              what: 'Volex watches the market for setups its rules recognise '
+                  'and lists them here, with the reason each one triggered.',
+              when: 'Use it to find situations worth a closer look, then open '
+                  'the chart and judge for yourself before trading.',
+              caution: 'A signal is an observation, not a prediction and not '
+                  'advice. Plenty of them lose. Never take one you cannot '
+                  'explain in your own words.',
+            ),
             const SignalLimitBanner(),
             Expanded(
               child: _signals.isEmpty
@@ -347,8 +359,8 @@ class _SignalCard extends StatelessWidget {
                   ),
                 ),
 
-                // AI Warning
-                if (signal.aiWarning != null) ...[
+                // What could go wrong with this setup.
+                if (signal.riskWarning != null) ...[
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -357,7 +369,7 @@ class _SignalCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          signal.aiWarning!,
+                          signal.riskWarning!,
                           style: const TextStyle(
                               color: Colors.amber, fontSize: 12),
                         ),

@@ -81,6 +81,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
         elevation: 0,
         actions: [
           IconButton(
+            tooltip: 'Rescan',
             icon: Icon(scanner.isScanning ? Icons.sync : Icons.refresh,
                 color: VxColors.neonCyan, size: 20),
             onPressed: scanner.isScanning

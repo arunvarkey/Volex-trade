@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
-import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
+import 'package:volex_terminal/features/trade_checks/services/trade_check_service.dart';
 
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/core/app_logger.dart';
@@ -13,7 +13,7 @@ import 'package:volex_terminal/data/i_market_data_repository.dart';
 
 class SignalEngine {
   final StrategyEngine _strategyEngine;
-  final AIGuardianService _aiGuardian;
+  final TradeCheckService _tradeChecks;
   final IMarketDataRepository _marketData;
   final _signalsController = StreamController<TradeSignal>.broadcast();
 
@@ -33,26 +33,56 @@ class SignalEngine {
 
   SignalEngine({
     required StrategyEngine strategyEngine,
-    required AIGuardianService aiGuardian,
+    required TradeCheckService tradeChecks,
     required IMarketDataRepository marketData,
   })  : _strategyEngine = strategyEngine,
-        _aiGuardian = aiGuardian,
+        _tradeChecks = tradeChecks,
         _marketData = marketData;
 
-  /// Start generating signals
+  /// The scan timer.
+  ///
+  /// This used to be created with a bare `Timer.periodic(...)` whose handle
+  /// was thrown away, so nothing could ever stop it: it kept running after
+  /// dispose(), and every tick fetched 500 candles for each of four symbols
+  /// and then tried to add to a closed StreamController, which throws.
+  Timer? _scanTimer;
+  bool _disposed = false;
+
+  /// Start generating signals. Safe to call more than once — a second call
+  /// used to stack another timer on top of the first.
   Future<void> startGenerating() async {
+    if (_disposed || _scanTimer != null) return;
     AppLogger.info('🎯 SignalEngine: Started generating signals');
 
     // Initial generation
-    _generateSignals();
+    unawaited(_generateSignals());
 
     // Enforce 60s minimum scan interval
-    Timer.periodic(const Duration(minutes: 1), (timer) async {
+    _scanTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
+      await _generateSignals();
+    });
+  }
+
+  /// Stop scanning — used when the app goes to the background, where this is
+  /// the heaviest network job in the app (four 500-candle fetches a minute).
+  void pause() {
+    _scanTimer?.cancel();
+    _scanTimer = null;
+  }
+
+  /// Resume scanning after [pause]. Does nothing once disposed.
+  void resume() {
+    if (_disposed || _scanTimer != null) return;
+    _scanTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
       await _generateSignals();
     });
   }
 
   Future<void> _generateSignals() async {
+    // A scan already in flight when dispose() lands would otherwise try to
+    // add to a closed controller, which throws.
+    if (_disposed) return;
+
     // For MVP, we watch a fixed set of high-volume pairs
     final watchlist = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT'];
 
@@ -100,8 +130,8 @@ class SignalEngine {
             status: OrderStatus.open,
           );
 
-          // Get AI Guardian analysis
-          final aiAnalysis = await _aiGuardian.analyzeTradeIntent(mockOrder);
+          // Run the pre-trade checks
+          final checkResult = await _tradeChecks.analyzeTradeIntent(mockOrder);
 
           // Create signal
           final signal = TradeSignal(
@@ -109,11 +139,17 @@ class SignalEngine {
             symbol: symbol,
             side: rec.side,
             entryPrice: rec.entryPrice,
-            stopLoss: rec.stopLoss ?? rec.entryPrice * 0.98,
-            takeProfit: rec.takeProfit ?? rec.entryPrice * 1.05,
+            // Direction-aware fallbacks. These were a flat entry * 0.98 and
+            // entry * 1.05 regardless of side, which is backwards for a
+            // short: the "stop" sat below entry (where a short profits) and
+            // the "target" above it (where a short loses). A learner reading
+            // a sell signal was being shown an inverted setup.
+            stopLoss: rec.stopLoss ?? fallbackStop(rec.side, rec.entryPrice),
+            takeProfit:
+                rec.takeProfit ?? fallbackTarget(rec.side, rec.entryPrice),
             reasoning: rec.reasoning ?? 'Strategy detected opportunity',
             // Use 'recommendation' as the warning text if shouldWarn is true
-            aiWarning: aiAnalysis.shouldWarn ? aiAnalysis.recommendation : null,
+            riskWarning: checkResult.shouldWarn ? checkResult.recommendation : null,
             confidence: rec.confidence,
             strategyName: rec.strategyName,
             timestamp: DateTime.now(),
@@ -123,7 +159,10 @@ class SignalEngine {
             isActionable: rec.shouldTrade,
           );
 
-          // Retain + emit
+          // Retain + emit. The await above yields, so re-check: dispose()
+          // may have closed the controller while we were waiting on the AI
+          // Guardian or the network.
+          if (_disposed) return;
           _recent.insert(0, signal);
           if (_recent.length > 50) _recent.removeRange(50, _recent.length);
           _signalsController.add(signal);
@@ -140,6 +179,16 @@ class SignalEngine {
     }
     _hasScanned = true;
   }
+
+  /// A stop is always on the losing side of entry: below for a long, above
+  /// for a short. 2% away, matching the order ticket's default.
+  static double fallbackStop(OrderSide side, double entry) =>
+      side == OrderSide.buy ? entry * 0.98 : entry * 1.02;
+
+  /// A target is always on the winning side of entry: above for a long,
+  /// below for a short. 5% away, for a 2.5:1 reward-to-risk against the stop.
+  static double fallbackTarget(OrderSide side, double entry) =>
+      side == OrderSide.buy ? entry * 1.05 : entry * 0.95;
 
   String _generateSignalId() {
     return 'sig_${DateTime.now().millisecondsSinceEpoch}';
@@ -166,6 +215,9 @@ class SignalEngine {
   }
 
   void dispose() {
+    _disposed = true;
+    _scanTimer?.cancel();
+    _scanTimer = null;
     _signalsController.close();
   }
 }

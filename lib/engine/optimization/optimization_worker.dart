@@ -1,7 +1,7 @@
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
 import 'package:volex_terminal/features/simulator/backtest/backtest_engine.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import 'package:volex_terminal/engine/strategy/strategy_base.dart';
 
 /// The result of an isolate-based evaluation batch.

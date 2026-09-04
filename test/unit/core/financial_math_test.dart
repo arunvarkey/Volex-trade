@@ -281,4 +281,63 @@ void main() {
       });
     });
   });
+
+  group('shouldTriggerProtectiveExit', () {
+    // Long: entry 100, stop 98, target 104.
+    test('long stops out at or below the stop', () {
+      bool at(double price) => FinancialMath.shouldTriggerProtectiveExit(
+          isLong: true, price: price, stopLoss: 98, takeProfit: 104);
+      expect(at(99), false); // still inside the range
+      expect(at(98), true); // exactly at the stop
+      expect(at(97.5), true); // through the stop
+    });
+
+    test('long takes profit at or above the target', () {
+      bool at(double price) => FinancialMath.shouldTriggerProtectiveExit(
+          isLong: true, price: price, stopLoss: 98, takeProfit: 104);
+      expect(at(103.9), false);
+      expect(at(104), true);
+      expect(at(110), true);
+    });
+
+    // Short is the mirror image: stop 102 (above), target 96 (below).
+    test('short stops out at or above the stop', () {
+      bool at(double price) => FinancialMath.shouldTriggerProtectiveExit(
+          isLong: false, price: price, stopLoss: 102, takeProfit: 96);
+      expect(at(101), false);
+      expect(at(102), true);
+      expect(at(105), true);
+    });
+
+    test('short takes profit at or below the target', () {
+      bool at(double price) => FinancialMath.shouldTriggerProtectiveExit(
+          isLong: false, price: price, stopLoss: 102, takeProfit: 96);
+      expect(at(96.5), false);
+      expect(at(96), true);
+      expect(at(90), true);
+    });
+
+    test('a long is not closed by short-side levels (direction not flipped)', () {
+      // Price well above entry must NOT look like a stop-out for a long.
+      expect(
+          FinancialMath.shouldTriggerProtectiveExit(
+              isLong: true, price: 103, stopLoss: 98),
+          false);
+      // ...but the same price does stop out a short with a stop at 102.
+      expect(
+          FinancialMath.shouldTriggerProtectiveExit(
+              isLong: false, price: 103, stopLoss: 102),
+          true);
+    });
+
+    test('no levels set, or a non-positive price, never triggers', () {
+      expect(
+          FinancialMath.shouldTriggerProtectiveExit(isLong: true, price: 100),
+          false);
+      expect(
+          FinancialMath.shouldTriggerProtectiveExit(
+              isLong: true, price: 0, stopLoss: 98, takeProfit: 104),
+          false);
+    });
+  });
 }

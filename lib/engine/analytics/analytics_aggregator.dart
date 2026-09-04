@@ -132,8 +132,14 @@ class AnalyticsAggregator {
     return (avg / stdDev) * sqrt(252);
   }
 
-  // --- COMPATIBILITY SHIMS ---
-
+  /// Real per-strategy metrics, computed from that strategy's stored orders.
+  ///
+  /// This sat alongside getSubscriberAnalytics() and getRevenueAnalytics(),
+  /// which returned invented figures — 124 subscribers, $1,240.50 monthly and
+  /// $15,400 lifetime revenue, $450.25 "pending payout" — to the creator
+  /// dashboard. There is no payments backend and no subscriber, so those two
+  /// methods and the dashboard that displayed them are gone rather than
+  /// showing anyone money they have not earned.
   Future<StrategyPerformanceMetrics> getPerformanceMetrics(
       String strategyId) async {
     final storage = OrderStorageService();
@@ -149,24 +155,6 @@ class AnalyticsAggregator {
       avgReturn: data.totalTrades > 0 ? data.totalPnl / data.totalTrades : 0.0,
       maxDrawdown: data.maxDrawdown,
       sharpeEstimate: data.sharpeRatio,
-    );
-  }
-
-  Future<SubscriberAnalytics> getSubscriberAnalytics(String strategyId) async {
-    // Return mock data for dashboard to show something
-    return const SubscriberAnalytics(
-      activeSubscribers: 124,
-      newSubscribersLast30Days: 12,
-      tierDistribution: {'Basic': 100, 'Pro': 24},
-    );
-  }
-
-  Future<RevenueAnalytics> getRevenueAnalytics(String creatorId) async {
-    // Return mock data for dashboard
-    return const RevenueAnalytics(
-      monthlyRevenue: 1240.50,
-      lifetimeRevenue: 15400.00,
-      pendingPayouts: 450.25,
     );
   }
 }

@@ -90,6 +90,7 @@ class _StrategyEditDialogState extends State<StrategyEditDialog> {
                         fontSize: 14,
                       ),
                       IconButton(
+                        tooltip: 'Close',
                         icon: const Icon(Icons.close,
                             color: Colors.white38, size: 20),
                         onPressed: () => Navigator.of(context).pop(),

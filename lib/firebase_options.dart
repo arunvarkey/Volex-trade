@@ -3,6 +3,19 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Firebase options read from a `.env` file at runtime.
+///
+/// **Android does not use this.** `main.dart` calls the no-argument
+/// `Firebase.initializeApp()` there, which reads the native
+/// `google-services.json`; this class is only reached on iOS.
+///
+/// That matters because `dotenv.load()` is never called — it was removed so
+/// the `.env` file would not be bundled onto the device — so every `!` below
+/// would throw on a null. On iOS, wire `dotenv.load()` into `main()` before
+/// Firebase init, or switch iOS to `GoogleService-Info.plist` and the
+/// no-argument initializer the way Android already does. Firebase init in
+/// `main.dart` is inside a try/catch, so today this fails to a Firebase-free
+/// guest mode rather than a crash.
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {

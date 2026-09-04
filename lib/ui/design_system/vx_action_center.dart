@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../sheets/vx_trade_sheet.dart';
 import '../navigation/vx_navigation_helper.dart';
-import '../screens/strategies/ai_strategy_generator_screen.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
@@ -12,6 +12,7 @@ import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import '../../core/app_router.dart';
 import 'package:volex_terminal/engine/alerts/alert_engine.dart';
 import 'package:volex_terminal/engine/alerts/alert_models.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 import '../../engine/strategy/built_in_strategies.dart';
 
 /// The Central Floating Action Button - "Command Palette"
@@ -135,11 +136,11 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
         action: _handleQuickSell,
       ),
       _Command(
-        icon: Icons.auto_awesome,
-        label: 'AI Strategy Gen',
-        description: 'Describe and build strategy',
+        icon: Icons.tune,
+        label: 'Build Strategy',
+        description: 'Start from a template',
         color: VxColors.neonCyan,
-        action: _handleAiStrategy,
+        action: _handleBuildStrategy,
       ),
       _Command(
         icon: isRunning ? Icons.auto_mode : Icons.auto_graph,
@@ -336,12 +337,9 @@ class _VxCommandPaletteState extends State<VxCommandPalette> {
     }
   }
 
-  void _handleAiStrategy() {
+  void _handleBuildStrategy() {
     Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AIStrategyGeneratorScreen()),
-    );
+    context.push('/simulator/templates');
   }
 
   void _handleFindSymbol() {
@@ -599,9 +597,12 @@ class _StrategyDashboardSheet extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Text(
-                  'SESSION P&L',
-                  style: TextStyle(
+                InfoLabel(
+                  // The headline number of the whole panel, labelled with an
+                  // abbreviation the app never defined anywhere near it.
+                  text: 'SESSION PROFIT & LOSS',
+                  termId: 'pnl',
+                  style: VxTypography.caption.copyWith(
                     color: Colors.white54,
                     fontSize: 12,
                     letterSpacing: 1,
@@ -1169,6 +1170,7 @@ class _VxSymbolSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
+        tooltip: 'Back',
         icon: const Icon(Icons.arrow_back),
         onPressed: () => close(context, ''),
       );

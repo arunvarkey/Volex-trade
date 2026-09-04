@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/data/historical_repository.dart';
 import 'package:volex_terminal/data/binance/binance_exchange_service.dart';
@@ -9,6 +8,26 @@ import 'package:volex_terminal/engine/optimization/optimization_job.dart';
 import 'package:volex_terminal/engine/strategy/built_in_strategies.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
+
+/// "Optimizer" and "genetic algorithm" describe the mechanism, which is of no
+/// help to someone who has never met either word. What a beginner needs to
+/// know is what the screen does to their strategy and why the result should be
+/// treated with suspicion.
+const String _introWhat =
+    'Every strategy has settings — how long a moving average is, how far a '
+    'stop sits. This screen tries thousands of combinations of those settings '
+    'against past prices and reports which ones would have made the most '
+    'money.';
+const String _introWhen =
+    'Use it once you already have a strategy that makes sense to you and you '
+    'want to know whether its numbers are in a sensible range. It cannot '
+    'invent a strategy, and it cannot rescue one whose idea is wrong.';
+const String _introCaution =
+    'Settings that look perfect on past prices often fail on new ones — the '
+    'search can end up memorising history instead of learning from it. Always '
+    'retest a winner on a period it has not seen.';
 
 class OptimizerScreen extends StatefulWidget {
   const OptimizerScreen({super.key});
@@ -105,7 +124,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.surface,
         title: Text("Deploy Strategy?",
-            style: GoogleFonts.dmSans(color: VxColors.neonCyan)),
+            style: VxTypography.h3.copyWith(color: VxColors.neonCyan)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +135,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
             const SizedBox(height: 16),
             ..._bestParams!.entries.map((e) => Text(
                 "• ${e.key}: ${e.value is double ? e.value.toStringAsFixed(2) : e.value}",
-                style: GoogleFonts.jetBrainsMono(color: VxColors.neonCyan))),
+                style: VxTypography.price.copyWith(color: VxColors.neonCyan))),
             const SizedBox(height: 16),
             const Text("Are you sure you want to proceed?",
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -144,7 +163,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: VxColors.neonGreen,
-            content: Text("STRATEGY UPDATED: GENETIC CODE INJECTED",
+            content: Text("Strategy updated with the new settings",
                 style: TextStyle(
                     color: Colors.black, fontWeight: FontWeight.bold)),
           ),
@@ -160,6 +179,19 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
         title: const Text("Strategy Optimizer"),
         centerTitle: true,
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            tooltip: 'What is this?',
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: () => FeatureIntro.show(
+              context,
+              title: 'Strategy Optimizer',
+              what: _introWhat,
+              when: _introWhen,
+              caution: _introCaution,
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -167,6 +199,14 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const FeatureIntro(
+                featureId: 'optimizer',
+                icon: Icons.science_outlined,
+                what: _introWhat,
+                when: _introWhen,
+                caution: _introCaution,
+              ),
+              const SizedBox(height: 4),
               // Header Stats
               Container(
                 padding: const EdgeInsets.all(20),
@@ -180,13 +220,13 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                     const Icon(Icons.biotech,
                         size: 48, color: VxColors.neonCyan),
                     const SizedBox(height: 16),
-                    Text("Genetic Optimization",
+                    Text("Find Better Settings",
                         style: Theme.of(context).textTheme.headlineSmall),
                     const SizedBox(height: 8),
                     Text(
                       _useRealData
-                          ? "Evolving the 'Ghost Trend' strategy against 1,000 minutes of real Binance history."
-                          : "Evolving the 'Ghost Trend' strategy against 1,000 minutes of simulated data.",
+                          ? "Testing thousands of setting combinations for the 'Ghost Trend' strategy against 1,000 minutes of real Binance history, keeping the ones that performed best."
+                          : "Testing thousands of setting combinations for the 'Ghost Trend' strategy against 1,000 minutes of simulated data, keeping the ones that performed best.",
                       textAlign: TextAlign.center,
                       style: const TextStyle(color: Colors.white70),
                     ),
@@ -196,7 +236,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Simulated",
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(fontFamily: VxTypography.sans, 
                                 fontSize: 12,
                                 color: !_useRealData
                                     ? VxColors.neonCyan
@@ -209,7 +249,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                           inactiveThumbColor: VxColors.neonCyan,
                         ),
                         Text("Binance Live",
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(fontFamily: VxTypography.sans, 
                                 fontSize: 12,
                                 color: _useRealData
                                     ? VxColors.neonCyan
@@ -241,8 +281,10 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                     _useRealData
                         ? "Loaded: Binance 1m History"
                         : "Loaded: Simulated Stream",
-                    style: GoogleFonts.jetBrainsMono(
-                        fontSize: 9, color: Colors.white38),
+                    // Descriptive label, not data — DM Sans, and 9pt was
+                    // below a comfortable reading size.
+                    style: VxTypography.caption
+                        .copyWith(fontSize: 11, color: Colors.white38),
                   ),
                 ),
               ],
@@ -253,10 +295,10 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
               if (_job != null) ...[
                 Text(
                   "Generation ${_job!.currentGeneration} / ${_job!.totalGenerations}",
-                  style: GoogleFonts.jetBrainsMono(
+                  style: VxTypography.price.copyWith(
                       fontSize: 24,
                       color: VxColors.neonCyan,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.w700),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
@@ -291,8 +333,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
                   _job == null
                       ? "Start Evolution"
                       : (_job!.isRunning ? "Evolving..." : "Restart"),
-                  style: GoogleFonts.dmSans(
-                      fontWeight: FontWeight.bold, fontSize: 18),
+                  style: VxTypography.button
+                      .copyWith(fontWeight: FontWeight.w700, fontSize: 18),
                 ),
               ),
             ],
@@ -314,8 +356,8 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
       child: Column(
         children: [
           Text("Current Best",
-              style: GoogleFonts.dmSans(
-                  color: VxColors.neonGreen, fontSize: 12)),
+              style: VxTypography.caption
+                  .copyWith(color: VxColors.neonGreen, fontSize: 12)),
           if (params != null) ...[
             const SizedBox(height: 8),
             Wrap(
@@ -370,9 +412,9 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
             style: const TextStyle(color: Colors.white54, fontSize: 12)),
         const SizedBox(height: 4),
         Text(value,
-            style: GoogleFonts.jetBrainsMono(
+            style: VxTypography.price.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
                 color: Colors.white)),
       ],
     );

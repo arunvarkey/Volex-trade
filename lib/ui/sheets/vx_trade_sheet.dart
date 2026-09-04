@@ -206,6 +206,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
               tooltip: 'Open in Analyst',
             ),
           IconButton(
+            tooltip: 'Close',
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.close),
             color: Colors.white54,

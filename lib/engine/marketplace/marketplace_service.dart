@@ -1,9 +1,6 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/app_logger.dart';
 import 'models/strategy_listing.dart';
-import '../../domain/trade_signal.dart';
-import '../../domain/order.dart'; // For OrderSide
 
 /// Service handles the Strategy Marketplace.
 ///
@@ -12,63 +9,25 @@ import '../../domain/order.dart'; // For OrderSide
 /// - Subscribe to strategies ([subscribeToStrategy])
 /// - Publish their own strategies ([publishStrategy])
 ///
-/// Currently uses MOCK data for Phase 4B.
+/// Everything here is local to the device and free. There is no server, no
+/// payment provider and no seeded catalogue — the listings are whatever the
+/// user has published themselves.
 class MarketplaceService extends ChangeNotifier {
-  final List<StrategyListing> _mockListings = [
-    StrategyListing.mock(
-      id: 'strat_001',
-      title: 'Golden Cross Alpha',
-      category: StrategyCategory.trendFollowing,
-    ),
-    StrategyListing.mock(
-      id: 'strat_002',
-      title: 'Volex AI Scalper',
-      category: StrategyCategory.aiExperimental,
-    ).copyWith(
-      title: 'Volex AI Scalper',
-      description:
-          'High-frequency scalping using LSTM models. Risky but high reward.',
-      monthlyPrice: 99.00,
-      tier: MarketplaceTier.premium,
-      totalReturn: 312.5,
-      winRate: 0.58,
-      rating: 4.5,
-    ),
-    StrategyListing.mock(
-      id: 'strat_003',
-      title: 'Safe Harbor Yield',
-      category: StrategyCategory.arbitrage,
-    ).copyWith(
-      title: 'Safe Harbor Yield',
-      description: 'Stable coin arbitrage across exchanges. Low risk.',
-      monthlyPrice: 9.99,
-      tier: MarketplaceTier.basic,
-      totalReturn: 12.4,
-      winRate: 0.98,
-      rating: 4.9,
-    ),
-    StrategyListing.mock(
-      id: 'strat_004',
-      title: 'CryptoBreakout V2',
-      category: StrategyCategory.breakout,
-    ).copyWith(
-      title: 'CryptoBreakout V2',
-      description:
-          'Monitors consolidation zones and enters on high volume breakouts.',
-      monthlyPrice: 49.99,
-      tier: MarketplaceTier.premium,
-      totalReturn: 88.2,
-      winRate: 0.45, // Lower win rate but high R:R
-      rating: 4.2,
-    ),
-  ];
+  /// Published strategy listings.
+  ///
+  /// Intentionally starts EMPTY. This used to be seeded with invented
+  /// strategies carrying invented performance ("+312.5% return", "98% win
+  /// rate", "$99/month") presented as though they were real products for sale
+  /// — indefensible in a tool whose whole promise is honest numbers. The
+  /// marketplace now shows only strategies a user has actually published.
+  final List<StrategyListing> _listings = [];
 
   final Set<String> _subscriptions = {}; // Set of Strategy IDs
 
   /// Get featured strategies for the home carousel
   Future<List<StrategyListing>> getFeaturedStrategies() async {
     await Future.delayed(const Duration(milliseconds: 600)); // Simulate network
-    return _mockListings;
+    return _listings;
   }
 
   /// Search strategies by query or category
@@ -77,7 +36,7 @@ class MarketplaceService extends ChangeNotifier {
     StrategyCategory? category,
   }) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    return _mockListings.where((s) {
+    return _listings.where((s) {
       if (category != null && s.category != category) return false;
       if (query != null &&
           !s.title.toLowerCase().contains(query.toLowerCase())) {
@@ -87,18 +46,18 @@ class MarketplaceService extends ChangeNotifier {
     }).toList();
   }
 
-  /// Subscribe to a strategy
-  /// Returns success status
+  /// Add a strategy to the user's list.
+  ///
+  /// No money changes hands: there is no in-app purchase, no payment provider
+  /// and no billing account behind this app. The delay here used to be
+  /// commented "simulate payment processing", which — paired with a button
+  /// reading "Subscribe ($X/mo)" — made a free local list-append look like a
+  /// completed purchase. The UI now says what this is, and the fake delay is
+  /// gone with it.
   Future<bool> subscribeToStrategy(String strategyId) async {
-    AppLogger.info("MARKET: Subscribing to $strategyId...");
-    await Future.delayed(
-        const Duration(seconds: 1)); // Simulate payment processing
-
-    // In a real app, this would trigger IAP or Credit deduction
+    AppLogger.info("MARKET: Adding $strategyId to the user's strategies...");
     _subscriptions.add(strategyId);
     notifyListeners();
-
-    AppLogger.info("MARKET: Subscribed to $strategyId successfully.");
     return true;
   }
 
@@ -107,60 +66,25 @@ class MarketplaceService extends ChangeNotifier {
     return _subscriptions.contains(strategyId);
   }
 
-  /// Check if user is subscribed by Strategy Name (For Phase 4C Mock)
-  bool isSubscribedByName(String strategyName) {
-    try {
-      final strat = _mockListings.firstWhere((s) => s.title == strategyName);
-      return _subscriptions.contains(strat.id);
-    } catch (e) {
-      return false;
-    }
-  }
-
   /// Publish a new strategy
   Future<void> publishStrategy(StrategyListing listing) async {
     AppLogger.info("MARKET: Publishing ${listing.title}...");
     await Future.delayed(const Duration(seconds: 2));
-    _mockListings.add(listing);
+    _listings.add(listing);
     notifyListeners();
     AppLogger.info("MARKET: Published successfully.");
   }
 
-  // --- Signal Simulation (Phase 4C) ---
-  final _signalController = StreamController<TradeSignal>.broadcast();
-  Stream<TradeSignal> get signalStream => _signalController.stream;
-  Timer? _simTimer;
-
-  /// Start broadcasting mock signals for subscribed strategies
-  void startSignalSimulation() {
-    _simTimer?.cancel();
-    _simTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      if (_subscriptions.isEmpty) return;
-
-      // Pick a random strategy to emit a signal
-      // In reality, this would come from a websocket
-      final randomStratId = _subscriptions.toList().first;
-      final strat = _mockListings.firstWhere((s) => s.id == randomStratId);
-
-      final signal = TradeSignal(
-        timestamp: DateTime.now(),
-        price: 42000.0 + (timer.tick * 10), // variable price
-        side: (timer.tick % 2 == 0) ? OrderSide.buy : OrderSide.sell,
-        strategyName: strat.title,
-        description: "Signal generated by ${strat.title} algorithm.",
-      );
-
-      _signalController.add(signal);
-      AppLogger.info("MARKET: Emitted signal for ${strat.title}");
-    });
-  }
-
-  @override
-  void dispose() {
-    _simTimer?.cancel();
-    _signalController.close();
-    super.dispose();
-  }
+  // A "signal simulation" used to live here: a 10-second periodic timer,
+  // started unconditionally at app launch, that emitted TradeSignals at an
+  // invented price (42000 + tick * 10) attributed to a subscribed strategy.
+  // CopyTradingEngine listened to it and placed real paper orders — so a
+  // user's balance could move on prices that never occurred, credited to a
+  // strategy that never produced a signal. There is no signal source behind
+  // it (the comment said "in reality, this would come from a websocket"), so
+  // the timer, the stream and the copy-trading engine are gone rather than
+  // feeding fabricated fills into the simulator. It also means the app no
+  // longer runs a timer forever on every launch for nothing.
 }
 
 extension StrategyListingCopy on StrategyListing {

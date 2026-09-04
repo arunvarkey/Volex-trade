@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive launcher icon (Android 8+).
+
+  Without this file the launcher only finds the legacy square PNGs and shrinks
+  one inside a white circle, which is why the icon looked letterboxed and
+  washed out on modern devices. The layers below let each launcher apply its
+  own mask - circle, squircle, rounded square - to art drawn for it.
+
+  The foreground is the V mark alone on transparency, sized to 58% of the 108dp
+  canvas so it stays inside the 72dp safe zone under any mask. The background
+  is the flat navy the mark was always drawn on.
+
+  <monochrome> is what Android 13's themed icons tint; without it those
+  launchers fall back to the legacy icon and the app looks out of place on a
+  themed home screen.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_monochrome" />
+</adaptive-icon>

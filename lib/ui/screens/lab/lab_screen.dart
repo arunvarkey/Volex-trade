@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../design_system/vx_colors.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
+import '../../widgets/feature_intro.dart';
 import '../strategies/strategy_detail_view.dart';
 
 class LabScreen extends StatelessWidget {
@@ -40,6 +41,20 @@ class LabScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const FeatureIntro(
+              featureId: 'lab',
+              icon: Icons.science_outlined,
+              what: 'A strategy is a set of rules that decides when to buy and '
+                  'sell for you. This screen is where you run one against past '
+                  'prices to see how it would have done, and switch it on to '
+                  'trade your virtual balance automatically.',
+              when: 'Use it when you have a rule you want to check before '
+                  'trusting it — for example "buy when the 20-period average '
+                  'crosses above the 50-period one".',
+              caution: 'A strategy doing well on past prices is evidence, not '
+                  'proof. Markets change, and the period you tested is only '
+                  'one of the many the strategy will meet.',
+            ),
             _buildLabHeader(context),
             const SizedBox(height: 20),
 
@@ -61,7 +76,7 @@ class LabScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: strategies
                       .where((s) => activeIds.contains(s.id))
-                      .map((s) => _buildActiveStrategyCard(s))
+                      .map((s) => _buildActiveStrategyCard(s, execution))
                       .toList(),
                 ),
               ),
@@ -159,12 +174,9 @@ class LabScreen extends StatelessWidget {
           Row(
             children: [
               _LabActionButton(
-                label: "Create with AI",
-                icon: Icons.auto_awesome,
-                onTap: () {
-                  // Navigate to AI Strategy Generator
-                  context.push('/ai-strategy');
-                },
+                label: "New Strategy",
+                icon: Icons.tune,
+                onTap: () => context.push('/simulator/templates'),
               ),
               const SizedBox(width: 12),
               _LabActionButton(
@@ -296,7 +308,19 @@ class LabScreen extends StatelessWidget {
   }
 }
 
-Widget _buildActiveStrategyCard(Strategy strategy) {
+Widget _buildActiveStrategyCard(Strategy strategy, ExecutionManager execution) {
+  // Real P&L for this strategy's positions. This card used to print a
+  // hardcoded "+0.00%" in green regardless of what the strategy had actually
+  // done, with a comment noting the real value "would" be wired up.
+  double pnl = 0;
+  for (final p in execution.positions) {
+    if (p.strategyId != strategy.id) continue;
+    pnl += p.isOpen ? (p.unrealizedPnl ?? 0) : (p.realizedPnL ?? 0);
+  }
+  final hasPositions =
+      execution.positions.any((p) => p.strategyId == strategy.id);
+  final up = pnl >= 0;
+
   return VxHolographicCard(
     width: 160,
     margin: const EdgeInsets.only(right: 12),
@@ -325,13 +349,17 @@ Widget _buildActiveStrategyCard(Strategy strategy) {
         const Spacer(),
         Text(
           'P&L',
-          style:
-              VxTypography.caption.copyWith(fontSize: 7, color: Colors.white24),
+          style: VxTypography.caption
+              .copyWith(fontSize: 10, color: Colors.white24),
         ),
         Text(
-          "+0.00%", // Real PnL would link to ExecutionManager in real implementation
+          hasPositions
+              ? '${up ? '+' : ''}\$${pnl.toStringAsFixed(2)}'
+              : '—',
           style: VxTypography.price.copyWith(
-            color: VxColors.neonGreen,
+            color: !hasPositions
+                ? Colors.white38
+                : (up ? VxColors.neonGreen : VxColors.neonRed),
             fontSize: 12,
           ),
         ),
@@ -413,7 +441,7 @@ class _StrategyCard extends StatelessWidget {
                 statusText,
                 style: VxTypography.caption.copyWith(
                   color: statusColor,
-                  fontSize: 7,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
                 ),
               ),

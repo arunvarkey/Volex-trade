@@ -111,18 +111,36 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   void _subscribeToData() {
-    // Watchlist
+    // Watchlist. Each ticker carries its own symbol, so this is the only
+    // source that can price every open position correctly — the candle stream
+    // below only covers whichever market the chart is on.
     _watchlistSubscription = _marketRepo.watchlistStream.listen((map) {
       _watchlistMap = map;
+      for (final ticker in map.values) {
+        if (ticker.closePrice > 0) {
+          _execManager.updateUnrealizedPnlForSymbol(
+              ticker.symbol, ticker.closePrice);
+        }
+      }
       notifyListeners();
     });
 
     // Execution Updates (Balances)
     _execManager.addListener(_onExecUpdate);
 
-    // Subscribe to all tickers to update unrealized PnL
+    // Live candles for the charted symbol — higher frequency than the
+    // watchlist poll, so the market being watched updates smoothly.
+    //
+    // This used to call updateUnrealizedPnl(candle.close), which applies one
+    // price to *every* position, every resting limit order and every
+    // stop-loss regardless of market. A BTC tick would therefore mark an ETH
+    // position at BTC's price, and could trigger that position's stop or fill
+    // an unrelated sell limit — a sell limit at 2000 fills the moment any
+    // symbol prints above 2000. Candles carry no symbol, so the repository's
+    // currentSymbol supplies it.
     _priceUpdatesSubscription = _marketRepo.updatesStream.listen((candle) {
-      _execManager.updateUnrealizedPnl(candle.close);
+      _execManager.updateUnrealizedPnlForSymbol(
+          _marketRepo.currentSymbol, candle.close);
     });
   }
 

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/features/legal/ui/legal_screen.dart';
 import 'package:volex_terminal/ui/screens/settings/security_settings_screen.dart';
 import 'package:volex_terminal/ui/screens/settings/risk_settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/services/user_mode_service.dart';
 import 'package:volex_terminal/core/service_locator.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -24,6 +24,7 @@ class SettingsScreen extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w700)),
         backgroundColor: Colors.transparent,
         leading: IconButton(
+          tooltip: 'Back',
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
@@ -34,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
           _buildModeSwitch(context),
           _buildCpuTile(
             context,
-            title: "Connect Exchange",
+            title: "Exchange Connection",
             icon: Icons.sync_alt,
             onTap: () => context.push('/api-key-setup'),
           ),
@@ -49,7 +50,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           _buildCpuTile(
             context,
-            title: "Risk Parameters",
+            title: "Risk Limits",
             icon: Icons.speed,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const RiskSettingsScreen())),
@@ -58,17 +59,22 @@ class SettingsScreen extends StatelessWidget {
           _buildSectionHeader("Legal & Support"),
           _buildCpuTile(
             context,
-            title: "Privacy Policy",
+            title: "Privacy",
             icon: Icons.privacy_tip,
-            onTap: () =>
-                _launchUrl('https://volexterminal.com/privacy'), // Placeholder
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) =>
+                        const LegalScreen(doc: LegalDoc.privacy))),
           ),
           _buildCpuTile(
             context,
-            title: "Terms of Service",
+            title: "Terms of Use",
             icon: Icons.description,
-            onTap: () =>
-                _launchUrl('https://volexterminal.com/terms'), // Placeholder
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const LegalScreen(doc: LegalDoc.terms))),
           ),
           _buildCpuTile(
             context,
@@ -79,8 +85,13 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 48),
           Center(
             child: Text(
-              "Version 1.0.0 (Build 15)",
-              style: GoogleFonts.jetBrainsMono(color: Colors.white24, fontSize: 12),
+              // Kept in step with pubspec.yaml's `version:` by hand. There
+              // is no package_info_plus dependency and adding a native
+              // plugin purely to print a string is not worth it, but the
+              // two had already drifted apart.
+              "Version 1.0.1 (Build 10)",
+              style: VxTypography.price
+                  .copyWith(color: Colors.white24, fontSize: 12),
             ),
           ),
         ],
@@ -93,11 +104,13 @@ class SettingsScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title.toUpperCase(),
-        style: GoogleFonts.jetBrainsMono(
+        // Section labels are UI text, not data — DM Sans like every other
+        // screen. Monospace is reserved for numbers.
+        style: VxTypography.caption.copyWith(
           color: Colors.grey,
           fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
         ),
       ),
     );
@@ -145,7 +158,11 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              isPro ? "Pro Simulator Active" : "Paper Trading (Simulation)",
+              isPro
+                  ? "On: you can edit strategy settings and run them "
+                      "automatically. Still simulated."
+                  : "Off: guided mode with ready-made strategies. Also "
+                      "simulated — the switch does not involve real money.",
               style: const TextStyle(
                 color: VxColors.textSecondary,
                 fontSize: 12,
@@ -178,10 +195,4 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    }
-  }
 }

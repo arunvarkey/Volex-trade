@@ -8,6 +8,7 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/domain/trade_signal.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
+import 'package:volex_terminal/domain/position.dart';
 import 'package:volex_terminal/ui/chart_engine/vx_pro_chart.dart';
 import 'package:volex_terminal/ui/chart_engine/chart_marker.dart';
 import 'package:volex_terminal/ui/chart_engine/chart_drawing.dart';
@@ -17,11 +18,13 @@ import 'package:volex_terminal/ui/screens/chart/components/timeframe_selector.da
 import 'package:volex_terminal/ui/screens/chart/components/chart_stats_overlay.dart';
 import 'package:volex_terminal/ui/sheets/smart_order_sheet.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 // [NEW] Backtesting Imports
 import 'package:volex_terminal/engine/replay_controller.dart';
 import 'package:volex_terminal/ui/replay_panel.dart';
+import 'components/chart_legend_sheet.dart';
 
 class ChartScreenV2 extends StatefulWidget {
   final MarketDataRepository? repository;
@@ -44,6 +47,10 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
   late String _currentSymbol; // Changed from init assignment
   String _currentTimeframe = '1m';
   List<Candle> _candles = [];
+
+  /// True when the candles on screen are generated rather than live exchange
+  /// data (offline / feed blocked). Shown to the user rather than hidden.
+  bool _isSimulatedData = false;
   double _currentPrice = 0.0;
   bool _isLoading = true;
 
@@ -102,6 +109,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
           if (history.isNotEmpty) {
             _currentPrice = history.last.close;
           }
+          _isSimulatedData = _repository.isSimulatedFeed;
           _isLoading = false;
         });
 
@@ -267,6 +275,120 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
     return marks;
   }
 
+  /// Compact bar showing the open position for the charted symbol: side, size,
+  /// entry, its protective levels and live P&L, with a one-tap close. Renders
+  /// nothing when the symbol has no open position.
+  Widget _buildOpenPositionBar(BuildContext context) {
+    final manager = context.watch<ExecutionManager>();
+    Position? found;
+    for (final p in manager.openPositions) {
+      if (p.symbol == _currentSymbol) {
+        found = p;
+        break;
+      }
+    }
+    if (found == null) return const SizedBox.shrink();
+    final pos = found; // non-null for the rest of the build, closures included
+
+    final isLong = pos.side == OrderSide.buy;
+    final pnl = pos.unrealizedPnl ?? 0.0;
+    final up = pnl >= 0;
+    final sl = pos.stopLoss;
+    final tp = pos.takeProfit;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: VxColors.surface.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: (isLong ? VxColors.success : VxColors.danger)
+                .withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: (isLong ? VxColors.success : VxColors.danger)
+                  .withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              isLong ? 'LONG' : 'SHORT',
+              style: TextStyle(
+                color: isLong ? VxColors.success : VxColors.danger,
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${pos.quantity.toStringAsFixed(4)} @ '
+                  '\$${pos.entryPrice.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      color: Colors.white70, fontSize: 11.5),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (sl != null || tp != null)
+                  Text(
+                    [
+                      if (sl != null) 'SL ${sl.toStringAsFixed(2)}',
+                      if (tp != null) 'TP ${tp.toStringAsFixed(2)}',
+                    ].join('  ·  '),
+                    style: const TextStyle(
+                        color: Colors.white30, fontSize: 10),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${up ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
+            style: TextStyle(
+              color: up ? VxColors.success : VxColors.danger,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            tooltip: 'Close position',
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.close, size: 16, color: Colors.white38),
+            onPressed: () => _closeOpenPosition(pos),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _closeOpenPosition(Position pos) async {
+    final manager = context.read<ExecutionManager>();
+    final messenger = ScaffoldMessenger.of(context);
+    final pnl = pos.unrealizedPnl ?? 0.0;
+    try {
+      await manager.closeOrder(pos.id, _currentPrice);
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: pnl >= 0 ? VxColors.success : VxColors.danger,
+        content: Text('Closed ${pos.symbol} · '
+            '${pnl >= 0 ? '+' : ''}\$${pnl.toStringAsFixed(2)}'),
+      ));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('Could not close: $e')));
+    }
+  }
+
   /// Adds a horizontal price level at the current price for this symbol.
   void _addLevelAtCurrentPrice() {
     if (_currentPrice <= 0) return;
@@ -429,6 +551,45 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   ),
                 ),
 
+                // Layer 1.7: the key to what the chart is drawing. The chart
+                // is a single painted canvas, so its on-canvas labels
+                // (SMA20, Vol, RSI) cannot be tapped; this is the way in.
+                Positioned(
+                  left: 12,
+                  bottom: 8,
+                  child: _ChartLegendButton(
+                    onTap: () => ChartLegendSheet.show(context),
+                  ),
+                ),
+
+                // Layer 1.8: honest "simulated data" badge — the chart falls
+                // back to generated candles when the exchange feed is
+                // unreachable, and the user must be able to tell.
+                if (_isSimulatedData && !_isReplayMode)
+                  Positioned(
+                    top: 96,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: VxColors.warning.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                            color: VxColors.warning.withValues(alpha: 0.5)),
+                      ),
+                      child: const Text(
+                        'SIMULATED DATA',
+                        style: TextStyle(
+                          color: VxColors.warning,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+
                 // Layer 2: Chart Stats Overlay (compact strip below the
                 // one-time guidance banner; the chart draws its own OHLC
                 // legend at the very top, so these never stack anymore).
@@ -497,22 +658,43 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   Positioned(
                     bottom: 198,
                     right: 26,
-                    child: GestureDetector(
-                      onTap: _addLevelAtCurrentPrice,
-                      onLongPress: _openDrawingsSheet,
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: VxColors.surfaceBright.withValues(alpha: 0.9),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: VxColors.neonCyan.withValues(alpha: 0.5)),
+                    // 48dp, not 44 — Android treats 48 as the minimum
+                    // reliable touch target. The label is here because a bare
+                    // GestureDetector round an icon announces nothing to a
+                    // screen reader.
+                    child: Semantics(
+                      button: true,
+                      label: 'Add price level at current price. '
+                          'Long press to manage drawings.',
+                      child: GestureDetector(
+                        onTap: _addLevelAtCurrentPrice,
+                        onLongPress: _openDrawingsSheet,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color:
+                                VxColors.surfaceBright.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color:
+                                    VxColors.neonCyan.withValues(alpha: 0.5)),
+                          ),
+                          child: const Icon(Icons.horizontal_rule_rounded,
+                              color: VxColors.neonCyan, size: 24),
                         ),
-                        child: const Icon(Icons.horizontal_rule_rounded,
-                            color: VxColors.neonCyan, size: 24),
                       ),
                     ),
+                  ),
+
+                // Layer 3.7: Open position for this symbol — entry, live P&L
+                // and a close action, right where the trade was placed.
+                if (!_isReplayMode)
+                  Positioned(
+                    bottom: 112,
+                    left: 16,
+                    right: 86, // clear of the trade FAB
+                    child: _buildOpenPositionBar(context),
                   ),
 
                 // Layer 4: Trade FAB
@@ -520,37 +702,44 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   Positioned(
                     bottom: 130,
                     right: 20,
-                    child: GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          useRootNavigator: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => SmartOrderSheet(
-                            symbol: _currentSymbol,
-                            currentPrice: _currentPrice,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          gradient: VxColors.primaryGradient,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: VxColors.neonCyan.withValues(alpha: 0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
+                    // The bolt icon alone told a screen reader nothing about
+                    // what this opens.
+                    child: Semantics(
+                      button: true,
+                      label: 'Place a trade',
+                      child: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            useRootNavigator: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => SmartOrderSheet(
+                              symbol: _currentSymbol,
+                              currentPrice: _currentPrice,
                             ),
-                          ],
-                          border:
-                              Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                          );
+                        },
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            gradient: VxColors.primaryGradient,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    VxColors.neonCyan.withValues(alpha: 0.3),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                            border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2)),
+                          ),
+                          child: const Icon(Icons.bolt,
+                              color: Colors.white, size: 28),
                         ),
-                        child: const Icon(Icons.bolt,
-                            color: Colors.white, size: 28),
                       ),
                     ),
                   ),
@@ -558,5 +747,49 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
             ),
           ),
         ));
+  }
+}
+
+/// Small, low-contrast affordance sitting over the chart. Deliberately quiet:
+/// it must not compete with the price, but it has to be findable by someone
+/// who does not yet know what they are looking at.
+class _ChartLegendButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _ChartLegendButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Explain the chart',
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: VxColors.surface.withValues(alpha: 0.82),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.help_outline_rounded,
+                  size: 13, color: VxColors.textSecondary),
+              const SizedBox(width: 5),
+              Text(
+                "What's this?",
+                style: VxTypography.caption.copyWith(
+                  color: VxColors.textSecondary,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

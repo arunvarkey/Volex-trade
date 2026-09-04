@@ -5,13 +5,19 @@ import 'package:volex_terminal/core/app_logger.dart';
 
 enum StartupDestination {
   onboarding, // New user, show slides
-  signup, // Saw onboarding, needs account
+  riskDisclosure, // Saw onboarding, must acknowledge trading risk
+  signup, // Accepted disclosure, needs account
   modeSelection, // Has account, needs to choose mode
   home, // All setup, go to app
 }
 
 class StartupService {
   static const _keyOnboardingComplete = 'has_completed_onboarding';
+
+  /// Written by RiskDisclosureScreen. A trading app has to put the risk
+  /// disclosure in front of the user once before they can trade, even in a
+  /// simulator — the screen existed but nothing ever routed to it.
+  static const keyRiskDisclosureAccepted = 'accepted_risk_disclosure';
   static const _keyModeSelected = 'has_selected_mode';
   static const _keySignalViewCount = 'signal_view_count';
   static const _keyHasShownUpgradePrompt = 'has_shown_upgrade_prompt';
@@ -38,14 +44,23 @@ class StartupService {
     // Check if user selected mode
     final hasSelectedMode = prefs.getBool(_keyModeSelected) ?? false;
 
+    // Check if user acknowledged the risk disclosure
+    final hasAcceptedRisk =
+        prefs.getBool(keyRiskDisclosureAccepted) ?? false;
+
     AppLogger.info('🚀 Startup Check:');
     AppLogger.info('  - Authenticated: $isAuthenticated');
     AppLogger.info('  - Onboarding: $hasCompletedOnboarding');
+    AppLogger.info('  - Risk Accepted: $hasAcceptedRisk');
     AppLogger.info('  - Mode Selected: $hasSelectedMode');
 
     // Decision tree
     if (!hasCompletedOnboarding) {
       return StartupDestination.onboarding;
+    }
+
+    if (!hasAcceptedRisk) {
+      return StartupDestination.riskDisclosure;
     }
 
     // Only require an account when Firebase is actually available.
@@ -109,7 +124,12 @@ class StartupService {
   Future<void> resetOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    await _auth.signOut();
+    // Every other read in this class guards on Firebase being configured;
+    // this one did not, so the debug reset threw on a build without
+    // google-services.json — the exact build most likely to be reset.
+    if (Firebase.apps.isNotEmpty) {
+      await _auth.signOut();
+    }
     AppLogger.info('🔄 Reset complete - app will restart as fresh install');
   }
 }

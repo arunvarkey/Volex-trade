@@ -14,6 +14,22 @@ class ActivityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // This returned a bare Column. It is registered as a full route pushed on
+    // top of the shell, so with no Scaffold it had no background, no safe-area
+    // inset — content ran under the status bar — and no way back other than
+    // the Android hardware button, which leaves iOS users stuck on it.
+    return Scaffold(
+      backgroundColor: VxColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Activity'),
+      ),
+      body: _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     return Column(
       children: [
         // 1. Analytics Header
@@ -124,7 +140,15 @@ class _ActivityLogList extends StatelessWidget {
           strategyId: 'manual',
           strategyName: 'Manual Trade',
           action: order.direction == OrderDirection.long ? 'BUY' : 'SELL',
-          message: "Executed ${order.quantity} @ ${order.entryPrice}",
+          // "Executed 0.5 @ 104532.1" -- a bare float with no currency and
+          // no indication of which side the trade took. The direction is
+          // already the row's colour and icon, but the line a user reads
+          // should say it too.
+          message: order.direction == OrderDirection.long
+              ? "Bought ${order.quantity} at "
+                  "\$${order.entryPrice.toStringAsFixed(2)}"
+              : "Sold ${order.quantity} at "
+                  "\$${order.entryPrice.toStringAsFixed(2)}",
           symbol: order.symbol,
         ));
       }

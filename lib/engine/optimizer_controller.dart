@@ -5,7 +5,7 @@ import 'strategy/strategy_engine.dart';
 import 'package:volex_terminal/features/simulator/backtest/backtest_engine.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_request.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import '../core/service_locator.dart';
 
 import 'parameters/parameter_models.dart';

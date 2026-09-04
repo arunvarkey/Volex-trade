@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,11 +11,13 @@ import 'package:volex_terminal/ui/navigation/main_navigator.dart';
 import 'package:volex_terminal/ui/screens/auth/email_verification_screen.dart';
 import 'package:volex_terminal/ui/screens/onboarding/onboarding_screen.dart';
 import 'package:volex_terminal/ui/screens/onboarding/mode_selection_screen.dart';
+import 'package:volex_terminal/ui/screens/risk_disclosure_screen.dart';
 import 'package:volex_terminal/ui/screens/chart/chart_screen_v2.dart';
 import 'package:volex_terminal/features/signals/ui/signal_feed_screen.dart';
 import 'package:volex_terminal/ui/screens/portfolio/portfolio_screen.dart';
 import 'package:volex_terminal/ui/screens/activity_screen.dart';
 import 'package:volex_terminal/ui/screens/more_screen.dart';
+import 'package:volex_terminal/ui/screens/glossary_screen.dart';
 import 'package:volex_terminal/ui/screens/auth/pin_entry_screen.dart';
 import 'package:volex_terminal/ui/screens/auth/biometric_screen.dart';
 import 'package:volex_terminal/ui/screens/subscriptions/subscription_screen.dart';
@@ -22,13 +25,11 @@ import 'package:volex_terminal/ui/screens/subscriptions/subscription_screen.dart
 // Real Screen Imports
 import 'package:volex_terminal/ui/screens/strategies/optimizer_screen.dart';
 import 'package:volex_terminal/ui/screens/strategies/scanner_screen.dart'; // MarketScannerScreen
-import 'package:volex_terminal/ui/screens/strategies/ai_strategy_generator_screen.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/screens/simulator_home_screen.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/screens/template_selector_screen.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/screens/template_config_screen.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/screens/ai_assistant_screen.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/screens/simulator_home_screen.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/screens/template_selector_screen.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/screens/template_config_screen.dart';
 import 'package:volex_terminal/features/simulator/screens/my_strategies_screen.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/strategy_template.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/strategy_template.dart';
 import 'package:volex_terminal/ui/screens/lab/lab_screen.dart';
 import 'package:volex_terminal/ui/screens/marketplace/marketplace_screen.dart';
 import 'package:volex_terminal/ui/screens/marketplace/leaderboard_screen.dart';
@@ -42,9 +43,10 @@ import 'package:volex_terminal/ui/screens/profile/profile_screen.dart';
 import 'package:volex_terminal/ui/screens/notifications/notifications_screen.dart';
 import 'package:volex_terminal/features/simulator/backtest/screens/backtest_config_screen.dart';
 import 'package:volex_terminal/features/simulator/backtest/screens/backtest_results_screen.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/models/backtest_result.dart';
 import 'package:volex_terminal/features/academy/ui/academy_screen.dart';
+import 'package:volex_terminal/features/journal/ui/journal_screen.dart';
 import 'package:volex_terminal/features/academy/ui/lesson_screen.dart';
 import 'package:volex_terminal/features/academy/ui/quiz_screen.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
@@ -66,7 +68,8 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/splash',
-  debugLogDiagnostics: true,
+  // Logged every navigation in release builds too.
+  debugLogDiagnostics: kDebugMode,
   redirect: AuthGuard.handleRedirect,
   routes: [
     // Splash
@@ -91,6 +94,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/onboarding',
       builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/risk-disclosure',
+      builder: (context, state) => const RiskDisclosureScreen(),
     ),
     GoRoute(
       path: '/mode-selection',
@@ -160,12 +167,12 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ActivityScreen(),
     ),
     GoRoute(
-      path: '/notifications',
-      builder: (context, state) => const NotificationsScreen(),
+      path: '/glossary',
+      builder: (context, state) => const GlossaryScreen(),
     ),
     GoRoute(
-      path: '/ai-strategy',
-      builder: (context, state) => const AIStrategyGeneratorScreen(),
+      path: '/notifications',
+      builder: (context, state) => const NotificationsScreen(),
     ),
 
     // Strategy Studio (template-driven build pillar). Backtest reuses the
@@ -180,12 +187,17 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/simulator/templates/config',
-      builder: (context, state) =>
-          TemplateConfigScreen(template: state.extra as StrategyTemplate),
-    ),
-    GoRoute(
-      path: '/simulator/ai-assistant',
-      builder: (context, state) => const AiAssistantScreen(),
+      builder: (context, state) {
+        // GoRouter restores a location after process death but cannot restore
+        // `extra` — it is not serialisable. An unguarded cast therefore threw
+        // on resume: background the app on this screen, let Android reclaim
+        // it, come back, and the app died on a null cast. Fall back to the
+        // picker, which is where the template comes from anyway. The lesson
+        // and quiz routes already did this; these did not.
+        final extra = state.extra;
+        if (extra is! StrategyTemplate) return const TemplateSelectorScreen();
+        return TemplateConfigScreen(template: extra);
+      },
     ),
     GoRoute(
       path: '/simulator/my-strategies',
@@ -196,6 +208,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/daily',
       builder: (context, state) => const DailyScreen(),
+    ),
+
+    // Trading journal (the habit the Academy's psychology lesson prescribes)
+    GoRoute(
+      path: '/journal',
+      builder: (context, state) => const JournalScreen(),
     ),
 
     // Trading Academy (guided learning)
@@ -246,8 +264,14 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
             path: 'backtest/results',
             builder: (context, state) {
-              final result = state.extra as BacktestResult;
-              return BacktestResultsScreen(result: result);
+              // Same restoration problem as the template config route. A
+              // result cannot be rebuilt from nothing, so send the user back
+              // to the config screen to run one rather than crashing.
+              final extra = state.extra;
+              if (extra is! BacktestResult) {
+                return const BacktestConfigScreen();
+              }
+              return BacktestResultsScreen(result: extra);
             }),
       ],
     ),

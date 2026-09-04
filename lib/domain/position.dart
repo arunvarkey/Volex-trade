@@ -84,17 +84,25 @@ class Position {
       id: json['id'],
       symbol: json['symbol'],
       side: OrderSide.values[json['side']],
-      quantity: json['quantity'],
-      entryPrice: json['entryPrice'],
+      // Read numbers as num before narrowing: JSON gives back an int for a
+      // whole number, and assigning that straight to a double field throws.
+      // This runs on the boot path now that positions are restored, so it
+      // must not be able to take the app down.
+      quantity: (json['quantity'] as num).toDouble(),
+      entryPrice: (json['entryPrice'] as num).toDouble(),
       openedAt: DateTime.parse(json['openedAt']),
-      isOpen: json['isOpen'],
+      isOpen: json['isOpen'] ?? true,
     )
       ..closedAt =
           json['closedAt'] != null ? DateTime.parse(json['closedAt']) : null
-      ..realizedPnL = json['realizedPnl']
-      ..unrealizedPnl = json['unrealizedPnl']
-      ..stopLoss = json['stopLoss']
-      ..takeProfit = json['takeProfit']
+      // toJson writes 'realizedPnL' with a capital L; this read the lowercase
+      // spelling, so a position's realized P&L came back null on every
+      // round-trip. Nothing persisted positions until now, which is the only
+      // reason it never showed up.
+      ..realizedPnL = (json['realizedPnL'] as num?)?.toDouble()
+      ..unrealizedPnl = (json['unrealizedPnl'] as num?)?.toDouble()
+      ..stopLoss = (json['stopLoss'] as num?)?.toDouble()
+      ..takeProfit = (json['takeProfit'] as num?)?.toDouble()
       ..strategyId = json['strategyId'];
   }
 }

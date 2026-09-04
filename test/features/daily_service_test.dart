@@ -124,7 +124,12 @@ void main() {
       expect(txt, contains('12-day streak'));
       expect(txt, contains('🟩'));
       expect(txt, contains('🟥'));
-      expect(r.estimatedRank, 'top 20%');
+      expect(r.scoreBand, 'a strong round');
+      // The share text must not claim a ranking. There is no player
+      // population, so a percentile in shareable copy is a public claim
+      // about a leaderboard that does not exist.
+      expect(txt, isNot(contains('top ')));
+      expect(txt, isNot(contains('Estimated')));
     });
   });
 }

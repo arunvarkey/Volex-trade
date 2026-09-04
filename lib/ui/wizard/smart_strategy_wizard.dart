@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../design_system/vx_colors.dart';
 import '../../engine/wizard/script_templates.dart';
 import '../screens/script_editor_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 enum StrategyType { trend, reversion }
 
@@ -28,6 +28,14 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
   double _rsiSell = 70;
 
   @override
+  void dispose() {
+    // The wizard is a dialog, so it is built and torn down repeatedly; a
+    // PageController that is never released leaks its State every time.
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: VxColors.deepBlack,
@@ -46,9 +54,9 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
               children: [
                 Text(
                   "Smart Builder",
-                  style: GoogleFonts.dmSans(
+                  style: VxTypography.h3.copyWith(
                     color: VxColors.neonCyan,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 0.2,
                   ),
                 ),

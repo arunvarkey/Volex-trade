@@ -92,9 +92,13 @@ class _StrategyListViewState extends State<StrategyListView> {
                       final s = strategies[index];
                       final isSelected = s.id == widget.selectedId;
 
-                      // Map Strategy State to UI
-                      final bool isGhost = s.id == 'ghost_trend_v1';
-
+                      // Map Strategy State to UI.
+                      //
+                      // These tiles used to advertise a "Score" of 94 or 88 —
+                      // a number nothing computed, invented per strategy id.
+                      // There is no scoring engine, so instead of faking one
+                      // we show what the strategy actually reports: its
+                      // validation status and how many parameters it exposes.
                       return VxStrategyTile(
                         name: s.name,
                         status: s.isEnabled
@@ -102,10 +106,8 @@ class _StrategyListViewState extends State<StrategyListView> {
                             : VxBadgeStyle.info,
                         statusLabel: s.isEnabled ? "ACTIVE" : "IDLE",
                         metrics: {
-                          "Ref": isGhost ? "GENETIC" : "STABLE",
-                          "Score": isGhost
-                              ? "94"
-                              : "88", // Hardcoded for now till we have real score engine
+                          "Status": _validationLabel(s.validationStatus),
+                          "Params": "${s.parameters.length}",
                         },
                         isSelected: isSelected,
                         onTap: () => widget.onSelect(s.id),
@@ -116,6 +118,17 @@ class _StrategyListViewState extends State<StrategyListView> {
         ],
       ),
     );
+  }
+
+  String _validationLabel(ValidationStatus status) {
+    switch (status) {
+      case ValidationStatus.verified:
+        return "VERIFIED";
+      case ValidationStatus.failed:
+        return "FAILED";
+      case ValidationStatus.experimental:
+        return "UNTESTED";
+    }
   }
 
   Widget _buildEmptyState() {

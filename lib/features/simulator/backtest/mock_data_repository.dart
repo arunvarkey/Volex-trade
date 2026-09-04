@@ -6,6 +6,9 @@ import 'dart:async';
 
 class MockDataRepository implements IMarketDataRepository {
   @override
+  String get currentSymbol => 'BTCUSDT';
+
+  @override
   Future<void> initialize() async {}
 
   @override

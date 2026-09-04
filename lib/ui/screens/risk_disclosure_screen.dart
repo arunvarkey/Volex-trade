@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/config/legal_config.dart';
+import '../../features/legal/ui/legal_screen.dart';
+import '../../services/startup_service.dart';
 import '../design_system/vx_colors.dart';
 
 class RiskDisclosureScreen extends StatefulWidget {
@@ -101,22 +103,23 @@ class _RiskDisclosureScreenState extends State<RiskDisclosureScreen> {
 
               const SizedBox(height: 32),
 
-              // Legal links
+              // Legal links. These used to pop a dialog showing a raw
+              // placeholder URL; they now open the real in-app documents.
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    onPressed: () => _openUrl(LegalConfig.termsOfServiceUrl),
+                    onPressed: () => _openDoc(LegalDoc.terms),
                     child: const Text(
-                      'Terms of Service',
+                      'Terms of Use',
                       style: TextStyle(color: VxColors.neonCyan, fontSize: 12),
                     ),
                   ),
                   Text(' • ', style: TextStyle(color: Colors.grey[600])),
                   TextButton(
-                    onPressed: () => _openUrl(LegalConfig.privacyPolicyUrl),
+                    onPressed: () => _openDoc(LegalDoc.privacy),
                     child: const Text(
-                      'Privacy Policy',
+                      'Privacy',
                       style: TextStyle(color: VxColors.neonCyan, fontSize: 12),
                     ),
                   ),
@@ -194,28 +197,20 @@ class _RiskDisclosureScreenState extends State<RiskDisclosureScreen> {
 
   Future<void> _accept() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('accepted_risk_disclosure', true);
+    await prefs.setBool(StartupService.keyRiskDisclosureAccepted, true);
 
+    // Back to the splash so the startup decision tree runs again. Going
+    // straight to '/' here used to skip whatever step comes next (sign-up,
+    // mode selection) for anyone who hadn't finished setup.
     if (mounted) {
-      context.go('/');
+      context.go('/splash');
     }
   }
 
-  void _openUrl(String url) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: VxColors.deepBlack,
-        title: const Text('Link', style: TextStyle(color: VxColors.neonCyan)),
-        content: Text(url, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child:
-                const Text('Close', style: TextStyle(color: VxColors.neonCyan)),
-          ),
-        ],
-      ),
+  void _openDoc(LegalDoc doc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => LegalScreen(doc: doc)),
     );
   }
 }

@@ -1,7 +1,7 @@
 name: volex_terminal
-description: "Educational trading simulator - Learn with AI-powered strategy builder. No real money."
+description: "Educational trading simulator. Practise with virtual money on real market prices."
 publish_to: 'none'
-version: 1.0.1+10
+version: 1.1.0+11
 
 environment:
   sdk: ^3.5.3
@@ -23,7 +23,10 @@ dependencies:
   shared_preferences: ^2.5.3
   provider: ^6.1.5+1
   path_provider: ^2.1.5
-  google_fonts: ^6.3.0
+  # google_fonts removed: it downloads font files over the network on first
+  # use, so a fresh install rendered its first screens in a fallback face while
+  # waiting on fonts.gstatic.com. DM Sans and JetBrains Mono are bundled as
+  # assets below and referenced by family name instead.
   go_router: ^15.1.2
   fl_chart: 0.69.2
   hive: ^2.2.3
@@ -49,17 +52,15 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^18.0.1
 
-  flutter_background_service: ^5.0.0
-  
+  # flutter_background_service was removed: every Dart call site was commented
+  # out, so no background worker ever ran, but the plugin's manifest still
+  # merged in a foreground service and its permissions.
+
   # Utils
-  collection: ^1.18.0
   equatable: ^2.0.7
-  json_annotation: ^4.9.0
-  synchronized: ^3.3.0+3
   
   # UI Enhancements
   shimmer: ^3.0.0
-  confetti: ^0.8.0
 
   timeago: ^3.6.1
   
@@ -70,21 +71,8 @@ dependencies:
   # Permissions
   permission_handler: ^11.3.1
 
-  # AI & Machine Learning
-
-  
-  # Time Utils
-  # Time Utils
-  # timeago: ^3.7.0 (removed duplicate)
-  
-  # Media & Video Testing
-  # Media (Removed)
-
-  
   # Share & Deep linking
   share_plus: ^10.1.2
-  app_links: ^6.3.0
-  url_launcher: ^6.3.1
   
   # QR Code
   # QR (Removed)
@@ -95,7 +83,6 @@ dependencies:
 
   
   # Connectivity
-  connectivity_plus: ^6.1.0
   image_picker: ^1.1.2
   
   # Security
@@ -103,9 +90,7 @@ dependencies:
   device_info_plus: ^10.1.0
 
   cloud_firestore: ^5.6.12
-  cloud_functions: ^5.6.2
   flutter_dotenv: ^6.0.0
-  firebase_app_check: ^0.3.2+10
   sentry_flutter: ^9.10.0
   firebase_remote_config: ^5.5.0
 
@@ -127,11 +112,26 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+# Icon regeneration: `dart run flutter_launcher_icons`.
+#
+# The android key was "launcher_icon", which generates mipmap/launcher_icon.*
+# while AndroidManifest.xml asks for @mipmap/ic_launcher — so running the
+# generator produced a second, unused set of icons and changed nothing on the
+# device. It now writes the names the manifest actually references.
+#
+# min_sdk_android was 21 against a real minSdk of 26; below 26 the tool skips
+# adaptive icons entirely, which is part of why there were none.
+#
+# The adaptive layers are committed under android/app/src/main/res, so a build
+# does not depend on anyone running this first.
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: "ic_launcher"
   ios: true
   image_path: "assets/images/app_icon.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
+  min_sdk_android: 26
+  adaptive_icon_background: "#0A0E14"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/images/app_icon_foreground.png"
 
 flutter:
   uses-material-design: true
@@ -140,5 +140,39 @@ flutter:
   assets:
     - assets/images/
     - assets/market_data/
-    
-  # Using Google Fonts - no need to bundle fonts
+
+  # Fonts are bundled, not fetched.
+  #
+  # This used to say "Using Google Fonts - no need to bundle fonts", and that
+  # assumption was the bug: the google_fonts package downloads font files over
+  # the network on first use. Every fresh install therefore rendered its first
+  # screens in a fallback font, waited on fonts.gstatic.com, then swapped —
+  # slow on the sign-up and password screens, wrong-looking on the ones before
+  # them, and completely broken with no connection. It also meant a
+  # third-party request on first launch that the privacy policy did not
+  # mention.
+  #
+  # Latin subset, upright only — no italic is used anywhere in the app.
+  fonts:
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans-400.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans-500.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-600.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans-700.ttf
+          weight: 700
+        - asset: assets/fonts/DMSans-800.ttf
+          weight: 800
+        - asset: assets/fonts/DMSans-900.ttf
+          weight: 900
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-400.ttf
+          weight: 400
+        - asset: assets/fonts/JetBrainsMono-500.ttf
+          weight: 500
+        - asset: assets/fonts/JetBrainsMono-700.ttf
+          weight: 700

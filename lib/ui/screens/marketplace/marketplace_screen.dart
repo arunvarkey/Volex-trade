@@ -77,20 +77,52 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget _buildBrowseTab() {
-    return _loading
-        ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _buildSectionHeader('Featured Strategies'),
-              const SizedBox(height: 12),
-              _buildFeaturedCarousel(),
-              const SizedBox(height: 24),
-              _buildSectionHeader('Top Rated'),
-              const SizedBox(height: 12),
-              ..._featured.map((s) => _buildStrategyCard(s)),
-            ],
-          );
+    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_featured.isEmpty) return _buildEmptyState();
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _buildSectionHeader('Featured Strategies'),
+        const SizedBox(height: 12),
+        _buildFeaturedCarousel(),
+        const SizedBox(height: 24),
+        _buildSectionHeader('Top Rated'),
+        const SizedBox(height: 12),
+        ..._featured.map((s) => _buildStrategyCard(s)),
+      ],
+    );
+  }
+
+  /// Shown until a real strategy has been published. The marketplace is no
+  /// longer seeded with invented listings and invented performance.
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.storefront_outlined,
+                size: 44, color: VxColors.textTertiary),
+            const SizedBox(height: 16),
+            Text(
+              'No strategies published yet',
+              style: VxTypography.h3,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Build a strategy in the Simulator, backtest it, then publish it '
+              'here. Listings show only real, user-published strategies — no '
+              'invented performance figures.',
+              style: VxTypography.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSectionHeader(String title) {
@@ -142,7 +174,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             children: [
               const Icon(Icons.trending_up, color: VxColors.positive, size: 16),
               const SizedBox(width: 4),
-              Text('+${top.totalReturn}%',
+              Text('+${top.totalReturn}% reported',
                   style: const TextStyle(
                       color: VxColors.positive, fontWeight: FontWeight.bold)),
               const Spacer(),
@@ -180,12 +212,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 Text(s.title[0], style: const TextStyle(color: Colors.white))),
         title:
             Text(s.title, style: const TextStyle(color: VxColors.neutral100)),
+        // "Return: +X%" read as a measured result. Nothing here measures it:
+        // the numbers come from whatever the publisher typed. Labelling them
+        // as reported costs one word and stops the card asserting something
+        // the app has not checked.
         subtitle: Text(
-            'Return: +${s.totalReturn}%  •  Win Rate: ${(s.winRate * 100).toStringAsFixed(0)}%',
+            'Reported: +${s.totalReturn}%  •  Win rate ${(s.winRate * 100).toStringAsFixed(0)}%',
             style: const TextStyle(color: VxColors.neutral400)),
-        trailing: Text('\$${s.monthlyPrice}',
-            style: const TextStyle(
-                color: VxColors.accent, fontWeight: FontWeight.bold)),
+        // The trailing slot used to show '$${s.monthlyPrice}'. Nothing in the
+        // marketplace is for sale — there is no payment provider anywhere in
+        // the app — so a price tag was pure decoration on a free local list.
+        trailing: const Text('Free',
+            style: TextStyle(
+                color: VxColors.neutral400, fontWeight: FontWeight.w600)),
         onTap: () {
           Navigator.push(
             context,

@@ -1,20 +1,36 @@
 // lib/core/config/legal_config.dart
-class LegalConfig {
-  static const String termsOfServiceUrl =
-      'https://yourusername.github.io/vxtrading-legal/terms.html';
-  static const String privacyPolicyUrl =
-      'https://yourusername.github.io/vxtrading-legal/privacy.html';
-  static const String riskDisclosureUrl =
-      'https://yourusername.github.io/vxtrading-legal/risk.html';
-  static const String supportEmail = 'support@volexterminal.com';
 
+/// Legal copy shown by [RiskDisclosureScreen].
+///
+/// This used to also carry `termsOfServiceUrl` / `privacyPolicyUrl` /
+/// `riskDisclosureUrl` pointing at `yourusername.github.io/...` — placeholder
+/// addresses that were never published, so every link built from them was
+/// dead. The real documents now live in-app (`LegalScreen`), so the constants
+/// are gone rather than left around waiting to be linked by mistake.
+class LegalConfig {
   static const String riskDisclosure = '''
 RISK DISCLOSURE:
 
-Trading cryptocurrencies involves a high degree of risk and is not suitable for all investors. The high degree of leverage can work against you as well as for you. Before deciding to trade cryptocurrencies you should carefully consider your investment objectives, level of experience, and risk appetite.
+Volex Terminal is a trading simulator. Every trade you place here uses virtual
+money — you cannot lose real funds inside this app, and nothing here places a
+real order.
 
-The possibility exists that you could sustain a loss of some or all of your initial investment and therefore you should not invest money that you cannot afford to lose. You should be aware of all the risks associated with cryptocurrency trading and seek advice from an independent financial advisor if you have any doubts.
+The disclosure below is about real trading, which is what this app is teaching
+you to practise for.
 
-Volex Terminal is an educational tool provided for information purposes only. It does not constitute investment advice. Paper trading results have inherent limitations and do not represent actual trading.
+Trading cryptocurrencies involves a high degree of risk and is not suitable for
+all investors. Leverage can work against you as easily as for you. Before
+trading, consider your objectives, your level of experience, and your appetite
+for risk.
+
+You could lose some or all of the money you put in, so never trade money you
+cannot afford to lose. Seek advice from an independent, qualified financial
+adviser if you are in any doubt.
+
+Volex Terminal is educational software. Nothing in it — signals,
+suggestions, strategy templates, backtests or lessons — is investment advice or
+a recommendation to buy or sell anything. Simulated results have inherent
+limitations: they cannot reproduce real fees, real liquidity, or how a live
+market would react to your orders, and they do not represent actual trading.
 ''';
 }

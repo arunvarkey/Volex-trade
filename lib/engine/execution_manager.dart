@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/domain/order.dart';
@@ -9,11 +10,12 @@ import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/engine/exchange/exchange_service.dart';
 import 'package:volex_terminal/engine/exchange/paper_exchange_client.dart';
 import 'package:volex_terminal/engine/risk_manager.dart';
+import 'package:volex_terminal/engine/persistence/persistence_service.dart';
 import 'package:volex_terminal/services/analytics_service.dart';
 import 'package:volex_terminal/engine/execution/i_execution_service.dart';
 import 'package:volex_terminal/features/academy/services/xp_service.dart';
-import 'package:volex_terminal/features/ai_guardian/services/ai_guardian_service.dart';
-import 'package:volex_terminal/features/ai_guardian/ui/ai_guardian_warning_dialog.dart';
+import 'package:volex_terminal/features/trade_checks/services/trade_check_service.dart';
+import 'package:volex_terminal/features/trade_checks/ui/trade_check_dialog.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/core/financial_math.dart';
@@ -67,11 +69,19 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   bool _isExecuting = false;
   String? _lastError;
 
+  /// Where the paper account is saved between launches.
+  ///
+  /// Optional so tests can build a manager with no storage behind it; when
+  /// null, saving and restoring are both no-ops.
+  final PersistenceService? _persistence;
+
   ExecutionManager({
     ExchangeService? exchange,
     RiskManager? riskManager,
+    PersistenceService? persistence,
   })  : _exchange = exchange ?? PaperExchangeClient(),
-        _riskManager = riskManager ?? RiskManager();
+        _riskManager = riskManager ?? RiskManager(),
+        _persistence = persistence;
 
   static ExecutionManager provide({
     required dynamic marketData,
@@ -82,6 +92,12 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     return ExecutionManager(
       riskManager: riskManager,
       exchange: exchange,
+      // This was accepted and dropped, along with marketData. Nothing about
+      // the paper account survived a restart: balance back to $100k, every
+      // position and order gone. For a simulator whose whole promise is
+      // practising over time and reviewing your record, that erased the
+      // record on every launch.
+      persistence: persistence is PersistenceService ? persistence : null,
     );
   }
 
@@ -141,35 +157,62 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   ExchangeService get exchange => _exchange;
 
   /// Standard interface method for placing orders.
+  ///
+  /// The protective levels used to be dropped here: the trade ticket sets
+  /// stopLossPrice/takeProfitPrice on the Order, and this forwarded
+  /// everything except those two, so a position opened through this path
+  /// never carried a stop no matter what the user chose on the ticket.
   @override
   Future<OrderResult?> placeOrder(Order order) async {
+    // Route on the order's own type. This used to send everything to
+    // placeMarketOrder, so a limit order from the ticket filled instantly at
+    // whatever limit price was typed — you could "buy" far below the market
+    // and be filled on the spot — while the confirmation still read "Limit
+    // order placed". The resting-order machinery (_checkPendingOrders) was
+    // already there and simply never reached.
+    if (order.type == OrderType.limit) {
+      return await placeLimitOrder(
+        symbol: order.symbol,
+        side: order.side,
+        quantity: order.quantity,
+        limitPrice: order.price,
+        strategyId: order.strategyId,
+        stopLoss: order.stopLossPrice,
+        takeProfit: order.takeProfitPrice,
+      );
+    }
+
     return await placeMarketOrder(
       symbol: order.symbol,
       side: order.side,
       quantity: order.quantity,
       strategyId: order.strategyId,
       currentPrice: order.price,
+      stopLoss: order.stopLossPrice,
+      takeProfit: order.takeProfitPrice,
     );
   }
 
-  /// Places an order with AI Guardian protection.
+  /// Places an order after the pre-trade checks.
   /// Used by UI components to intercept emotional trades.
   Future<OrderResult?> placeOrderWithGuard(
       BuildContext context, Order order) async {
     // 0. Feature Flag Check
     final flags = getIt<FeatureFlagService>();
-    if (!flags.isAIGuardianEnabled) {
+    if (!flags.areTradeChecksEnabled) {
       return placeOrder(order);
     }
 
-    // AI Guardian Check
+    // Pre-trade checks
     try {
-      final aiGuardian = getIt<AIGuardianService>();
-      final analysis = await aiGuardian.analyzeTradeIntent(order);
+      final tradeChecks = getIt<TradeCheckService>();
+      final analysis = await tradeChecks.analyzeTradeIntent(order);
 
       if (analysis.shouldWarn) {
         // Analytics: Warning Triggered
         AnalyticsService.instance
+            // Event names are kept as-is so the analytics series is
+            // continuous across the rename to "trade checks".
             .logEvent('ai_guardian_warning_shown', parameters: {
           'symbol': order.symbol,
           'risk_score': analysis.riskScore,
@@ -182,7 +225,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         final proceed = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
-          builder: (_) => AIGuardianWarningDialog(analysis: analysis),
+          builder: (_) => TradeCheckDialog(analysis: analysis),
         );
 
         if (proceed != true) {
@@ -190,15 +233,17 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
               parameters: {'action': 'cancelled'});
           return OrderResult(
               success: false,
-              message: "User canceled trade based on AI warning.");
+              message: "User canceled trade after a pre-trade warning.");
         }
 
         AnalyticsService.instance.logEvent('ai_guardian_action',
             parameters: {'action': 'proceeded'});
       }
     } catch (e) {
-      AppLogger.error("AI Guardian Check Failed: $e");
-      // Fallthrough to allow trade if AI fails
+      AppLogger.error("Trade check failed: $e");
+      // The checks are advisory. If one throws, the order still goes
+      // through — blocking a trade because a warning could not be computed
+      // would be a worse failure than not showing the warning.
     }
 
     return placeOrder(order);
@@ -226,6 +271,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     double? stopLoss,
     double? takeProfit,
     String? strategyId,
+    bool isReduction = false,
   }) async {
     _isExecuting = true;
     _lastError = null;
@@ -243,6 +289,14 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         priceUsdt: executionPrice,
         strategyId: strategyId,
         isLive: isLiveMode,
+        // A trade that closes or reduces a position is exempt from the daily
+        // loss limit. Nothing in the codebase ever passed this, so it was
+        // always false: once the limit was hit, closeOrder was rejected and
+        // the user could not exit a losing position — and because protective
+        // exits close through the same path, their stop-losses stopped firing
+        // at exactly the moment the limit says they are losing money. A risk
+        // control that traps you in a trade is worse than none.
+        isReduction: isReduction,
       );
 
       if (!isValid) {
@@ -255,20 +309,58 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         wsStreamName: "${symbol.toLowerCase()}@kline_1m",
       );
 
-      final order = await _exchange.placeOrder(
+      // The paper simulator prices its fill (and the slippage on it) from the
+      // last price it was told about — and nothing ever told it, so
+      // _lastPrice sat at 0.0 and every market fill came back at zero. Hand
+      // it the price the caller validated against.
+      //
+      // This is done here rather than by passing `price:` to placeOrder,
+      // because on a real exchange that parameter means "limit price": a mark
+      // price sent that way would turn a market order into a limit order.
+      final exchange = _exchange;
+      if (exchange is PaperExchangeClient) {
+        exchange.updatePrice(executionPrice);
+      }
+
+      final filled = await _exchange.placeOrder(
         symbol: symbolInfo,
         side: side == OrderSide.buy ? "BUY" : "SELL",
         quantity: quantity,
       );
 
-      // We no longer need to manually construct the Order object from a Map response.
-      // The exchange adapter now returns a fully formed Order object.
+      // The exchange builds its own Order and knows nothing about the
+      // ticket's protective levels, so they have to be carried across —
+      // otherwise the stop-loss and take-profit the user set are silently
+      // dropped on the way to the position.
+      //
+      // The fill price is also belt-and-braces guarded: anything that comes
+      // back non-positive falls back to the validated price rather than
+      // opening a position at an entry of zero, which would report the whole
+      // mark price as profit.
+      final fillPrice = resolveFillPrice(
+        reported: filled.filledPrice ?? filled.price,
+        validated: executionPrice,
+      );
+
+      final order = filled.copyWith(
+        price: fillPrice,
+        filledPrice: fillPrice,
+        stopLossPrice: stopLoss,
+        takeProfitPrice: takeProfit,
+        strategyId: strategyId,
+      );
 
       _orders.add(order);
       _updatePositionAfterTrade(order);
+      _persist();
 
-      // Placing a paper trade is a repeatable, XP-earning action.
-      XpService.instance.addXp(XpService.tradeXp);
+      // Progression is paid for the habit, not the activity: a trade only
+      // earns XP if it carried a stop, and only for the first few each day.
+      // Paying per order placed rewarded churn, which is the behaviour the
+      // app's own trade checks exist to discourage.
+      if (stopLoss != null) {
+        XpService.instance.awardTradeWithStop(DateTime.now());
+      }
 
       AnalyticsService.instance.logEvent('order_placed', parameters: {
         'symbol': symbol,
@@ -298,12 +390,30 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     required double quantity,
     required double limitPrice,
     String? strategyId,
+    double? stopLoss,
+    double? takeProfit,
   }) async {
     _isExecuting = true;
     notifyListeners();
 
     try {
-      // Create a pending order instead of immediate market execution
+      // Limit orders used to skip risk validation entirely — only the market
+      // path checked — so an order the risk manager would have rejected could
+      // be rested and later filled without ever being examined.
+      final isValid = _riskManager.validateOrder(
+        quantity: quantity,
+        priceUsdt: limitPrice,
+        strategyId: strategyId,
+        isLive: isLiveMode,
+      );
+
+      if (!isValid) {
+        throw Exception("Risk Validation Failed.");
+      }
+
+      // Create a pending order instead of immediate market execution.
+      // The protective levels ride along on the resting order so they are
+      // still attached when it fills (see _fillOrderLocal).
       final order = Order(
         id: const Uuid().v4(),
         symbol: symbol,
@@ -312,10 +422,16 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         quantity: quantity,
         price: limitPrice,
         status: OrderStatus.open, // Status remains 'open' or 'pending'
+        strategyId: strategyId,
+        stopLossPrice: stopLoss,
+        takeProfitPrice: takeProfit,
         isLive: isLiveMode,
       );
 
       _orders.add(order);
+      // A resting order has to survive a restart too, or the user comes back
+      // to find a limit they placed has quietly vanished.
+      _persist();
 
       AnalyticsService.instance.logEvent('limit_order_placed', parameters: {
         'symbol': symbol,
@@ -335,7 +451,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     bool changed = false;
 
     // 1. Check pending limit orders (Task 38)
-    _checkPendingOrders(currentPrice);
+    _checkPendingOrders(null, currentPrice);
 
     // 2. Update existing positions
     for (final pos in _positions) {
@@ -352,7 +468,37 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         }
       }
     }
+    _checkProtectiveExits(null, currentPrice);
     if (changed) notifyListeners();
+  }
+
+  /// Closes any open position whose stop-loss or take-profit has been reached
+  /// at [price]. Without this, a stop set on the order ticket would be shown
+  /// to the user but never actually trigger. Pass [symbol] to limit the check
+  /// to one market (the mark price only applies to that market).
+  void _checkProtectiveExits(String? symbol, double price) {
+    if (price <= 0) return;
+    // Collect first: closing mutates _positions.
+    final toClose = <Position>[];
+    for (final pos in _positions) {
+      if (!pos.isOpen) continue;
+      if (symbol != null && pos.symbol != symbol) continue;
+      final isLong = pos.side == OrderSide.buy;
+      if (FinancialMath.shouldTriggerProtectiveExit(
+        isLong: isLong,
+        price: price,
+        stopLoss: pos.stopLoss,
+        takeProfit: pos.takeProfit,
+      )) {
+        AppLogger.info("EXEC: Protective exit hit for ${pos.symbol} at "
+            "$price — closing position.");
+        toClose.add(pos);
+      }
+    }
+    for (final pos in toClose) {
+      // Fire and forget: closeOrder places the offsetting market order.
+      unawaited(closeOrder(pos.id, price));
+    }
   }
 
   /// Updates unrealized PnL for open positions of a single [symbol] only.
@@ -374,12 +520,22 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         }
       }
     }
+    _checkPendingOrders(symbol, currentPrice);
+    _checkProtectiveExits(symbol, currentPrice);
     if (changed) notifyListeners();
   }
 
-  void _checkPendingOrders(double currentPrice) {
+  /// Fill any resting limit order that [currentPrice] has crossed.
+  ///
+  /// [symbol] scopes the check to one market. It used to be unscoped, priced
+  /// off whichever market the chart happened to be on, so a sell limit resting
+  /// at 2000 would fill the instant *any* symbol printed above 2000.
+  void _checkPendingOrders(String? symbol, double currentPrice) {
     final pending = _orders
-        .where((o) => o.status == OrderStatus.open && o.type == OrderType.limit)
+        .where((o) =>
+            o.status == OrderStatus.open &&
+            o.type == OrderType.limit &&
+            (symbol == null || o.symbol == symbol))
         .toList();
 
     for (final order in pending) {
@@ -408,6 +564,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         filledAt: DateTime.now(),
       );
       _updatePositionAfterTrade(_orders[index]);
+      _persist();
       notifyListeners();
     }
   }
@@ -435,25 +592,52 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     await _exchange.cancelOrder(orderId, symbol);
   }
 
+  /// Positions with a close already in flight.
+  ///
+  /// Closing is asynchronous — the simulated exchange takes 100-300ms — but
+  /// the position stays open until the offsetting order comes back. Anything
+  /// that re-checks in that window sees an open position and asks again, and
+  /// two offsetting orders do not close a position twice: the second one
+  /// opens an equal position the other way round.
+  ///
+  /// Two ways in. Protective exits run on every price update, and prices now
+  /// arrive from both the watchlist poll and the candle stream. And a user
+  /// double-tapping Close is the same thing by hand.
+  final Set<String> _closingPositionIds = {};
+
   /// Closes an open position by placing an offsetting market order.
   @override
   Future<void> closeOrder(String orderId, [double? currentPrice]) async {
+    if (_closingPositionIds.contains(orderId)) return;
+
     final pos = _positions.firstWhere(
       (p) => p.id == orderId,
       orElse: () => throw Exception("Position not found"),
     );
 
-    // placeMarketOrder requires a mark price; derive it from the position's
-    // last-known unrealized PnL when the caller doesn't supply one, so a
-    // manual "Close" always works instead of throwing.
-    final mark = currentPrice ?? _positionMarkPrice(pos);
+    if (!pos.isOpen) return;
+    _closingPositionIds.add(orderId);
 
-    await placeMarketOrder(
-      symbol: pos.symbol,
-      side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
-      quantity: pos.quantity,
-      currentPrice: mark,
-    );
+    try {
+      // placeMarketOrder requires a mark price; derive it from the position's
+      // last-known unrealized PnL when the caller doesn't supply one, so a
+      // manual "Close" always works instead of throwing.
+      final mark = currentPrice ?? _positionMarkPrice(pos);
+
+      await placeMarketOrder(
+        symbol: pos.symbol,
+        side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
+        quantity: pos.quantity,
+        currentPrice: mark,
+        // Exiting is always a reduction, so it is not blocked by the daily
+        // loss limit. See the note in placeMarketOrder.
+        isReduction: true,
+      );
+    } finally {
+      // Released even if the order threw, so a failed close can be retried
+      // rather than leaving the position permanently unclosable.
+      _closingPositionIds.remove(orderId);
+    }
   }
 
   /// Best-estimate current price of an open position, backed out from its
@@ -525,6 +709,7 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     _paperBalance = 100000.0;
     _liveBalance = 0.0;
     _isReadOnly = false;
+    _persist();
     notifyListeners();
   }
 
@@ -554,10 +739,136 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
     await syncLiveBalance();
   }
 
+  /// Storage key for the saved paper account.
+  static const String _stateKey = 'exec_paper_state_v1';
+
+  /// How many orders to keep. The account is stored as a single JSON blob in
+  /// shared preferences, so the history cannot grow without bound.
+  static const int _maxStoredOrders = 200;
+
+  /// Reload the paper account saved by [_persist].
+  ///
+  /// Never throws: a blob written by an older build, or a corrupted one, must
+  /// not stop the app from starting. In that case the account simply begins
+  /// fresh, which is what happened on every launch before this existed.
+  Future<void> restoreState() async {
+    final store = _persistence;
+    if (store == null) return;
+
+    try {
+      final raw = store.getString(_stateKey);
+      if (raw == null || raw.isEmpty) return;
+
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+
+      _paperBalance =
+          (data['paperBalance'] as num?)?.toDouble() ?? _paperBalance;
+
+      final positions = (data['positions'] as List?) ?? const [];
+      _positions
+        ..clear()
+        ..addAll(positions
+            .whereType<Map<String, dynamic>>()
+            .map(Position.fromJson));
+
+      final orders = (data['orders'] as List?) ?? const [];
+      _orders
+        ..clear()
+        ..addAll(orders.whereType<Map<String, dynamic>>().map(Order.fromJson));
+
+      AppLogger.info(
+          "EXEC: Restored ${_positions.length} positions, ${_orders.length} "
+          "orders, balance ${_paperBalance.toStringAsFixed(2)}.");
+      notifyListeners();
+    } catch (e, stack) {
+      AppLogger.error("EXEC: Could not restore saved account — starting "
+          "fresh.", e, stack);
+    }
+  }
+
+  /// Save the paper account after anything that changes it.
+  ///
+  /// Deliberately not called from the price-update path: marking positions
+  /// happens many times a second and none of it needs to survive a restart,
+  /// since unrealized P&L is recomputed from the entry price on the next tick.
+  void _persist() {
+    final store = _persistence;
+    if (store == null) return;
+
+    try {
+      // Newest orders are the ones worth keeping if the list is trimmed.
+      final orders = _orders.length > _maxStoredOrders
+          ? _orders.sublist(_orders.length - _maxStoredOrders)
+          : _orders;
+
+      unawaited(store.setString(
+        _stateKey,
+        jsonEncode({
+          'paperBalance': _paperBalance,
+          'positions': _positions.map((p) => p.toJson()).toList(),
+          'orders': orders.map((o) => o.toJson()).toList(),
+        }),
+      ));
+    } catch (e) {
+      // Failing to save must never break the trade that just happened.
+      AppLogger.error("EXEC: Could not save account state", e);
+    }
+  }
+
+  /// Decide the price a position actually opens at.
+  ///
+  /// [reported] is whatever the exchange said it filled at; [validated] is the
+  /// price the caller checked risk against and the user saw on the ticket.
+  ///
+  /// A fill that comes back as zero, negative or non-finite is not a fill at
+  /// any price — opening a position at an entry of 0 makes the entire mark
+  /// price look like profit, and an entry of NaN poisons every P&L sum that
+  /// touches it. In those cases the validated price is the honest answer.
+  static double resolveFillPrice({
+    required double reported,
+    required double validated,
+  }) {
+    if (reported > 0 && reported.isFinite) return reported;
+    return validated;
+  }
+
+  /// Taker fee charged on every simulated fill, as a fraction of notional.
+  ///
+  /// 0.075% — the same rate the backtest engine models, deliberately. The
+  /// paper simulator used to fill for free while backtests charged fees and
+  /// slippage, so the same strategy looked better traded by hand than it did
+  /// in its own backtest. That gap teaches the single most expensive lesson a
+  /// new trader can learn wrong: that costs do not matter. It especially
+  /// flatters high-frequency behaviour — the overtrading this app's own
+  /// guardian warns about — because free execution is exactly what makes
+  /// churning look viable.
+  static const double takerFeeRate = 0.00075;
+
+  /// The fee on a fill of [quantity] at [price].
+  static double feeFor(double quantity, double price) {
+    final notional = (quantity * price).abs();
+    if (notional <= 0 || !notional.isFinite) return 0;
+    return notional * takerFeeRate;
+  }
+
+  /// Debit a fill's fee from whichever balance is in play.
+  void _chargeFee(double quantity, double price) {
+    final fee = feeFor(quantity, price);
+    if (fee <= 0) return;
+    if (isLiveMode) {
+      _liveBalance -= fee;
+    } else {
+      _paperBalance -= fee;
+    }
+  }
+
   // Helper Methods
   void _updatePositionAfterTrade(Order order) {
     final index =
         _positions.indexWhere((p) => p.symbol == order.symbol && p.isOpen);
+
+    // Every fill costs something, whichever branch below handles it.
+    _chargeFee(order.quantity, order.filledPrice ?? order.price);
 
     if (index == -1) {
       // New position
@@ -568,6 +879,10 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         quantity: order.quantity,
         entryPrice: order.filledPrice ?? order.price,
         openedAt: DateTime.now(),
+        // Carry the ticket's protective exits onto the position so they can
+        // actually be enforced (see _checkProtectiveExits).
+        stopLoss: order.stopLossPrice,
+        takeProfit: order.takeProfitPrice,
       ));
     } else {
       final existing = _positions[index];

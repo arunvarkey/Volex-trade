@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'vx_themes.dart';
 import 'vx_colors.dart';
+import 'vx_typography.dart';
 
 /// Modern Theme Service for Volex Terminal
 /// Handles persistence and dynamic theme switching with premium attributes
@@ -70,7 +70,8 @@ class ThemeService extends ChangeNotifier {
     // One consistent app-wide font (DM Sans) to match VxTypography, instead of
     // the per-theme display fonts (Orbitron/RobotoMono) that made different
     // pages render in different fonts.
-    final textTheme = GoogleFonts.dmSansTextTheme(base.textTheme).apply(
+    final textTheme = base.textTheme.apply(
+      fontFamily: VxTypography.sans,
       bodyColor: VxColors.textPrimary,
       displayColor: VxColors.textPrimary,
     );

@@ -141,6 +141,54 @@ class AcademyCurriculum {
                 'up today.'),
           ],
         ),
+        Lesson(
+          id: 'f5',
+          title: 'The odds you\'re up against',
+          summary: 'What actually happens to most people who try this.',
+          minutes: 4,
+          blocks: [
+            LessonBlock.paragraph(
+                'Before you learn anything else, you should know the base rate — '
+                'what happens to the average person who does this. Most trading '
+                'education skips it. We think skipping it is how people end up '
+                'surprised by an outcome that was the most likely one all along.'),
+            LessonBlock.heading('What the research says'),
+            LessonBlock.paragraph(
+                'Studies of retail trading are consistent and unflattering. Barber '
+                'and Odean\'s work on tens of thousands of brokerage accounts found '
+                'that the most active traders underperformed the least active ones '
+                'by a wide margin, largely through costs and overtrading. A study '
+                'of Brazilian day traders by Chague and colleagues followed people '
+                'who persisted for 300 days or more and found almost all of them '
+                'lost money.'),
+            LessonBlock.warning(
+                'Read that again: persistence alone did not fix it. Trading longer '
+                'did not turn losers into winners. Something else has to change, '
+                'and that something is method and discipline.'),
+            LessonBlock.heading('Why so many lose'),
+            LessonBlock.bullets([
+              'Costs — every trade pays a fee and a spread, and frequent trading '
+                  'pays them over and over.',
+              'Size — one oversized position undoes months of careful work.',
+              'Behaviour — cutting winners early, holding losers, and revenge '
+                  'trading after a loss.',
+              'No edge — trading on feelings rather than a rule that has been '
+                  'tested.',
+            ]),
+            LessonBlock.paragraph(
+                'Notice that only the last one is about market knowledge. Three of '
+                'the four are about cost control and self-control, which is exactly '
+                'why this Academy spends more time on those than on chart patterns.'),
+            LessonBlock.tip(
+                'This is not a reason to give up. It is a reason to be honest about '
+                'what you are attempting: you are trying to be in a minority. Anyone '
+                'who tells you it is easy is selling you something.'),
+            LessonBlock.keyTakeaway(
+                'Most active retail traders lose money, mostly to costs, size and '
+                'their own behaviour. Knowing the base rate is what lets you set out '
+                'to beat it instead of assuming you already have.'),
+          ],
+        ),
       ],
     ),
 
@@ -194,6 +242,15 @@ class AcademyCurriculum {
             LessonBlock.warning(
                 'A trade without a stop-loss is not a trade — it\'s an open-ended '
                 'bet on your ego.'),
+            LessonBlock.tryIt(
+                text:
+                    'Open the trade ticket and set one. Stop loss and take '
+                    'profit are on by default: you\'ll see the price levels, '
+                    'what you risk in dollars, and your reward-to-risk ratio '
+                    'before you commit — and the simulator closes the position '
+                    'for you when either level is reached.',
+                label: 'Set a stop on a paper trade',
+                route: '/chart?symbol=BTCUSDT'),
             LessonBlock.keyTakeaway(
                 'Every trade needs a pre-planned exit for both being wrong (stop) '
                 'and being right (target).'),
@@ -217,6 +274,14 @@ class AcademyCurriculum {
                 'Notice you never asked "how much do I want to make?" You start from '
                 '"how much can I lose?" and size backwards. That one reversal in '
                 'thinking separates survivors from gamblers.'),
+            LessonBlock.tryIt(
+                text:
+                    'The trade ticket does this arithmetic for you. Set a stop, '
+                    'then tap "Risk 1%" — it sizes the position with exactly '
+                    'this formula, so you can watch the number change as you '
+                    'move the stop.',
+                label: 'Try risk-based sizing',
+                route: '/chart?symbol=BTCUSDT'),
             LessonBlock.keyTakeaway(
                 'Let your stop-loss decide your position size — not your hopes.'),
           ],
@@ -245,6 +310,58 @@ class AcademyCurriculum {
             LessonBlock.keyTakeaway(
                 'A complete trade = direction + reason + stop + target + correct '
                 'size. Do all five, every time.'),
+          ],
+        ),
+        Lesson(
+          id: 't5',
+          title: 'What a trade actually costs',
+          summary: 'The quiet tax that decides most outcomes.',
+          minutes: 4,
+          blocks: [
+            LessonBlock.paragraph(
+                'Every trade costs you something before the market has moved at '
+                'all. Three things, each small, and all of them charged whether '
+                'you win or lose.'),
+            LessonBlock.bullets([
+              'Fee — a percentage of the trade\'s value, charged when you open '
+                  'and again when you close. Volex applies 0.075%, in line with a '
+                  'typical crypto exchange.',
+              'Spread — buyers bid slightly below what sellers ask, and a market '
+                  'order crosses that gap.',
+              'Slippage — the price moves between pressing the button and the '
+                  'order filling.',
+            ]),
+            LessonBlock.heading('Do the arithmetic once'),
+            LessonBlock.paragraph(
+                'At 0.075% a side, a round trip costs roughly 0.15% of the position '
+                'before spread and slippage. That sounds like nothing. Now suppose '
+                'you are trading small moves and aiming for 0.3% a time: you are '
+                'handing over about half your gross profit on every winner, and '
+                'still paying the full cost on every loser.'),
+            LessonBlock.paragraph(
+                'Scale it up. Ten round trips a day is about 1.5% of your traded '
+                'value a day in costs alone. You do not need to be wrong to lose '
+                'money at that rate — you only need to be average.'),
+            LessonBlock.warning(
+                'This is the main reason frequent trading is dangerous, and it is '
+                'usually invisible: the fee never feels like a loss, because it '
+                'never appears as a losing trade.'),
+            LessonBlock.tip(
+                'A strategy that only works when you ignore costs does not work. '
+                'Fewer, larger, better-chosen trades beat many small ones, because '
+                'the cost is charged per trade, not per pound of profit.'),
+            LessonBlock.tryIt(
+                text:
+                    'Place a paper trade and close it straight away without '
+                    'waiting for a move. Your balance will be slightly lower '
+                    'than it started. That difference is the cost, and Volex '
+                    'charges it exactly like an exchange would.',
+                label: 'See the cost for yourself',
+                route: '/chart?symbol=BTCUSDT'),
+            LessonBlock.keyTakeaway(
+                'Costs are charged per trade, win or lose. Trading more often '
+                'multiplies them, which is why frequency is the most expensive '
+                'habit in trading.'),
           ],
         ),
       ],
@@ -342,6 +459,48 @@ class AcademyCurriculum {
                 'it.'),
           ],
         ),
+        Lesson(
+          id: 'r5',
+          title: 'When five trades are really one',
+          summary: 'Correlation, and the risk you did not know you took.',
+          minutes: 3,
+          blocks: [
+            LessonBlock.paragraph(
+                'You have learned to risk about 1% per trade. Now suppose you open '
+                'five positions, each risking 1%, all of them long crypto. You have '
+                'not taken five separate 1% risks. You have taken something much '
+                'closer to one 5% risk wearing five different names.'),
+            LessonBlock.heading('Why'),
+            LessonBlock.paragraph(
+                'Bitcoin, Ethereum and most large altcoins move together most of '
+                'the time. When the market drops hard, it drops on all of them at '
+                'once. The thing that would stop out one of your positions is the '
+                'same thing that stops out all five, on the same afternoon.'),
+            LessonBlock.paragraph(
+                'Assets that move together are called correlated. Correlation is '
+                'not fixed — pairs that drift apart in calm markets tend to move '
+                'as one during a panic, which is precisely when you need the '
+                'diversification you thought you had.'),
+            LessonBlock.warning(
+                'Diversification means holding things that do not move together. '
+                'Holding five of the same thing is concentration with extra fees.'),
+            LessonBlock.tip(
+                'Count your risk by what moves together, not by how many tickets '
+                'you opened. If a single bad day would hit every open position, add '
+                'up their risk and treat the total as one number.'),
+            LessonBlock.tryIt(
+                text:
+                    'Open the portfolio and look at your open positions. Ask '
+                    'yourself which of them would still be fine if crypto fell '
+                    '10% tomorrow. If the answer is none, that is your real '
+                    'position size.',
+                label: 'Review your open positions',
+                route: '/portfolio'),
+            LessonBlock.keyTakeaway(
+                'Risk adds up across positions that move together. Five correlated '
+                '1% trades is one 5% trade.'),
+          ],
+        ),
       ],
     ),
 
@@ -390,11 +549,19 @@ class AcademyCurriculum {
             LessonBlock.heading('Revenge trading'),
             LessonBlock.paragraph(
                 'After a loss, the urge to "win it back" immediately is powerful and '
-                'destructive. This app\'s AI Guardian is built to catch exactly this '
+                'destructive. This app\'s trade checks are built to catch exactly this '
                 'pattern — but the real fix is awareness and a hard daily stop.'),
             LessonBlock.tip(
                 'Journal every trade with why you entered and how you felt. Patterns '
                 'in your behaviour become obvious — and fixable.'),
+            LessonBlock.tryIt(
+                text:
+                    'The journal is built in. Tag each entry with how you felt '
+                    '— it counts how often you traded while anxious, greedy or '
+                    'chasing a loss, which is exactly the pattern this lesson '
+                    'is about.',
+                label: 'Open your trading journal',
+                route: '/journal'),
             LessonBlock.keyTakeaway(
                 'Discipline beats intelligence in trading. The edge is useless if '
                 'you can\'t follow it.'),
@@ -413,10 +580,10 @@ class AcademyCurriculum {
                 'rules can.'),
             LessonBlock.tryIt(
                 text:
-                    'Describe a trading idea in plain English and let the AI '
-                    'Strategy Lab turn it into testable rules for you.',
-                label: 'Open the AI Strategy Lab',
-                route: '/ai-strategy'),
+                    'Take a ready-made template and change one number at a '
+                    'time, so you can see what each rule does.',
+                label: 'Open Strategy Studio',
+                route: '/simulator/templates'),
             LessonBlock.keyTakeaway(
                 'If you can\'t write your idea as rules, you can\'t test it — and if '
                 'you can\'t test it, you\'re guessing.'),
@@ -451,6 +618,104 @@ class AcademyCurriculum {
             LessonBlock.keyTakeaway(
                 'Test on the past and practise on paper until the edge is proven. '
                 'Only then does real money make sense.'),
+          ],
+        ),
+        Lesson(
+          id: 'p5',
+          title: 'Does this actually make money?',
+          summary: 'Expectancy — the one number that answers it.',
+          minutes: 4,
+          blocks: [
+            LessonBlock.paragraph(
+                'You know your win rate. You know your reward-to-risk. Neither one '
+                'tells you whether a strategy makes money, and that surprises most '
+                'people. You need both, combined, and the combination has a name: '
+                'expectancy.'),
+            LessonBlock.heading('The formula'),
+            LessonBlock.paragraph(
+                'Expectancy = (win rate x average win) minus (loss rate x average '
+                'loss). It tells you what one trade is worth on average, over many '
+                'trades. Positive means the strategy makes money; negative means it '
+                'loses, however good it feels.'),
+            LessonBlock.heading('Two examples that flip the intuition'),
+            LessonBlock.bullets([
+              'Wins 40% of the time, winners are twice the size of losers: '
+                  '(0.40 x 2) - (0.60 x 1) = +0.2. Profitable, while being wrong '
+                  'six times out of ten.',
+              'Wins 70% of the time, winners are half the size of losers: '
+                  '(0.70 x 0.5) - (0.30 x 1) = +0.05. Barely profitable, despite '
+                  'feeling excellent.',
+              'Wins 70% of the time, winners are a third the size of losers: '
+                  '(0.70 x 0.33) - (0.30 x 1) = -0.07. Loses money while winning '
+                  'most of its trades.',
+            ]),
+            LessonBlock.warning(
+                'That last one is the trap. A high win rate feels like skill and '
+                'reads well in a screenshot, but a strategy that wins small and '
+                'loses big can lose money at a 70% win rate. Win rate on its own '
+                'is a vanity metric.'),
+            LessonBlock.paragraph(
+                'Expectancy is per trade, so your result is roughly expectancy '
+                'multiplied by the number of trades — minus costs, which is why the '
+                'previous lesson matters here. A tiny positive expectancy can be '
+                'turned negative by fees alone.'),
+            LessonBlock.tryIt(
+                text:
+                    'Run a backtest and look at win rate, average win and average '
+                    'loss together rather than one at a time. Profit factor on '
+                    'that screen is the same idea in a different form: gross '
+                    'profit divided by gross loss.',
+                label: 'Read a backtest properly',
+                route: '/lab'),
+            LessonBlock.keyTakeaway(
+                'Win rate and reward-to-risk mean nothing apart. Expectancy '
+                'combines them, and only a positive one makes money.'),
+          ],
+        ),
+        Lesson(
+          id: 'p6',
+          title: 'How many trades before you believe it?',
+          summary: 'Small samples lie, in both directions.',
+          minutes: 4,
+          blocks: [
+            LessonBlock.paragraph(
+                'The backtest lesson asked whether you had enough trades to trust a '
+                'result. Here is the answer, and it is larger than most people '
+                'expect.'),
+            LessonBlock.heading('Why ten trades tells you nothing'),
+            LessonBlock.paragraph(
+                'Flip a fair coin ten times and getting seven heads is entirely '
+                'ordinary — it happens about one run in six. If you judged the coin '
+                'on that, you would conclude it was biased. Ten trades is exactly '
+                'the same situation, except you have money and ego attached to the '
+                'conclusion.'),
+            LessonBlock.paragraph(
+                'As a working rule, treat anything under about 30 trades as a story '
+                'rather than evidence, and prefer 100 or more before you believe an '
+                'edge is real. Even then the uncertainty is wide — a measured 55% '
+                'win rate over 100 trades is consistent with a true rate anywhere '
+                'from the mid-forties to the mid-sixties.'),
+            LessonBlock.heading('Losing streaks are normal'),
+            LessonBlock.paragraph(
+                'This cuts the other way too. With a genuine 45% win rate, a run of '
+                'six losses in a row will happen regularly — roughly once every '
+                'sixty trades. It is not a sign your strategy has broken. It is '
+                'what a 45% win rate looks like from the inside, and abandoning a '
+                'working strategy during one is a common and expensive mistake.'),
+            LessonBlock.warning(
+                'Small samples are also how curve-fitting hides. Tune a strategy '
+                'until it looks perfect over 20 historical trades and you have '
+                'memorised twenty coincidences, not found an edge.'),
+            LessonBlock.tryIt(
+                text:
+                    'Check the trade count on any backtest before you read its '
+                    'other numbers. If it is small, the win rate and profit '
+                    'factor are noise dressed up as findings.',
+                label: 'Check a backtest\'s sample size',
+                route: '/lab'),
+            LessonBlock.keyTakeaway(
+                'Judge a strategy on many trades, not a few. Small samples flatter '
+                'bad strategies and condemn good ones.'),
           ],
         ),
       ],

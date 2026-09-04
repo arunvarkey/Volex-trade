@@ -168,10 +168,20 @@ class _IntroView extends StatelessWidget {
               style: VxTypography.h1.copyWith(fontSize: 26)),
           const SizedBox(height: 10),
           Text(
-            '${challenge.length} quick calls. About 60 seconds. '
-            'Test your trading judgment, keep your streak alive.',
+            // "Calls" is trader shorthand the app never defined, and the
+            // screen counted "CALL 1 OF 5" without ever saying what one is.
+            '${challenge.length} charts. For each one you say which way you '
+            'think price went next, then see what actually happened. About 60 '
+            'seconds.',
             textAlign: TextAlign.center,
             style: VxTypography.bodySmall.copyWith(fontSize: 14, height: 1.5),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Nothing here is traded and nothing is at stake. It is practice '
+            'at reading a chart.',
+            textAlign: TextAlign.center,
+            style: VxTypography.caption.copyWith(height: 1.5),
           ),
           const SizedBox(height: 28),
           ElevatedButton(
@@ -421,7 +431,7 @@ class _DoneView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 22, letterSpacing: 2)),
             const SizedBox(height: 8),
-            Text('Estimated ${result!.estimatedRank}',
+            Text('That was ${result!.scoreBand}',
                 textAlign: TextAlign.center,
                 style: VxTypography.bodySmall.copyWith(fontSize: 13)),
           ] else ...[

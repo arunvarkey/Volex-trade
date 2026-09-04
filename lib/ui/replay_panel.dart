@@ -102,6 +102,7 @@ class ReplayPanel extends StatelessWidget {
                         children: [
                           // Play/Pause
                           IconButton(
+                            tooltip: controller.isPlaying ? 'Pause' : 'Play',
                             onPressed: controller.togglePlayPause,
                             icon: Icon(
                               controller.isPlaying
