@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/features/subscriptions/models/subscription_tier.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -19,6 +20,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
+    // Paired with limit_hit, this gives the conversion step that matters:
+    // of the people who actually ran into a limit, how many looked at the
+    // price. A paywall with plenty of views and no limit_hit before it is
+    // being reached by curiosity, not by need.
+    VxFunnel.paywallViewed('subscription_screen');
   }
 
   @override
@@ -424,6 +430,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final productToBuy = _isAnnual
         ? SubscriptionProduct.premiumYearly
         : SubscriptionProduct.explorerPremium;
+    final plan = productToBuy.id;
+    VxFunnel.purchaseStarted(plan);
 
     try {
       final success =
@@ -432,6 +440,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (!mounted) return;
 
       if (success) {
+        VxFunnel.purchaseSucceeded(plan);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Opening Google Play…')),
         );
@@ -443,6 +452,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       // button did nothing at all when the products were not configured in
       // the Play Console — the single most likely state on launch day, and
       // the one where silence looks exactly like a broken app.
+      VxFunnel.purchaseFailed(plan, 'no_product');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           duration: Duration(seconds: 6),
@@ -454,6 +464,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       );
     } catch (e) {
+      VxFunnel.purchaseFailed(plan, 'exception');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

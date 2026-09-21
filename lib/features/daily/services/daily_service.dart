@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../academy/services/xp_service.dart';
+import '../../../core/analytics/vx_funnel.dart';
 import '../data/daily_question_bank.dart';
 import '../models/daily_models.dart';
 
@@ -113,7 +114,17 @@ class DailyService extends ChangeNotifier {
       _lastScore = score;
     } else {
       final yesterdayKey = dateKey(today.subtract(const Duration(days: 1)));
-      _streak = (_lastKey == yesterdayKey) ? _streak + 1 : 1;
+      final continued = _lastKey == yesterdayKey;
+
+      // A streak that ended is a churn signal, and the distribution of how
+      // long they were tells us where a streak freeze would pay for itself.
+      // Reported here rather than at app start because this is the only place
+      // that knows the previous run's length before it is overwritten.
+      if (!continued && _streak > 0) {
+        VxFunnel.dailyStreakLost(_streak);
+      }
+
+      _streak = continued ? _streak + 1 : 1;
       _best = max(_best, _streak);
       _lastKey = todayKey;
       _lastScore = score;
@@ -121,6 +132,13 @@ class DailyService extends ChangeNotifier {
     }
 
     await _persist();
+
+    VxFunnel.dailyCompleted(
+      score: score,
+      outOf: challenge.length,
+      streakDays: _streak,
+    );
+    VxFunnel.setStreakBucket(_streak);
 
     // Award XP once per challenge — replaying the same day never double-counts.
     await XpService.instance

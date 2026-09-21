@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/core/glossary.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
@@ -22,8 +25,14 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   final TextEditingController _search = TextEditingController();
   String _query = '';
 
+  /// Debounce for the search analytics. Cancelled on dispose — a pending
+  /// timer that fires after the screen is gone would touch `_filtered` on a
+  /// defunct State.
+  Timer? _searchLog;
+
   @override
   void dispose() {
+    _searchLog?.cancel();
     _search.dispose();
     super.dispose();
   }
@@ -57,7 +66,20 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: TextField(
               controller: _search,
-              onChanged: (v) => setState(() => _query = v),
+              onChanged: (v) {
+                setState(() => _query = v);
+                // Debounced: onChanged fires per keystroke, and logging
+                // "s", "sh", "sha", "shar" would bury the one term the user
+                // actually meant. The misses are the valuable half — they
+                // are a list, written by users, of vocabulary we are
+                // missing.
+                _searchLog?.cancel();
+                _searchLog = Timer(const Duration(milliseconds: 1200), () {
+                  final q = v.trim();
+                  if (q.length < 2) return;
+                  VxFunnel.glossarySearched(q, found: _filtered.isNotEmpty);
+                });
+              },
               style: VxTypography.body,
               decoration: InputDecoration(
                 hintText: 'Search terms',

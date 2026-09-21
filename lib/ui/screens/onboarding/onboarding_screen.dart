@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/services/startup_service.dart';
 
@@ -75,6 +76,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    VxFunnel.onboardingFinished();
+
     // Mark onboarding as complete
     await StartupService().markOnboardingComplete();
 
@@ -117,6 +120,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _pageController,
                 onPageChanged: (index) {
                   setState(() => _currentPage = index);
+                  // The step where this count collapses is the step to
+                  // rewrite. Without it, a user who quits during onboarding
+                  // is indistinguishable from one who never opened the app.
+                  VxFunnel.onboardingStep(index, _pages[index].title);
                 },
                 itemCount: _pages.length,
                 itemBuilder: (context, index) {

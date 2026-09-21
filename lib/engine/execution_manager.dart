@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/domain/position.dart';
@@ -368,6 +370,12 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
         'quantity': quantity,
         'isLive': isLiveMode,
       });
+
+      // The activation moment, fired once per install. Splitting it by
+      // whether the trade carried a stop gives the comparison the whole
+      // product rests on: if users who set stops retain better than those
+      // who don't, the teaching is working and we can prove it.
+      unawaited(_logFirstTradeOnce(withStop: stopLoss != null));
 
       return OrderResult(success: true, order: order);
     } catch (e) {
@@ -843,6 +851,26 @@ class ExecutionManager extends ChangeNotifier implements IExecutionService {
   /// guardian warns about — because free execution is exactly what makes
   /// churning look viable.
   static const double takerFeeRate = 0.00075;
+
+  /// Fires [VxFunnel.firstTrade] the first time this install places an order.
+  ///
+  /// Kept out of the order path's own error handling on purpose: analytics
+  /// must never be able to fail a trade, so this is awaited nowhere and its
+  /// own failure is swallowed. SharedPreferences is the store because the
+  /// flag has to survive relaunch — an "activation" that re-fires every
+  /// session is not activation, it is just a trade count.
+  static const String _kFirstTradeLogged = 'funnel_first_trade_logged_v1';
+
+  Future<void> _logFirstTradeOnce({required bool withStop}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool(_kFirstTradeLogged) ?? false) return;
+      await prefs.setBool(_kFirstTradeLogged, true);
+      VxFunnel.firstTrade(withStop: withStop);
+    } catch (e) {
+      AppLogger.debug('First-trade funnel event skipped: $e');
+    }
+  }
 
   /// The fee on a fill of [quantity] at [price].
   static double feeFor(double quantity, double price) {

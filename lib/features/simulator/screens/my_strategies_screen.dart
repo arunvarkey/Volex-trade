@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import '../../../ui/design_system/vx_colors.dart';
 import '../../../features/subscriptions/services/subscription_service.dart';
 import '../strategy_builder/services/strategy_repository.dart';
@@ -21,6 +22,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
   final _repository = GetIt.I<StrategyRepository>();
   final _subscription = GetIt.I<SubscriptionService>();
   List<GeneratedStrategy> _strategies = [];
+  bool _strategyLimitLogged = false;
 
   @override
   void initState() {
@@ -32,6 +34,16 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
     setState(() {
       _strategies = _repository.getAll();
     });
+
+    // Logged on load rather than in build(), which runs on every repaint.
+    // Reaching the saved-strategy ceiling is one of only two things Premium
+    // lifts, so how often it happens is how much Premium is worth.
+    if (!_strategyLimitLogged &&
+        !_subscription.isPremium &&
+        _strategies.length >= _subscription.maxStrategies) {
+      _strategyLimitLogged = true;
+      VxFunnel.limitHit('saved_strategies');
+    }
   }
 
   @override

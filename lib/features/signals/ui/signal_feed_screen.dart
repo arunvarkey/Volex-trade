@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/features/signals/services/signal_engine.dart';
@@ -31,6 +32,11 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   StreamSubscription<TradeSignal>? _sub;
   bool _scanning = true;
   bool _upgradeDismissed = false;
+
+  /// Guards [VxFunnel.limitHit] against firing on every rebuild. We want the
+  /// count of users who reach the free signal ceiling, not the count of
+  /// repaints while they sit on the screen.
+  bool _signalLimitLogged = false;
 
   @override
   void initState() {
@@ -99,6 +105,15 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
                             !_upgradeDismissed;
                         final displayCount =
                             showUpgrade ? limit : _signals.length;
+
+                        // The free ceiling was actually reached. Whether this
+                        // ever happens decides whether Premium has a reason to
+                        // exist: it lifts this limit and the saved-strategy
+                        // one, and nothing else.
+                        if (showUpgrade && !_signalLimitLogged) {
+                          _signalLimitLogged = true;
+                          VxFunnel.limitHit('signals_per_day');
+                        }
 
                         return ListView.builder(
                           padding: const EdgeInsets.all(16),
