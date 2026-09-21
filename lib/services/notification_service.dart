@@ -153,6 +153,12 @@ class NotificationService {
         // a declaration form between us and every release. A reminder that
         // arrives within the hour is a reminder.
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        // Still required at this plugin version. absoluteTime, not
+        // wallClockTime, because [instant] is already a fixed UTC moment
+        // converted from the user's local time above — asking the platform to
+        // reinterpret it as a wall clock would shift it by the offset twice.
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
       return true;
