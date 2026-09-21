@@ -52,6 +52,17 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^18.0.1
 
+  # Required to schedule a notification at a wall-clock time. It already
+  # arrives transitively via flutter_local_notifications, but importing a
+  # package you have not declared trips depend_on_referenced_packages, and
+  # CI runs analyze with --fatal-infos.
+  #
+  # The range spans 0.9.x and 0.10.x deliberately: flutter_local_notifications
+  # changed which major it depends on between 18 and 19, and pinning one would
+  # break resolution on the next plugin bump. There is no pubspec.lock in the
+  # repo, so every CI run resolves fresh.
+  timezone: '>=0.9.2 <0.11.0'
+
   # flutter_background_service was removed: every Dart call site was commented
   # out, so no background worker ever ran, but the plugin's manifest still
   # merged in a foreground service and its permissions.

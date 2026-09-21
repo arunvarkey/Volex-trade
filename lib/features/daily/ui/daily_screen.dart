@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,7 @@ import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import '../models/daily_models.dart';
+import '../services/daily_reminder_service.dart';
 import '../services/daily_service.dart';
 
 /// Volex Daily — the daily ritual: five quick trading-judgment calls, instant
@@ -79,6 +82,12 @@ class _DailyScreenState extends State<DailyScreen> {
     } else {
       final result =
           await _service.recordCompletion(_challenge, List.of(_correctness));
+
+      // Today's reminder is now pointless and tomorrow's should reflect the
+      // new streak length. Not awaited — a notification reschedule must never
+      // hold up the results screen.
+      unawaited(DailyReminderService.instance.reschedule());
+
       if (!mounted) return;
       setState(() {
         _result = result;

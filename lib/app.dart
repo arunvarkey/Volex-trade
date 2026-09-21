@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
+import 'dart:async';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/core/service_locator.dart';
@@ -16,6 +17,7 @@ import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/data/market_data_repository.dart';
 import 'package:volex_terminal/services/market_ticker_service.dart';
 import 'package:volex_terminal/features/signals/services/signal_engine.dart';
+import 'package:volex_terminal/features/daily/services/daily_reminder_service.dart';
 import 'package:volex_terminal/core/providers_setup.dart';
 import 'package:volex_terminal/services/feature_flag_service.dart';
 import 'package:volex_terminal/features/compliance/age_gate_screen.dart';
@@ -137,6 +139,12 @@ class _VolexTerminalAppState extends State<VolexTerminalApp>
     AppLogger.debug('📱 App resumed');
     AnalyticsService.instance.logEvent('app_resumed');
     getIt<SecurityService>().recordActivity();
+
+    // Rewrite the next week of reminders. Doing it on every resume is what
+    // keeps the wall-clock time right after a timezone change or a DST shift,
+    // and what stops us reminding someone about a streak they just extended.
+    // Fire-and-forget: a failed reschedule must not affect resuming.
+    unawaited(DailyReminderService.instance.reschedule());
     _withMarketData((repo) => repo.resumeLiveFeeds());
     // Only restarts if the tape is actually on screen — the widget calls
     // start() itself, and start() is idempotent.

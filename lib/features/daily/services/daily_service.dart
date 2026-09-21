@@ -25,18 +25,29 @@ class DailyService extends ChangeNotifier {
   static const String _kLastScore = 'daily_last_score_v1';
   static const String _kPlayed = 'daily_played_count_v1';
 
+  /// Date key of the last day a freeze was spent, and the ISO week it was
+  /// spent in. One freeze per calendar week.
+  static const String _kFreezeUsedKey = 'daily_freeze_used_key_v1';
+  static const String _kFreezeWeek = 'daily_freeze_week_v1';
+
   bool _loaded = false;
   String? _lastKey;
   int _streak = 0;
   int _best = 0;
   int _lastScore = 0;
   int _played = 0;
+  String? _freezeUsedKey;
+  int? _freezeWeek;
 
   bool get isLoaded => _loaded;
   int get currentStreak => _streak;
   int get bestStreak => _best;
   int get playedCount => _played;
   int get lastScore => _lastScore;
+
+  /// The day a streak freeze covered for the user, if it has not been
+  /// acknowledged yet. The UI reads this to tell them after the fact.
+  String? get freezeUsedOn => _freezeUsedKey;
 
   Future<void> ensureLoaded() async {
     if (_loaded) return;
@@ -47,6 +58,8 @@ class DailyService extends ChangeNotifier {
       _best = prefs.getInt(_kBest) ?? 0;
       _lastScore = prefs.getInt(_kLastScore) ?? 0;
       _played = prefs.getInt(_kPlayed) ?? 0;
+      _freezeUsedKey = prefs.getString(_kFreezeUsedKey);
+      _freezeWeek = prefs.getInt(_kFreezeWeek);
     } catch (_) {
       // Start fresh if storage is unavailable.
     } finally {
@@ -112,6 +125,47 @@ class DailyService extends ChangeNotifier {
   bool hasPlayedToday({DateTime? now}) =>
       _lastKey == dateKey(now ?? DateTime.now());
 
+  // ── Streak freeze ─────────────────────────────────────────────────
+
+  /// One freeze per calendar week.
+  ///
+  /// Weekly rather than a stockpile you earn and spend: a balance turns into
+  /// a resource to manage, and the point is to absorb the one night someone
+  /// forgot — not to add a second game on top of the first.
+  bool _canFreeze(DateTime today) => _freezeWeek != _weekOf(today);
+
+  /// True when the gap is exactly one missed day. A freeze covers a slip, not
+  /// a fortnight away; extending a month-old streak would make the number
+  /// meaningless.
+  bool _missedExactlyOneDay(DateTime today) {
+    if (_lastKey == null) return false;
+    final twoDaysAgo = dateKey(today.subtract(const Duration(days: 2)));
+    return _lastKey == twoDaysAgo;
+  }
+
+  /// Calendar week index, weeks starting Monday.
+  ///
+  /// Not simply `daysSinceEpoch ~/ 7`: the epoch is a Thursday, so plain
+  /// division puts the boundary mid-week and "one freeze per week" would
+  /// quietly mean "one per arbitrary seven-day bucket". Offsetting by the
+  /// epoch's weekday moves the break to Monday, which is what a user means.
+  ///
+  /// Only used for equality, so the absolute value does not matter.
+  int _weekOf(DateTime date) {
+    final days =
+        DateTime(date.year, date.month, date.day).difference(_epoch).inDays;
+    return (days + (_epoch.weekday - DateTime.monday)) ~/ 7;
+  }
+
+  /// Marks the freeze notice as seen, so it is shown once and not on every
+  /// visit to the Daily screen.
+  Future<void> acknowledgeFreeze() async {
+    if (_freezeUsedKey == null) return;
+    _freezeUsedKey = null;
+    await _persist();
+    notifyListeners();
+  }
+
   // ── Completion + streak ───────────────────────────────────────────
 
   /// Records a finished challenge and updates the streak.
@@ -135,15 +189,25 @@ class DailyService extends ChangeNotifier {
       final yesterdayKey = dateKey(today.subtract(const Duration(days: 1)));
       final continued = _lastKey == yesterdayKey;
 
-      // A streak that ended is a churn signal, and the distribution of how
-      // long they were tells us where a streak freeze would pay for itself.
-      // Reported here rather than at app start because this is the only place
-      // that knows the previous run's length before it is overwritten.
-      if (!continued && _streak > 0) {
+      // Exactly one day was missed, and a freeze is available this week.
+      // Cover it silently: the user finds out afterwards, the way Duolingo
+      // does it, because a "spend your freeze?" prompt turns a kindness into
+      // another decision and another thing to feel bad about.
+      final broke = !continued && _streak > 0;
+      final covered = broke && _canFreeze(today) && _missedExactlyOneDay(today);
+
+      if (covered) {
+        _freezeUsedKey = dateKey(today.subtract(const Duration(days: 1)));
+        _freezeWeek = _weekOf(today);
+      } else if (broke) {
+        // A streak that ended is a churn signal, and the distribution of how
+        // long they were tells us where a streak freeze would pay for itself.
+        // Reported here rather than at app start because this is the only
+        // place that knows the previous run's length before it is overwritten.
         VxFunnel.dailyStreakLost(_streak);
       }
 
-      _streak = continued ? _streak + 1 : 1;
+      _streak = (continued || covered) ? _streak + 1 : 1;
       _best = max(_best, _streak);
       _lastKey = todayKey;
       _lastScore = score;
@@ -179,6 +243,8 @@ class DailyService extends ChangeNotifier {
     _best = 0;
     _lastScore = 0;
     _played = 0;
+    _freezeUsedKey = null;
+    _freezeWeek = null;
     await _persist();
     notifyListeners();
   }
@@ -196,6 +262,18 @@ class DailyService extends ChangeNotifier {
       await prefs.setInt(_kBest, _best);
       await prefs.setInt(_kLastScore, _lastScore);
       await prefs.setInt(_kPlayed, _played);
+      if (_freezeUsedKey != null) {
+        await prefs.setString(_kFreezeUsedKey, _freezeUsedKey!);
+      } else {
+        await prefs.remove(_kFreezeUsedKey);
+      }
+      if (_freezeWeek != null) {
+        await prefs.setInt(_kFreezeWeek, _freezeWeek!);
+      } else {
+        // resetAll() clears this; without the remove, a stale week would
+        // survive the reset and deny the next freeze.
+        await prefs.remove(_kFreezeWeek);
+      }
     } catch (_) {
       // Non-fatal: in-memory state stands for this session.
     }

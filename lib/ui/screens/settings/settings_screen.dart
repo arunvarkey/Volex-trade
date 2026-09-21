@@ -11,6 +11,8 @@ import 'package:volex_terminal/ui/providers/dashboard_provider.dart';
 import 'package:volex_terminal/services/user_mode_service.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/features/daily/services/daily_reminder_service.dart';
+import 'package:volex_terminal/services/notification_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -56,6 +58,9 @@ class SettingsScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const RiskSettingsScreen())),
           ),
           const SizedBox(height: 24),
+          _buildSectionHeader("Daily Practice"),
+          const _DailyReminderTile(),
+          const SizedBox(height: 24),
           _buildSectionHeader("Legal & Support"),
           _buildCpuTile(
             context,
@@ -89,7 +94,7 @@ class SettingsScreen extends StatelessWidget {
               // is no package_info_plus dependency and adding a native
               // plugin purely to print a string is not worth it, but the
               // two had already drifted apart.
-              "Version 1.0.1 (Build 10)",
+              "Version 1.1.0 (Build 11)",
               style: VxTypography.price
                   .copyWith(color: Colors.white24, fontSize: 12),
             ),
@@ -195,4 +200,95 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+}
+
+/// The daily reminder switch.
+///
+/// Its own widget because the settings screen is stateless and this needs to
+/// read a stored preference asynchronously. Kept in this file because it is
+/// the only place it appears.
+class _DailyReminderTile extends StatefulWidget {
+  const _DailyReminderTile();
+
+  @override
+  State<_DailyReminderTile> createState() => _DailyReminderTileState();
+}
+
+class _DailyReminderTileState extends State<_DailyReminderTile> {
+  final _service = DailyReminderService.instance;
+  bool _loading = true;
+  bool _enabled = true;
+
+  /// Whether Android has actually granted the permission. A switch that reads
+  /// "on" while the OS silently drops every notification is worse than one
+  /// that admits the situation.
+  bool _permitted = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    await _service.ensureLoaded();
+    final permitted = await NotificationService.hasPermission();
+    if (!mounted) return;
+    setState(() {
+      _enabled = _service.isEnabled;
+      _permitted = permitted;
+      _loading = false;
+    });
+  }
+
+  Future<void> _toggle(bool value) async {
+    setState(() => _enabled = value);
+
+    if (value && !_permitted) {
+      // Ask at the moment the user says they want it, not at launch — a
+      // prompt with obvious context is far more likely to be granted, and on
+      // Android 13+ a denial is effectively permanent.
+      await NotificationService.requestNotificationPermission();
+      final permitted = await NotificationService.hasPermission();
+      if (mounted) setState(() => _permitted = permitted);
+    }
+
+    await _service.setEnabled(enabled: value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hh = _service.hour.toString().padLeft(2, '0');
+    final mm = _service.minute.toString().padLeft(2, '0');
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: VxColors.surface,
+        border: Border.all(color: VxColors.textTertiary),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: SwitchListTile(
+        title: const Text(
+          'Daily reminder',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          _loading
+              ? 'Loading…'
+              : !_enabled
+                  ? 'Off. Volex Daily is still there whenever you want it.'
+                  : _permitted
+                      ? 'One nudge at $hh:$mm to answer the day\'s five '
+                          'questions. Never about prices or trades.'
+                      : 'Notifications are blocked for Volex in your device '
+                          'settings, so nothing will arrive.',
+          style: const TextStyle(color: VxColors.textSecondary, fontSize: 12),
+        ),
+        value: _enabled,
+        activeThumbColor: VxColors.neonCyan,
+        onChanged: _loading ? null : _toggle,
+      ),
+    );
+  }
 }
