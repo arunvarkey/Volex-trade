@@ -73,13 +73,32 @@ class DailyService extends ChangeNotifier {
   // ── Challenge generation (deterministic) ──────────────────────────
 
   /// The challenge for [date] — the same five calls for everyone on that day.
+  ///
+  /// Days take consecutive, non-overlapping slices of the pool rather than a
+  /// fresh random draw. A per-day shuffle looks correct and is not: each day
+  /// samples independently, so with 5 draws from 300 the chance of a repeat
+  /// within a week is high, and that repeat is what makes a streak feel
+  /// pointless. Slicing guarantees no question returns until the whole pool
+  /// has been seen — currently about two months.
+  ///
+  /// Once the pool is exhausted the cycle restarts, offset by one so the
+  /// second pass does not reproduce the first pass's groupings.
   DailyChallenge challengeFor(DateTime date) {
     final number = challengeNumber(date);
-    final indices = List<int>.generate(DailyQuestionBank.all.length, (i) => i);
-    // Seeded shuffle → stable per calendar day across devices.
-    indices.shuffle(Random(number));
-    final take = min(_callsPerDay, indices.length);
-    final calls = [for (int i = 0; i < take; i++) DailyQuestionBank.all[indices[i]]];
+    final pool = DailyQuestionBank.all;
+    final take = min(_callsPerDay, pool.length);
+
+    // Day 1 starts at index 0.
+    final day = number - 1;
+    final cycleLength = pool.length ~/ take;
+    final cycle = cycleLength > 0 ? day ~/ cycleLength : 0;
+    final dayInCycle = cycleLength > 0 ? day % cycleLength : 0;
+
+    final start = (dayInCycle * take + cycle) % pool.length;
+    final calls = [
+      for (int i = 0; i < take; i++) pool[(start + i) % pool.length],
+    ];
+
     return DailyChallenge(
       dateKey: dateKey(date),
       number: number,
