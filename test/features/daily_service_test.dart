@@ -74,15 +74,35 @@ void main() {
       expect(service.playedCount, 3);
     });
 
-    test('a skipped day resets the streak to 1', () async {
+    test('a one-day gap is absorbed by the streak freeze', () async {
+      // This used to assert that any skipped day reset the streak to 1, and
+      // that was the behaviour until the freeze was added. Losing a streak to
+      // a single forgotten evening is a churn cliff — people abandon rather
+      // than restart from zero — so one missed day a week is now covered.
+      // The full rules, including the weekly limit, are in
+      // daily_streak_freeze_test.dart.
       final d1 = DateTime(2026, 4, 1, 9);
       final d3 = DateTime(2026, 4, 3, 9); // skip the 2nd
       await service.recordCompletion(
           service.challengeFor(d1), perfect(service.challengeFor(d1)), now: d1);
       final r = await service.recordCompletion(
           service.challengeFor(d3), perfect(service.challengeFor(d3)), now: d3);
+      expect(r.streakAfter, 2);
+      expect(service.freezeUsedOn, isNotNull);
+    });
+
+    test('a two-day gap still resets the streak to 1', () async {
+      // The freeze covers a slip, not a week away. Without this boundary the
+      // streak number would stop meaning anything.
+      final d1 = DateTime(2026, 4, 1, 9);
+      final d4 = DateTime(2026, 4, 4, 9); // skip the 2nd and 3rd
+      await service.recordCompletion(
+          service.challengeFor(d1), perfect(service.challengeFor(d1)), now: d1);
+      final r = await service.recordCompletion(
+          service.challengeFor(d4), perfect(service.challengeFor(d4)), now: d4);
       expect(r.streakAfter, 1);
       expect(service.bestStreak, 1);
+      expect(service.freezeUsedOn, isNull);
     });
 
     test('same-day replay is idempotent for streak and play count', () async {
