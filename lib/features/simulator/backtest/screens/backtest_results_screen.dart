@@ -191,6 +191,12 @@ class BacktestResultsScreen extends StatelessWidget {
     'Sortino Ratio': 'sortino_ratio',
     'Calmar Ratio': 'calmar_ratio',
     'P&L': 'pnl',
+    'Final Equity': 'equity_curve',
+    'Profit/Loss': 'pnl',
+    'Equity Curve': 'equity_curve',
+    'Slippage': 'slippage',
+    'Fees': 'fees',
+    'Trading Fees': 'fees',
   };
 
   /// A metric label that becomes tappable (with a "?") when we have a plain
@@ -228,9 +234,12 @@ class BacktestResultsScreen extends StatelessWidget {
   }
 
   Widget _buildSectionHeader(String title) {
-    return Text(
+    // Section headings are jargon too -- "Equity Curve" is the name of the
+    // thing, not an explanation of it -- so they get the same "?" as the
+    // metric labels whenever a definition exists.
+    return _termLabel(
       title,
-      style: const TextStyle(
+      const TextStyle(
         color: VxColors.neonCyan,
         fontSize: 14,
         fontWeight: FontWeight.bold,

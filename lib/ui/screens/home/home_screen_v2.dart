@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/domain/order.dart';
@@ -23,6 +22,13 @@ import 'package:volex_terminal/ui/widgets/first_user_guide.dart';
 import 'package:volex_terminal/features/daily/ui/daily_home_card.dart';
 import 'package:volex_terminal/services/profile_service.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
+
+/// Minimum size for anything tappable.
+///
+/// Android's accessibility guidance — and the automated scan in Play's
+/// pre-launch report — treat 48dp as the floor for a reliable touch target.
+/// Visuals can be drawn smaller inside it; the hit area should not be.
+const double _kMinTapTarget = 48;
 
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({super.key});
@@ -133,18 +139,28 @@ class HomeScreenV2 extends StatelessWidget {
       label: semanticLabel,
       child: Tooltip(
         message: semanticLabel ?? '',
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: VxColors.surface,
-              shape: BoxShape.circle,
-              border: Border.all(color: VxColors.border),
+        // The tap area is 48dp even though the circle is drawn at 36dp.
+        // Android's accessibility scanner and Play's pre-launch report flag
+        // anything smaller than 48dp as too small to hit reliably, and the
+        // InkWell used to be sized to the 36dp circle itself.
+        child: SizedBox(
+          width: _kMinTapTarget,
+          height: _kMinTapTarget,
+          child: InkWell(
+            onTap: onPressed,
+            customBorder: const CircleBorder(),
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: VxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: VxColors.border),
+                ),
+                child: Icon(icon, size: 18, color: VxColors.textSecondary),
+              ),
             ),
-            child: Icon(icon, size: 18, color: VxColors.textSecondary),
           ),
         ),
       ),
@@ -156,38 +172,45 @@ class HomeScreenV2 extends StatelessWidget {
       stream: getIt<NotificationBus>().unreadCountStream,
       builder: (context, snapshot) {
         final unreadCount = snapshot.data ?? 0;
-        return InkWell(
-          onTap: () => context.push('/notifications'),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: VxColors.surface,
-              shape: BoxShape.circle,
-              border: Border.all(color: VxColors.border),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                const Icon(Icons.notifications_none_rounded,
-                    size: 18, color: VxColors.textSecondary),
-                if (unreadCount > 0)
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: VxColors.danger,
-                        shape: BoxShape.circle,
-                        border:
-                            Border.all(color: VxColors.background, width: 2),
+        return SizedBox(
+          // Same 48dp minimum tap target as _buildIconButton.
+          width: _kMinTapTarget,
+          height: _kMinTapTarget,
+          child: InkWell(
+            onTap: () => context.push('/notifications'),
+            customBorder: const CircleBorder(),
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: VxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: VxColors.border),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(Icons.notifications_none_rounded,
+                        size: 18, color: VxColors.textSecondary),
+                    if (unreadCount > 0)
+                      Positioned(
+                        top: 6,
+                        right: 6,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: VxColors.danger,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: VxColors.background, width: 2),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         );
@@ -250,7 +273,7 @@ class HomeScreenV2 extends StatelessWidget {
                     Text(
                       '${dailyPnL == 0 ? '' : (dailyPnL > 0 ? '+' : '-')}\$${dailyPnL.abs().toStringAsFixed(2)} today',
                       style: TextStyle(
-                        fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+                        fontFamily: VxTypography.mono,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: dailyPnL == 0
@@ -264,7 +287,7 @@ class HomeScreenV2 extends StatelessWidget {
                 Text(
                   dailyPnL == 0
                       ? 'Place your first trade to get started'
-                      : 'Portfolio performance is tracking correctly',
+                      : 'Profit and loss across today\'s trades',
                   style: VxTypography.caption
                       .copyWith(color: VxColors.textTertiary),
                 ),
@@ -279,38 +302,45 @@ class HomeScreenV2 extends StatelessWidget {
   Widget _buildQuickActions(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ActionCard(
-              icon: Icons.auto_awesome_rounded,
-              title: 'AI Builder',
-              subtitle: 'Create a strategy with AI',
-              iconBgColor: const Color(0x1F63B3ED),
-              onTap: () => context.push('/ai-strategy'),
+      // IntrinsicHeight + stretch makes all three cards the height of the
+      // tallest one. Without it, a subtitle that wraps to two lines ("Create a
+      // strategy with AI") made its card taller than a one-line one ("AI trade
+      // ideas") and the Row centred them — so the boxes looked misaligned.
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.tune_rounded,
+                title: 'Build',
+                subtitle: 'Start from a template',
+                iconBgColor: const Color(0x1F63B3ED),
+                onTap: () => context.push('/simulator/templates'),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _ActionCard(
-              icon: Icons.science_rounded,
-              title: 'Backtest',
-              subtitle: 'Test against real history',
-              iconBgColor: const Color(0x1FB794F4),
-              onTap: () => context.push('/lab'),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.science_rounded,
+                title: 'Backtest',
+                subtitle: 'Test against real history',
+                iconBgColor: const Color(0x1FB794F4),
+                onTap: () => context.push('/lab'),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _ActionCard(
-              icon: Icons.sensors_rounded,
-              title: 'Signals',
-              subtitle: 'AI trade ideas',
-              iconBgColor: const Color(0x1F34D399),
-              onTap: () => context.push('/signals'),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ActionCard(
+                icon: Icons.sensors_rounded,
+                title: 'Signals',
+                subtitle: 'Setups our rules spotted',
+                iconBgColor: const Color(0x1F34D399),
+                onTap: () => context.push('/signals'),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -520,8 +550,8 @@ class HomeScreenV2 extends StatelessWidget {
               _StrategyCard(
                 icon: '🤖',
                 iconColor: VxColors.success,
-                name: 'AI Signal Sentinel',
-                status: 'Idle · Listening for signals',
+                name: 'Signal Watcher',
+                status: 'Idle · watching for setups',
                 pnl: 0.00,
                 pnlPercent: 0.00,
                 onTap: () => context.push('/signals'),
@@ -860,7 +890,7 @@ class _StrategyCard extends StatelessWidget {
                 Text(
                   '${isPositive ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
+                    fontFamily: VxTypography.mono,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: isPositive ? VxColors.success : VxColors.danger,

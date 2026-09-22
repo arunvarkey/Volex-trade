@@ -1,6 +1,6 @@
 // test/unit/backtest/backtest_engine_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import 'package:volex_terminal/features/simulator/backtest/backtest_engine.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
 

@@ -77,6 +77,52 @@ void main() {
     expect(xp.totalXp, XpService.backtestXp * 2 + XpService.tradeXp);
   });
 
+  group('trade XP is paid for discipline, not volume', () {
+    final day = DateTime(2026, 8, 31, 10);
+
+    test('a trade with a stop earns, up to three times a day', () async {
+      for (var i = 0; i < XpService.maxTradeAwardsPerDay; i++) {
+        expect(await xp.awardTradeWithStop(day), XpService.tradeXp);
+      }
+      expect(xp.totalXp, XpService.tradeXp * XpService.maxTradeAwardsPerDay);
+    });
+
+    test('the fourth trade of the day earns nothing', () async {
+      for (var i = 0; i < XpService.maxTradeAwardsPerDay; i++) {
+        await xp.awardTradeWithStop(day);
+      }
+      final capped = xp.totalXp;
+
+      // The mechanic this replaced paid 15 XP per order with no ceiling, so
+      // a hundred trades was 1,500 XP. Rewarding volume is rewarding the
+      // behaviour that loses retail traders money.
+      expect(await xp.awardTradeWithStop(day), 0);
+      expect(await xp.awardTradeWithStop(day), 0);
+      expect(xp.totalXp, capped);
+    });
+
+    test('the cap resets the next day', () async {
+      for (var i = 0; i < XpService.maxTradeAwardsPerDay; i++) {
+        await xp.awardTradeWithStop(day);
+      }
+      expect(await xp.awardTradeWithStop(day), 0);
+
+      final tomorrow = day.add(const Duration(days: 1));
+      expect(await xp.awardTradeWithStop(tomorrow), XpService.tradeXp);
+    });
+
+    test('days are keyed unambiguously', () async {
+      // A naive '$year-$month-$day' key makes 2026-1-11 and 2026-11-1 differ
+      // only by where the digits fall, and other pairs collide outright.
+      await xp.awardTradeWithStop(DateTime(2026, 1, 11));
+      final afterFirst = xp.totalXp;
+      expect(await xp.awardTradeWithStop(DateTime(2026, 11, 1)),
+          XpService.tradeXp,
+          reason: 'a different date must have a different key');
+      expect(xp.totalXp, afterFirst + XpService.tradeXp);
+    });
+  });
+
   test('addXp ignores non-positive amounts', () async {
     await xp.addXp(0);
     await xp.addXp(-10);

@@ -44,10 +44,10 @@ class _JourneyStripState extends State<JourneyStrip> {
           const _JourneyStep(
             number: '02',
             label: 'Build',
-            sub: 'AI strategy from an idea',
-            icon: Icons.auto_awesome_rounded,
+            sub: 'Rules from a template',
+            icon: Icons.tune_rounded,
             color: VxColors.primary,
-            route: '/ai-strategy',
+            route: '/simulator/templates',
           ),
           const _JourneyStep(
             number: '03',

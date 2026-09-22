@@ -1,49 +1,28 @@
-# 🍎 APP STORE & 🤖 GOOGLE PLAY LISTING
+# Store listing — superseded
 
-## App Name: Volex Terminal
+The live listing copy is **[`store/play-listing.md`](../store/play-listing.md)**.
+Use that. Do not copy anything from this file into a store console.
 
-### Short Description (Google Play):
-The flight simulator for traders — learn, build & backtest strategies on real market data. Zero risk.
+This file used to hold a full Play/App Store draft. It was written against a
+version of the app that does not exist and it described features that were
+never built:
 
-### Full Description:
-**VOLEX: THE FLIGHT SIMULATOR FOR TRADERS**
+- an "AI STRATEGY LAB" where "our AI drafts a strategy" from plain language —
+  the strategy builder is a form over indicator rules; there is no model
+- an "AI Guardian" — renamed to trade checks, which are threshold rules
+- a **CREATOR** tier that lets you "publish your strategies to the marketplace
+  and build a following" — no such tier and no such marketplace payout exists
+- a **PRO** tier selling "unlimited backtests" — backtesting is unlimited for
+  everyone; the only paid product is Premium at $4.99/mo, which lifts the
+  signal and saved-strategy counts
+- `volexlabs.com/support` and `volexlabs.com/privacy` — a domain the project
+  does not own
 
-Master the markets before you ever risk a dollar. Volex is a high-fidelity
-trading simulator that gives you an institutional-grade terminal to learn,
-build, backtest, and prove your strategies on real market data — with zero
-financial risk. No real money. No gambling. Just skill.
+Shipping that text would have put claims in the store listing that the app
+cannot back, on a Finance-category listing, which is where store review is
+strictest and where a false feature claim is a policy violation rather than
+just bad copy.
 
-#### ⚡ PROFESSIONAL CHARTING
-- Fluid, custom-rendered candlestick charts built for real-time analysis.
-- Live market data streaming directly from Binance public feeds.
-- Professional indicators and multi-timeframe analysis.
-
-#### 🤖 AI STRATEGY LAB
-- Turn your trading ideas into strategies in plain language.
-- Describe your edge, and our AI drafts a strategy you can test.
-- Backtest instantly against historical data — with honest, clearly-labelled results.
-
-#### 🛡️ RISK-FREE BY DESIGN
-- 100% paper trading — practice with virtual capital, never real money.
-- Built-in risk caps and the AI Guardian to build disciplined habits.
-- Biometric lock and encrypted storage keep your account secure.
-
-#### 💎 SUBSCRIPTIONS
-- **PRO:** unlimited backtests, advanced AI strategy generation, and the full indicator suite.
-- **CREATOR:** publish your strategies to the marketplace and build a following.
-
-Start training today. Become the trader you want to be — before you risk a thing.
-
-> Volex is an educational trading simulator. It is not a broker, does not hold
-> funds, and does not execute real-money trades. All trading is simulated.
-
----
-
-### Keywords:
-trading simulator, paper trading, learn trading, crypto, binance, strategy builder, ai trading, backtesting, candles, indicators, risk management, trading education.
-
-### Support URL:
-https://volexlabs.com/support
-
-### Privacy Policy URL:
-https://volexlabs.com/privacy
+The current listing describes only what the app does, and the reasoning behind
+each field (character counts, category choice, content-rating answers) is
+recorded alongside it in `store/play-listing.md`.

@@ -6,8 +6,8 @@ import '../../test_helper.dart';
 void main() {
   late ExecutionManager manager;
 
-  setUp(() {
-    setupServiceLocator();
+  setUp(() async {
+    await setupServiceLocator();
     manager = ExecutionManager();
   });
 

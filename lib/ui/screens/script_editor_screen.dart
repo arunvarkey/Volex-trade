@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../design_system/vx_colors.dart';
 import '../design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class ScriptEditorScreen extends StatefulWidget {
   final String? initialScript;
@@ -90,6 +90,7 @@ def on_candle(candle):
       appBar: AppBar(
         backgroundColor: VxColors.surface,
         leading: IconButton(
+          tooltip: 'Close',
           icon: const Icon(Icons.close, color: Colors.white70),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -105,6 +106,7 @@ def on_candle(candle):
         ),
         actions: [
           IconButton(
+            tooltip: 'Save',
             icon: const Icon(Icons.save, color: VxColors.neonCyan),
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
@@ -185,6 +187,15 @@ def on_candle(candle):
       ),
       body: Column(
         children: [
+          const FeatureIntro(
+            featureId: 'script_editor',
+            icon: Icons.code_rounded,
+            what: 'Write your own trading rules as code, when the ready-made '
+                'templates cannot express the idea you have in mind.',
+            when: 'This one is for people who already program. If you do not, '
+                'nothing here is missing from the rest of the app — Strategy '
+                'Studio builds the same kinds of rules without code.',
+          ),
           // Code Editor Area
           Expanded(
             child: Container(
@@ -195,9 +206,10 @@ def on_candle(candle):
                 focusNode: _focusNode,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
-                style: GoogleFonts.jetBrainsMono(
+                style: VxTypography.price.copyWith(
                   color: const Color(0xFFD4D4D4), // VS Code text
                   fontSize: 14,
+                  fontWeight: FontWeight.w400,
                   height: 1.5,
                 ),
                 decoration: const InputDecoration(
@@ -262,7 +274,7 @@ class _SnippetButton extends StatelessWidget {
         child: Text(
           label,
           style:
-              GoogleFonts.jetBrainsMono(fontSize: 12, fontWeight: FontWeight.bold),
+              VxTypography.price.copyWith(fontSize: 12, fontWeight: FontWeight.w700),
         ),
       ),
     );

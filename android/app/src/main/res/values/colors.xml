@@ -2,4 +2,9 @@
 <resources>
     <!-- Your brand color for launch screen -->
     <color name="launch_background_color">#0A0B0D</color> <!-- VxColors.deepBlack -->
+
+    <!-- Adaptive launcher icon background layer. This is the exact navy the
+         source artwork was drawn on (VxColors.background), so the masked icon
+         matches the app's own surface instead of a near-miss. -->
+    <color name="ic_launcher_background">#0A0E14</color>
 </resources>

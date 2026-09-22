@@ -47,6 +47,20 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.spellcheck_rounded,
+            title: 'Glossary',
+            subtitle: 'Every trading word the app uses, in plain English',
+            route: '/glossary',
+          ),
+          _buildMenuItem(
+            context,
+            icon: Icons.menu_book_outlined,
+            title: 'Trading Journal',
+            subtitle: 'Log why you traded and how you felt',
+            route: '/journal',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.insights,
             title: 'Buzz & Predictions',
             subtitle: 'Trade events, politics & crypto on sentiment — virtual',
@@ -54,16 +68,9 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
-            icon: Icons.auto_awesome,
-            title: 'AI Strategy Builder',
-            subtitle: 'Describe an idea, AI builds a strategy',
-            route: '/ai-strategy',
-          ),
-          _buildMenuItem(
-            context,
             icon: Icons.tune,
             title: 'Strategy Studio',
-            subtitle: 'Pick a template, tune it, and save your strategies',
+            subtitle: 'Build a set of buy and sell rules from a ready-made template',
             route: '/simulator',
           ),
           _buildMenuItem(
@@ -77,7 +84,7 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.scanner,
             title: 'Market Scanner',
-            subtitle: 'Find trading opportunities across markets',
+            subtitle: 'Scan every market at once for setups worth a look',
             route: '/market-scanner',
           ),
 
@@ -86,14 +93,14 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.speed,
             title: 'Strategy Optimizer',
-            subtitle: 'Fine-tune with genetic algorithms',
+            subtitle: 'Search for better settings for a strategy you already have',
             route: '/optimizer',
           ),
           _buildMenuItem(
             context,
             icon: Icons.code,
             title: 'Script Editor',
-            subtitle: 'Write custom strategy code',
+            subtitle: 'Write your own trading rules in code — for programmers',
             route: '/script-editor',
           ),
 
@@ -102,14 +109,18 @@ class MoreScreen extends StatelessWidget {
             context,
             icon: Icons.store,
             title: 'Marketplace',
-            subtitle: 'Browse and share strategies',
+            // There is no server behind this, so "other people" was wrong:
+            // the listings are the ones published on this device.
+            subtitle: 'Strategies published from this device',
             route: '/marketplace',
           ),
           _buildMenuItem(
             context,
             icon: Icons.leaderboard,
             title: 'Leaderboard',
-            subtitle: 'See top performing traders',
+            // It ranks strategies on verified results, not people, and it
+            // stays empty until there are results to rank.
+            subtitle: 'Ranked strategies — empty until results are verified',
             route: '/leaderboard',
           ),
 
@@ -167,13 +178,6 @@ class MoreScreen extends StatelessWidget {
                   letterSpacing: 2.0,
                 ),
               ),
-            ),
-            _buildMenuItem(
-              context,
-              icon: Icons.bug_report,
-              title: 'DEBUG: Test Navigation',
-              subtitle: 'Test all routes',
-              route: '/debug-nav',
             ),
             ListTile(
               leading: const Icon(Icons.refresh, color: Colors.red),

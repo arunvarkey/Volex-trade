@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import '../../../ui/design_system/vx_colors.dart';
 import '../../../features/subscriptions/services/subscription_service.dart';
-import '../ai_strategy/services/strategy_repository.dart';
+import '../strategy_builder/services/strategy_repository.dart';
 import '../../../engine/marketplace/marketplace_service.dart';
 import '../../../engine/marketplace/models/strategy_listing.dart';
 import '../../../services/profile_service.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import 'package:intl/intl.dart';
 
 class MyStrategiesScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
   final _repository = GetIt.I<StrategyRepository>();
   final _subscription = GetIt.I<SubscriptionService>();
   List<GeneratedStrategy> _strategies = [];
+  bool _strategyLimitLogged = false;
 
   @override
   void initState() {
@@ -32,6 +34,16 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
     setState(() {
       _strategies = _repository.getAll();
     });
+
+    // Logged on load rather than in build(), which runs on every repaint.
+    // Reaching the saved-strategy ceiling is one of only two things Premium
+    // lifts, so how often it happens is how much Premium is worth.
+    if (!_strategyLimitLogged &&
+        !_subscription.isPremium &&
+        _strategies.length >= _subscription.maxStrategies) {
+      _strategyLimitLogged = true;
+      VxFunnel.limitHit('saved_strategies');
+    }
   }
 
   @override
@@ -54,6 +66,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
         actions: [
           if (count < limit)
             IconButton(
+              tooltip: 'Add',
               icon: const Icon(Icons.add, color: VxColors.neonGreen),
               onPressed: () => context
                   .push('/simulator/templates')
@@ -93,7 +106,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Create your first AI-powered strategy',
+            'Create your first strategy',
             style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
           const SizedBox(height: 32),
@@ -156,6 +169,7 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
                 ),
               ),
               IconButton(
+                tooltip: 'Delete',
                 icon: const Icon(Icons.delete_outline, color: VxColors.neonRed),
                 onPressed: () => _confirmDelete(strategy),
               ),

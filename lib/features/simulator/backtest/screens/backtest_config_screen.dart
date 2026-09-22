@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../ui/design_system/vx_colors.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import '../models/backtest_request.dart';
 import '../backtest_engine.dart';
-import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:provider/provider.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class BacktestConfigScreen extends StatefulWidget {
   final GeneratedStrategy? strategy;
@@ -46,7 +46,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'BACKTEST CONFIGURATION',
+          'SET UP A BACKTEST',
           style: TextStyle(
             color: VxColors.neonCyan,
             letterSpacing: 0.3,
@@ -59,6 +59,20 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const FeatureIntro(
+              featureId: 'backtest_config',
+              icon: Icons.history_toggle_off_rounded,
+              what: 'A backtest replays past prices and applies your '
+                  'strategy\'s rules to them, so you can see what it would '
+                  'have done without risking anything.',
+              when: 'Run one before trusting a strategy. Fees and slippage '
+                  'are applied, because a strategy that only works without '
+                  'costs does not work.',
+              caution: 'A good result on one stretch of history is not a '
+                  'forecast. Test more than one period, and expect live '
+                  'results to be worse than the backtest.',
+            ),
+            const SizedBox(height: 8),
             // Strategy Selection
             _buildSectionHeader('STRATEGY'),
             const SizedBox(height: 12),
@@ -74,7 +88,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             const SizedBox(height: 24),
 
             // Initial equity
-            _buildSectionHeader('INITIAL CAPITAL'),
+            _buildSectionHeader('STARTING BALANCE'),
             const SizedBox(height: 12),
             _buildEquitySlider(),
 
@@ -405,17 +419,15 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
   Future<void> _runBacktest() async {
     setState(() => _isRunning = true);
 
-    // Check subscription limit (Soft Gate)
-    final canRun = await GetIt.I<SubscriptionService>().checkAndTrackBacktest();
-    if (!canRun) {
-      setState(() => _isRunning = false);
-      if (mounted) {
-        _showUpgradeDialog(
-            "Free accounts get 1 backtest per day. Want to test this strategy now? Premium gives you unlimited backtests.");
-      }
-      return;
-    }
-
+    // Backtesting is not rationed.
+    //
+    // It used to be capped at one a day on the free tier. That gated the one
+    // activity the Academy spends four lessons telling people to do, and the
+    // lesson on sample size explicitly says a handful of results is noise --
+    // so the app was teaching "test it properly" while charging for the
+    // second attempt. A backtest is also a local computation over data the
+    // device already has: it costs nothing to serve, so rationing it was
+    // never about capacity.
     try {
       final isGenerated = _selectedStrategy is GeneratedStrategy;
 
@@ -466,36 +478,7 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
     );
   }
 
-  void _showUpgradeDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: VxColors.deepBlack,
-        title: const Text(
-          'UPGRADE TO PREMIUM',
-          style: TextStyle(
-            color: VxColors.neonCyan,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.3,
-          ),
-        ),
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.push('/subscription');
-            },
-            child: const Text('Start Free Trial',
-                style: TextStyle(color: VxColors.neonCyan)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Wait Until Tomorrow',
-                style: TextStyle(color: Colors.grey)),
-          ),
-        ],
-      ),
-    );
-  }
+  // The upgrade dialog that used to live here was only ever shown when a free
+  // account hit the one-backtest-a-day limit. With that limit gone there is
+  // nothing to upsell on this screen, and a dialog with no caller is dead code.
 }

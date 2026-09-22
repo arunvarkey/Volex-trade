@@ -146,9 +146,38 @@ class XpService extends ChangeNotifier {
     return amount;
   }
 
-  /// Adds [amount] XP for a *repeatable* action (a paper trade, a backtest)
-  /// without idempotency tracking — every call counts. Use [awardOnce] for
-  /// one-time milestones like completing a specific lesson.
+  /// XP for placing a paper trade that carried a stop-loss, capped at
+  /// [maxTradeAwardsPerDay] a day.
+  ///
+  /// This used to be a flat [addXp] on every order placed: fifteen XP for the
+  /// act of trading, uncapped, with no condition attached. That pays for
+  /// volume, and volume is the single behaviour most reliably associated with
+  /// retail traders losing money — the same mechanic as a streak counter on a
+  /// brokerage app, which is why those draw regulatory attention. An app whose
+  /// own Academy teaches "a trade without a stop is an open-ended bet on your
+  /// ego", and whose trade checks warn about overtrading by name, should not
+  /// have been quietly rewarding the opposite.
+  ///
+  /// Progression is kept, but it is paid for the habit rather than the
+  /// activity: the trade has to have a stop, and the third one each day is the
+  /// last that earns anything. The daily cap rides on [awardOnce]'s existing
+  /// idempotency by keying on the date, so it needs no extra storage and
+  /// survives a restart like everything else.
+  static const int maxTradeAwardsPerDay = 3;
+
+  Future<int> awardTradeWithStop(DateTime now) async {
+    final day = '${now.year}-${now.month.toString().padLeft(2, '0')}-'
+        '${now.day.toString().padLeft(2, '0')}';
+    for (var i = 1; i <= maxTradeAwardsPerDay; i++) {
+      final added = await awardOnce('trade_stop_${day}_$i', tradeXp);
+      if (added > 0) return added;
+    }
+    return 0;
+  }
+
+  /// Adds [amount] XP for a *repeatable* action (a backtest) without
+  /// idempotency tracking — every call counts. Use [awardOnce] for one-time
+  /// milestones like completing a specific lesson.
   Future<void> addXp(int amount) async {
     await ensureLoaded();
     if (amount <= 0) return;

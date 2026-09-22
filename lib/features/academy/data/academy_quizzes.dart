@@ -666,5 +666,213 @@ class AcademyQuizzes {
             'tomorrow.',
       ),
     ],
+
+    // ── Added lessons ──────────────────────────────────────────────
+    'f5': [
+      QuizQuestion(
+        prompt: 'What do studies of retail traders consistently find?',
+        options: [
+          'Most active retail traders make money',
+          'Most active retail traders lose money, largely to costs, size and behaviour',
+          'Results are evenly split between winners and losers',
+          'Only people without charts lose money',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Barber and Odean found the most active traders underperformed the '
+            'least active, and a study of Brazilian day traders who persisted '
+            '300+ days found almost all lost money.',
+      ),
+      QuizQuestion(
+        prompt: 'In that Brazilian day-trading study, what did persistence achieve?',
+        options: [
+          'It turned most losers into winners over time',
+          'It made no meaningful difference — almost all still lost',
+          'It guaranteed profitability after one year',
+          'It was never measured',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Trading for longer did not fix the outcome. Method and discipline '
+            'have to change, not just the number of hours.',
+      ),
+      QuizQuestion(
+        prompt: 'Of the four main reasons traders lose, how many are about market knowledge?',
+        options: [
+          'All four',
+          'Three of the four',
+          'Only one — the rest are costs, size and behaviour',
+          'None of them',
+        ],
+        correctIndex: 2,
+        explanation:
+            'Costs, position size and behaviour account for three of the four. '
+            'That is why this Academy spends more time on them than on patterns.',
+      ),
+    ],
+    't5': [
+      QuizQuestion(
+        prompt: 'When is a trading fee charged?',
+        options: [
+          'Only when you make a profit',
+          'Only when you open a position',
+          'On the way in and again on the way out, win or lose',
+          'Once a month, as a subscription',
+        ],
+        correctIndex: 2,
+        explanation:
+            'Both the opening and the closing fill are charged, regardless of '
+            'whether the trade made money.',
+      ),
+      QuizQuestion(
+        prompt: 'At 0.075% a side, roughly what does one round trip cost?',
+        options: [
+          'About 0.015%',
+          'About 0.15%',
+          'About 1.5%',
+          'Nothing, if the trade wins',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Two fills at 0.075% is about 0.15% of the position, before spread '
+            'and slippage are counted.',
+      ),
+      QuizQuestion(
+        prompt: 'Why is frequent trading especially expensive?',
+        options: [
+          'Exchanges raise the fee rate for active traders',
+          'Cost is charged per trade, so trading more multiplies it',
+          'Frequent traders always pick worse assets',
+          'It is not — costs depend only on profit',
+        ],
+        correctIndex: 1,
+        explanation:
+            'The cost is per trade, not per pound of profit. Ten round trips a '
+            'day is roughly 1.5% of traded value a day in costs alone.',
+      ),
+    ],
+    'r5': [
+      QuizQuestion(
+        prompt: 'You hold five long crypto positions, each risking 1%. What is your real risk?',
+        options: [
+          'Five separate, independent 1% risks',
+          'Closer to a single 5% risk, because they move together',
+          'Exactly 1%, because that is what you set per trade',
+          'Zero, because holding several assets is diversification',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Correlated assets fall together. The event that stops out one '
+            'position stops out all five, on the same day.',
+      ),
+      QuizQuestion(
+        prompt: 'What tends to happen to correlations during a market panic?',
+        options: [
+          'They break down, so assets move independently',
+          'They rise — assets move as one, exactly when you need diversification',
+          'They stay fixed, since correlation never changes',
+          'They reverse, so assets move in opposite directions',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Pairs that drift apart in calm markets tend to move together in a '
+            'panic, which is when the diversification was supposed to help.',
+      ),
+      QuizQuestion(
+        prompt: 'What does genuine diversification require?',
+        options: [
+          'Holding as many positions as possible',
+          'Holding things that do not move together',
+          'Holding five versions of the same trade',
+          'Opening positions on different days',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Holding five of the same thing is concentration with extra fees. '
+            'Count risk by what moves together.',
+      ),
+    ],
+    'p5': [
+      QuizQuestion(
+        prompt: 'What is expectancy?',
+        options: [
+          'The percentage of trades that win',
+          '(win rate x average win) minus (loss rate x average loss)',
+          'The largest winning trade you have had',
+          'How confident you feel about a trade',
+        ],
+        correctIndex: 1,
+        explanation:
+            'It combines how often you win with how much you win and lose, '
+            'giving what one trade is worth on average.',
+      ),
+      QuizQuestion(
+        prompt: 'A strategy wins 70% of the time but winners are a third the size of losers. Is it profitable?',
+        options: [
+          'Yes — a 70% win rate is always profitable',
+          'No — (0.70 x 0.33) - (0.30 x 1) is negative',
+          'Yes, but only with leverage',
+          'It cannot be calculated',
+        ],
+        correctIndex: 1,
+        explanation:
+            'It loses money while winning most of its trades. Win rate on its '
+            'own is a vanity metric.',
+      ),
+      QuizQuestion(
+        prompt: 'Can a strategy that is wrong 60% of the time make money?',
+        options: [
+          'No, never',
+          'Yes, if its winners are large enough relative to its losers',
+          'Only if it uses more indicators',
+          'Only over a single trade',
+        ],
+        correctIndex: 1,
+        explanation:
+            'Wins 40% of the time with winners twice the size of losers gives '
+            '(0.40 x 2) - (0.60 x 1) = +0.2. Profitable while mostly wrong.',
+      ),
+    ],
+    'p6': [
+      QuizQuestion(
+        prompt: 'Roughly how many trades before you should believe an edge is real?',
+        options: [
+          'About 5',
+          'About 10',
+          '100 or more, and treat under 30 as a story rather than evidence',
+          'Sample size does not matter if the win rate is high',
+        ],
+        correctIndex: 2,
+        explanation:
+            'Even at 100 trades a measured 55% win rate is consistent with a '
+            'true rate from the mid-forties to the mid-sixties.',
+      ),
+      QuizQuestion(
+        prompt: 'With a genuine 45% win rate, how unusual is a run of six losses?',
+        options: [
+          'It should never happen',
+          'It is normal — roughly once every sixty trades',
+          'It proves the strategy has stopped working',
+          'It only happens with a losing strategy',
+        ],
+        correctIndex: 1,
+        explanation:
+            'That is what a 45% win rate looks like from the inside. Abandoning '
+            'a working strategy during one is a common, expensive mistake.',
+      ),
+      QuizQuestion(
+        prompt: 'Why do small samples make curve-fitting easy to miss?',
+        options: [
+          'They contain too many trades to review',
+          'Tuning rules to fit 20 historical trades memorises coincidences, not an edge',
+          'They always show losses',
+          'They cannot be backtested',
+        ],
+        correctIndex: 1,
+        explanation:
+            'A strategy tuned until it looks perfect over a handful of trades '
+            'has learned that stretch of history, not the market.',
+      ),
+    ],
   };
 }

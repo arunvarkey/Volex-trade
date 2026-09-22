@@ -25,6 +25,7 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
+            tooltip: 'Settings',
             icon: const Icon(Icons.settings, color: Colors.white70),
             onPressed: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const SettingsScreen())),
@@ -62,6 +63,7 @@ class ProfileScreen extends StatelessWidget {
                       backgroundColor: VxColors.primary,
                       radius: 20,
                       child: IconButton(
+                        tooltip: 'Change photo',
                         icon: const Icon(Icons.camera_alt,
                             size: 18, color: Colors.white),
                         onPressed: () =>

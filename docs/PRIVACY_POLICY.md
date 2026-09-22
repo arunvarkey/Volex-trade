@@ -1,29 +1,27 @@
-# PRIVACY POLICY - VOLEX TERMINAL
+# Privacy policy — superseded
 
-Last Updated: January 28, 2026
+The policy that ships is **[`store/privacy-policy.html`](../store/privacy-policy.html)**.
+That is the file to host and to link from the Play Console.
 
-Volex Terminal ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our mobile application.
+This markdown version is kept only as a pointer, because the text it used to
+contain described a different application and would have been wrong as a legal
+document:
 
-## 1. INFORMATION WE COLLECT
-- **Account Information:** We collect your operator name, email, and biometric data (stored locally on your device via Secure Enclave) if you enable it.
-- **Trade Data:** We monitor your trade performance and analytics to provide the risk management and analytics features.
-- **Device Information:** We collect data about your device type, OS version, and crash logs to improve app stability.
-- **API Keys:** Your exchange API keys are stored with AES-256 encryption on your device and are never transmitted to our servers.
+- **"We transmit trade intent to your connected exchange (e.g., Binance) to
+  execute orders."** The app places no real orders and holds no exchange
+  connection. A privacy policy that says otherwise tells a regulator the app
+  does something it does not do.
+- **"Your exchange API keys are stored with AES-256 encryption on your
+  device."** The app no longer collects exchange keys at all; the screen that
+  used to now offers to delete anything an earlier build saved.
+- **"To provide AI-generated strategy recommendations."** There is no model
+  and nothing is sent anywhere to be analysed.
+- **"biometric data (stored locally via Secure Enclave)"** — the app lock uses
+  the platform biometric prompt, which returns a yes/no. No biometric data is
+  read, stored or transmitted by Volex.
+- The contact line was still `[YOUR_CONTACT_EMAIL]`.
 
-## 2. HOW WE USE INFORMATION
-- To provide the trading services and analytics.
-- To enforce risk-management rules (drawdown limits).
-- To provide AI-generated strategy recommendations.
-- To improve app performance and security.
-
-## 3. DATA SHARING
-- We do not sell your personal data.
-- We share anonymized analytics with Firebase for performance monitoring.
-- We transmit trade intent to your connected exchange (e.g., Binance) to execute orders.
-
-## 4. YOUR RIGHTS
-- You can delete your account and all associated local data at any time via the Settings menu.
-- You can request an export of your trade history.
-
-## 5. CONTACT US
-If you have any questions, contact us at [YOUR_CONTACT_EMAIL].
+A privacy policy is the one document where over-claiming is worse than
+under-claiming: it is a binding statement about data handling, and the Play
+Data Safety form must agree with it. `store/privacy-policy.html` and
+`store/data-safety.md` are written to match each other and the code.

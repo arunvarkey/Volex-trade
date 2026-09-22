@@ -3,12 +3,13 @@ import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
-import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
 import '../data/prediction_data.dart';
 import '../models/prediction_models.dart';
 import '../services/prediction_portfolio_service.dart';
 import 'widgets/prediction_widgets.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 /// The "Buzz & Predictions" hub — Kalshi-style event markets driven by a
 /// mentions/buzz feed, all traded with virtual money.
@@ -64,11 +65,18 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
             children: [
-              const GuidanceBanner(
-                id: 'predict_intro',
-                text:
-                    'Predict real-world events with virtual money. Pick Yes or No, '
-                    'set how many contracts, and see your payout if you\'re right.',
+              const FeatureIntro(
+                featureId: 'predictions',
+                icon: Icons.insights_rounded,
+                what: 'Markets on whether something will happen, instead of on '
+                    'a price. You buy Yes or No; each contract pays \$1 if you '
+                    'are right and nothing if you are wrong.',
+                when: 'The price tells you the odds. A contract at 40c means '
+                    'the crowd thinks it is about 40% likely — so the question '
+                    'is not "will this happen" but "are they wrong about how '
+                    'likely it is".',
+                caution: 'Virtual money only. Nothing here is a wager and '
+                    'nothing pays out in real terms.',
               ),
               _BalanceHeader(portfolio: _portfolio),
               const SizedBox(height: 22),
@@ -160,7 +168,8 @@ class _BalanceHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Net worth \$${portfolio.netWorth.toStringAsFixed(2)}',
+                  'Cash plus open contracts: '
+                  '\$${portfolio.netWorth.toStringAsFixed(2)}',
                   style: VxTypography.caption.copyWith(fontSize: 11),
                 ),
               ],
@@ -176,8 +185,11 @@ class _BalanceHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('OPEN P/L',
-                    style: VxTypography.caption.copyWith(fontSize: 9)),
+                InfoLabel(
+                  text: 'OPEN P&L',
+                  termId: 'pnl',
+                  style: VxTypography.caption.copyWith(fontSize: 9),
+                ),
                 const SizedBox(height: 2),
                 Text(
                   '${up ? '+' : '-'}\$${pnl.abs().toStringAsFixed(2)}',

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../vx_colors.dart';
+import 'package:volex_terminal/core/glossary.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 
 /// Model for a technical indicator
 class TechnicalIndicator {
@@ -98,7 +100,7 @@ class TechnicalIndicators {
     ),
     TechnicalIndicator(
       id: 'macd',
-      name: 'MACD',
+      name: 'MACD (Momentum)',
       shortName: 'MACD',
       color: VxColors.neonGreen,
       icon: Icons.area_chart,
@@ -326,13 +328,32 @@ class _IndicatorTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        indicator.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              indicator.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          if (Glossary.has(_glossaryIdFor(indicator.id))) ...[
+                            const SizedBox(width: 6),
+                            GestureDetector(
+                              onTap: () => GlossarySheet.show(
+                                  context, _glossaryIdFor(indicator.id)),
+                              behavior: HitTestBehavior.opaque,
+                              child: const Padding(
+                                padding: EdgeInsets.all(2),
+                                child: Icon(Icons.help_outline_rounded,
+                                    size: 14, color: Colors.white38),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       if (indicator.params.isNotEmpty)
                         Text(
@@ -349,6 +370,7 @@ class _IndicatorTile extends StatelessWidget {
                 ),
                 if (indicator.isEnabled)
                   IconButton(
+                    tooltip: 'Settings',
                     icon: const Icon(Icons.settings, size: 16),
                     color: Colors.white38,
                     onPressed: onSettings,
@@ -526,3 +548,8 @@ class _IndicatorSettingsSheetState extends State<_IndicatorSettingsSheet> {
     );
   }
 }
+
+/// Indicator ids line up with glossary keys apart from Bollinger Bands,
+/// which is abbreviated to "bb" in the chart config.
+String _glossaryIdFor(String indicatorId) =>
+    indicatorId == 'bb' ? 'bollinger_bands' : indicatorId;

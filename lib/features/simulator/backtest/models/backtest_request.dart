@@ -1,5 +1,5 @@
 // lib/engine/backtest/models/backtest_request.dart
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 
 class BacktestRequest {
   final GeneratedStrategy? strategy;

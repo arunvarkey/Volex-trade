@@ -10,6 +10,7 @@ class AuthGuard {
     '/login',
     '/signup',
     '/onboarding',
+    '/risk-disclosure',
     '/verify-email'
   ];
 
@@ -39,10 +40,14 @@ class AuthGuard {
           : '/verify-email';
     }
 
-    // Logged in and verified on public route (except splash/onboarding/verify) -> go home
+    // Logged in and verified on public route (except splash/onboarding/
+    // risk-disclosure/verify) -> go home. The risk disclosure has to survive
+    // this bounce: an existing signed-in user who hasn't acknowledged it yet
+    // is routed there by the splash and must be allowed to stay.
     if (isPublic &&
         state.uri.path != '/splash' &&
         state.uri.path != '/onboarding' &&
+        state.uri.path != '/risk-disclosure' &&
         state.uri.path != '/verify-email') {
       return '/';
     }

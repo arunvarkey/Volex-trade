@@ -204,14 +204,19 @@ class StrategyRunner {
   }
 
   Future<void> _close(String key, String id, Position pos, double price) async {
-    // Offsetting market order (ExecutionManager.closeOrder omits the required
-    // currentPrice, so we close directly).
+    // Offsetting market order placed directly rather than via closeOrder,
+    // because we already hold the live price for this symbol and closeOrder
+    // would only back one out of the position's last-marked P&L.
     await _execution.placeMarketOrder(
       symbol: pos.symbol,
       side: pos.side == OrderSide.buy ? OrderSide.sell : OrderSide.buy,
       quantity: pos.quantity,
       currentPrice: price,
       strategyId: id,
+      // Exiting is a reduction, so it is not blocked once the daily loss
+      // limit trips the emergency stop. Without this a strategy's own
+      // stop-loss exit would be refused exactly when it was needed.
+      isReduction: true,
     );
     _brackets.remove(key);
     _cooldownUntil[key] = DateTime.now().add(_cooldown);

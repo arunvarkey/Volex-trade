@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
@@ -32,6 +33,11 @@ class _QuizScreenState extends State<QuizScreen> {
   bool _finished = false;
   int _awardedXp = 0;
 
+  /// When the learner opened the quiz, so [VxFunnel.lessonCompleted] can carry
+  /// how long it took. Duration is what separates a lesson someone read from
+  /// one they clicked through — both look identical as a completion count.
+  final DateTime _startedAt = DateTime.now();
+
   QuizQuestion get _q => _questions[_index];
   bool get _answered => _chosen != null;
 
@@ -41,6 +47,9 @@ class _QuizScreenState extends State<QuizScreen> {
       _chosen = i;
       if (_q.isCorrect(i)) _correct++;
     });
+    // Per-question, so a question the whole cohort gets wrong shows up as a
+    // lesson that failed to teach rather than as learners who failed.
+    VxFunnel.quizAnswered(widget.lesson.id, correct: _q.isCorrect(i));
   }
 
   Future<void> _next() async {
@@ -57,6 +66,13 @@ class _QuizScreenState extends State<QuizScreen> {
       await AcademyProgressService.instance.markComplete(widget.lesson.id);
       _awardedXp = await XpService.instance
           .awardOnce('lesson:${widget.lesson.id}', XpService.lessonXp);
+      VxFunnel.lessonCompleted(
+        widget.lesson.id,
+        DateTime.now().difference(_startedAt).inSeconds,
+      );
+      VxFunnel.setLessonsBucket(
+        AcademyProgressService.instance.completedCount,
+      );
     }
     if (!mounted) return;
     setState(() => _finished = true);

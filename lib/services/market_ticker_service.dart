@@ -63,6 +63,14 @@ class MarketTickerService extends ChangeNotifier {
     _timer = Timer.periodic(_pollInterval, (_) => _fetch());
   }
 
+  /// Stop polling. Called when the app goes to the background — this used to
+  /// keep hitting Binance every 10 seconds for a tape nobody could see.
+  /// [start] is idempotent, so resuming is just another start().
+  void stop() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
   Future<void> _fetch() async {
     if (_fetching) return;
     _fetching = true;

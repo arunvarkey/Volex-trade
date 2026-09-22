@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/trading/services/secure_trading_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
-import 'package:volex_terminal/core/service_locator.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
+/// Exchange connection — deliberately not available.
+///
+/// This screen used to collect a real Binance API key and secret, store them,
+/// and report "Exchange connected successfully". Nothing in the app ever read
+/// them back: `SecureTradingService.executeTrade` has no callers and
+/// `isLiveMode` is never set true from any UI. Pro-mode onboarding sent every
+/// new user straight here, so the first thing the app asked a new Pro user for
+/// was live exchange credentials it had no use for.
+///
+/// That is worse than a confusing screen. Exchange keys carry real authority;
+/// asking for them buys the user nothing here and leaves credentials on the
+/// device for no reason, and telling someone they are connected to an exchange
+/// when they are not is exactly the kind of claim a simulator must never make.
+///
+/// The screen now says what is true, and offers to delete any keys stored by
+/// the previous version. When live trading is actually built, the form belongs
+/// back here — behind a working execution path, not in front of one.
 class ApiKeySetupScreen extends StatefulWidget {
   const ApiKeySetupScreen({super.key});
 
@@ -14,13 +31,9 @@ class ApiKeySetupScreen extends StatefulWidget {
 }
 
 class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
-  final _apiKeyController = TextEditingController();
-  final _secretKeyController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
-  bool _obscureSecret = true;
-  bool _loading = false;
-  bool _hasExistingKeys = false;
+  bool _checking = true;
+  bool _hasStoredKeys = false;
+  String? _maskedKey;
 
   @override
   void initState() {
@@ -29,12 +42,63 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
   }
 
   Future<void> _checkExistingKeys() async {
-    final hasKeys = await getIt<SecureTradingService>().hasApiKeys();
-    setState(() => _hasExistingKeys = hasKeys);
+    try {
+      final service = getIt<SecureTradingService>();
+      final hasKeys = await service.hasApiKeys();
+      final masked = hasKeys ? await service.getMaskedApiKey() : null;
+      if (!mounted) return;
+      setState(() {
+        _hasStoredKeys = hasKeys;
+        _maskedKey = masked;
+        _checking = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _checking = false);
+    }
+  }
 
-    if (hasKeys) {
-      final masked = await getIt<SecureTradingService>().getMaskedApiKey();
-      _apiKeyController.text = masked ?? '';
+  Future<void> _removeKeys() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: VxColors.surface,
+        title: Text('Delete stored keys?',
+            style: VxTypography.h3.copyWith(fontWeight: FontWeight.w700)),
+        content: Text(
+          'This removes the exchange API key and secret from this device. '
+          'Nothing in Volex uses them, so nothing will stop working.',
+          style: VxTypography.bodySmall.copyWith(height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: VxColors.neonRed),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await getIt<SecureTradingService>().removeApiKeys();
+      if (!mounted) return;
+      setState(() {
+        _hasStoredKeys = false;
+        _maskedKey = null;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Stored keys deleted')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete keys: $e')),
+      );
     }
   }
 
@@ -44,533 +108,147 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
       backgroundColor: VxColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('Connect Exchange'),
+        title: const Text('Exchange Connection'),
         leading: IconButton(
+          tooltip: 'Close',
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
         ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Security warning
-              _buildSecurityWarning(),
-
-              const SizedBox(height: 32),
-
-              // Instructions
-              _buildInstructions(),
-
-              const SizedBox(height: 32),
-
-              // API Key input
-              const Text(
-                'API Key',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: VxColors.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(16),
+                border:
+                    Border.all(color: VxColors.primary.withValues(alpha: 0.25)),
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _apiKeyController,
-                enabled: !_hasExistingKeys,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: VxTypography.monoFamily,
-                  fontSize: 13,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Enter your Binance API key',
-                  hintStyle: const TextStyle(color: Colors.white24),
-                  filled: true,
-                  fillColor: VxColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded,
+                          color: VxColors.primary, size: 22),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Volex does not connect to an exchange',
+                          style: VxTypography.body
+                              .copyWith(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ],
                   ),
-                  suffixIcon: _hasExistingKeys
-                      ? const Icon(Icons.check_circle, color: VxColors.positive)
-                      : null,
-                ),
-                validator: (value) {
-                  if (!_hasExistingKeys && (value == null || value.isEmpty)) {
-                    return 'API key is required';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 24),
-
-              // Secret Key input
-              const Text(
-                'Secret Key',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _secretKeyController,
-                enabled: !_hasExistingKeys,
-                obscureText: _obscureSecret,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: VxTypography.monoFamily,
-                  fontSize: 13,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Enter your Binance secret key',
-                  hintStyle: const TextStyle(color: Colors.white24),
-                  filled: true,
-                  fillColor: VxColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+                  const SizedBox(height: 14),
+                  Text(
+                    'Every trade in this app is simulated against real market '
+                    'prices using virtual money. There is no live trading, so '
+                    'there is nothing for exchange API keys to do.',
+                    style: VxTypography.bodySmall.copyWith(height: 1.5),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureSecret ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.white38,
-                    ),
-                    onPressed: () =>
-                        setState(() => _obscureSecret = !_obscureSecret),
-                  ),
-                ),
-                validator: (value) {
-                  if (!_hasExistingKeys && (value == null || value.isEmpty)) {
-                    return 'Secret key is required';
-                  }
-                  return null;
-                },
+                ],
               ),
-
-              const SizedBox(height: 32),
-
-              // Critical security checklist
-              _buildSecurityChecklist(),
-
-              const SizedBox(height: 32),
-
-              // Action buttons
-              if (_hasExistingKeys)
-                _buildExistingKeysActions()
-              else
-                _buildNewKeysActions(),
-
-              const SizedBox(height: 24),
-
-              // Help link
-              Center(
-                child: TextButton.icon(
-                  onPressed: _openBinanceApiHelp,
-                  icon: const Icon(Icons.help_outline, size: 18),
-                  label: const Text('How to create API keys?'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSecurityWarning() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: VxColors.danger.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: VxColors.danger.withValues(alpha: 0.3), width: 2),
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.security, color: VxColors.danger, size: 28),
-              SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Security First',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Text(
-            '• Your API keys NEVER leave your device\n'
-            '• Keys are encrypted with AES-256\n'
-            '• We NEVER see or store your keys\n'
-            '• Withdrawal permission MUST be disabled',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              height: 1.6,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInstructions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Setup Instructions',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        _buildInstructionStep('1', 'Go to Binance → API Management'),
-        _buildInstructionStep('2', 'Create new API key'),
-        _buildInstructionStep('3', 'Enable "Spot & Margin Trading"'),
-        _buildInstructionStep('4', 'DISABLE "Enable Withdrawals" ⚠️'),
-        _buildInstructionStep('5', 'Copy keys and paste below'),
-      ],
-    );
-  }
-
-  Widget _buildInstructionStep(String number, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: VxColors.primary.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                number,
-                style: const TextStyle(
+            const SizedBox(height: 28),
+            Text('WHY WE DO NOT ASK FOR YOUR KEYS',
+                style: VxTypography.caption.copyWith(
                   color: VxColors.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  letterSpacing: 0.6,
+                )),
+            const SizedBox(height: 8),
+            Text(
+              'An exchange API key can move real money. Handing one to an app '
+              'that cannot use it gains you nothing and leaves a live '
+              'credential sitting on your phone. An earlier version of this '
+              'screen collected them anyway and reported success. It should '
+              'not have, and it no longer does.',
+              style: VxTypography.bodySmall.copyWith(
+                color: VxColors.textSecondary,
+                height: 1.55,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'If live trading is added later, this is where it will be set '
+              'up — and it will say plainly what it is about to do before it '
+              'asks for anything.',
+              style: VxTypography.bodySmall.copyWith(
+                color: VxColors.textSecondary,
+                height: 1.55,
+              ),
+            ),
+            if (_checking) ...[
+              const SizedBox(height: 32),
+              const Center(
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: VxColors.primary),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: VxColors.textSecondary,
-                  fontSize: 14,
+            ] else if (_hasStoredKeys) ...[
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: VxColors.neonRed.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                      color: VxColors.neonRed.withValues(alpha: 0.3)),
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSecurityChecklist() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: VxColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: VxColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '⚠️ CRITICAL: Before connecting',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildChecklistItem(
-            '❌ "Enable Withdrawals" is DISABLED',
-            'This prevents anyone from stealing your funds',
-          ),
-          _buildChecklistItem(
-            '✅ "Enable Spot Trading" is ENABLED',
-            'This allows the app to place trades',
-          ),
-          _buildChecklistItem(
-            '✅ API key has IP restrictions (optional)',
-            'Additional security layer',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChecklistItem(String title, String subtitle) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              color: VxColors.textTertiary,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNewKeysActions() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _loading ? null : _connectExchange,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: VxColors.primary,
-              foregroundColor: VxColors.deepBlack, // ✅ ADDED
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: _loading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: VxColors.deepBlack, // ✅ FIXED
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Keys are stored on this device',
+                      style: VxTypography.body
+                          .copyWith(fontWeight: FontWeight.w700),
                     ),
-                  )
-                : const Text(
-                    'Connect Exchange',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 8),
+                    Text(
+                      _maskedKey == null
+                          ? 'An earlier version of Volex saved exchange keys '
+                              'here. Nothing uses them. We recommend deleting '
+                              'them, and revoking them at your exchange.'
+                          : 'Saved key $_maskedKey. Nothing uses it. We '
+                              'recommend deleting it here, and revoking it at '
+                              'your exchange.',
+                      style: VxTypography.bodySmall.copyWith(
+                        color: VxColors.textSecondary,
+                        height: 1.5,
+                      ),
                     ),
-                  ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildExistingKeysActions() {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: VxColors.positive.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: VxColors.positive.withValues(alpha: 0.3)),
-          ),
-          child: const Row(
-            children: [
-              Icon(Icons.check_circle, color: VxColors.positive),
-              SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Exchange Connected',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _removeKeys,
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: VxColors.neonRed),
+                          foregroundColor: VxColors.neonRed,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        icon: const Icon(Icons.delete_outline_rounded),
+                        label: const Text('Delete stored keys'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
+            const SizedBox(height: 32),
+          ],
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: _disconnectExchange,
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: VxColors.danger),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Disconnect Exchange',
-              style: TextStyle(
-                color: VxColors.danger,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _connectExchange() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _loading = true);
-
-    try {
-      await getIt<SecureTradingService>().storeApiKeys(
-        apiKey: _apiKeyController.text.trim(),
-        secretKey: _secretKeyController.text.trim(),
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Exchange connected successfully!'),
-            backgroundColor: VxColors.positive,
-          ),
-        );
-        context.pop();
-      }
-    } on SecurityException catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: VxColors.surface,
-            title: const Row(
-              children: [
-                Icon(Icons.error, color: VxColors.danger),
-                SizedBox(width: 12),
-                Text('Security Error',
-                    style: TextStyle(color: Colors.white)),
-              ],
-            ),
-            content: Text(
-              e.message,
-              style: const TextStyle(color: VxColors.textSecondary),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-              ElevatedButton(
-                onPressed: _openBinanceApiManagement,
-                child: const Text('Open Binance'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Error: $e'),
-            backgroundColor: VxColors.danger,
-          ),
-        );
-      }
-    } finally {
-      setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _disconnectExchange() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: VxColors.surface,
-        title: const Text('Disconnect Exchange?',
-            style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'Your API keys will be permanently deleted from this device. '
-          'You can reconnect anytime.',
-          style: TextStyle(color: VxColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: VxColors.danger),
-            child: const Text('Disconnect'),
-          ),
-        ],
       ),
     );
-
-    if (confirmed == true) {
-      await getIt<SecureTradingService>().removeApiKeys();
-      setState(() {
-        _hasExistingKeys = false;
-        _apiKeyController.clear();
-        _secretKeyController.clear();
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Exchange disconnected')),
-        );
-      }
-    }
-  }
-
-  Future<void> _openBinanceApiHelp() async {
-    final url = Uri.parse(
-        'https://www.binance.com/en/support/faq/how-to-create-api-360002502072');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _openBinanceApiManagement() async {
-    final url =
-        Uri.parse('https://www.binance.com/en/my/settings/api-management');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  @override
-  void dispose() {
-    _apiKeyController.dispose();
-    _secretKeyController.dispose();
-    super.dispose();
   }
 }

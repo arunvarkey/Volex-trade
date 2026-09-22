@@ -65,7 +65,7 @@ class RiskDisclaimerDialog extends StatelessWidget {
                 text: "Past performance does not guarantee future results."),
             _BulletItem(
                 text:
-                    "AI-generated strategies are for educational purposes only."),
+                    "Strategies and backtests are for educational purposes only."),
             _BulletItem(text: "Volex Terminal is not a financial advisor."),
           ],
         ),

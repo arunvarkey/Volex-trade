@@ -56,4 +56,18 @@ class AnalyticsService {
       AppLogger.error('Screen view log failed', e);
     }
   }
+
+  /// Sets a user property for cohort segmentation.
+  ///
+  /// Properties are what let retention be split by behaviour rather than read
+  /// as one average. Firebase allows 25 custom properties per project and
+  /// treats high-cardinality values poorly, so callers should pass bucketed
+  /// labels — see [VxFunnel] — not raw counts.
+  void setUserProperty(String name, String value) {
+    try {
+      _analytics?.setUserProperty(name: name, value: value);
+    } catch (e) {
+      AppLogger.error('User property set failed', e);
+    }
+  }
 }

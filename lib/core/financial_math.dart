@@ -312,4 +312,29 @@ class FinancialMath {
     final total = sum(centsList);
     return divide(total, centsList.length);
   }
+
+  // ============================================
+  // PROTECTIVE EXITS
+  // ============================================
+
+  /// Whether an open position's stop-loss or take-profit has been reached at
+  /// [price].
+  ///
+  /// The comparison flips with direction — a long stops out *below* entry and
+  /// targets *above* it, a short is the mirror image — so this is kept as a
+  /// pure function that can be tested directly. Getting it backwards would
+  /// either close every position instantly or never close one at all.
+  static bool shouldTriggerProtectiveExit({
+    required bool isLong,
+    required double price,
+    double? stopLoss,
+    double? takeProfit,
+  }) {
+    if (price <= 0) return false;
+    final hitStop =
+        stopLoss != null && (isLong ? price <= stopLoss : price >= stopLoss);
+    final hitTarget = takeProfit != null &&
+        (isLong ? price >= takeProfit : price <= takeProfit);
+    return hitStop || hitTarget;
+  }
 }

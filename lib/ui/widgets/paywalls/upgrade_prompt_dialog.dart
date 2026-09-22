@@ -77,7 +77,7 @@ class UpgradePromptDialog extends StatelessWidget {
 
             // Message
             const Text(
-              'You\'ve viewed 5 AI-powered signals!\n\nUpgrade to Premium for:',
+              'You\'ve viewed 5 signals today.\n\nUpgrade to Premium for:',
               style: TextStyle(
                 fontSize: 15,
                 color: VxColors.textSecondary,
@@ -91,9 +91,7 @@ class UpgradePromptDialog extends StatelessWidget {
             // Features
             ...[
               '✨ Unlimited signals every day',
-              '🤖 AI Guardian warnings',
-              '📊 Advanced analytics',
-              '🎯 Custom watchlists',
+              '📁 Unlimited saved strategies',
             ].map((feature) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Row(

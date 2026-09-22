@@ -3,7 +3,7 @@ import 'dart:ui';
 import '../engine/chart_controller.dart';
 import '../features/simulator/backtest/backtest_engine.dart';
 import '../features/simulator/backtest/models/backtest_request.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import '../engine/strategy/strategy_engine.dart';
 import '../domain/symbol_info.dart';
 import '../domain/candle_model.dart';

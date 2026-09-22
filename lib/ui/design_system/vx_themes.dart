@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 enum VolexThemeType { cyberpunk, bloomberg, midnight, matrix }
 
@@ -43,30 +42,15 @@ class VolexTheme {
   final Color selectionColor;
   final Color glowColor;
 
-  TextTheme getTextTheme(TextTheme base) {
-    switch (type) {
-      case VolexThemeType.cyberpunk:
-        return GoogleFonts.orbitronTextTheme(base).apply(
-          bodyColor: textPrimary,
-          displayColor: textPrimary,
-        );
-      case VolexThemeType.bloomberg:
-        return GoogleFonts.robotoMonoTextTheme(base).apply(
-          bodyColor: textPrimary,
-          displayColor: textPrimary,
-        );
-      case VolexThemeType.midnight:
-        return GoogleFonts.interTextTheme(base).apply(
-          bodyColor: textPrimary,
-          displayColor: textPrimary,
-        );
-      case VolexThemeType.matrix:
-        return GoogleFonts.shareTechMonoTextTheme(base).apply(
-          bodyColor: textPrimary,
-          displayColor: textPrimary,
-        );
-    }
-  }
+  // A per-theme getTextTheme() lived here, switching between Orbitron,
+  // Roboto Mono, Inter and Share Tech Mono. buildThemeData() deliberately
+  // ignored it and uses DM Sans for everything — that unification is what
+  // fixed pages rendering in different fonts — so it was dead code whose only
+  // effect was to keep four extra font families referenced.
+  //
+  // With fonts now bundled rather than fetched, each referenced family is
+  // weight-per-file in the APK, so an unused one is dead weight as well as
+  // dead code.
 
   static const cyberpunk = VolexTheme(
     type: VolexThemeType.cyberpunk,

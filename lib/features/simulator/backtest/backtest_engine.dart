@@ -4,7 +4,7 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:volex_terminal/data/market_data_repository.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
-import 'package:volex_terminal/features/simulator/ai_strategy/models/generated_strategy.dart';
+import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import 'package:volex_terminal/domain/order.dart' as dom;
 import 'package:volex_terminal/features/academy/services/xp_service.dart';
 import 'models/backtest_request.dart';

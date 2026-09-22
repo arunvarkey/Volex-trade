@@ -8,7 +8,7 @@ class TradeSignal {
   final double stopLoss;
   final double takeProfit;
   final String reasoning;
-  final String? aiWarning;
+  final String? riskWarning;
   final double confidence;
   final String strategyName;
   final DateTime timestamp;
@@ -28,7 +28,7 @@ class TradeSignal {
     required this.stopLoss,
     required this.takeProfit,
     required this.reasoning,
-    this.aiWarning,
+    this.riskWarning,
     required this.confidence,
     required this.strategyName,
     required this.timestamp,
@@ -48,7 +48,9 @@ class TradeSignal {
         'stop_loss': stopLoss,
         'take_profit': takeProfit,
         'reasoning': reasoning,
-        'ai_warning': aiWarning,
+        // Serialised key kept as-is: signals are persisted, and renaming
+        // it would drop the warning on every already-stored signal.
+        'ai_warning': riskWarning,
         'confidence': confidence,
         'strategy_name': strategyName,
         'timestamp': timestamp.toIso8601String(),
@@ -64,7 +66,7 @@ class TradeSignal {
         stopLoss: json['stop_loss'],
         takeProfit: json['take_profit'],
         reasoning: json['reasoning'],
-        aiWarning: json['ai_warning'],
+        riskWarning: json['ai_warning'],
         confidence: json['confidence'],
         strategyName: json['strategy_name'],
         timestamp: DateTime.parse(json['timestamp']),
@@ -88,10 +90,11 @@ $emoji Volex Signal: $action $symbol
 
 📝 $reasoning
 
-${aiWarning != null ? '⚠️ AI Warning: $aiWarning\n' : ''}
+${riskWarning != null ? '⚠️ Warning: $riskWarning\n' : ''}
 ⏰ Valid for ${timeRemaining.inMinutes} minutes
 
-Download Volex Terminal: https://volex.app
+Simulated signal from Volex Terminal, a paper-trading app. Not financial advice.
+https://play.google.com/store/apps/details?id=com.antigravity.volextrade
 ''';
   }
 }

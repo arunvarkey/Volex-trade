@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/features/signals/services/signal_engine.dart';
@@ -16,6 +17,7 @@ import 'package:volex_terminal/features/subscriptions/services/subscription_serv
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/services/startup_service.dart';
 import 'package:volex_terminal/ui/widgets/paywalls/upgrade_prompt_dialog.dart';
+import 'package:volex_terminal/ui/widgets/feature_intro.dart';
 
 class SignalFeedScreen extends StatefulWidget {
   const SignalFeedScreen({super.key});
@@ -30,6 +32,11 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   StreamSubscription<TradeSignal>? _sub;
   bool _scanning = true;
   bool _upgradeDismissed = false;
+
+  /// Guards [VxFunnel.limitHit] against firing on every rebuild. We want the
+  /// count of users who reach the free signal ceiling, not the count of
+  /// repaints while they sit on the screen.
+  bool _signalLimitLogged = false;
 
   @override
   void initState() {
@@ -75,6 +82,17 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(),
+            const FeatureIntro(
+              featureId: 'signals',
+              icon: Icons.notifications_active_outlined,
+              what: 'Volex watches the market for setups its rules recognise '
+                  'and lists them here, with the reason each one triggered.',
+              when: 'Use it to find situations worth a closer look, then open '
+                  'the chart and judge for yourself before trading.',
+              caution: 'A signal is an observation, not a prediction and not '
+                  'advice. Plenty of them lose. Never take one you cannot '
+                  'explain in your own words.',
+            ),
             const SignalLimitBanner(),
             Expanded(
               child: _signals.isEmpty
@@ -87,6 +105,15 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
                             !_upgradeDismissed;
                         final displayCount =
                             showUpgrade ? limit : _signals.length;
+
+                        // The free ceiling was actually reached. Whether this
+                        // ever happens decides whether Premium has a reason to
+                        // exist: it lifts this limit and the saved-strategy
+                        // one, and nothing else.
+                        if (showUpgrade && !_signalLimitLogged) {
+                          _signalLimitLogged = true;
+                          VxFunnel.limitHit('signals_per_day');
+                        }
 
                         return ListView.builder(
                           padding: const EdgeInsets.all(16),
@@ -347,8 +374,8 @@ class _SignalCard extends StatelessWidget {
                   ),
                 ),
 
-                // AI Warning
-                if (signal.aiWarning != null) ...[
+                // What could go wrong with this setup.
+                if (signal.riskWarning != null) ...[
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -357,7 +384,7 @@ class _SignalCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          signal.aiWarning!,
+                          signal.riskWarning!,
                           style: const TextStyle(
                               color: Colors.amber, fontSize: 12),
                         ),

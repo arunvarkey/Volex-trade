@@ -15,7 +15,7 @@ void main() {
 
     log("Starting Market Data Debug...");
 
-    setupServiceLocator(); // Register dependencies for MarketDataRepository factory
+    await setupServiceLocator(); // Register dependencies for MarketDataRepository factory
 
     // Initialize Repository
     final repo = MarketDataRepository.forTesting();

@@ -20,7 +20,7 @@ void main() {
 
   late DashboardProvider provider;
 
-  setUp(() {
+  setUp(() async {
     mockMarketRepo = MockIMarketDataRepository();
     mockExecManager = MockExecutionManager();
     mockRiskManager = MockRiskManager();
@@ -28,7 +28,7 @@ void main() {
     mockUserModeService = MockUserModeService();
 
     // Setup Locator
-    setupServiceLocator(
+    await setupServiceLocator(
       marketRepo: mockMarketRepo,
       execManager: mockExecManager,
       riskManager: mockRiskManager,

@@ -78,7 +78,7 @@ class PredictionPortfolioService extends ChangeNotifier {
   /// Balance + open-position value (virtual $).
   double get netWorth => _balance + positionsValue;
 
-  /// Total unrealised P/L across open positions (virtual $).
+  /// Total unrealised P&L across open positions (virtual $).
   double get totalPnl {
     double total = 0;
     for (final pos in _positions.values) {

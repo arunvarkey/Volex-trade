@@ -1,20 +1,30 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    
-    <!-- Permissions -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Permissions.
+         Only what the app actually uses. Two were dropped:
+
+         REQUEST_IGNORE_BATTERY_OPTIMIZATIONS is restricted by Google Play to
+         a narrow set of use cases (alarms, VoIP, device administration); a
+         trading simulator is not one of them, and requesting it is a common
+         cause of policy rejection.
+
+         FOREGROUND_SERVICE and FOREGROUND_SERVICE_DATA_SYNC backed a
+         flutter_background_service worker whose Dart side was entirely
+         commented out, so no foreground service ever started. Declaring a
+         foreground service type obliges you to justify it in a Play
+         declaration form and shows up in the store listing's permission
+         list — all for a service that did not exist. -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    
-    <!-- Payment & Biometric Permissions -->
+
+    <!-- Billing is real: SubscriptionService uses the in_app_purchase plugin
+         (queryProductDetails, purchaseStream). Biometrics back the app lock;
+         USE_FINGERPRINT is deprecated from API 28 but still needed at our
+         minSdk of 26. -->
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-    
-    <!-- Battery Optimization Exemption for Samsung/others -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:label="Volex Terminal"
@@ -22,15 +32,11 @@
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
         
-        <!-- FIXED: Background Service with proper configuration -->
-        <!-- FIXED: Background Service with tools:replace to override plugin defaults -->
-        <service 
-            android:name="id.flutter.flutter_background_service.BackgroundService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="dataSync"
-            tools:replace="android:exported,android:foregroundServiceType">
-        </service>
+        <!-- A flutter_background_service BackgroundService was declared here
+             with android:exported="true", which would have let any other app
+             on the device start it. Nothing ever ran it — every Dart call
+             site was commented out — so the service and the unused plugin are
+             gone rather than left exported. -->
 
         <activity
             android:name="com.antigravity.volextrade.MainActivity"

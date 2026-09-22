@@ -9,6 +9,7 @@ import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
+import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 
 class SmartOrderSheet extends StatefulWidget {
   final String symbol;
@@ -33,6 +34,15 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       TextEditingController(text: '0.1');
   late final TextEditingController _limitPriceController;
 
+  /// Protective exits are ON by default: the Academy teaches that a trade
+  /// without a stop is "an open-ended bet on your ego", so the ticket should
+  /// make the good habit the default rather than an afterthought.
+  bool _useRiskControls = true;
+  final TextEditingController _slPercentController =
+      TextEditingController(text: '2');
+  final TextEditingController _tpPercentController =
+      TextEditingController(text: '4');
+
   @override
   void initState() {
     super.initState();
@@ -45,10 +55,10 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
   void dispose() {
     _amountController.dispose();
     _limitPriceController.dispose();
+    _slPercentController.dispose();
+    _tpPercentController.dispose();
     super.dispose();
   }
-
-  // Future: Leverage slider, Take Profit, Stop Loss
 
   /// Price the order will execute at: the live price for market orders, or the
   /// user's chosen limit price otherwise.
@@ -56,12 +66,47 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
       ? widget.currentPrice
       : (double.tryParse(_limitPriceController.text) ?? widget.currentPrice);
 
+  /// Stop-loss level, expressed as a % away from entry in the losing
+  /// direction (below entry for a long, above for a short). Percent input
+  /// means the level can never be set on the wrong side by accident.
+  double? get _stopLossPrice {
+    if (!_useRiskControls) return null;
+    final pct = double.tryParse(_slPercentController.text);
+    if (pct == null || pct <= 0) return null;
+    final p = _effectivePrice;
+    return _isBuy ? p * (1 - pct / 100) : p * (1 + pct / 100);
+  }
+
+  /// Take-profit level, a % away from entry in the winning direction.
+  double? get _takeProfitPrice {
+    if (!_useRiskControls) return null;
+    final pct = double.tryParse(_tpPercentController.text);
+    if (pct == null || pct <= 0) return null;
+    final p = _effectivePrice;
+    return _isBuy ? p * (1 + pct / 100) : p * (1 - pct / 100);
+  }
+
+  /// Cash at risk if the stop is hit, and the reward if the target is hit.
+  ({double risk, double reward, double? rr}) get _riskReward {
+    final qty = double.tryParse(_amountController.text) ?? 0.0;
+    final entry = _effectivePrice;
+    final sl = _stopLossPrice;
+    final tp = _takeProfitPrice;
+    final risk = sl == null ? 0.0 : (entry - sl).abs() * qty;
+    final reward = tp == null ? 0.0 : (tp - entry).abs() * qty;
+    return (risk: risk, reward: reward, rr: risk > 0 ? reward / risk : null);
+  }
+
   @override
   Widget build(BuildContext context) {
     final balance = context.watch<ExecutionManager>().balance;
     final qty = double.tryParse(_amountController.text) ?? 0.0;
     final cost = qty * _effectivePrice;
-    final insufficient = _isBuy && qty > 0 && cost > balance;
+    // The simulator charges a taker fee on every fill, so the affordability
+    // check has to include it — otherwise a "Max" buy would overdraw by
+    // exactly the fee.
+    final fee = ExecutionManager.feeFor(qty, _effectivePrice);
+    final insufficient = _isBuy && qty > 0 && (cost + fee) > balance;
 
     // Glassmorphism wrapper
     return ClipRRect(
@@ -97,6 +142,7 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                     ],
                   ),
                   IconButton(
+                    tooltip: 'Close',
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close, color: VxColors.neutral500),
                   ),
@@ -144,6 +190,10 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
               VxText.caption("Amount"),
               const SizedBox(height: 8),
               TextField(
+                // Keyed so tests can assert what risk-based sizing actually
+                // put in the box. The number here decides how much a losing
+                // trade costs, which makes it the one field worth pinning.
+                key: const Key('ticket_amount'),
                 controller: _amountController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -198,6 +248,17 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                   VxText.caption('Balance  \$${balance.toStringAsFixed(2)}'),
                 ],
               ),
+              // Fees are charged on entry and again on exit, and a trader who
+              // cannot see them is being taught that they do not exist.
+              if (qty > 0) ...[
+                const SizedBox(height: 4),
+                VxText.caption(
+                  'Fee  ≈ \$${fee.toStringAsFixed(2)} per fill '
+                  '(${(ExecutionManager.takerFeeRate * 100).toStringAsFixed(3)}%) '
+                  '· round trip ≈ \$${(fee * 2).toStringAsFixed(2)}',
+                  color: VxColors.textTertiary,
+                ),
+              ],
               const SizedBox(height: 12),
 
               // Quick-size buttons (fraction of what the balance can buy)
@@ -212,6 +273,16 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
                   Expanded(child: _buildQuickSize('Max', 1.0)),
                 ],
               ),
+
+              const SizedBox(height: 8),
+
+              // Size from risk, the way the Academy teaches it:
+              // position size = (1% of balance) / distance to the stop.
+              _buildRiskBasedSize(balance),
+
+              const SizedBox(height: 16),
+
+              _buildRiskControls(),
 
               const SizedBox(height: 12),
 
@@ -305,13 +376,210 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
     );
   }
 
+  /// "Risk 1%" sizing — the position-sizing rule the Academy teaches:
+  /// size = (risk budget) / (distance from entry to the stop). Requires a
+  /// stop, because without one there is no defined risk to size from.
+  Widget _buildRiskBasedSize(double balance) {
+    final sl = _stopLossPrice;
+    final entry = _effectivePrice;
+    final stopDistance = sl == null ? 0.0 : (entry - sl).abs();
+    final enabled = stopDistance > 0 && balance > 0;
+
+    void applyRisk(double accountPercent) {
+      if (!enabled) return;
+      HapticFeedback.selectionClick();
+      final riskBudget = balance * (accountPercent / 100);
+      setState(() {
+        _amountController.text =
+            (riskBudget / stopDistance).toStringAsFixed(4);
+      });
+    }
+
+    return Opacity(
+      opacity: enabled ? 1 : 0.45,
+      child: Row(
+        children: [
+          Expanded(
+            child: InfoLabel(
+              // The whole idea behind these two chips is the one thing a
+              // beginner most needs and is least likely to know, so the
+              // label itself opens the explanation.
+              text: enabled
+                  ? 'Size from risk'
+                  : 'Set a stop loss to size by risk',
+              termId: 'position_size',
+              style: VxTypography.caption
+                  .copyWith(color: VxColors.textTertiary),
+            ),
+          ),
+          _buildRiskChip('Risk 1%', () => applyRisk(1)),
+          const SizedBox(width: 8),
+          _buildRiskChip('2%', () => applyRisk(2)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRiskChip(String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: VxColors.primary.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(8),
+          border:
+              Border.all(color: VxColors.primary.withValues(alpha: 0.35)),
+        ),
+        child: VxText.caption(label, color: VxColors.primary),
+      ),
+    );
+  }
+
+  /// Stop-loss / take-profit inputs plus the risk:reward read-out. Percent
+  /// inputs keep the levels on the correct side of entry automatically, and
+  /// the cash figures teach what the percentages actually cost.
+  Widget _buildRiskControls() {
+    final rr = _riskReward;
+    final sl = _stopLossPrice;
+    final tp = _takeProfitPrice;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+      decoration: BoxDecoration(
+        color: VxColors.neutral900,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: VxColors.neutral800),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: InfoLabel(
+                  text: 'Stop loss & take profit',
+                  termId: 'stop_loss',
+                  style: VxTypography.caption
+                      .copyWith(color: VxColors.textSecondary),
+                ),
+              ),
+              Switch(
+                value: _useRiskControls,
+                activeThumbColor: VxColors.primary,
+                onChanged: (v) {
+                  HapticFeedback.lightImpact();
+                  setState(() => _useRiskControls = v);
+                },
+              ),
+            ],
+          ),
+          if (_useRiskControls) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPercentField(
+                    controller: _slPercentController,
+                    label: 'Stop loss',
+                    level: sl,
+                    color: VxColors.danger,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildPercentField(
+                    controller: _tpPercentController,
+                    label: 'Take profit',
+                    level: tp,
+                    color: VxColors.success,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                VxText.caption('Risk \$${rr.risk.toStringAsFixed(2)}',
+                    color: VxColors.danger),
+                VxText.caption('Reward \$${rr.reward.toStringAsFixed(2)}',
+                    color: VxColors.success),
+                InfoLabel(
+                  // "R:R 1:2.00" is unreadable unless you already know the
+                  // convention it is written in.
+                  text: rr.rr == null
+                      ? 'R:R —'
+                      : 'R:R 1:${rr.rr!.toStringAsFixed(2)}',
+                  termId: 'risk_reward',
+                  style: VxTypography.caption
+                      .copyWith(color: VxColors.textSecondary),
+                ),
+              ],
+            ),
+          ] else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: VxText.caption(
+                'No stop set — the trade has no planned exit if it moves '
+                'against you.',
+                color: VxColors.textTertiary,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPercentField({
+    required TextEditingController controller,
+    required String label,
+    required double? level,
+    required Color color,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        VxText.caption(label, color: color),
+        const SizedBox(height: 4),
+        TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          style: VxTypography.body.copyWith(color: VxColors.textPrimary),
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: VxColors.surface,
+            suffixText: '%',
+            suffixStyle:
+                VxTypography.caption.copyWith(color: VxColors.neutral500),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: 4),
+        VxText.caption(
+          level == null ? '—' : '\$${level.toStringAsFixed(2)}',
+          color: VxColors.textTertiary,
+        ),
+      ],
+    );
+  }
+
   Widget _buildQuickSize(String label, double pct) {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
         final balance = context.read<ExecutionManager>().balance;
-        final affordable =
-            _effectivePrice > 0 ? balance / _effectivePrice : 0.0;
+        // Leave room for the fee, so Max is actually affordable rather than
+        // one fee short.
+        final unitCost =
+            _effectivePrice * (1 + ExecutionManager.takerFeeRate);
+        final affordable = unitCost > 0 ? balance / unitCost : 0.0;
         setState(() {
           _amountController.text = (affordable * pct).toStringAsFixed(4);
         });
@@ -351,12 +619,14 @@ class _SmartOrderSheetState extends State<SmartOrderSheet> {
             side: _isBuy ? OrderSide.buy : OrderSide.sell,
             quantity: qty,
             price: price,
+            stopLossPrice: _stopLossPrice,
+            takeProfitPrice: _takeProfitPrice,
             status: OrderStatus.pending,
           ));
 
       if (!mounted) return;
 
-      // The order can be declined without throwing (e.g. AI Guardian cancel).
+      // The order can be declined without throwing (e.g. a trade check cancel).
       if (result != null && !result.success) {
         messenger.showSnackBar(SnackBar(
           content: Text(result.message ?? 'Order was not placed'),

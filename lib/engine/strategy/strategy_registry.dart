@@ -3,6 +3,7 @@ import 'built_in_strategies.dart';
 import 'strategy_base.dart';
 import 'strategy_metadata.dart';
 import '../../core/app_logger.dart';
+import 'package:volex_terminal/engine/strategy/unavailable_strategy.dart';
 
 /// Central registry for all trading strategies
 class StrategyRegistry with ChangeNotifier {
@@ -40,14 +41,16 @@ class StrategyRegistry with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Placeholder for published strategies that don't have actual code loaded
+  /// Stand-in for a published strategy whose rules this build does not have.
+  ///
+  /// This used to return a BollingerRSIStrategy for *every* published entry.
+  /// Running any published strategy therefore executed Bollinger+RSI while
+  /// the screen showed the published strategy's name, and the resulting
+  /// trades and backtest figures were attributed to rules that never ran.
+  /// Quietly substituting different logic is worse than admitting there is
+  /// none, so it now returns a strategy that takes no trades and says why.
   Strategy _createPublishedStrategyPlaceholder(StrategyMetadata meta) {
-    // Return a basic mock/stub strategy
-    // We need a class that extends Strategy.
-    // Since we can't easily create one here without circular deps or polluting this file,
-    // we will rely on a basic internal implementation or just reuse a built-in.
-    // Reusing BollingerRSIStrategy as a placeholder.
-    return BollingerRSIStrategy();
+    return UnavailableStrategy(id: meta.id, name: meta.name);
   }
 
   void clear() {

@@ -15,8 +15,7 @@ import 'services/auth/security_service.dart';
 import '../ui/providers/dashboard_provider.dart';
 import '../engine/scanner/scanner_engine.dart';
 import '../engine/terminal_settings_provider.dart';
-import '../features/simulator/ai_strategy/providers/strategy_provider.dart';
-import '../features/simulator/ai_strategy/services/strategy_repository.dart';
+import '../features/simulator/strategy_builder/services/strategy_repository.dart';
 import '../features/simulator/backtest/backtest_engine.dart';
 import 'config/app_mode_service.dart';
 
@@ -66,9 +65,6 @@ List<SingleChildWidget> getApplicationProviders() {
     // DashboardProvider instantiated directly (ViewModel pattern)
     ChangeNotifierProvider<DashboardProvider>(
       create: (_) => DashboardProvider(),
-    ),
-    ChangeNotifierProvider<StrategyProvider>(
-      create: (_) => StrategyProvider(),
     ),
     // Strategy Studio: hub watches AppModeService; screens resolve the repo.
     if (getIt.isRegistered<AppModeService>())

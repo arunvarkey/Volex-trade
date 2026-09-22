@@ -3,7 +3,17 @@ import 'package:flutter/foundation.dart';
 enum LogLevel { debug, info, warning, error }
 
 class AppLogger {
-  static LogLevel _minLevel = kReleaseMode ? LogLevel.info : LogLevel.debug;
+  /// Release ships warnings and errors only.
+  ///
+  /// debugPrint is throttled print, not a debug-only print — it writes to
+  /// logcat in release builds as well. At info level that meant a release
+  /// build logging the signed-in user's Firebase UID, whether they were
+  /// authenticated, their paper balance and the day's restored losses, all
+  /// readable over adb or by anything holding READ_LOGS. Errors still print
+  /// and still reach Crashlytics; info-level breadcrumbs do not belong in a
+  /// device log.
+  static LogLevel _minLevel =
+      kReleaseMode ? LogLevel.warning : LogLevel.debug;
 
   static void setLevel(LogLevel level) {
     _minLevel = level;

@@ -15,13 +15,13 @@ void main() {
   late MockAuthService mockAuthService;
   late StreamController<List<VolexNotification>> notificationStreamController;
 
-  setUp(() {
+  setUp(() async {
     mockNotificationBus = MockNotificationBus();
     mockAuthService = MockAuthService();
     notificationStreamController = StreamController<List<VolexNotification>>();
 
     // Setup Locator
-    setupServiceLocator(
+    await setupServiceLocator(
       notificationBus: mockNotificationBus,
       authService: mockAuthService,
     );
