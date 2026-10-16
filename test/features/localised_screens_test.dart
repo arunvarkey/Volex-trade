@@ -18,6 +18,9 @@ void main() {
   /// Files that have been fully extracted and must stay that way.
   const localisedScreens = <String>[
     'lib/ui/screens/more_screen.dart',
+    'lib/ui/screens/home/home_screen_v2.dart',
+    'lib/features/academy/ui/academy_screen.dart',
+    'lib/features/daily/ui/daily_screen.dart',
   ];
 
   /// Literals in these argument positions are user-facing copy.

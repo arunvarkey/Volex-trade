@@ -73,5 +73,84 @@
   "debugReset": "Reset environment",
   "debugResetSub": "Purge local storage and restart simulation.",
   "debugResetConfirm": "Reset everything?",
-  "actionReset": "Reset"
+  "actionReset": "Reset",
+  "academyTitle": "Trading Academy",
+  "academyProgress": "{completed} of {total} lessons complete",
+  "@academyProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "academyLessonMinutes": "{minutes}m",
+  "@academyLessonMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "academyXpTotal": "{xp} XP",
+  "@academyXpTotal": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "academyDisclaimer": "Educational content only. Volex is a risk-free simulator — nothing here is financial advice, and all practice uses virtual money.",
+  "homeSimulatedBalance": "Simulated balance",
+  "homeActionBuild": "Build",
+  "homeActionBuildSub": "Start from a template",
+  "homeActionBacktest": "Backtest",
+  "homeActionBacktestSub": "Test against real history",
+  "homeActionSignals": "Signals",
+  "homeActionSignalsSub": "Setups our rules spotted",
+  "homeQuickTrade": "Quick trade",
+  "homeAllMarkets": "All Markets →",
+  "homeBuyLong": "Buy / Long",
+  "homeSellShort": "Sell / Short",
+  "homeYourPerformance": "Your performance",
+  "homeViewAll": "View All →",
+  "homeNewToTrading": "New to trading?",
+  "homeNewToTradingSub": "Start free lessons — learn step by step, zero risk",
+  "homePredictions": "Buzz & Predictions",
+  "homePredictionsSub": "Trade politics, crypto & events on sentiment — virtual",
+  "dailyTitle": "Volex Daily",
+  "dailyIntro": "{count} charts. For each one you say which way you think price went next, then see what actually happened. About 60 seconds.",
+  "@dailyIntro": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyNoStakes": "Nothing here is traded and nothing is at stake. It is practice at reading a chart.",
+  "dailyStart": "Start today's calls",
+  "dailyCallProgress": "Call {index} of {total}",
+  "@dailyCallProgress": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyLearnThis": "Learn this in 3 min",
+  "dailyComeBack": "Come back tomorrow for Volex Daily #{number}.",
+  "@dailyComeBack": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyShareResult": "Share result",
+  "dailyResultCopied": "Result copied — paste it anywhere"
 }
