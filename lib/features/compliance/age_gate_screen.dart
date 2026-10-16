@@ -103,7 +103,7 @@ class _AskView extends StatelessWidget {
             onPressed: () => service.declineUnderAge(),
             child: Text('I\'m under ${AgeGateService.minimumAge}',
                 style: VxTypography.bodySmall
-                    .copyWith(fontSize: 13, color: Colors.white54)),
+                    .copyWith(fontSize: 13, color: VxColors.textSecondary)),
           ),
           const SizedBox(height: 20),
           Text(

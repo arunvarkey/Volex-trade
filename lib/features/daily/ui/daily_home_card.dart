@@ -112,7 +112,7 @@ class _DailyHomeCardState extends State<DailyHomeCard> {
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.0,
-                        color: played ? Colors.white54 : Colors.black,
+                        color: played ? VxColors.textSecondary : Colors.black,
                       ),
                     ),
                   ),

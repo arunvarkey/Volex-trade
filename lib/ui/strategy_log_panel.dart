@@ -127,7 +127,7 @@ class _LogListState extends State<_LogList> {
                         color: actionColor, fontSize: 10),
                     const SizedBox(height: 2),
                     VxText.body(log.message,
-                        color: Colors.white54, fontSize: 10, maxLines: 2),
+                        color: VxColors.textSecondary, fontSize: 10, maxLines: 2),
                   ],
                 ),
               )

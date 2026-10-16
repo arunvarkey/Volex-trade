@@ -110,7 +110,7 @@ class TradeConfirmationDialog extends StatelessWidget {
                   IconButton(
                     tooltip: 'Close',
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white54),
+                    icon: const Icon(Icons.close, color: VxColors.textSecondary),
                   ),
                 ],
               ),
@@ -257,7 +257,7 @@ class TradeConfirmationDialog extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: Colors.white54,
+            color: VxColors.textSecondary,
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),
@@ -315,7 +315,7 @@ class OrderExecutingOverlay extends StatelessWidget {
               Text(
                 'Please wait',
                 style: TextStyle(
-                  color: Colors.white54,
+                  color: VxColors.textSecondary,
                   fontSize: 13,
                 ),
               ),
@@ -378,7 +378,7 @@ void showTradeNotification(
                   Text(
                     '${order.quantity} @ \$${order.filledPrice?.toStringAsFixed(2) ?? order.price.toStringAsFixed(2)}',
                     style: const TextStyle(
-                      color: Colors.white54,
+                      color: VxColors.textSecondary,
                       fontSize: 11,
                       fontFamily: 'monospace',
                     ),

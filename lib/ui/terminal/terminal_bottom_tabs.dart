@@ -31,7 +31,7 @@ class TerminalBottomTabs extends StatelessWidget {
             child: TabBar(
               controller: tabController,
               labelColor: VxColors.neonCyan,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: VxColors.textSecondary,
               indicatorColor: VxColors.neonCyan,
               indicatorWeight: 2,
               labelStyle: const TextStyle(
@@ -111,7 +111,7 @@ class TerminalBottomTabs extends StatelessWidget {
                       fontSize: 10)),
               trailing: IconButton(
                 tooltip: 'Close',
-                icon: const Icon(Icons.close, size: 16, color: Colors.white54),
+                icon: const Icon(Icons.close, size: 16, color: VxColors.textSecondary),
                 onPressed: () {
                   final symbolInfo = SymbolRegistry.supportedSymbols.firstWhere(
                       (s) => s.symbol == order.symbol,
@@ -174,7 +174,7 @@ class TerminalBottomTabs extends StatelessWidget {
                   Text(
                       '${pos.quantity} @ ${pos.filledPrice?.toStringAsFixed(2) ?? "-"}',
                       style:
-                          const TextStyle(color: Colors.white54, fontSize: 10)),
+                          const TextStyle(color: VxColors.textSecondary, fontSize: 10)),
                   const SizedBox(width: 8),
                   Text('P&L: \$${pnl.toStringAsFixed(2)}',
                       style: TextStyle(

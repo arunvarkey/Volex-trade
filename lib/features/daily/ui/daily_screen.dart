@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
+import 'package:volex_terminal/core/app_constants.dart';
+import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/features/academy/data/academy_curriculum.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
@@ -462,16 +465,33 @@ class _DoneView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await Clipboard.setData(
-                      ClipboardData(text: result!.shareText()));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Result copied — paste it anywhere!'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                  final text =
+                      result!.shareText(link: AppConstants.playListingUrl);
+                  final messenger = ScaffoldMessenger.of(context);
+
+                  // The native share sheet, not the clipboard. Copying puts
+                  // the work on the user — open an app, find a chat, paste —
+                  // and "paste it anywhere" is where most people stop. The
+                  // sheet is one tap to whichever app they already use, and
+                  // this is the only growth loop the app has that costs
+                  // nothing to run.
+                  try {
+                    await Share.share(text, subject: 'Volex Daily');
+                    return;
+                  } catch (e) {
+                    AppLogger.warning('Share sheet unavailable: $e');
                   }
+
+                  // Fall back to the old behaviour rather than failing
+                  // silently — on a device with no share targets the result
+                  // is still worth having.
+                  await Clipboard.setData(ClipboardData(text: text));
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Result copied — paste it anywhere'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.ios_share_rounded, size: 18),
                 style: ElevatedButton.styleFrom(

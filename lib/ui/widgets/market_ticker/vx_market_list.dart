@@ -147,7 +147,7 @@ class _MarketRow extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text('/USDT',
                           style: VxTypography.caption
-                              .copyWith(fontSize: 9.5, color: Colors.white30)),
+                              .copyWith(fontSize: 9.5, color: VxColors.textTertiary)),
                     ],
                   ),
                   const SizedBox(height: 2),

@@ -143,7 +143,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
         children: [
           VxText.heading2(l10n.signalsTitle, color: Colors.white),
           const SizedBox(height: 8),
-          VxText.body(l10n.signalsSubtitle, color: Colors.white54),
+          VxText.body(l10n.signalsSubtitle, color: VxColors.textSecondary),
           const SizedBox(height: 10),
           VxDisclaimer(text: l10n.signalsDisclaimer),
         ],
@@ -158,7 +158,7 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
         children: [
           const CircularProgressIndicator(color: VxColors.primary),
           const SizedBox(height: 16),
-          VxText.body('Scanning markets...', color: Colors.white54),
+          VxText.body('Scanning markets...', color: VxColors.textSecondary),
         ],
       ),
     );

@@ -245,22 +245,22 @@ class _OptimizerPanelState extends State<OptimizerPanel> {
             columns: [
               DataColumn(
                   label: VxText.monoBold("RANK",
-                      fontSize: 10, color: Colors.white54)),
+                      fontSize: 10, color: VxColors.textSecondary)),
               DataColumn(
                   label: VxText.monoBold("PARAMS",
-                      fontSize: 10, color: Colors.white54)),
+                      fontSize: 10, color: VxColors.textSecondary)),
               DataColumn(
                   label: VxText.monoBold("WIN_RATE",
-                      fontSize: 10, color: Colors.white54)),
+                      fontSize: 10, color: VxColors.textSecondary)),
               DataColumn(
                   label: VxText.monoBold("RETURN %",
-                      fontSize: 10, color: Colors.white54)),
+                      fontSize: 10, color: VxColors.textSecondary)),
               DataColumn(
                   label: VxText.monoBold("PROFIT_FACTOR",
-                      fontSize: 10, color: Colors.white54)),
+                      fontSize: 10, color: VxColors.textSecondary)),
               DataColumn(
                   label: VxText.monoBold("TRADES",
-                      fontSize: 10, color: Colors.white54)),
+                      fontSize: 10, color: VxColors.textSecondary)),
             ],
             rows: _results.asMap().entries.map((entry) {
               final index = entry.key;

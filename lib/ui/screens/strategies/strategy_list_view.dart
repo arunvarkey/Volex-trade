@@ -57,7 +57,7 @@ class _StrategyListViewState extends State<StrategyListView> {
               children: [
                 VxText.subtitle("ALGORITHMS", color: Colors.white),
                 PopupMenuButton<SortOption>(
-                  icon: const Icon(Icons.sort, color: Colors.white54),
+                  icon: const Icon(Icons.sort, color: VxColors.textSecondary),
                   tooltip: "Sort Strategies",
                   onSelected: (val) => setState(() => _currentSort = val),
                   itemBuilder: (context) => [

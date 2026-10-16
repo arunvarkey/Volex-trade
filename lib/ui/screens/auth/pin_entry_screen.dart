@@ -208,7 +208,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
         Text(
           subtitle,
           style: const TextStyle(
-            color: Colors.white54,
+            color: VxColors.textSecondary,
             fontSize: 14,
           ),
           textAlign: TextAlign.center,
@@ -231,7 +231,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
             shape: BoxShape.circle,
             color: isFilled ? VxColors.neonCyan : Colors.transparent,
             border: Border.all(
-              color: isFilled ? VxColors.neonCyan : Colors.white30,
+              color: isFilled ? VxColors.neonCyan : VxColors.textTertiary,
               width: 2,
             ),
             boxShadow: isFilled
@@ -428,7 +428,7 @@ class _PinEntryScreenState extends State<PinEntryScreen>
                 Text(
                   'Too many failed attempts.\nPlease try again in ${remaining?.inMinutes ?? 0} minutes.',
                   style: const TextStyle(
-                    color: Colors.white54,
+                    color: VxColors.textSecondary,
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,

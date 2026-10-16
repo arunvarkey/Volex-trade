@@ -114,7 +114,7 @@ class TerminalTradingPanel extends StatelessWidget {
             Text(
               'AMOUNT',
               style: TextStyle(
-                color: Colors.white54,
+                color: VxColors.textSecondary,
                 fontSize: isVerySmall ? 9 : 10,
                 letterSpacing: 0.5,
               ),
@@ -195,7 +195,7 @@ class TerminalTradingPanel extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isSelected ? VxColors.neonCyan : Colors.white54,
+            color: isSelected ? VxColors.neonCyan : VxColors.textSecondary,
             fontSize: isSmall ? 10 : 11,
             fontWeight: FontWeight.w700,
           ),

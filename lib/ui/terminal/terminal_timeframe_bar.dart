@@ -45,7 +45,7 @@ class TerminalTimeframeBar extends StatelessWidget {
                 child: Text(
                   tf.toUpperCase(),
                   style: TextStyle(
-                    color: isSelected ? VxColors.neonCyan : Colors.white54,
+                    color: isSelected ? VxColors.neonCyan : VxColors.textSecondary,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),

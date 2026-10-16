@@ -321,12 +321,12 @@ class _InitErrorScreenState extends State<InitErrorScreen>
       },
       icon: Icon(
         _showDetails ? Icons.expand_less : Icons.expand_more,
-        color: Colors.white54,
+        color: VxColors.textSecondary,
       ),
       label: Text(
         _showDetails ? 'Hide Details' : 'Show Technical Details',
         style: const TextStyle(
-          color: Colors.white54,
+          color: VxColors.textSecondary,
           fontSize: 12,
         ),
       ),
@@ -394,7 +394,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
               child: Text(
                 ServiceLocator.initLog.join('\n'),
                 style: const TextStyle(
-                  color: Colors.white54,
+                  color: VxColors.textSecondary,
                   fontSize: 10,
                   fontFamily: 'monospace',
                 ),
@@ -417,7 +417,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
             child: Text(
               '$label:',
               style: const TextStyle(
-                color: Colors.white54,
+                color: VxColors.textSecondary,
                 fontSize: 12,
               ),
             ),
@@ -494,7 +494,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
               label: const Text('Continue Anyway'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white70,
-                side: const BorderSide(color: Colors.white30),
+                side: const BorderSide(color: VxColors.textTertiary),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -511,7 +511,7 @@ class _InitErrorScreenState extends State<InitErrorScreen>
           icon: const Icon(Icons.exit_to_app, size: 16),
           label: const Text('Exit App'),
           style: TextButton.styleFrom(
-            foregroundColor: Colors.white30,
+            foregroundColor: VxColors.textTertiary,
           ),
         ),
       ],

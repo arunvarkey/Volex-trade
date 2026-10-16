@@ -283,7 +283,7 @@ class LabScreen extends StatelessWidget {
                         "Return: ${result.totalReturnPercent.toStringAsFixed(2)}%",
                         style: VxTypography.caption.copyWith(
                           fontSize: 10,
-                          color: Colors.white54,
+                          color: VxColors.textSecondary,
                         ),
                       ),
                     ],

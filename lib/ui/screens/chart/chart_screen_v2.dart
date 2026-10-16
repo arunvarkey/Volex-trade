@@ -343,7 +343,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                       if (tp != null) 'TP ${tp.toStringAsFixed(2)}',
                     ].join('  ·  '),
                     style: const TextStyle(
-                        color: Colors.white30, fontSize: 10),
+                        color: VxColors.textTertiary, fontSize: 10),
                     overflow: TextOverflow.ellipsis,
                   ),
               ],

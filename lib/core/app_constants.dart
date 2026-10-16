@@ -25,6 +25,19 @@ class AppConstants {
   /// inbox, not a forwarding alias that bounces.
   static const String supportEmail = 'dailyvolex@gmail.com';
 
+  /// Where a shared Daily result should send a reader.
+  ///
+  /// Empty until the app is actually listed. A share loop is the only
+  /// zero-budget growth mechanic this app has, and it only works if the link
+  /// resolves — a URL that 404s makes a share worse than no share, because
+  /// the reader's one moment of curiosity is spent on an error page.
+  ///
+  /// Set this to the Play listing URL the day the app goes live
+  /// (https://play.google.com/store/apps/details?id=com.antigravity.volextrade)
+  /// and every share starts converting. Until then the share text simply
+  /// omits the line.
+  static const String playListingUrl = '';
+
   // The hosted policy URLs and the paper starting balance were here too. Both
   // were copies: the URLs are declared in AndroidManifest.xml, which is what
   // Play actually reads, and the balance is ExecutionManager's own default.
