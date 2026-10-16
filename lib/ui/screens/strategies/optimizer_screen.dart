@@ -409,7 +409,7 @@ class _OptimizerScreenState extends State<OptimizerScreen> {
     return Column(
       children: [
         Text(label,
-            style: const TextStyle(color: Colors.white54, fontSize: 12)),
+            style: const TextStyle(color: VxColors.textSecondary, fontSize: 12)),
         const SizedBox(height: 4),
         Text(value,
             style: VxTypography.price.copyWith(

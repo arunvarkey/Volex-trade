@@ -86,14 +86,27 @@ class DailyResult {
     return 'a round to learn from';
   }
 
-  /// Wordle-style shareable text (copied to clipboard).
-  String shareText() {
+  /// Wordle-style shareable text.
+  ///
+  /// The shape is deliberate: the grid is spoiler-free (it shows the pattern
+  /// of right and wrong, never which questions or answers), so posting it
+  /// cannot ruin the day for anyone who has not played. That property is the
+  /// whole reason the format spreads — a result people can post without
+  /// guilt, that is visually distinctive enough to be recognised in a feed.
+  ///
+  /// [link] is appended only when there is somewhere real to send a reader.
+  /// Until the app is listed there is no URL, and inventing one that 404s
+  /// would make every share worse than no share.
+  String shareText({String link = ''}) {
     final grid = correctness.map((c) => c ? '🟩' : '🟥').join();
     final buf = StringBuffer()
       ..writeln('Volex Daily #$number')
       ..writeln('$grid  $score/$total')
       ..writeln('🔥 $streakAfter-day streak')
-      ..write('The flight simulator for traders');
+      ..write('Five trading judgment calls a day');
+    if (link.isNotEmpty) {
+      buf.write('\n$link');
+    }
     return buf.toString();
   }
 }

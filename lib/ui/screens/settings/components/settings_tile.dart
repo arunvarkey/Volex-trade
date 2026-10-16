@@ -32,7 +32,7 @@ class SettingsTile extends StatelessWidget {
         onChanged: onChanged,
         activeThumbColor: VxColors.neonCyan,
         activeTrackColor: VxColors.neonCyan.withValues(alpha: 0.3),
-        inactiveThumbColor: Colors.white54,
+        inactiveThumbColor: VxColors.textSecondary,
         inactiveTrackColor: Colors.white10,
       ),
     );

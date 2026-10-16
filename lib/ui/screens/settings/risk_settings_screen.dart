@@ -155,7 +155,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                             ? "No new positions until you switch it back on"
                             : "Your limits are on and being checked",
                         style: const TextStyle(
-                            color: Colors.white54, fontSize: 12)),
+                            color: VxColors.textSecondary, fontSize: 12)),
                   ],
                 )
               ],
@@ -268,7 +268,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
                   "positions. You can still close or reduce what is open.",
                   textAlign: TextAlign.center,
                   style: VxTypography.caption
-                      .copyWith(color: Colors.white54, height: 1.4),
+                      .copyWith(color: VxColors.textSecondary, height: 1.4),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(

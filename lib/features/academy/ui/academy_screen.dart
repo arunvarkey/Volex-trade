@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
+import 'package:volex_terminal/ui/widgets/english_content_notice.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
 import '../data/academy_curriculum.dart';
@@ -42,7 +44,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'TRADING ACADEMY',
+          AppLocalizations.of(context).academyTitle.toUpperCase(),
           style: VxTypography.caption.copyWith(
             fontWeight: FontWeight.w900,
             letterSpacing: 3.0,
@@ -56,6 +58,10 @@ class _AcademyScreenState extends State<AcademyScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
             children: [
+              // Above the guidance banner on purpose: if the lessons are not
+              // in your language, that is the first thing you need to know
+              // about this screen, not the fourth.
+              const EnglishContentNotice(),
               const GuidanceBanner(
                 id: 'learn_intro',
                 text:
@@ -177,7 +183,8 @@ class _ProgressHeader extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '$completed of $total lessons complete',
+            AppLocalizations.of(context)
+                .academyProgress(completed, total),
             style: VxTypography.caption.copyWith(fontSize: 11),
           ),
           const SizedBox(height: 16),
@@ -410,7 +417,8 @@ class _LessonRow extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              '${lesson.minutes}m',
+              AppLocalizations.of(context)
+                  .academyLessonMinutes(lesson.minutes),
               style: VxTypography.caption.copyWith(fontSize: 10),
             ),
             const Icon(Icons.chevron_right_rounded,
@@ -476,7 +484,7 @@ class _XpBar extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              '${xp.totalXp} XP',
+              AppLocalizations.of(context).academyXpTotal(xp.totalXp),
               style: VxTypography.caption.copyWith(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
@@ -516,8 +524,7 @@ class _DisclaimerFooter extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Text(
-        'Educational content only. Volex is a risk-free simulator — nothing here '
-        'is financial advice, and all practice uses virtual money.',
+        AppLocalizations.of(context).academyDisclaimer,
         textAlign: TextAlign.center,
         style: VxTypography.caption.copyWith(fontSize: 10.5),
       ),

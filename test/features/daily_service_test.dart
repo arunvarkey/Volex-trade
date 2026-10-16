@@ -151,5 +151,42 @@ void main() {
       expect(txt, isNot(contains('top ')));
       expect(txt, isNot(contains('Estimated')));
     });
+
+    const sample = DailyResult(
+      dateKey: '2026-04-01',
+      number: 91,
+      score: 4,
+      total: 5,
+      correctness: [true, true, false, true, true],
+      streakAfter: 12,
+    );
+
+    test('omits the link line until there is somewhere to send people', () {
+      final txt = sample.shareText();
+      expect(txt.trim().split('\n').last, isNot(startsWith('http')),
+          reason: 'a shared result that lands on a 404 spends the reader\'s '
+              'one moment of curiosity on an error page');
+    });
+
+    test('appends the link when one is configured', () {
+      final txt = sample.shareText(link: 'https://example.com/volex');
+      expect(txt, contains('https://example.com/volex'));
+      expect(txt.trim().split('\n').last, 'https://example.com/volex',
+          reason: 'the link goes last so it is what a reader lands on after '
+              'the grid, and so chat apps attach the preview to it');
+    });
+
+    test('the grid gives nothing away', () {
+      // The format only spreads if posting it cannot spoil the day for
+      // someone who has not played. Pattern only: no prompt, no answer, no
+      // question id.
+      final txt = sample.shareText();
+      expect(txt, isNot(contains('?')),
+          reason: 'a question mark would mean a prompt leaked into the grid');
+      for (final word in ['stop', 'risk', 'leverage', 'RSI']) {
+        expect(txt.toLowerCase(), isNot(contains(word.toLowerCase())),
+            reason: 'question content must never reach the share text');
+      }
+    });
   });
 }

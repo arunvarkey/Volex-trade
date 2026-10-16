@@ -44,7 +44,7 @@ class ActivityScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              VxText.subtitle("Activity Log", color: Colors.white54),
+              VxText.subtitle("Activity Log", color: VxColors.textSecondary),
               const Icon(Icons.filter_list, color: Colors.white24, size: 16),
             ],
           ),
@@ -174,7 +174,7 @@ class _ActivityLogList extends StatelessWidget {
         final log = logs[index];
         final type = log.action;
 
-        Color color = Colors.white54;
+        Color color = VxColors.textSecondary;
         IconData icon = Icons.info_outline;
 
         if (type == 'ERROR') {

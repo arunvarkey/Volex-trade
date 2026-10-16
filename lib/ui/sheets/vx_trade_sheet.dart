@@ -209,7 +209,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
             tooltip: 'Close',
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.close),
-            color: Colors.white54,
+            color: VxColors.textSecondary,
           ),
         ],
       ),
@@ -261,7 +261,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                     const Text(
                       'AMOUNT',
                       style: TextStyle(
-                        color: Colors.white54,
+                        color: VxColors.textSecondary,
                         fontSize: 12,
                         letterSpacing: 1,
                       ),
@@ -364,7 +364,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? color : Colors.white54,
+              color: isSelected ? color : VxColors.textSecondary,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               letterSpacing: 1.2,

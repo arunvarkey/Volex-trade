@@ -28,7 +28,7 @@ class SecuritySettingsScreen extends StatelessWidget {
             title:
                 const Text('Change PIN', style: TextStyle(color: Colors.white)),
             subtitle: const Text('Update your 6-digit PIN',
-                style: TextStyle(color: Colors.white54)),
+                style: TextStyle(color: VxColors.textSecondary)),
             tileColor: VxColors.surface,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -63,7 +63,7 @@ class SecuritySettingsScreen extends StatelessWidget {
                   isAvailable
                       ? 'Use fingerprint or face recognition'
                       : 'Biometrics not available on this device',
-                  style: const TextStyle(color: Colors.white54),
+                  style: const TextStyle(color: VxColors.textSecondary),
                 ),
                 tileColor: VxColors.surface,
                 shape: RoundedRectangleBorder(
@@ -87,7 +87,7 @@ class SecuritySettingsScreen extends StatelessWidget {
             title: const Text('Export My Data',
                 style: TextStyle(color: Colors.white)),
             subtitle: const Text('Download a copy of your personal data',
-                style: TextStyle(color: Colors.white54)),
+                style: TextStyle(color: VxColors.textSecondary)),
             tileColor: VxColors.surface,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -114,7 +114,7 @@ class SecuritySettingsScreen extends StatelessWidget {
             title: const Text('Delete Account',
                 style: TextStyle(color: VxColors.neonRed)),
             subtitle: const Text('Permanently remove all data',
-                style: TextStyle(color: Colors.white54)),
+                style: TextStyle(color: VxColors.textSecondary)),
             tileColor: VxColors.surface.withValues(alpha: 0.5),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -142,7 +142,7 @@ class SecuritySettingsScreen extends StatelessWidget {
             child: Text(
               "Volex uses your device's native secure enclave. Biometric data is never stored or transmitted by the app.",
               style:
-                  TextStyle(color: Colors.white54, fontSize: 13, height: 1.4),
+                  TextStyle(color: VxColors.textSecondary, fontSize: 13, height: 1.4),
             ),
           ),
         ],

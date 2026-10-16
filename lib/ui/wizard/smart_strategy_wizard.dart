@@ -61,7 +61,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white54),
+                  icon: const Icon(Icons.close, color: VxColors.textSecondary),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -164,7 +164,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
         TextButton(
           onPressed: () => _pageController.previousPage(
               duration: const Duration(milliseconds: 300), curve: Curves.ease),
-          child: const Text("BACK", style: TextStyle(color: Colors.white54)),
+          child: const Text("BACK", style: TextStyle(color: VxColors.textSecondary)),
         ),
       ],
     );
@@ -203,7 +203,7 @@ class _SmartStrategyWizardState extends State<SmartStrategyWizard> {
                   const SizedBox(height: 4),
                   Text(subtitle,
                       style:
-                          const TextStyle(color: Colors.white54, fontSize: 12)),
+                          const TextStyle(color: VxColors.textSecondary, fontSize: 12)),
                 ],
               ),
             ),

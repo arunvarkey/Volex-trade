@@ -25,6 +25,14 @@ class AcademyQuizzes {
   /// True if [correct] out of the quiz is a passing score.
   static bool isPass(int correct) => correct >= passThreshold;
 
+  /// Every quiz question in the curriculum.
+  ///
+  /// Exposed so things that need to count the content — the localisation
+  /// coverage record, for one — read the real figure instead of a number
+  /// written down somewhere that drifts as questions are added.
+  static int get totalQuestions =>
+      _byLesson.values.fold<int>(0, (sum, qs) => sum + qs.length);
+
   static const Map<String, List<QuizQuestion>> _byLesson = {
     // ── Foundations ────────────────────────────────────────────────
     'f1': [

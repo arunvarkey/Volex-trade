@@ -18,6 +18,7 @@ import 'package:volex_terminal/ui/screens/portfolio/portfolio_screen.dart';
 import 'package:volex_terminal/ui/screens/activity_screen.dart';
 import 'package:volex_terminal/ui/screens/more_screen.dart';
 import 'package:volex_terminal/ui/screens/glossary_screen.dart';
+import 'package:volex_terminal/features/insights/ui/behaviour_screen.dart';
 import 'package:volex_terminal/ui/screens/auth/pin_entry_screen.dart';
 import 'package:volex_terminal/ui/screens/auth/biometric_screen.dart';
 import 'package:volex_terminal/ui/screens/subscriptions/subscription_screen.dart';
@@ -169,6 +170,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/glossary',
       builder: (context, state) => const GlossaryScreen(),
+    ),
+    GoRoute(
+      path: '/your-trading',
+      builder: (context, state) => const BehaviourScreen(),
     ),
     GoRoute(
       path: '/notifications',

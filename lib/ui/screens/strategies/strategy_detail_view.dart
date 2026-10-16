@@ -98,7 +98,7 @@ class StrategyDetailView extends StatelessWidget {
               child: const TabBar(
                 indicatorColor: VxColors.neonCyan,
                 labelColor: VxColors.neonCyan,
-                unselectedLabelColor: Colors.white54,
+                unselectedLabelColor: VxColors.textSecondary,
                 tabs: [
                   Tab(text: "OVERVIEW"),
                   Tab(text: "PARAMETERS"),

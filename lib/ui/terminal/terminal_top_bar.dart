@@ -132,7 +132,7 @@ class TerminalTopBar extends StatelessWidget {
               ),
             ),
             const Icon(Icons.keyboard_arrow_down,
-                color: Colors.white54, size: 14),
+                color: VxColors.textSecondary, size: 14),
           ],
         ),
       ),

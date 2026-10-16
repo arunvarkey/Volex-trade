@@ -235,7 +235,7 @@ class HomeScreenV2 extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'SIMULATED BALANCE',
+                      AppLocalizations.of(context).homeSimulatedBalance.toUpperCase(),
                       style: VxTypography.caption.copyWith(
                         color: VxColors.textTertiary,
                         fontWeight: FontWeight.w600,
@@ -313,8 +313,8 @@ class HomeScreenV2 extends StatelessWidget {
             Expanded(
               child: _ActionCard(
                 icon: Icons.tune_rounded,
-                title: 'Build',
-                subtitle: 'Start from a template',
+                title: AppLocalizations.of(context).homeActionBuild,
+                subtitle: AppLocalizations.of(context).homeActionBuildSub,
                 iconBgColor: const Color(0x1F63B3ED),
                 onTap: () => context.push('/simulator/templates'),
               ),
@@ -323,8 +323,8 @@ class HomeScreenV2 extends StatelessWidget {
             Expanded(
               child: _ActionCard(
                 icon: Icons.science_rounded,
-                title: 'Backtest',
-                subtitle: 'Test against real history',
+                title: AppLocalizations.of(context).homeActionBacktest,
+                subtitle: AppLocalizations.of(context).homeActionBacktestSub,
                 iconBgColor: const Color(0x1FB794F4),
                 onTap: () => context.push('/lab'),
               ),
@@ -333,8 +333,8 @@ class HomeScreenV2 extends StatelessWidget {
             Expanded(
               child: _ActionCard(
                 icon: Icons.sensors_rounded,
-                title: 'Signals',
-                subtitle: 'Setups our rules spotted',
+                title: AppLocalizations.of(context).homeActionSignals,
+                subtitle: AppLocalizations.of(context).homeActionSignalsSub,
                 iconBgColor: const Color(0x1F34D399),
                 onTap: () => context.push('/signals'),
               ),
@@ -355,7 +355,7 @@ class HomeScreenV2 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'QUICK TRADE',
+                AppLocalizations.of(context).homeQuickTrade.toUpperCase(),
                 style: VxTypography.caption.copyWith(
                   fontWeight: FontWeight.w600,
                   color: VxColors.textTertiary,
@@ -370,7 +370,7 @@ class HomeScreenV2 extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  'All Markets →',
+                  AppLocalizations.of(context).homeAllMarkets,
                   style: VxTypography.caption.copyWith(
                     color: VxColors.neonCyan,
                     fontWeight: FontWeight.w600,
@@ -464,7 +464,7 @@ class HomeScreenV2 extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _TradeButton(
-                            label: 'BUY / LONG',
+                            label: AppLocalizations.of(context).homeBuyLong.toUpperCase(),
                             color: VxColors.success,
                             onPressed: () =>
                                 _showOrderDialog(context, OrderSide.buy, price),
@@ -473,7 +473,7 @@ class HomeScreenV2 extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _TradeButton(
-                            label: 'SELL / SHORT',
+                            label: AppLocalizations.of(context).homeSellShort.toUpperCase(),
                             color: VxColors.danger,
                             onPressed: () => _showOrderDialog(
                                 context, OrderSide.sell, price),
@@ -508,7 +508,7 @@ class HomeScreenV2 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'YOUR PERFORMANCE',
+                AppLocalizations.of(context).homeYourPerformance.toUpperCase(),
                 style: VxTypography.caption.copyWith(
                   fontWeight: FontWeight.w600,
                   color: VxColors.textTertiary,
@@ -523,7 +523,7 @@ class HomeScreenV2 extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  'View All →',
+                  AppLocalizations.of(context).homeViewAll,
                   style: VxTypography.caption.copyWith(
                     color: VxColors.neonCyan,
                     fontWeight: FontWeight.w600,
@@ -599,12 +599,12 @@ class HomeScreenV2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'New to trading?',
+                      AppLocalizations.of(context).homeNewToTrading,
                       style: VxTypography.body
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      'Start free lessons — learn step by step, zero risk',
+                      AppLocalizations.of(context).homeNewToTradingSub,
                       style: VxTypography.bodySmall.copyWith(fontSize: 12),
                     ),
                   ],
@@ -658,12 +658,12 @@ class HomeScreenV2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Buzz & Predictions',
+                      AppLocalizations.of(context).homePredictions,
                       style: VxTypography.body
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      'Trade politics, crypto & events on sentiment — virtual',
+                      AppLocalizations.of(context).homePredictionsSub,
                       style: VxTypography.bodySmall.copyWith(fontSize: 12),
                     ),
                   ],

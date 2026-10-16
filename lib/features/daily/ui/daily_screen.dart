@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
+import 'package:volex_terminal/core/app_constants.dart';
+import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/features/academy/data/academy_curriculum.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
@@ -116,7 +120,7 @@ class _DailyScreenState extends State<DailyScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'VOLEX DAILY',
+          AppLocalizations.of(context).dailyTitle.toUpperCase(),
           style: VxTypography.caption.copyWith(
             fontWeight: FontWeight.w900,
             letterSpacing: 3.0,
@@ -179,16 +183,13 @@ class _IntroView extends StatelessWidget {
           Text(
             // "Calls" is trader shorthand the app never defined, and the
             // screen counted "CALL 1 OF 5" without ever saying what one is.
-            '${challenge.length} charts. For each one you say which way you '
-            'think price went next, then see what actually happened. About 60 '
-            'seconds.',
+            AppLocalizations.of(context).dailyIntro(challenge.length),
             textAlign: TextAlign.center,
             style: VxTypography.bodySmall.copyWith(fontSize: 14, height: 1.5),
           ),
           const SizedBox(height: 10),
           Text(
-            'Nothing here is traded and nothing is at stake. It is practice '
-            'at reading a chart.',
+            AppLocalizations.of(context).dailyNoStakes,
             textAlign: TextAlign.center,
             style: VxTypography.caption.copyWith(height: 1.5),
           ),
@@ -202,8 +203,8 @@ class _IntroView extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14)),
             ),
-            child: const Text('START TODAY\'S CALLS',
-                style: TextStyle(
+            child: Text(AppLocalizations.of(context).dailyStart.toUpperCase(),
+                style: const TextStyle(
                     fontWeight: FontWeight.w900, letterSpacing: 1.0)),
           ),
         ],
@@ -262,7 +263,7 @@ class _CallView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          Text('CALL ${index + 1} OF $total',
+          Text(AppLocalizations.of(context).dailyCallProgress(index + 1, total).toUpperCase(),
               style: VxTypography.caption.copyWith(fontSize: 10)),
           const SizedBox(height: 20),
           Text(call.prompt,
@@ -326,7 +327,7 @@ class _CallView extends StatelessWidget {
                           const Icon(Icons.school_rounded,
                               size: 14, color: VxColors.neonCyan),
                           const SizedBox(width: 5),
-                          Text('Learn this in 3 min',
+                          Text(AppLocalizations.of(context).dailyLearnThis,
                               style: VxTypography.caption.copyWith(
                                   fontSize: 12,
                                   color: VxColors.neonCyan,
@@ -450,7 +451,7 @@ class _DoneView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: VxTypography.h2.copyWith(fontSize: 22)),
             const SizedBox(height: 6),
-            Text('Come back tomorrow for Volex Daily #${challenge.number + 1}.',
+            Text(AppLocalizations.of(context).dailyComeBack(challenge.number + 1),
                 textAlign: TextAlign.center,
                 style: VxTypography.bodySmall.copyWith(fontSize: 13)),
           ],
@@ -462,16 +463,38 @@ class _DoneView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await Clipboard.setData(
-                      ClipboardData(text: result!.shareText()));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Result copied — paste it anywhere!'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                  final text =
+                      result!.shareText(link: AppConstants.playListingUrl);
+                  final messenger = ScaffoldMessenger.of(context);
+                  // Resolved now, not after the awaits below: touching
+                  // context once the widget may be gone is the lint's whole
+                  // point, and a captured string costs nothing.
+                  final copiedMessage =
+                      AppLocalizations.of(context).dailyResultCopied;
+
+                  // The native share sheet, not the clipboard. Copying puts
+                  // the work on the user — open an app, find a chat, paste —
+                  // and "paste it anywhere" is where most people stop. The
+                  // sheet is one tap to whichever app they already use, and
+                  // this is the only growth loop the app has that costs
+                  // nothing to run.
+                  try {
+                    await Share.share(text, subject: 'Volex Daily');
+                    return;
+                  } catch (e) {
+                    AppLogger.warning('Share sheet unavailable: $e');
                   }
+
+                  // Fall back to the old behaviour rather than failing
+                  // silently — on a device with no share targets the result
+                  // is still worth having.
+                  await Clipboard.setData(ClipboardData(text: text));
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text(copiedMessage),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.ios_share_rounded, size: 18),
                 style: ElevatedButton.styleFrom(
@@ -481,8 +504,9 @@ class _DoneView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
-                label: const Text('SHARE RESULT',
-                    style: TextStyle(
+                label: Text(
+                    AppLocalizations.of(context).dailyShareResult.toUpperCase(),
+                    style: const TextStyle(
                         fontWeight: FontWeight.w900, letterSpacing: 1.0)),
               ),
             ),

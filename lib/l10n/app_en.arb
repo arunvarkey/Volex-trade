@@ -27,5 +27,130 @@
   "settingsTitle": "Settings",
   "greetingMorning": "Good morning",
   "greetingAfternoon": "Good afternoon",
-  "greetingEvening": "Good evening"
+  "greetingEvening": "Good evening",
+  "menuTitle": "Menu",
+  "menuSectionLearn": "Learn & practice",
+  "menuSectionTools": "Advanced tools",
+  "menuSectionCommunity": "Community",
+  "menuSectionAccount": "Account",
+  "menuDaily": "Volex Daily",
+  "menuDailySub": "5 quick calls a day — build your streak",
+  "menuAcademy": "Trading Academy",
+  "menuAcademySub": "Learn to trade step by step — free, zero risk",
+  "menuGlossary": "Glossary",
+  "menuGlossarySub": "Every trading word the app uses, in plain English",
+  "menuBehaviour": "Your Trading",
+  "menuBehaviourSub": "What your own closed trades say about your habits",
+  "menuJournal": "Trading Journal",
+  "menuJournalSub": "Log why you traded and how you felt",
+  "menuPredictions": "Buzz & Predictions",
+  "menuPredictionsSub": "Trade events, politics & crypto on sentiment — virtual",
+  "menuStrategyStudio": "Strategy Studio",
+  "menuStrategyStudioSub": "Build a set of buy and sell rules from a ready-made template",
+  "menuBacktest": "Backtest Lab",
+  "menuBacktestSub": "Test strategies against real market history",
+  "menuScanner": "Market Scanner",
+  "menuScannerSub": "Scan every market at once for setups worth a look",
+  "menuOptimizer": "Strategy Optimizer",
+  "menuOptimizerSub": "Search for better settings for a strategy you already have",
+  "menuScriptEditor": "Script Editor",
+  "menuScriptEditorSub": "Write your own trading rules in code — for programmers",
+  "menuMarketplace": "Marketplace",
+  "menuMarketplaceSub": "Strategies published from this device",
+  "menuLeaderboard": "Leaderboard",
+  "menuLeaderboardSub": "Ranked strategies — empty until results are verified",
+  "menuPremium": "Premium",
+  "menuPremiumSub": "Unlock unlimited features",
+  "menuProfile": "Profile",
+  "menuProfileSub": "Your account and avatar",
+  "menuSettings": "Settings",
+  "menuSettingsSub": "App preferences",
+  "menuRiskSettings": "Risk Settings",
+  "menuRiskSettingsSub": "Daily limits and safety controls",
+  "menuSecurity": "Security",
+  "menuSecuritySub": "PIN, API keys, biometrics",
+  "debugSection": "System debug",
+  "debugReset": "Reset environment",
+  "debugResetSub": "Purge local storage and restart simulation.",
+  "debugResetConfirm": "Reset everything?",
+  "actionReset": "Reset",
+  "academyTitle": "Trading Academy",
+  "academyProgress": "{completed} of {total} lessons complete",
+  "@academyProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "academyLessonMinutes": "{minutes}m",
+  "@academyLessonMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "academyXpTotal": "{xp} XP",
+  "@academyXpTotal": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "academyDisclaimer": "Educational content only. Volex is a risk-free simulator — nothing here is financial advice, and all practice uses virtual money.",
+  "homeSimulatedBalance": "Simulated balance",
+  "homeActionBuild": "Build",
+  "homeActionBuildSub": "Start from a template",
+  "homeActionBacktest": "Backtest",
+  "homeActionBacktestSub": "Test against real history",
+  "homeActionSignals": "Signals",
+  "homeActionSignalsSub": "Setups our rules spotted",
+  "homeQuickTrade": "Quick trade",
+  "homeAllMarkets": "All Markets →",
+  "homeBuyLong": "Buy / Long",
+  "homeSellShort": "Sell / Short",
+  "homeYourPerformance": "Your performance",
+  "homeViewAll": "View All →",
+  "homeNewToTrading": "New to trading?",
+  "homeNewToTradingSub": "Start free lessons — learn step by step, zero risk",
+  "homePredictions": "Buzz & Predictions",
+  "homePredictionsSub": "Trade politics, crypto & events on sentiment — virtual",
+  "dailyTitle": "Volex Daily",
+  "dailyIntro": "{count} charts. For each one you say which way you think price went next, then see what actually happened. About 60 seconds.",
+  "@dailyIntro": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyNoStakes": "Nothing here is traded and nothing is at stake. It is practice at reading a chart.",
+  "dailyStart": "Start today's calls",
+  "dailyCallProgress": "Call {index} of {total}",
+  "@dailyCallProgress": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyLearnThis": "Learn this in 3 min",
+  "dailyComeBack": "Come back tomorrow for Volex Daily #{number}.",
+  "@dailyComeBack": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyShareResult": "Share result",
+  "dailyResultCopied": "Result copied — paste it anywhere"
 }
