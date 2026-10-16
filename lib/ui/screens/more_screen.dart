@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
@@ -12,6 +13,7 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: VxColors.background,
       appBar: AppBar(
@@ -19,7 +21,7 @@ class MoreScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Menu',
+          l10n.menuTitle,
           style: VxTypography.caption.copyWith(
             fontWeight: FontWeight.w900,
             letterSpacing: 4.0,
@@ -30,141 +32,141 @@ class MoreScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildSection('LEARN & PRACTICE'),
+          _buildSection(l10n.menuSectionLearn),
           _buildMenuItem(
             context,
             icon: Icons.bolt,
-            title: 'Volex Daily',
-            subtitle: '5 quick calls a day — build your streak',
+            title: l10n.menuDaily,
+            subtitle: l10n.menuDailySub,
             route: '/daily',
           ),
           _buildMenuItem(
             context,
             icon: Icons.school,
-            title: 'Trading Academy',
-            subtitle: 'Learn to trade step by step — free, zero risk',
+            title: l10n.menuAcademy,
+            subtitle: l10n.menuAcademySub,
             route: '/learn',
           ),
           _buildMenuItem(
             context,
             icon: Icons.spellcheck_rounded,
-            title: 'Glossary',
-            subtitle: 'Every trading word the app uses, in plain English',
+            title: l10n.menuGlossary,
+            subtitle: l10n.menuGlossarySub,
             route: '/glossary',
           ),
           _buildMenuItem(
             context,
             icon: Icons.psychology_alt_outlined,
-            title: 'Your Trading',
-            subtitle: 'What your own closed trades say about your habits',
+            title: l10n.menuBehaviour,
+            subtitle: l10n.menuBehaviourSub,
             route: '/your-trading',
           ),
           _buildMenuItem(
             context,
             icon: Icons.menu_book_outlined,
-            title: 'Trading Journal',
-            subtitle: 'Log why you traded and how you felt',
+            title: l10n.menuJournal,
+            subtitle: l10n.menuJournalSub,
             route: '/journal',
           ),
           _buildMenuItem(
             context,
             icon: Icons.insights,
-            title: 'Buzz & Predictions',
-            subtitle: 'Trade events, politics & crypto on sentiment — virtual',
+            title: l10n.menuPredictions,
+            subtitle: l10n.menuPredictionsSub,
             route: '/predictions',
           ),
           _buildMenuItem(
             context,
             icon: Icons.tune,
-            title: 'Strategy Studio',
-            subtitle: 'Build a set of buy and sell rules from a ready-made template',
+            title: l10n.menuStrategyStudio,
+            subtitle: l10n.menuStrategyStudioSub,
             route: '/simulator',
           ),
           _buildMenuItem(
             context,
             icon: Icons.science,
-            title: 'Backtest Lab',
-            subtitle: 'Test strategies against real market history',
+            title: l10n.menuBacktest,
+            subtitle: l10n.menuBacktestSub,
             route: '/lab',
           ),
           _buildMenuItem(
             context,
             icon: Icons.scanner,
-            title: 'Market Scanner',
-            subtitle: 'Scan every market at once for setups worth a look',
+            title: l10n.menuScanner,
+            subtitle: l10n.menuScannerSub,
             route: '/market-scanner',
           ),
 
-          _buildSection('ADVANCED TOOLS'),
+          _buildSection(l10n.menuSectionTools),
           _buildMenuItem(
             context,
             icon: Icons.speed,
-            title: 'Strategy Optimizer',
-            subtitle: 'Search for better settings for a strategy you already have',
+            title: l10n.menuOptimizer,
+            subtitle: l10n.menuOptimizerSub,
             route: '/optimizer',
           ),
           _buildMenuItem(
             context,
             icon: Icons.code,
-            title: 'Script Editor',
-            subtitle: 'Write your own trading rules in code — for programmers',
+            title: l10n.menuScriptEditor,
+            subtitle: l10n.menuScriptEditorSub,
             route: '/script-editor',
           ),
 
-          _buildSection('COMMUNITY'),
+          _buildSection(l10n.menuSectionCommunity),
           _buildMenuItem(
             context,
             icon: Icons.store,
-            title: 'Marketplace',
+            title: l10n.menuMarketplace,
             // There is no server behind this, so "other people" was wrong:
             // the listings are the ones published on this device.
-            subtitle: 'Strategies published from this device',
+            subtitle: l10n.menuMarketplaceSub,
             route: '/marketplace',
           ),
           _buildMenuItem(
             context,
             icon: Icons.leaderboard,
-            title: 'Leaderboard',
+            title: l10n.menuLeaderboard,
             // It ranks strategies on verified results, not people, and it
             // stays empty until there are results to rank.
-            subtitle: 'Ranked strategies — empty until results are verified',
+            subtitle: l10n.menuLeaderboardSub,
             route: '/leaderboard',
           ),
 
-          _buildSection('ACCOUNT'),
+          _buildSection(l10n.menuSectionAccount),
           _buildMenuItem(
             context,
             icon: Icons.workspace_premium,
-            title: 'Premium',
-            subtitle: 'Unlock unlimited features',
+            title: l10n.menuPremium,
+            subtitle: l10n.menuPremiumSub,
             route: '/subscription',
           ),
           _buildMenuItem(
             context,
             icon: Icons.person_outline,
-            title: 'Profile',
-            subtitle: 'Your account and avatar',
+            title: l10n.menuProfile,
+            subtitle: l10n.menuProfileSub,
             route: '/profile',
           ),
           _buildMenuItem(
             context,
             icon: Icons.settings_outlined,
-            title: 'Settings',
-            subtitle: 'App preferences',
+            title: l10n.menuSettings,
+            subtitle: l10n.menuSettingsSub,
             route: '/settings',
           ),
           _buildMenuItem(
             context,
             icon: Icons.shield,
-            title: 'Risk Settings',
-            subtitle: 'Daily limits and safety controls',
+            title: l10n.menuRiskSettings,
+            subtitle: l10n.menuRiskSettingsSub,
             route: '/risk-settings',
           ),
           _buildMenuItem(
             context,
             icon: Icons.security,
-            title: 'Security',
-            subtitle: 'PIN, API keys, biometrics',
+            title: l10n.menuSecurity,
+            subtitle: l10n.menuSecuritySub,
             route: '/security-settings',
           ),
 
@@ -177,7 +179,7 @@ class MoreScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               child: Text(
-                'SYSTEM_DEBUG',
+                l10n.debugSection.toUpperCase(),
                 style: VxTypography.caption.copyWith(
                   color: VxColors.neonRed,
                   fontSize: 10,
@@ -189,14 +191,14 @@ class MoreScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.refresh, color: Colors.red),
               title: Text(
-                'RESET_ENVIRONMENT',
+                l10n.debugReset.toUpperCase(),
                 style: VxTypography.body.copyWith(
                   color: VxColors.neonRed,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               subtitle: Text(
-                'Purge local storage and restart simulation.',
+                l10n.debugResetSub,
                 style: VxTypography.caption
                     .copyWith(color: Colors.white24, fontSize: 11),
               ),
@@ -205,12 +207,12 @@ class MoreScreen extends StatelessWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     backgroundColor: VxColors.surface,
-                    title: const Row(
+                    title: Row(
                       children: [
-                        Icon(Icons.warning, color: Colors.orange),
-                        SizedBox(width: 12),
-                        Text('Reset Everything?',
-                            style: TextStyle(color: Colors.white)),
+                        const Icon(Icons.warning, color: Colors.orange),
+                        const SizedBox(width: 12),
+                        Text(l10n.debugResetConfirm,
+                            style: const TextStyle(color: Colors.white)),
                       ],
                     ),
                     content: const Text(
@@ -225,13 +227,13 @@ class MoreScreen extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
+                        child: Text(l10n.actionCancel),
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.pop(context, true),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red),
-                        child: const Text('Reset'),
+                        child: Text(l10n.actionReset),
                       ),
                     ],
                   ),
