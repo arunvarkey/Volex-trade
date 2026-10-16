@@ -87,8 +87,29 @@ are unsure.
 
 ---
 
-## Contact details (required by Play)
+## Languages — read this before adding any
 
+List **English only** in the Play Console, whatever the app's
+`supportedLocales` says.
+
+The app ships Spanish and Hindi translations of its menus and navigation —
+28 strings. Every lesson, daily question, quiz and glossary definition is
+English. Listing Hindi would bring in users who install expecting a Hindi app,
+find an English one, and uninstall. Those installs convert worse than no
+installs, because they also leave a rating on the way out.
+
+Add a language to the listing when its *content* is translated, not when its
+buttons are. The in-app notice (`EnglishContentNotice`) says the same thing to
+anyone running a non-English device, so the two agree.
+
+Translating the content needs a native speaker who understands trading. These
+lessons explain stop placement and position sizing to people about to risk
+money on them; a machine translation that is subtly wrong about risk does not
+read as awkward, it teaches the wrong thing to someone with no way to check.
+
+---
+
+## Contact details (required by Play)
 - **Support email:** `dailyvolex@gmail.com` — must match the address in the
   privacy policy, and must be monitored: Play expects account-deletion requests
   sent there to be actioned.
