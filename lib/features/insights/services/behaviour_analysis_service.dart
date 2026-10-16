@@ -1,6 +1,7 @@
 import 'package:volex_terminal/domain/position.dart';
 import 'package:volex_terminal/features/insights/models/behaviour_insight.dart';
 import 'package:volex_terminal/features/journal/models/journal_entry.dart';
+import 'package:volex_terminal/ui/design_system/vx_format.dart';
 
 /// Reads a trader's own record back to them.
 ///
@@ -450,16 +451,11 @@ class BehaviourAnalysisService {
   static double _holdMinutes(Position p) =>
       p.closedAt!.difference(p.openedAt).inSeconds / 60.0;
 
-  static String _money(double v) {
-    final abs = v.abs();
-    final sign = v < 0 ? '-' : '';
-    if (abs >= 1000) return '$sign\$${abs.toStringAsFixed(0)}';
-    return '$sign\$${abs.toStringAsFixed(2)}';
-  }
+  // Both delegate to the app-wide formatter. Written locally first, which was
+  // exactly the habit that produced 239 ad-hoc toStringAsFixed calls spread
+  // across the app and no two screens agreeing on separators.
+  static String _money(double v) => VxFormat.money(v);
 
-  static String _duration(double minutes) {
-    if (minutes < 60) return '${minutes.round()} min';
-    if (minutes < 60 * 24) return '${(minutes / 60).toStringAsFixed(1)} hours';
-    return '${(minutes / (60 * 24)).toStringAsFixed(1)} days';
-  }
+  static String _duration(double minutes) =>
+      VxFormat.duration(Duration(seconds: (minutes * 60).round()));
 }

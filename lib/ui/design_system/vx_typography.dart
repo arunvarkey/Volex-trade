@@ -44,6 +44,19 @@ class VxTypography {
       fontWeight: weight,
       color: color,
       letterSpacing: letterSpacing,
+      // Tabular figures everywhere, not just on the price style.
+      //
+      // In a proportional face a '1' is narrower than a '0', so a live number
+      // physically changes width as it ticks and everything beside it shuffles
+      // — a balance in the app bar, a P&L in a list, a countdown. Traders read
+      // that jitter as amateur before they can say why: every terminal they
+      // have used, from Bloomberg to TWS, locks digits to one width.
+      //
+      // Applied in _scale rather than per style because any digit anywhere in
+      // this app can update, and because it is inert on text that has no
+      // digits in it. JetBrains Mono is already fixed-width so the feature is
+      // redundant there and harmless; DM Sans is where it does the work.
+      fontFeatures: const [FontFeature.tabularFigures()],
     );
   }
 
