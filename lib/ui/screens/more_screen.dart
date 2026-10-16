@@ -54,6 +54,13 @@ class MoreScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.psychology_alt_outlined,
+            title: 'Your Trading',
+            subtitle: 'What your own closed trades say about your habits',
+            route: '/your-trading',
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.menu_book_outlined,
             title: 'Trading Journal',
             subtitle: 'Log why you traded and how you felt',
