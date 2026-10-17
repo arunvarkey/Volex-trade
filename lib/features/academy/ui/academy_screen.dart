@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
-import 'package:volex_terminal/ui/widgets/english_content_notice.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
 import '../data/academy_curriculum.dart';
@@ -58,10 +57,6 @@ class _AcademyScreenState extends State<AcademyScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
             children: [
-              // Above the guidance banner on purpose: if the lessons are not
-              // in your language, that is the first thing you need to know
-              // about this screen, not the fourth.
-              const EnglishContentNotice(),
               const GuidanceBanner(
                 id: 'learn_intro',
                 text:
