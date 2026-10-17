@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import 'age_gate_service.dart';
@@ -31,9 +32,7 @@ class _AgeGateState extends State<AgeGate> {
       builder: (context, _) {
         if (!_service.isLoaded) {
           return const _Scaffolded(
-            child: Center(
-              child: CircularProgressIndicator(color: VxColors.neonCyan),
-            ),
+            child: Center(child: VxInlineSpinner(size: 28)),
           );
         }
         if (_service.isConfirmed) return widget.child;

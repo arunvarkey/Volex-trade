@@ -21,11 +21,8 @@ class TemplateSelectorScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'CHOOSE TEMPLATE',
-          style: TextStyle(
-            color: VxColors.neonCyan,
-            letterSpacing: 0.3,
-          ),
+          'Choose a template',
+          style: TextStyle(color: VxColors.neonCyan),
         ),
       ),
       body: ListView.separated(
@@ -108,13 +105,12 @@ class TemplateSelectorScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        template.name.toUpperCase(),
+                        template.name,
                         style: TextStyle(
                           color:
                               hasAccess ? VxColors.neonCyan : Colors.grey[500],
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           fontSize: 16,
-                          letterSpacing: 1,
                         ),
                       ),
                       if (!hasAccess) ...[

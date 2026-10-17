@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import '../data/prediction_data.dart';
@@ -51,12 +52,8 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'BUZZ & PREDICTIONS',
-          style: VxTypography.caption.copyWith(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 3.0,
-            color: Colors.white,
-          ),
+          'Buzz & Predictions',
+          style: VxTypography.h3.copyWith(color: Colors.white),
         ),
       ),
       body: AnimatedBuilder(
@@ -81,7 +78,7 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
               _BalanceHeader(portfolio: _portfolio),
               const SizedBox(height: 22),
               const _SectionLabel(icon: Icons.local_fire_department_rounded,
-                  text: 'TRENDING MENTIONS', accent: VxColors.neonYellow),
+                  text: 'Trending mentions', accent: VxColors.neonYellow),
               const SizedBox(height: 10),
               SizedBox(
                 height: 168,
@@ -105,7 +102,7 @@ class _PredictionsScreenState extends State<PredictionsScreen> {
               ),
               const SizedBox(height: 22),
               const _SectionLabel(icon: Icons.insights_rounded,
-                  text: 'EVENT MARKETS', accent: VxColors.neonCyan),
+                  text: 'Event markets', accent: VxColors.neonCyan),
               const SizedBox(height: 10),
               _CategoryFilter(
                 selected: _filter,
@@ -186,7 +183,7 @@ class _BalanceHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 InfoLabel(
-                  text: 'OPEN P&L',
+                  text: 'Open P&L',
                   termId: 'pnl',
                   style: VxTypography.caption.copyWith(fontSize: 9),
                 ),
@@ -220,15 +217,7 @@ class _SectionLabel extends StatelessWidget {
       children: [
         Icon(icon, size: 16, color: accent),
         const SizedBox(width: 6),
-        Text(
-          text,
-          style: VxTypography.caption.copyWith(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 2.0,
-            fontSize: 11,
-            color: Colors.white70,
-          ),
-        ),
+        VxEyebrow(text, color: Colors.white70, fontWeight: FontWeight.w800),
       ],
     );
   }

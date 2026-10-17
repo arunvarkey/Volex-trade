@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/domain/order.dart';
 import 'package:volex_terminal/ui/sheets/smart_order_sheet.dart';
@@ -234,13 +235,8 @@ class HomeScreenV2 extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      AppLocalizations.of(context).homeSimulatedBalance.toUpperCase(),
-                      style: VxTypography.caption.copyWith(
-                        color: VxColors.textTertiary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
+                    VxEyebrow(
+                      AppLocalizations.of(context).homeSimulatedBalance,
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -354,14 +350,8 @@ class HomeScreenV2 extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                AppLocalizations.of(context).homeQuickTrade.toUpperCase(),
-                style: VxTypography.caption.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: VxColors.textTertiary,
-                  letterSpacing: 0.8,
-                ),
-              ),
+              VxEyebrow(AppLocalizations.of(context).homeQuickTrade,
+                  fontSize: 12),
               TextButton(
                 onPressed: () => context.push('/market-scanner'),
                 style: TextButton.styleFrom(
@@ -464,7 +454,7 @@ class HomeScreenV2 extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _TradeButton(
-                            label: AppLocalizations.of(context).homeBuyLong.toUpperCase(),
+                            label: AppLocalizations.of(context).homeBuyLong,
                             color: VxColors.success,
                             onPressed: () =>
                                 _showOrderDialog(context, OrderSide.buy, price),
@@ -473,7 +463,7 @@ class HomeScreenV2 extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _TradeButton(
-                            label: AppLocalizations.of(context).homeSellShort.toUpperCase(),
+                            label: AppLocalizations.of(context).homeSellShort,
                             color: VxColors.danger,
                             onPressed: () => _showOrderDialog(
                                 context, OrderSide.sell, price),
@@ -507,14 +497,8 @@ class HomeScreenV2 extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                AppLocalizations.of(context).homeYourPerformance.toUpperCase(),
-                style: VxTypography.caption.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: VxColors.textTertiary,
-                  letterSpacing: 0.8,
-                ),
-              ),
+              VxEyebrow(AppLocalizations.of(context).homeYourPerformance,
+                  fontSize: 12),
               TextButton(
                 onPressed: () => context.push('/activity'),
                 style: TextButton.styleFrom(

@@ -90,6 +90,17 @@ class VxTypography {
   static final TextStyle button = _scale(
       sans, 16, FontWeight.w600, VxColors.textPrimary, letterSpacing: 0.2);
 
+  /// Small capitalised labels — section eyebrows, column headers, metric
+  /// captions. Always applied through `VxEyebrow`, never by hand.
+  ///
+  /// The letter spacing is the part that is easy to leave out and the part
+  /// that matters. Type designers fit the sidebearings of a capital for the
+  /// company of lower-case letters, so a run of capitals set at its default
+  /// tracking reads as crowded — the glyphs touch where the eye expects air.
+  /// Roughly 0.1em of extra tracking restores it, which at 11px is 1.1.
+  static final TextStyle eyebrow = _scale(
+      sans, 11, FontWeight.w600, VxColors.textTertiary, letterSpacing: 1.1);
+
   /// The single mono family for numeric/tabular text, exposed so raw
   /// `fontFamily:` usages can align to it.
   static String get monoFamily => mono;

@@ -46,12 +46,11 @@ class _RiskDisclosureScreenState extends State<RiskDisclosureScreen> {
 
               // Title
               const Text(
-                'IMPORTANT RISK DISCLOSURE',
+                'Important risk disclosure',
                 style: TextStyle(
                   color: VxColors.neonCyan,
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+                  fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -144,10 +143,9 @@ class _RiskDisclosureScreenState extends State<RiskDisclosureScreen> {
                     ),
                   ),
                   child: const Text(
-                    'I ACCEPT THE RISKS',
+                    'I accept the risks',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
                   ),

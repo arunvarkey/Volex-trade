@@ -4,6 +4,7 @@ import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/services/user_mode_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 
@@ -82,7 +83,7 @@ class _MainNavigatorState extends State<MainNavigator> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: VxColors.background,
-        body: Center(child: CircularProgressIndicator(color: VxColors.primary)),
+        body: Center(child: VxInlineSpinner(size: 28)),
       );
     }
 

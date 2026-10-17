@@ -324,11 +324,10 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _isBuyMode ? 'EXECUTE BUY' : 'EXECUTE SELL',
+                      _isBuyMode ? 'Execute buy' : 'Execute sell',
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -411,7 +410,7 @@ class _VxTradeSheetState extends State<VxTradeSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                '${side.name.toUpperCase()} executed: ${quantity.toStringAsFixed(4)} ${widget.symbol}'),
+                'Executed: ${side.name} ${quantity.toStringAsFixed(4)} ${widget.symbol}'),
             backgroundColor: VxColors.neonGreen,
           ),
         );

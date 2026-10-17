@@ -156,12 +156,10 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
               ),
             ),
             const SizedBox(height: 28),
-            Text('WHY WE DO NOT ASK FOR YOUR KEYS',
-                style: VxTypography.caption.copyWith(
+            Text('Why we do not ask for your keys',
+                style: VxTypography.bodySmall.copyWith(
                   color: VxColors.primary,
                   fontWeight: FontWeight.w700,
-                  fontSize: 11,
-                  letterSpacing: 0.6,
                 )),
             const SizedBox(height: 8),
             Text(
@@ -187,14 +185,7 @@ class _ApiKeySetupScreenState extends State<ApiKeySetupScreen> {
             ),
             if (_checking) ...[
               const SizedBox(height: 32),
-              const Center(
-                child: SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2, color: VxColors.primary),
-                ),
-              ),
+              const Center(child: VxInlineSpinner(size: 20)),
             ] else if (_hasStoredKeys) ...[
               const SizedBox(height: 32),
               Container(

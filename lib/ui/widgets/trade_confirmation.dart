@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../../engine/execution_manager.dart';
 import 'package:volex_terminal/domain/order.dart';
 import '../design_system/vx_colors.dart';
+import '../design_system/vx_eyebrow.dart';
+import '../design_system/vx_loading.dart';
+import '../design_system/vx_typography.dart';
 
 /// Modern Trade Confirmation Dialog
 /// Shows order preview with risk checks before execution
@@ -87,22 +90,20 @@ class TradeConfirmationDialog extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'CONFIRM ${side.name.toUpperCase()}',
-                          style: TextStyle(
+                          'Confirm ${side.name}',
+                          style: VxTypography.h3.copyWith(
                             color: isBuy ? Colors.green : VxColors.neonRed,
                             fontSize: 18,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          '${type.name.toUpperCase()} ORDER',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        // Still capitals, because this one is a label: two
+                        // words the user glances at to check the order type.
+                        VxEyebrow(
+                          '${type.name} order',
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
                       ],
                     ),
@@ -230,12 +231,8 @@ class TradeConfirmationDialog extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'CONFIRM ${side.name.toUpperCase()}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 14,
-                              letterSpacing: 0.5,
-                            ),
+                            'Confirm ${side.name}',
+                            style: VxTypography.button.copyWith(fontSize: 15),
                           ),
                         ],
                       ),
@@ -294,30 +291,19 @@ class OrderExecutingOverlay extends StatelessWidget {
               width: 2,
             ),
           ),
-          child: const Column(
+          // A spinner is the right answer here and one of the few places it
+          // is: the user has just pressed Confirm, the wait is a second, and
+          // the only question they have is whether the tap registered.
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(
-                color: VxColors.neonCyan,
-                strokeWidth: 3,
-              ),
-              SizedBox(height: 24),
-              Text(
-                'EXECUTING ORDER...',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              SizedBox(height: 8),
+              const VxInlineSpinner(size: 32, color: VxColors.neonCyan),
+              const SizedBox(height: 24),
+              Text('Executing order…', style: VxTypography.h3),
+              const SizedBox(height: 8),
               Text(
                 'Please wait',
-                style: TextStyle(
-                  color: VxColors.textSecondary,
-                  fontSize: 13,
-                ),
+                style: VxTypography.caption.copyWith(fontSize: 13),
               ),
             ],
           ),

@@ -127,11 +127,10 @@ class _FirstUserGuideState extends State<FirstUserGuide> {
                       ),
                     ),
                     child: const Text(
-                      'TAKE YOUR FIRST LESSON  •  3 MIN',
+                      'Take your first lesson  •  3 min',
                       style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.8,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
                     ),
                   ),

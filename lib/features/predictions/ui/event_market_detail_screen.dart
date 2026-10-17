@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import '../data/prediction_data.dart';
@@ -79,13 +80,13 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          '${market.category.emoji} ${market.category.label.toUpperCase()}',
-          style: VxTypography.caption.copyWith(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 2.0,
-            color: cat,
-          ),
+        title: Row(
+          children: [
+            Text(market.category.emoji, style: VxTypography.bodySmall),
+            const SizedBox(width: 6),
+            VxEyebrow(market.category.label,
+                color: cat, fontWeight: FontWeight.w800),
+          ],
         ),
       ),
       body: AnimatedBuilder(
@@ -125,7 +126,7 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
               const SizedBox(height: 24),
 
               if (yesPos != null || noPos != null) ...[
-                _sectionLabel('YOUR POSITION'),
+                _sectionLabel('Your position'),
                 const SizedBox(height: 8),
                 if (yesPos != null)
                   _PositionTile(
@@ -142,13 +143,13 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
                 const SizedBox(height: 22),
               ],
 
-              _sectionLabel('PLACE A TRADE'),
+              _sectionLabel('Place a trade'),
               const SizedBox(height: 10),
               _buildTradePanel(),
 
               if (_relatedMentions.isNotEmpty) ...[
                 const SizedBox(height: 26),
-                _sectionLabel('WHAT PEOPLE ARE SAYING'),
+                _sectionLabel('What people are saying'),
                 const SizedBox(height: 10),
                 for (final m in _relatedMentions) ...[
                   _MentionTile(buzz: m),
@@ -289,9 +290,8 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
                     borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                'BUY ${_side.name.toUpperCase()}  •  \$${_cost.toStringAsFixed(2)}',
-                style: const TextStyle(
-                    fontWeight: FontWeight.w900, letterSpacing: 0.8),
+                'Buy ${_side.name}  •  \$${_cost.toStringAsFixed(2)}',
+                style: VxTypography.button.copyWith(color: Colors.black),
               ),
             ),
           ),
@@ -373,15 +373,7 @@ class _EventMarketDetailScreenState extends State<EventMarketDetailScreen> {
   }
 
   Widget _sectionLabel(String text) {
-    return Text(
-      text,
-      style: VxTypography.caption.copyWith(
-        fontWeight: FontWeight.w900,
-        letterSpacing: 2.0,
-        fontSize: 11,
-        color: Colors.white70,
-      ),
-    );
+    return VxEyebrow(text, color: Colors.white70, fontWeight: FontWeight.w800);
   }
 
   static String _compactMoney(double n) {

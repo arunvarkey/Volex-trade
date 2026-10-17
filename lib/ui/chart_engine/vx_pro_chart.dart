@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:volex_terminal/domain/candle_model.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/core/chart_math.dart';
 import 'chart_drawing.dart';
 import 'chart_marker.dart';
@@ -217,9 +218,11 @@ class _VxProChartState extends State<VxProChart> {
   @override
   Widget build(BuildContext context) {
     if (widget.candles.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: VxColors.neonCyan),
-      );
+      // Chart-shaped, so the axes and the price action appear where they are
+      // about to be rather than replacing a centred dot. The chart is also
+      // the one place in the app where the user is waiting on a *picture*,
+      // and a placeholder picture is read in a glance.
+      return const VxChartSkeleton();
     }
 
     final series = _seriesFor(widget.candles);

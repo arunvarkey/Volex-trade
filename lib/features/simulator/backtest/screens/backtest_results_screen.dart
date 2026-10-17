@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import '../../../../core/glossary.dart';
 import '../../../../ui/design_system/vx_colors.dart';
+import '../../../../ui/design_system/vx_eyebrow.dart';
 import '../../../../ui/widgets/guidance_banner.dart';
 import '../../../../ui/widgets/glossary_sheet.dart';
 import '../models/backtest_result.dart';
@@ -459,14 +460,8 @@ class BacktestResultsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _getTradeTypeLabel(trade.type),
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
+                VxEyebrow(_getTradeTypeLabel(trade.type),
+                    color: color, fontSize: 11),
                 Text(
                   _formatTimestamp(trade.timestamp),
                   style: TextStyle(
@@ -536,13 +531,13 @@ class BacktestResultsScreen extends StatelessWidget {
   String _getTradeTypeLabel(TradeType type) {
     switch (type) {
       case TradeType.entry:
-        return 'ENTRY';
+        return 'Entry';
       case TradeType.exit:
-        return 'EXIT';
+        return 'Exit';
       case TradeType.stopLoss:
-        return 'STOP LOSS';
+        return 'Stop loss';
       case TradeType.takeProfit:
-        return 'TAKE PROFIT';
+        return 'Take profit';
     }
   }
 
@@ -681,8 +676,8 @@ class BacktestResultsScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'COMING SOON',
-          style: TextStyle(color: VxColors.neonCyan, letterSpacing: 1.5),
+          'Coming soon',
+          style: TextStyle(color: VxColors.neonCyan),
         ),
         content: Text(
           '$feature will be available in the next update!',

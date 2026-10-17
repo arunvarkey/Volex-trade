@@ -3,6 +3,7 @@ import '../../../engine/marketplace/marketplace_service.dart';
 import '../../../engine/marketplace/models/strategy_listing.dart';
 import '../../../core/service_locator.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_eyebrow.dart';
 
 class StrategyDetailsScreen extends StatefulWidget {
   final StrategyListing strategy;
@@ -115,12 +116,8 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                       color: tierColor.withValues(alpha: 0.5))),
-                              child: Text(
-                                  widget.strategy.tier.name.toUpperCase(),
-                                  style: TextStyle(
-                                      color: tierColor,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold)),
+                              child: VxEyebrow(widget.strategy.tier.name,
+                                  color: tierColor, fontSize: 10),
                             )
                           ],
                         ),
@@ -231,10 +228,7 @@ class _StrategyDetailsScreenState extends State<StrategyDetailsScreen> {
                         borderRadius: BorderRadius.circular(8)),
                   ),
                   child: _isSubscribing
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2))
+                      ? const VxInlineSpinner(size: 20)
                       // Was "Subscribe (\$X/mo)" / "Active Subscription" for
                       // an action that appends to a local list and charges
                       // nothing — the app has no payment provider at all.

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../ui/design_system/vx_colors.dart';
+import '../../../../ui/design_system/vx_eyebrow.dart';
 import '../models/strategy_template.dart';
 import '../models/template_parameter.dart';
 import '../services/strategy_validator.dart';
@@ -64,7 +65,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             const SizedBox(height: 24),
 
             // Strategy name
-            _buildSectionHeader('STRATEGY NAME'),
+            _buildSectionHeader('Strategy name'),
             const SizedBox(height: 8),
             TextField(
               controller: _nameController,
@@ -93,21 +94,21 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
             const SizedBox(height: 24),
 
             // Symbol selection
-            _buildSectionHeader('SYMBOL'),
+            _buildSectionHeader('Symbol'),
             const SizedBox(height: 8),
             _buildSymbolSelector(),
 
             const SizedBox(height: 24),
 
             // Timeframe selection
-            _buildSectionHeader('TIMEFRAME'),
+            _buildSectionHeader('Timeframe'),
             const SizedBox(height: 8),
             _buildTimeframeSelector(),
 
             const SizedBox(height: 24),
 
             // Dynamic parameters
-            _buildSectionHeader('PARAMETERS'),
+            _buildSectionHeader('Parameters'),
             const SizedBox(height: 12),
             ...widget.template.parameters.map((param) => Padding(
                   padding: const EdgeInsets.only(bottom: 24),
@@ -169,12 +170,11 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  widget.template.name.toUpperCase(),
+                  widget.template.name,
                   style: const TextStyle(
                     color: VxColors.neonCyan,
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -194,17 +194,8 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        color: VxColors.neonCyan,
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
-      ),
-    );
-  }
+  Widget _buildSectionHeader(String title) =>
+      VxEyebrow(title, color: VxColors.neonCyan, fontSize: 12);
 
   Widget _buildSymbolSelector() {
     final symbols = StrategyValidator.allowedSymbols;
@@ -296,15 +287,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              param.label.toUpperCase(),
-              style: TextStyle(
-                color: Colors.grey[300],
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1,
-              ),
-            ),
+            VxEyebrow(param.label, color: Colors.grey[300], fontSize: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
@@ -391,15 +374,7 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          param.label.toUpperCase(),
-          style: TextStyle(
-            color: Colors.grey[300],
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1,
-          ),
-        ),
+        VxEyebrow(param.label, color: Colors.grey[300], fontSize: 12),
         if (param.description != null) ...[
           const SizedBox(height: 4),
           Text(
@@ -483,12 +458,9 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'VALIDATION FAILED',
-          style: TextStyle(
-            color: VxColors.neonRed,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-          ),
+          'That strategy will not run yet',
+          style:
+              TextStyle(color: VxColors.neonRed, fontWeight: FontWeight.w600),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -529,12 +501,9 @@ class _TemplateConfigScreenState extends State<TemplateConfigScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'UPGRADE TO PREMIUM',
-          style: TextStyle(
-            color: VxColors.neonCyan,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-          ),
+          'Upgrade to Premium',
+          style:
+              TextStyle(color: VxColors.neonCyan, fontWeight: FontWeight.w600),
         ),
         content: Text(message, style: const TextStyle(color: Colors.white)),
         actions: [

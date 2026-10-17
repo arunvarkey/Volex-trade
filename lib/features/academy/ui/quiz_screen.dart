@@ -138,7 +138,7 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
           const SizedBox(height: 20),
           _PrimaryButton(
-            label: _index + 1 < _questions.length ? 'CONTINUE' : 'SEE RESULT',
+            label: _index + 1 < _questions.length ? 'Continue' : 'See result',
             icon: Icons.arrow_forward_rounded,
             onTap: _next,
           ),
@@ -185,7 +185,7 @@ class _QuizScreenState extends State<QuizScreen> {
         const SizedBox(height: 32),
         if (passed)
           _PrimaryButton(
-            label: _hasNext ? 'NEXT LESSON' : 'BACK TO ACADEMY',
+            label: _hasNext ? 'Next lesson' : 'Back to Academy',
             icon: _hasNext
                 ? Icons.arrow_forward_rounded
                 : Icons.school_rounded,
@@ -193,13 +193,13 @@ class _QuizScreenState extends State<QuizScreen> {
           )
         else ...[
           _PrimaryButton(
-            label: 'TRY AGAIN',
+            label: 'Try again',
             icon: Icons.refresh_rounded,
             onTap: _retry,
           ),
           const SizedBox(height: 12),
           _SecondaryButton(
-            label: 'RE-READ THE LESSON',
+            label: 'Re-read the lesson',
             onTap: () => context.pop(),
           ),
         ],
@@ -325,12 +325,11 @@ class _ExplanationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            correct ? 'CORRECT' : 'NOT QUITE',
-            style: VxTypography.caption.copyWith(
+            correct ? 'Correct' : 'Not quite',
+            style: VxTypography.bodySmall.copyWith(
               color: color,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0,
-              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
             ),
           ),
           const SizedBox(height: 6),

@@ -171,15 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       elevation: 0,
                     ),
                     child: _loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: VxColors
-                                  .deepBlack, // ✅ FIXED: Dark spinner too
-                            ),
-                          )
+                        ? const VxInlineSpinner(
+                            size: 20, color: VxColors.deepBlack)
                         : const Text(
                             'Sign In',
                             style: TextStyle(

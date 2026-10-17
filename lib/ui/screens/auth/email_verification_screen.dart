@@ -182,14 +182,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                   ),
                   child: _verifying
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: VxColors.deepBlack,
-                          ),
-                        )
+                      ? const VxInlineSpinner(
+                          size: 20, color: VxColors.deepBlack)
                       : const Text(
                           "I've Verified It",
                           style: TextStyle(
@@ -211,11 +205,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     foregroundColor: VxColors.textSecondary,
                   ),
                   child: _sendingEmail
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                      ? const VxInlineSpinner(size: 20)
                       : const Text('Resend Email'),
                 ),
               ),

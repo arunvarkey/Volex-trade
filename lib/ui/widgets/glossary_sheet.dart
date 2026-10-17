@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:volex_terminal/core/glossary.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 /// A bottom sheet that explains one trading term — child-simple first, then
@@ -54,14 +55,14 @@ class GlossarySheet {
                   ],
                 ),
                 const SizedBox(height: 18),
-                _label('IN PLAIN TERMS'),
+                _label('In plain terms'),
                 const SizedBox(height: 6),
                 Text(
                   entry.simple,
                   style: VxTypography.bodyLarge.copyWith(height: 1.4),
                 ),
                 const SizedBox(height: 20),
-                _label('THE DETAIL'),
+                _label('The detail'),
                 const SizedBox(height: 6),
                 Text(
                   entry.detail,
@@ -93,15 +94,8 @@ class GlossarySheet {
     );
   }
 
-  static Widget _label(String text) => Text(
-        text,
-        style: VxTypography.caption.copyWith(
-          color: VxColors.primary,
-          fontWeight: FontWeight.w700,
-          fontSize: 11,
-          letterSpacing: 0.6,
-        ),
-      );
+  static Widget _label(String text) =>
+      VxEyebrow(text, color: VxColors.primary);
 }
 
 /// A label that carries a small "?" and opens the glossary for [termId].

@@ -3,9 +3,11 @@ import '../../../engine/marketplace/marketplace_service.dart';
 import '../../../engine/marketplace/models/strategy_listing.dart';
 import '../../../core/service_locator.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_eyebrow.dart';
 import 'strategy_details_screen.dart';
 import 'package:volex_terminal/ui/wizard/smart_strategy_wizard.dart';
 import 'leaderboard_screen.dart';
+import '../../design_system/vx_loading.dart';
 import '../../design_system/vx_toolbar.dart';
 import '../../design_system/vx_typography.dart';
 
@@ -77,7 +79,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget _buildBrowseTab() {
-    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_loading) return const VxCardListSkeleton(cardHeight: 128);
     if (_featured.isEmpty) return _buildEmptyState();
 
     return ListView(
@@ -160,8 +162,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               color: VxColors.neutral900.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const Text('FEATURED',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            child: const VxEyebrow('Featured', fontSize: 11),
           ),
           const Spacer(),
           Text(top.title,

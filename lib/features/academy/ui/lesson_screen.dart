@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import '../data/academy_curriculum.dart';
@@ -77,7 +78,7 @@ class _LessonScreenState extends State<LessonScreen> {
               Navigator.of(ctx).pop();
               if (mounted) context.pop();
             },
-            child: const Text('BACK TO ACADEMY',
+            child: const Text('Back to Academy',
                 style: TextStyle(color: VxColors.neonCyan)),
           ),
         ],
@@ -167,19 +168,19 @@ class _BottomBar extends StatelessWidget {
 
     if (!alreadyDone) {
       if (hasQuiz) {
-        label = 'TAKE THE CHECKPOINT QUIZ';
+        label = 'Take the checkpoint quiz';
         icon = Icons.quiz_rounded;
       } else {
-        label = hasNext ? 'MARK COMPLETE & CONTINUE' : 'MARK COMPLETE & FINISH';
+        label = hasNext ? 'Mark complete & continue' : 'Mark complete & finish';
         icon = Icons.check_rounded;
       }
       onTap = onComplete;
     } else if (hasNext) {
-      label = 'NEXT LESSON';
+      label = 'Next lesson';
       icon = Icons.arrow_forward_rounded;
       onTap = onNext;
     } else {
-      label = 'BACK TO ACADEMY';
+      label = 'Back to Academy';
       icon = Icons.school_rounded;
       onTap = onNext;
     }
@@ -274,21 +275,21 @@ class _LessonBlockView extends StatelessWidget {
         return _Callout(
           icon: Icons.lightbulb_rounded,
           color: VxColors.neonCyan,
-          label: 'PRO TIP',
+          label: 'Pro tip',
           text: block.text,
         );
       case LessonBlockType.warning:
         return _Callout(
           icon: Icons.warning_amber_rounded,
           color: VxColors.neonYellow,
-          label: 'WATCH OUT',
+          label: 'Watch out',
           text: block.text,
         );
       case LessonBlockType.keyTakeaway:
         return _Callout(
           icon: Icons.key_rounded,
           color: VxColors.neonGreen,
-          label: 'KEY TAKEAWAY',
+          label: 'Key takeaway',
           text: block.text,
           emphasise: true,
         );
@@ -330,14 +331,11 @@ class _Callout extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: color),
               const SizedBox(width: 6),
-              Text(
+              VxEyebrow(
                 label,
-                style: VxTypography.caption.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.0,
-                  fontSize: 10.5,
-                ),
+                color: color,
+                fontWeight: FontWeight.w800,
+                fontSize: 10.5,
               ),
             ],
           ),
@@ -381,19 +379,16 @@ class _TryItBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.rocket_launch_rounded,
+              Icon(Icons.rocket_launch_rounded,
                   size: 16, color: VxColors.neonCyan),
-              const SizedBox(width: 6),
-              Text(
-                'TRY IT NOW',
-                style: VxTypography.caption.copyWith(
-                  color: VxColors.neonCyan,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.0,
-                  fontSize: 10.5,
-                ),
+              SizedBox(width: 6),
+              VxEyebrow(
+                'Try it now',
+                color: VxColors.neonCyan,
+                fontWeight: FontWeight.w800,
+                fontSize: 10.5,
               ),
             ],
           ),
@@ -419,11 +414,8 @@ class _TryItBlock extends StatelessWidget {
                 ),
               ),
               child: Text(
-                (block.actionLabel ?? 'OPEN').toUpperCase(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.0,
-                ),
+                block.actionLabel ?? 'Open',
+                style: VxTypography.button,
               ),
             ),
           ),

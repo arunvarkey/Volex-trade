@@ -8,8 +8,10 @@ import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/signals/models/trade_signal.dart';
 import 'package:volex_terminal/features/signals/services/signal_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_card.dart';
 import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/widgets/paywalls/signal_limit_banner.dart';
 import 'package:volex_terminal/ui/widgets/vx_disclaimer.dart';
@@ -152,15 +154,29 @@ class _SignalFeedScreenState extends State<SignalFeedScreen> {
   }
 
   Widget _buildScanningState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(color: VxColors.primary),
-          const SizedBox(height: 16),
-          VxText.body('Scanning markets...', color: VxColors.textSecondary),
-        ],
-      ),
+    // A spinner here would have said only "wait". The skeleton says how many
+    // signal cards are coming and what one looks like, and the line above it
+    // says what the app is doing — which is the part a spinner can never
+    // tell you, and the part that makes a slow scan feel deliberate rather
+    // than stuck.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+          child: Row(
+            children: [
+              const VxInlineSpinner(size: 13),
+              const SizedBox(width: 10),
+              VxText.caption(
+                AppLocalizations.of(context).signalsScanning,
+                color: VxColors.textSecondary,
+              ),
+            ],
+          ),
+        ),
+        const Expanded(child: VxCardListSkeleton(cards: 4, cardHeight: 132)),
+      ],
     );
   }
 
@@ -322,12 +338,8 @@ class _SignalCard extends StatelessWidget {
                                   VxColors.textTertiary.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Text(l10n.signalsWatch,
-                                style: const TextStyle(
-                                    color: VxColors.textSecondary,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.5)),
+                            child: VxEyebrow(l10n.signalsWatch,
+                                color: VxColors.textSecondary, fontSize: 9),
                           ),
                           const SizedBox(width: 8),
                         ],

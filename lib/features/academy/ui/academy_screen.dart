@@ -3,6 +3,7 @@ import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 
@@ -43,10 +44,8 @@ class _AcademyScreenState extends State<AcademyScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          AppLocalizations.of(context).academyTitle.toUpperCase(),
-          style: VxTypography.caption.copyWith(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 3.0,
+          AppLocalizations.of(context).academyTitle,
+          style: VxTypography.h3.copyWith(
             color: Colors.white,
           ),
         ),
@@ -207,11 +206,8 @@ class _ProgressHeader extends StatelessWidget {
                         : Icons.school_rounded, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      started ? 'CONTINUE LEARNING' : 'START LEARNING',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.0,
-                      ),
+                      started ? 'Continue learning' : 'Start learning',
+                      style: VxTypography.button,
                     ),
                   ],
                 ),
@@ -439,14 +435,11 @@ class _LevelChip extends StatelessWidget {
         color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(6),
       ),
-      child: Text(
-        level.toUpperCase(),
-        style: VxTypography.caption.copyWith(
-          fontSize: 8.5,
-          color: accent,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 0.8,
-        ),
+      child: VxEyebrow(
+        level,
+        fontSize: 8.5,
+        color: accent,
+        fontWeight: FontWeight.w800,
       ),
     );
   }
@@ -468,14 +461,11 @@ class _XpBar extends StatelessWidget {
           children: [
             Text(level.emoji, style: const TextStyle(fontSize: 15)),
             const SizedBox(width: 6),
-            Text(
-              level.label.toUpperCase(),
-              style: VxTypography.caption.copyWith(
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.2,
-                color: VxColors.neonYellow,
-              ),
+            VxEyebrow(
+              level.label,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: VxColors.neonYellow,
             ),
             const Spacer(),
             Text(

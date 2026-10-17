@@ -159,12 +159,11 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
             children: [
               Expanded(
                 child: Text(
-                  strategy.name.toUpperCase(),
+                  strategy.name,
                   style: const TextStyle(
                     color: VxColors.neonCyan,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 16,
-                    letterSpacing: 1,
                   ),
                 ),
               ),
@@ -244,11 +243,10 @@ class _MyStrategiesScreenState extends State<MyStrategiesScreen> {
         backgroundColor: VxColors.deepBlack,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         title: const Text(
-          'DELETE STRATEGY?',
+          'Delete this strategy?',
           style: TextStyle(
             color: VxColors.neonRed,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.3,
+            fontWeight: FontWeight.w600,
           ),
         ),
         content: Column(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'vx_card.dart';
 import 'vx_colors.dart';
+import 'vx_eyebrow.dart';
 import 'vx_typography.dart';
 import 'vx_spacing.dart';
 import 'vx_status_badge.dart';
@@ -67,8 +68,8 @@ class VxStrategyTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    VxText.micro(
-                        e.key == "PnL" ? "IMPACT" : e.key.toUpperCase()),
+                    VxEyebrow(
+                        e.key == "PnL" ? "Impact" : e.key, fontSize: 10),
                     VxText.monoBold(e.value,
                         color: e.value.startsWith("-")
                             ? VxColors.neonRed

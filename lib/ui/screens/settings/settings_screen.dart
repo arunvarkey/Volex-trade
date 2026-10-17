@@ -3,6 +3,7 @@ import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/features/legal/ui/legal_screen.dart';
 import 'package:volex_terminal/ui/screens/settings/security_settings_screen.dart';
 import 'package:volex_terminal/ui/screens/settings/risk_settings_screen.dart';
@@ -107,17 +108,9 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Text(
-        title.toUpperCase(),
-        // Section labels are UI text, not data — DM Sans like every other
-        // screen. Monospace is reserved for numbers.
-        style: VxTypography.caption.copyWith(
-          color: Colors.grey,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.6,
-        ),
-      ),
+      // Section labels are UI text, not data — DM Sans like every other
+      // screen. Monospace is reserved for numbers.
+      child: VxEyebrow(title, color: Colors.grey, fontSize: 12),
     );
   }
 

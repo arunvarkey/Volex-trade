@@ -16,7 +16,8 @@
   "signalsTitle": "Live Signals",
   "signalsSubtitle": "Setups the built-in strategies just spotted, with the reason for each.",
   "signalsDisclaimer": "Signals are educational — not financial advice.",
-  "signalsWatch": "WATCH",
+  "signalsWatch": "Watch",
+  "signalsScanning": "Scanning markets…",
   "signalsNoneTitle": "No signals right now",
   "signalsNoneBody": "The engine re-scans the market every minute. Check back shortly or scan again now.",
   "marketsTitle": "All Markets",
@@ -151,6 +152,10 @@
       }
     }
   },
+  "dailyCorrect": "Correct",
+  "dailyNotQuite": "Not quite",
+  "dailyNextCall": "Next call",
+  "dailySeeResults": "See results",
   "dailyShareResult": "Share result",
   "dailyResultCopied": "Result copied — paste it anywhere"
 }

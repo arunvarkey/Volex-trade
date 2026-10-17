@@ -7,6 +7,7 @@ import 'package:volex_terminal/ui/design_system/vx_colors.dart';
 import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'package:volex_terminal/ui/widgets/guidance_banner.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 
 class MarketScannerScreen extends StatefulWidget {
   const MarketScannerScreen({super.key});
@@ -166,8 +167,7 @@ class _MarketScannerScreenState extends State<MarketScannerScreen> {
           // Content
           Expanded(
             child: scanner.isScanning && results.isEmpty
-                ? const Center(
-                    child: CircularProgressIndicator(color: VxColors.neonCyan))
+                ? const VxListSkeleton(rows: 7, rowHeight: 68)
                 : results.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(

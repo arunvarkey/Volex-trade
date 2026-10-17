@@ -6,6 +6,7 @@ import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/features/academy/services/academy_progress_service.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 /// The trademark: "Guided every step."
@@ -107,15 +108,7 @@ class _NextStepGuideState extends State<NextStepGuide> {
         children: [
           Row(
             children: [
-              Text(
-                'YOUR NEXT STEP',
-                style: VxTypography.caption.copyWith(
-                  color: VxColors.primary,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
-                  fontSize: 11,
-                ),
-              ),
+              const VxEyebrow('Your next step', color: VxColors.primary),
               const Spacer(),
               Text(
                 'Step ${step.index} of $_totalSteps',

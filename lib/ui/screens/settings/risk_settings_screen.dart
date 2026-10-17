@@ -166,7 +166,7 @@ class _RiskSettingsScreenState extends State<RiskSettingsScreen> {
 
           // Daily Loss Configuration
           InfoLabel(
-            text: "Daily Loss Limit",
+            text: "Daily loss limit",
             termId: 'daily_loss_limit',
             style: VxTypography.caption
                 .copyWith(color: VxColors.neonCyan, fontSize: 12),

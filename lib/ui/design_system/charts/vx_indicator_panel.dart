@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import '../vx_colors.dart';
+import '../vx_eyebrow.dart';
 import 'package:volex_terminal/core/glossary.dart';
 import 'package:volex_terminal/ui/widgets/glossary_sheet.dart';
 
@@ -219,15 +220,8 @@ class _VxIndicatorPanelState extends State<VxIndicatorPanel> {
                       Icon(Icons.show_chart,
                           color: VxColors.neonCyan, size: 20),
                       SizedBox(width: 8),
-                      Text(
-                        'INDICATORS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                      ),
+                      VxEyebrow('Indicators',
+                          color: Colors.white, fontSize: 13),
                     ],
                   ),
                 ),

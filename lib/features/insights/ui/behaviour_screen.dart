@@ -9,6 +9,7 @@ import 'package:volex_terminal/features/insights/models/behaviour_insight.dart';
 import 'package:volex_terminal/features/insights/services/behaviour_analysis_service.dart';
 import 'package:volex_terminal/features/journal/services/journal_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 /// Your own trading record, read back to you.
@@ -64,8 +65,7 @@ class _BehaviourScreenState extends State<BehaviourScreen> {
         ),
       ),
       body: _loading
-          ? const Center(
-              child: CircularProgressIndicator(color: VxColors.primary))
+          ? const VxCardListSkeleton(cards: 3, cardHeight: 150)
           : Consumer<ExecutionManager>(
               builder: (context, manager, _) {
                 final report = const BehaviourAnalysisService().analyse(

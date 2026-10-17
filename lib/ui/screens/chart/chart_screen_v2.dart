@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/engine/chart_controller.dart';
 import 'package:volex_terminal/data/market_data_repository.dart';
 import 'package:volex_terminal/domain/candle_model.dart';
@@ -25,6 +26,7 @@ import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/engine/replay_controller.dart';
 import 'package:volex_terminal/ui/replay_panel.dart';
 import 'components/chart_legend_sheet.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 
 class ChartScreenV2 extends StatefulWidget {
   final MarketDataRepository? repository;
@@ -442,7 +444,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                           TextButton(
                             onPressed: () => DrawingService.instance
                                 .clearSymbol(_currentSymbol),
-                            child: const Text('CLEAR ALL',
+                            child: const Text('Clear all',
                                 style: TextStyle(color: VxColors.neonRed)),
                           ),
                       ],
@@ -506,9 +508,7 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                   top: 70, // Leave space for top bar
                   bottom: 120, // Leave space for bottom controls + padding
                   child: _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                              color: VxColors.neonCyan))
+                      ? const VxChartSkeleton()
                       : AnimatedBuilder(
                           animation: DrawingService.instance,
                           builder: (context, _) => VxProChart(
@@ -578,14 +578,10 @@ class _ChartScreenV2State extends State<ChartScreenV2> {
                         border: Border.all(
                             color: VxColors.warning.withValues(alpha: 0.5)),
                       ),
-                      child: const Text(
-                        'SIMULATED DATA',
-                        style: TextStyle(
-                          color: VxColors.warning,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
+                      child: const VxEyebrow(
+                        'Simulated data',
+                        color: VxColors.warning,
+                        fontSize: 9,
                       ),
                     ),
                   ),

@@ -3,6 +3,7 @@ import 'package:volex_terminal/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/widgets/vx_holographic_card.dart';
 import 'package:volex_terminal/services/startup_service.dart';
@@ -178,23 +179,16 @@ class MoreScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: Text(
-                l10n.debugSection.toUpperCase(),
-                style: VxTypography.caption.copyWith(
-                  color: VxColors.neonRed,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2.0,
-                ),
-              ),
+              child: VxEyebrow(l10n.debugSection,
+                  color: VxColors.neonRed, fontSize: 10),
             ),
             ListTile(
               leading: const Icon(Icons.refresh, color: Colors.red),
               title: Text(
-                l10n.debugReset.toUpperCase(),
+                l10n.debugReset,
                 style: VxTypography.body.copyWith(
                   color: VxColors.neonRed,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               subtitle: Text(
@@ -259,15 +253,7 @@ class MoreScreen extends StatelessWidget {
   Widget _buildSection(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 24, bottom: 12, left: 4),
-      child: Text(
-        title.toUpperCase(),
-        style: VxTypography.caption.copyWith(
-          color: Colors.white24,
-          fontSize: 10,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 2.0,
-        ),
-      ),
+      child: VxEyebrow(title, color: Colors.white24, fontSize: 10),
     );
   }
 

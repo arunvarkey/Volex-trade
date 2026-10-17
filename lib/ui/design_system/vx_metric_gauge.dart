@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'vx_colors.dart';
+import 'vx_eyebrow.dart';
 import 'vx_typography.dart';
 import 'vx_spacing.dart';
 
@@ -55,7 +56,7 @@ class VxMetricGauge extends StatelessWidget {
           ),
         ),
         const SizedBox(height: VxSpacing.sm),
-        VxText.micro(label.toUpperCase(), color: VxColors.textSecondary),
+        VxEyebrow(label, color: VxColors.textSecondary, fontSize: 10),
       ],
     );
   }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:volex_terminal/engine/strategy/strategy_engine.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/design_system/vx_toolbar.dart';
 import 'package:volex_terminal/ui/screens/strategies/tabs/overview_tab.dart';
@@ -131,11 +132,7 @@ class StrategyDetailView extends StatelessWidget {
         IconButton(
           tooltip: isRunning ? "Strategy running" : "Start strategy",
           icon: isRunning
-              ? const SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2, color: VxColors.neonGreen))
+              ? const VxInlineSpinner(size: 16, color: VxColors.neonGreen)
               : const Icon(Icons.play_arrow, color: VxColors.neonGreen),
           onPressed: isRunning
               ? null

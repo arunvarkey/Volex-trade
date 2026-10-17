@@ -12,6 +12,8 @@ import 'package:volex_terminal/features/academy/data/academy_curriculum.dart';
 import 'package:volex_terminal/features/academy/models/academy_models.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 import '../models/daily_models.dart';
@@ -120,12 +122,8 @@ class _DailyScreenState extends State<DailyScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          AppLocalizations.of(context).dailyTitle.toUpperCase(),
-          style: VxTypography.caption.copyWith(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 3.0,
-            color: Colors.white,
-          ),
+          AppLocalizations.of(context).dailyTitle,
+          style: VxTypography.h3.copyWith(color: Colors.white),
         ),
       ),
       body: SafeArea(child: _body()),
@@ -135,8 +133,9 @@ class _DailyScreenState extends State<DailyScreen> {
   Widget _body() {
     switch (_phase) {
       case _Phase.loading:
-        return const Center(
-            child: CircularProgressIndicator(color: VxColors.neonCyan));
+        // Local, sub-second: the day's challenge is generated on device from
+        // a seed, so there is no network and nothing to draw a shape for.
+        return const Center(child: VxInlineSpinner(size: 24));
       case _Phase.intro:
         return _IntroView(challenge: _challenge, onStart: _start);
       case _Phase.playing:
@@ -203,9 +202,8 @@ class _IntroView extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14)),
             ),
-            child: Text(AppLocalizations.of(context).dailyStart.toUpperCase(),
-                style: const TextStyle(
-                    fontWeight: FontWeight.w900, letterSpacing: 1.0)),
+            child: Text(AppLocalizations.of(context).dailyStart,
+                style: VxTypography.button.copyWith(color: Colors.black)),
           ),
         ],
       ),
@@ -263,8 +261,9 @@ class _CallView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          Text(AppLocalizations.of(context).dailyCallProgress(index + 1, total).toUpperCase(),
-              style: VxTypography.caption.copyWith(fontSize: 10)),
+          VxEyebrow(
+              AppLocalizations.of(context).dailyCallProgress(index + 1, total),
+              fontSize: 10),
           const SizedBox(height: 20),
           Text(call.prompt,
               style: VxTypography.h2.copyWith(fontSize: 21, height: 1.3)),
@@ -303,10 +302,12 @@ class _CallView extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        gotItRight ? 'CORRECT' : 'NOT QUITE',
-                        style: VxTypography.caption.copyWith(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 11,
+                        gotItRight
+                            ? AppLocalizations.of(context).dailyCorrect
+                            : AppLocalizations.of(context).dailyNotQuite,
+                        style: VxTypography.bodySmall.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
                           color: gotItRight
                               ? VxColors.neonGreen
                               : VxColors.neonRed,
@@ -352,9 +353,10 @@ class _CallView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
-                  index + 1 < total ? 'NEXT CALL' : 'SEE RESULTS',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w900, letterSpacing: 1.0),
+                  index + 1 < total
+                      ? AppLocalizations.of(context).dailyNextCall
+                      : AppLocalizations.of(context).dailySeeResults,
+                  style: VxTypography.button.copyWith(color: Colors.black),
                 ),
               ),
             ),
@@ -505,9 +507,8 @@ class _DoneView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12)),
                 ),
                 label: Text(
-                    AppLocalizations.of(context).dailyShareResult.toUpperCase(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w900, letterSpacing: 1.0)),
+                    AppLocalizations.of(context).dailyShareResult,
+                    style: VxTypography.button.copyWith(color: Colors.black)),
               ),
             ),
         ],

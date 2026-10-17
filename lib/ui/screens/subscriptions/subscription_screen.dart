@@ -4,7 +4,9 @@ import 'package:volex_terminal/core/analytics/vx_funnel.dart';
 import 'package:volex_terminal/features/subscriptions/models/subscription_tier.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/core/service_locator.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -41,7 +43,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const VxCardListSkeleton(
+              cards: 3,
+              cardHeight: 168,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               child: Column(
@@ -164,14 +170,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 topRight: Radius.circular(18),
               ),
             ),
-            child: const Text(
-              'MOST POPULAR',
-              style: TextStyle(
-                color: VxColors.primary,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1,
-              ),
+            child: const VxEyebrow(
+              'Most popular',
+              color: VxColors.primary,
+              fontSize: 11,
               textAlign: TextAlign.center,
             ),
           ),

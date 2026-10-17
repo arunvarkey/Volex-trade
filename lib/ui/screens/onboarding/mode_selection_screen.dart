@@ -4,6 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:volex_terminal/services/startup_service.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_eyebrow.dart';
 
 class ModeSelectionScreen extends StatelessWidget {
   const ModeSelectionScreen({super.key});
@@ -51,7 +52,7 @@ class ModeSelectionScreen extends StatelessWidget {
                 _ModeCard(
                   title: 'Explorer',
                   subtitle: 'Guided — the place to start',
-                  badge: 'RECOMMENDED',
+                  badge: 'Recommended',
                   icon: Icons.explore,
                   color: VxColors.primary,
                   features: const [
@@ -182,15 +183,7 @@ class _ModeCard extends StatelessWidget {
                   color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
-                  badge!,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  ),
-                ),
+                child: VxEyebrow(badge!, color: color, fontSize: 10),
               ),
 
             const SizedBox(height: 16),

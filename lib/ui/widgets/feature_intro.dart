@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 /// A short plain-English answer to "what is this screen, and when would I use
@@ -87,11 +88,11 @@ class FeatureIntro extends StatefulWidget {
               Text(title,
                   style: VxTypography.h2.copyWith(fontWeight: FontWeight.w700)),
               const SizedBox(height: 18),
-              _heading('WHAT THIS IS'),
+              _heading('What this is'),
               const SizedBox(height: 6),
               Text(what, style: VxTypography.bodyLarge.copyWith(height: 1.4)),
               const SizedBox(height: 20),
-              _heading('WHEN TO USE IT'),
+              _heading('When to use it'),
               const SizedBox(height: 6),
               Text(
                 when,
@@ -102,7 +103,7 @@ class FeatureIntro extends StatefulWidget {
               ),
               if (caution != null) ...[
                 const SizedBox(height: 20),
-                _heading('WORTH KNOWING'),
+                _heading('Worth knowing'),
                 const SizedBox(height: 6),
                 Text(
                   caution,
@@ -134,15 +135,8 @@ class FeatureIntro extends StatefulWidget {
     );
   }
 
-  static Widget _heading(String text) => Text(
-        text,
-        style: VxTypography.caption.copyWith(
-          color: VxColors.primary,
-          fontWeight: FontWeight.w700,
-          fontSize: 11,
-          letterSpacing: 0.6,
-        ),
-      );
+  static Widget _heading(String text) =>
+      VxEyebrow(text, color: VxColors.primary);
 
   @override
   State<FeatureIntro> createState() => _FeatureIntroState();

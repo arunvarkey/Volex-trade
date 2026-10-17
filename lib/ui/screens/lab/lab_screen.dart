@@ -6,6 +6,7 @@ import 'package:volex_terminal/features/simulator/backtest/backtest_engine.dart'
 import 'package:volex_terminal/engine/execution_manager.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_eyebrow.dart';
 import '../../design_system/vx_typography.dart';
 import '../../widgets/vx_holographic_card.dart';
 import '../../widgets/feature_intro.dart';
@@ -335,11 +336,11 @@ Widget _buildActiveStrategyCard(Strategy strategy, ExecutionManager execution) {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                strategy.name.toUpperCase(),
+                strategy.name,
                 style: VxTypography.caption.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -347,11 +348,7 @@ Widget _buildActiveStrategyCard(Strategy strategy, ExecutionManager execution) {
           ],
         ),
         const Spacer(),
-        Text(
-          'P&L',
-          style: VxTypography.caption
-              .copyWith(fontSize: 10, color: Colors.white24),
-        ),
+        const VxEyebrow('P&L', fontSize: 10, color: Colors.white24),
         Text(
           hasPositions
               ? '${up ? '+' : ''}\$${pnl.toStringAsFixed(2)}'
@@ -419,13 +416,13 @@ class _StrategyCard extends StatelessWidget {
                   Text(
                     strategy.name,
                     style:
-                        VxTypography.body.copyWith(fontWeight: FontWeight.w900),
+                        VxTypography.body.copyWith(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    strategy.id.toUpperCase(),
+                    strategy.id,
                     style: VxTypography.caption
-                        .copyWith(color: Colors.white24, fontSize: 8),
+                        .copyWith(color: Colors.white24, fontSize: 9),
                   ),
                 ],
               ),

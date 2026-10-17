@@ -5,6 +5,8 @@ import 'package:volex_terminal/domain/mini_ticker.dart';
 import 'package:volex_terminal/services/haptic_service.dart';
 import 'package:volex_terminal/services/market_ticker_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 import 'package:volex_terminal/ui/design_system/vx_coin_icon.dart';
 import 'ticker_format.dart';
@@ -36,27 +38,17 @@ class _VxMarketListState extends State<VxMarketList> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 10),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 28, 24, 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'MARKETS',
-                    style: VxTypography.caption.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: VxColors.textTertiary,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                  Text(
-                    'LIVE • 24H',
-                    style: VxTypography.caption.copyWith(
-                      fontSize: 9.5,
-                      color: VxColors.neonGreen,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.0,
-                    ),
+                  VxEyebrow('Markets', fontSize: 12),
+                  VxEyebrow(
+                    'Live • 24h',
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w800,
+                    color: VxColors.neonGreen,
                   ),
                 ],
               ),
@@ -70,17 +62,11 @@ class _VxMarketListState extends State<VxMarketList> {
                   border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: tickers.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.all(24),
-                        child: Center(
-                          child: SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: VxColors.neonCyan),
-                          ),
-                        ),
-                      )
+                    // Eight rows of the real row's geometry, so the first
+                    // tick lands in the space already held for it instead of
+                    // dropping the card from 66px to 470 and shoving the rest
+                    // of the home screen down the page.
+                    ? const VxListSkeleton(rows: 8, rowHeight: 58)
                     : Column(
                         children: [
                           for (int i = 0; i < tickers.length; i++) ...[

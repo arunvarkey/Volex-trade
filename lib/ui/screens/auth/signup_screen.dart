@@ -213,14 +213,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     child: _loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: VxColors.deepBlack,
-                            ),
-                          )
+                        ? const VxInlineSpinner(
+                            size: 20, color: VxColors.deepBlack)
                         : const Text(
                             'Create Account',
                             style: TextStyle(

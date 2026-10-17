@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_eyebrow.dart';
 import 'package:volex_terminal/features/subscriptions/services/subscription_service.dart';
 import 'package:volex_terminal/features/subscriptions/models/subscription_tier.dart';
 import 'package:volex_terminal/core/config/app_mode_service.dart';
@@ -31,13 +32,10 @@ class SimulatorHomeScreen extends StatelessWidget {
               border: Border.all(color: appMode.currentMode.themeColor),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Text(
-              appMode.currentMode.displayName.toUpperCase(),
-              style: TextStyle(
-                color: appMode.currentMode.themeColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
+            child: VxEyebrow(
+              appMode.currentMode.displayName,
+              color: appMode.currentMode.themeColor,
+              fontSize: 11,
             ),
           ),
         ],
@@ -107,9 +105,12 @@ class SimulatorHomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
+                      // The enum name is 'explorerPremium'; the product it
+                      // stands for is called Premium everywhere the user can
+                      // see it, so read the name off the product.
                       subscription.currentTier == SubscriptionTier.free
-                          ? 'Free Tier • 3 Strategy Limit'
-                          : '${subscription.currentTier.toString().split('.').last.toUpperCase()} Plan',
+                          ? 'Free tier • 3 strategy limit'
+                          : '${SubscriptionProduct.explorerPremium.name} plan',
                       style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 12,

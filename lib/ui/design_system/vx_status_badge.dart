@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'vx_colors.dart';
-import 'vx_typography.dart';
+import 'vx_eyebrow.dart';
 
 enum VxBadgeStyle {
   success,
@@ -52,11 +52,10 @@ class VxStatusBadge extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: VxText.micro(
-        label.toUpperCase(),
-        color: color,
-        // using micro style but maybe we want a bespoke badge style
-      ),
+      // A badge is the textbook case for capitals: one or two words the
+      // user scans rather than reads. VxEyebrow sets them, and hands the
+      // screen reader the words instead of the letters.
+      child: VxEyebrow(label, color: color, fontSize: 10),
     );
   }
 }

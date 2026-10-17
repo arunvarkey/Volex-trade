@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../ui/design_system/vx_colors.dart';
+import '../../../../ui/design_system/vx_eyebrow.dart';
+import '../../../../ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/features/simulator/strategy_builder/models/generated_strategy.dart';
 import '../models/backtest_request.dart';
 import '../backtest_engine.dart';
@@ -46,12 +48,8 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
       appBar: AppBar(
         backgroundColor: VxColors.deepBlack,
         title: const Text(
-          'SET UP A BACKTEST',
-          style: TextStyle(
-            color: VxColors.neonCyan,
-            letterSpacing: 0.3,
-            fontSize: 16,
-          ),
+          'Set up a backtest',
+          style: TextStyle(color: VxColors.neonCyan, fontSize: 17),
         ),
       ),
       body: SingleChildScrollView(
@@ -74,21 +72,21 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
             ),
             const SizedBox(height: 8),
             // Strategy Selection
-            _buildSectionHeader('STRATEGY'),
+            _buildSectionHeader('Strategy'),
             const SizedBox(height: 12),
             _buildStrategySelector(strategies),
 
             const SizedBox(height: 24),
 
             // Date range
-            _buildSectionHeader('BACKTEST PERIOD'),
+            _buildSectionHeader('Backtest period'),
             const SizedBox(height: 12),
             _buildDateRangePicker(),
 
             const SizedBox(height: 24),
 
             // Initial equity
-            _buildSectionHeader('STARTING BALANCE'),
+            _buildSectionHeader('Starting balance'),
             const SizedBox(height: 12),
             _buildEquitySlider(),
 
@@ -113,25 +111,15 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                     ? const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation(VxColors.deepBlack),
-                            ),
-                          ),
+                          VxInlineSpinner(
+                              size: 20, color: VxColors.deepBlack),
                           SizedBox(width: 12),
                           Text('Running backtest…'),
                         ],
                       )
                     : const Text(
-                        'RUN BACKTEST',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
-                        ),
+                        'Run backtest',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
               ),
             ),
@@ -207,12 +195,11 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name.toUpperCase(),
+                    name,
                     style: const TextStyle(
                       color: VxColors.neonCyan,
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -253,17 +240,8 @@ class _BacktestConfigScreenState extends State<BacktestConfigScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        color: VxColors.neonCyan,
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 0.3,
-      ),
-    );
-  }
+  Widget _buildSectionHeader(String title) =>
+      VxEyebrow(title, color: VxColors.neonCyan, fontSize: 12);
 
   Widget _buildDateRangePicker() {
     return Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../vx_colors.dart';
+import '../../vx_eyebrow.dart';
 import 'vx_drawing_models.dart';
 
 /// Floating toolbar for drawing tools
@@ -73,15 +74,8 @@ class _VxDrawingToolbarState extends State<VxDrawingToolbar> {
                   children: [
                     Icon(Icons.draw, color: VxColors.neonCyan, size: 18),
                     SizedBox(width: 8),
-                    Text(
-                      'DRAWING TOOLS',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
-                    ),
+                    VxEyebrow('Drawing tools',
+                        color: Colors.white, fontSize: 12),
                   ],
                 ),
                 const SizedBox(height: 12),
