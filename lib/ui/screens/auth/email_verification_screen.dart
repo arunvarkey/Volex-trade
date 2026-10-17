@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
 
 class EmailVerificationScreen extends StatefulWidget {

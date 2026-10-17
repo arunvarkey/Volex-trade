@@ -329,7 +329,7 @@ class VxInlineSpinner extends StatelessWidget {
 class _LoadingSemantics extends StatelessWidget {
   final Widget child;
 
-  const _LoadingSemantics({super.key, required this.child});
+  const _LoadingSemantics({required this.child});
 
   @override
   Widget build(BuildContext context) {

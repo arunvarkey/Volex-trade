@@ -3,6 +3,7 @@ import '../../../engine/marketplace/marketplace_service.dart';
 import '../../../engine/marketplace/models/strategy_listing.dart';
 import '../../../core/service_locator.dart';
 import '../../design_system/vx_colors.dart';
+import '../../design_system/vx_loading.dart';
 import '../../design_system/vx_eyebrow.dart';
 
 class StrategyDetailsScreen extends StatefulWidget {

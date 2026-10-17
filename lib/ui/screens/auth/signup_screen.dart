@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/core/services/auth/auth_service.dart';
 import 'package:volex_terminal/core/app_logger.dart';
 import 'package:volex_terminal/core/service_locator.dart';

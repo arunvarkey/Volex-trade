@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:volex_terminal/core/service_locator.dart';
 import 'package:volex_terminal/features/trading/services/secure_trading_service.dart';
 import 'package:volex_terminal/ui/design_system/vx_colors.dart';
+import 'package:volex_terminal/ui/design_system/vx_loading.dart';
 import 'package:volex_terminal/ui/design_system/vx_typography.dart';
 
 /// Exchange connection — deliberately not available.
