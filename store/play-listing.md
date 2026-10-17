@@ -89,18 +89,19 @@ are unsure.
 
 ## Languages — read this before adding any
 
-List **English only** in the Play Console, whatever the app's
-`supportedLocales` says.
+List **English only** in the Play Console. The app is English only, by
+decision: `AppLocalizations.supportedLocales` is `['en']` and a test asserts
+it.
 
-The app ships Spanish and Hindi translations of its menus and navigation —
-28 strings. Every lesson, daily question, quiz and glossary definition is
-English. Listing Hindi would bring in users who install expecting a Hindi app,
-find an English one, and uninstall. Those installs convert worse than no
-installs, because they also leave a rating on the way out.
+It was briefly otherwise. Spanish and Hindi were declared with 28 strings
+translated — the menus and the navigation bar — against 436 English lessons,
+daily questions, quiz questions and glossary definitions. That is a Hindi
+navigation bar around an English app. It brings in users who install expecting
+a Hindi app, find an English one, and uninstall; those installs convert worse
+than no installs, because they leave a rating on the way out.
 
 Add a language to the listing when its *content* is translated, not when its
-buttons are. The in-app notice (`EnglishContentNotice`) says the same thing to
-anyone running a non-English device, so the two agree.
+buttons are — and add it to `supportedLocales` at the same moment, not before.
 
 Translating the content needs a native speaker who understands trading. These
 lessons explain stop placement and position sizing to people about to risk

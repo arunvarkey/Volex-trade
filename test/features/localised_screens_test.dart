@@ -4,10 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Stops localised screens quietly reverting to English.
 ///
-/// Extraction is easy to do once and impossible to maintain by discipline
-/// alone: the next person adding a menu item writes `title: 'Alerts'` because
-/// that is what the line above used to look like, and nobody notices until a
-/// Hindi user sees one English row in a translated list.
+/// The app ships English only, so nothing *looks* wrong when a string goes in
+/// as a literal — which is exactly why extraction rots. The next person adding
+/// a menu item writes `title: 'Alerts'` because that is what the line above
+/// used to look like, and the half-extracted state is invisible until someone
+/// tries to translate and finds the copy scattered back across the screens.
 ///
 /// So the screens that have been done are listed here, and this reads their
 /// source. A file in the list with a hardcoded user-facing string fails the
